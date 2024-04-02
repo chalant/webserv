@@ -1,0 +1,25 @@
+Set up the configuration | Configuration class
+
+Set up a TCP connection | Server class
+
+Set up the client communication | ClientHandler class
+
+Do the request parsing | RequestParser class
+
+Define the fields we want out of the parser | Request class
+
+Do the Router initialisation | Router class
+
+Implement the response creator classes: | ARequestHandler class
+    -StaticFileRequestHandler class
+    -UploadRequestHandler class
+    -GetMethodRequestHandler class
+    -PostMethodRequestHandler class
+    -DeleteMethodRequestHandler class
+    -CGIRequestHandler class
+    -ErrorPageRequestHandler class
+
+Define the fields we need for the 'Response' | Response class
+
+Do exception handling
+Write some tests
