@@ -21,5 +21,11 @@ Implement the response creator classes: | ARequestHandler class
 
 Define the fields we need for the 'Response' | Response class
 
-Do exception handling
+Do exception handling | ExceptionHandler class
 Write some tests
+
+Implement Logging | Logger class
+
+Add clear comments and explanations throughout the codebase
+
+Keep this TODO up-to-date with new ideas and developments
