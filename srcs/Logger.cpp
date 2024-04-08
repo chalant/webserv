@@ -68,7 +68,7 @@ Logger::Logger(LoggerType type, Configuration &configuration)
 Logger::~Logger()
 {
     this->errorLog(DEBUG, "Logger instance destroyed");
-    this->writeBufferToFile();
+    this->writeLogBufferToFile();
     close(this->_logFileDescriptor);
 }
 
@@ -97,16 +97,16 @@ int Logger::getLogFileDescriptor() const
 }
 
 // Method to flush buffer and write log messages to file
-void Logger::writeBufferToFile()
+void Logger::writeLogBufferToFile()
 {
     // Check if the file descriptor is ready for writing
     if ((this->_logFilePollFd->revents & POLLOUT) == 0)
     {
-        this->errorLog(DEBUG, "writeBufferToFile(): File descriptor not ready for writing");
+        this->errorLog(DEBUG, "writeLogBufferToFile(): File descriptor not ready for writing");
         return;
     }
     else
-        this->errorLog(DEBUG, "writeBufferToFile(): File descriptor ready for writing");
+        this->errorLog(DEBUG, "writeLogBufferToFile(): File descriptor ready for writing");
 
     // Get the current buffer content
     std::string batch = this->_logBufferStream.str();
@@ -114,12 +114,12 @@ void Logger::writeBufferToFile()
     // Return without writing to file if buffer is empty or below threshold
     if (batch.size() == 0)
     {
-        this->errorLog(DEBUG, "writeBufferToFile(): Buffer is empty, nothing to write to log file");
+        this->errorLog(DEBUG, "writeLogBufferToFile(): Buffer is empty, nothing to write to log file");
         return;
     }
     else if (batch.size() < this->_bufferSize)
     {
-        this->errorLog(DEBUG, "writeBufferToFile(): Threshold not reached, not writing to log file [current size: " + std::to_string(batch.size()) + " limit: " + std::to_string(this->_bufferSize) + "]");
+        this->errorLog(DEBUG, "writeLogBufferToFile(): Threshold not reached, not writing to log file [current size: " + std::to_string(batch.size()) + " limit: " + std::to_string(this->_bufferSize) + "]");
         return;
     }
 
@@ -207,4 +207,26 @@ void Logger::appendMapToLog(std::ostringstream &logBufferStream, const std::stri
     mapStream << "} ";
 
     logBufferStream << mapStream.str(); // Append the constructed string to the logBufferStream
+}
+
+// Method to flush buffer and write log messages to file (blocking)
+// This method is used to write the remaining log messages to the log file when the server is shutting down
+void Logger::writeLogBufferToFileBlocking()
+{
+    // Get the current buffer content
+    std::string batch = this->_logBufferStream.str();
+
+    // Clear the buffer stream
+    this->_logBufferStream.str("");
+
+    // Write to file, blocking until all data is written
+    size_t bytesWritten = 0;
+    while (bytesWritten < batch.size())
+    {
+        // Write the remaining bytes of the batch to the log file
+        ssize_t result = write(this->_logFileDescriptor, batch.c_str() + bytesWritten, batch.size() - bytesWritten);
+        if (result == -1)
+            return; // Writing to log file failed, return without writing the rest of the batch
+        bytesWritten += result; // Increment bytesWritten by the number of bytes written in this iteration
+    }
 }

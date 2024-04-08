@@ -13,6 +13,7 @@
 #include "Request.hpp"
 #include "Response.hpp"
 #include "Configuration.hpp"
+#include "WebservExceptions.hpp"
 
 /*
  * Logger Class:
@@ -89,7 +90,8 @@ public:
     void accessLog(const Request &request, const Response &response); // Method to log access events
 
     // Buffer methods
-    void writeBufferToFile(); // Method to write the log buffer to the log file
+    void writeLogBufferToFile();         // Method to write the log buffer to the log file
+    void writeLogBufferToFileBlocking(); // Method to write the log buffer to the log file in a blocking manner
 };
 
 #endif // LOGGER_HPP

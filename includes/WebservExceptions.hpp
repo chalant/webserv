@@ -65,6 +65,69 @@ public:
 };
 
 // Derived error classes
+class NoConfigFileError : public WebservException
+{
+public:
+    NoConfigFileError() 
+        : WebservException(CRITICAL, "No configuration file found.", 1) {};
+};
+
+class InvalidConfigFileError : public WebservException
+{
+public:
+    InvalidConfigFileError()
+        : WebservException(CRITICAL, "Invalid configuration file.", 1) {};
+};
+
+class MaximumConnectionsReachedError : public WebservException
+{
+public:
+    MaximumConnectionsReachedError()
+        : WebservException(WARNING, "Maximum Connections reached.", 1) {};
+};
+
+class ConnectionEstablishingError : public WebservException
+{
+public:
+    ConnectionEstablishingError()
+       : WebservException(CRITICAL, "Failed to accept Connection.", 1) {};
+};
+
+class PollError : public WebservException
+{
+public:
+    PollError()
+    : WebservException(CRITICAL, "Failed to poll events.", 1) {};
+};
+
+class SocketCreateError : public WebservException
+{
+public:
+    SocketCreateError()
+    : WebservException(CRITICAL, "Failed to create socket.", 1) {};
+};
+
+class SocketSetError : public WebservException
+{
+public:
+    SocketSetError()
+    : WebservException(CRITICAL, "Failed to set socket to non-blocking.", 1) {};
+};
+
+class SocketListenError : public WebservException
+{
+public:
+    SocketListenError()
+    : WebservException(CRITICAL, "Failed to listen on socket.", 1) {};
+};
+
+class SocketBindError : public WebservException
+{
+public:
+    SocketBindError()
+    : WebservException(CRITICAL, "Failed to bind socket.", 1) {};
+};
+
 class LogFileOpenError : public WebservException
 {
 public:
