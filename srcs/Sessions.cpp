@@ -20,27 +20,10 @@
  */
 
 Sessions::Sessions(Configuration &configuration, Logger &errorLogger, Logger &accessLogger, ExceptionHandler &exceptionHandler, Server &server)
-    : _pollFds(server.getPollfdQueue()), _errorLogger(errorLogger), _accessLogger(accessLogger), _exceptionHandler(exceptionHandler), _pollExceptionMask(POLLHUP | POLLERR | POLLNVAL)
+    : _pollFds(server.getPollfdQueue()), _errorLogger(errorLogger), _accessLogger(accessLogger), _exceptionHandler(exceptionHandler), _pollExceptionMask(POLLHUP | POLLERR | POLLNVAL), _clientHandler(errorLogger, exceptionHandler), _router(configuration, errorLogger, exceptionHandler)
 {
-    // Log the creation of a Sessions instance.
+    // Log the creation of the Sessions instance.
     errorLogger.errorLog(DEBUG, "Sessions instance created.");
-
-    /*
-     * Router: Selects the appropriate 'RequestHandler' based on the URI.
-     * Each location block in the config file corresponds to a 'RequestHandler' mapping.
-     */
-    Router router(configuration, errorLogger, exceptionHandler);
-
-    /*
-     * ClientHandler: Manages communication with clients, handling raw requests and responses.
-     */
-    ClientHandler clientHandler(errorLogger, exceptionHandler);
-
-    /*
-     * RequestParser: Parses raw requests to generate 'Request' objects.
-     * Extracts essential information from the raw request strings.
-     */
-    RequestParser requestParser(errorLogger, accessLogger, exceptionHandler);
 }
 
 /*
@@ -50,7 +33,7 @@ Sessions::Sessions(Configuration &configuration, Logger &errorLogger, Logger &ac
  */
 Sessions::~Sessions()
 {
-    // Log the destruction of a Sessions instance.
+    // Log the destruction of the Sessions instance.
     this->_errorLogger.errorLog(DEBUG, "Sessions instance destroyed.");
 }
 
@@ -63,9 +46,9 @@ void Sessions::processEvents()
     this->_errorLogger.errorLog(DEBUG, "Processing events.");
 
     // Process events
-    for (size_t i = FIRST_CLIENT_POLL_FD; i < _pollFds.size(); i++)
+    for (size_t i = FIRST_CLIENT_POLL_FD; i < this->_pollFds.size(); i++)
     {
-        short revents = _pollFds[i].revents;
+        short revents = this->_pollFds[i].revents;
 
         // If there are no events, continue
         if (revents == 0)
@@ -91,28 +74,42 @@ void Sessions::processEvents()
 
 void Sessions::processRequest(size_t &i)
 {
-    // Initialize the 'ClientHandler' with the socket descriptor
-    int fd = _pollFds[i].fd;
-    _clientHandler = ClientHandler(fd);
+    // Give the 'ClientHandler' the current socket descriptor
+    int fd = this->_pollFds[i].fd;
+    this->_clientHandler.setSocketDescriptor(fd);
 
     // Read the raw request
-    std::vector<char> rawRequest = _clientHandler.readRequest();
+    std::vector<char> rawRequest;
+    try
+    {
+        rawRequest = this->_clientHandler.readRequest();
+    }
+    catch (const WebservException &e)
+    {
+        // Log the exception
+        this->_exceptionHandler.handleException(e, "ClientHandler::readRequest");
+        // Remove the socket from the poll set
+        this->_pollFds.erase(i);
+        // Decrement i to compensate for the removal
+        i--;
+        return;
+    }
 
     // 'RequestParser' produces a 'Request' from the raw request string
-    _request = _requestParser.parseRequest(rawRequest);
+    this->_request = this->_requestParser.parseRequest(rawRequest);
 
     // 'Router' selects the right 'RequestHandler' for the job
-    _requestHandler = _router.route(_request);
+    this->_requestHandler = this->_router.route(_request);
 
     // 'ARequesthandler' produces the 'Response'
-    _response = _requestHandler->handleRequest(_request);
-    delete _requestHandler;
+    this->_response = this->_requestHandler->handleRequest(this->_request);
+    delete this->_requestHandler;
 
     // Create the raw response string
-    std::vector<char> rawResponse = _requestParser.rawResponse(_response);
+    std::vector<char> rawResponse = this->_requestParser.rawResponse(this->_response);
 
     // 'ClientHandler' sends out a response to the client
-    size_t sentBytes = _clientHandler.sendResponse(rawResponse);
+    size_t sentBytes = this->_clientHandler.sendResponse(rawResponse);
 
     // Verify if the entire response was sent
     if (sentBytes < rawResponse.size())
@@ -121,14 +118,14 @@ void Sessions::processRequest(size_t &i)
         std::vector<char> buffer(unsentBytes);
         memcpy(&buffer[0], &rawResponse[sentBytes], unsentBytes);
         // Save the remaining bytes to the buffer
-        _responseBuffer[fd] = buffer;
+        this->_responseBuffer[fd] = buffer;
         // Update the events for the socket to include POLLOUT
-        _pollFds.pollout(i);
+        this->_pollFds.pollout(i);
     }
-    else
+    else // The entire response was sent or an error occurred
     {
         // Remove the socket from the poll set
-        _pollFds.erase(i);
+        this->_pollFds.erase(i);
         // Decrement i to compensate for the removal
         i--;
     }
@@ -137,14 +134,14 @@ void Sessions::processRequest(size_t &i)
 void Sessions::processBufferedResponse(size_t &i)
 {
     // Initialize the 'ClientHandler' with the socket descriptor
-    int fd = _pollFds[i].fd;
-    _clientHandler = ClientHandler(fd);
+    int fd = this->_pollFds[i].fd;
+    this->_clientHandler.setSocketDescriptor(fd);
 
     // Get the remaining bytes to send
-    std::vector<char> &buffer = _responseBuffer[fd];
+    std::vector<char> &buffer = this->_responseBuffer[fd];
 
     // Send the remaining bytes
-    size_t sentBytes = _clientHandler.sendResponse(buffer);
+    size_t sentBytes = this->_clientHandler.sendResponse(buffer);
 
     // Verify if the entire response was sent
     if (sentBytes < buffer.size())
@@ -153,14 +150,14 @@ void Sessions::processBufferedResponse(size_t &i)
         std::vector<char> newBuffer(unsentBytes);
         memcpy(&newBuffer[0], &buffer[sentBytes], unsentBytes);
         // Save the remaining bytes to the buffer
-        _responseBuffer[fd] = newBuffer;
+        this->_responseBuffer[fd] = newBuffer;
     }
     else
     {
         // Remove the socket from the poll set
-        _pollFds.erase(i);
+        this->_pollFds.erase(i);
         // Remove the socket from the response buffer map
-        _responseBuffer.erase(fd);
+        this->_responseBuffer.erase(fd);
         // Decrement i to compensate for the removal
         i--;
     }
@@ -168,8 +165,8 @@ void Sessions::processBufferedResponse(size_t &i)
 
 void Sessions::handleException(size_t &i)
 {
-    short revents = _pollFds[i].revents;
-    int fd = _pollFds[i].fd;
+    short revents = this->_pollFds[i].revents;
+    int fd = this->_pollFds[i].fd;
 
     if (revents & POLLHUP)
     {
@@ -183,7 +180,7 @@ void Sessions::handleException(size_t &i)
         this->_errorLogger.errorLog(ERROR, "Invalid request on socket: " + std::to_string(fd));
 
         // Send a 400 response to the client
-        if (clientHandler.sendResponse("HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n", 46, 0) == -1)
+        if (this->_clientHandler.sendResponse("HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n") == -1)
         {
             // Log the error
             this->_errorLogger.errorLog(ERROR, "Error sending 400 response to socket: " + std::to_string(fd));
@@ -197,16 +194,16 @@ void Sessions::handleException(size_t &i)
         this->_errorLogger.errorLog(ERROR, "Error on socket: " + std::to_string(fd));
 
         // Send a 500 response to the client
-        if (clientHandler.sendResponse("HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n", 54, 0) == -1)
+        if (this->_clientHandler.sendResponse("HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n") == -1)
         {
             // Log the error
             this->_errorLogger.errorLog(ERROR, "Error sending 500 response to socket: " + std::to_string(fd));
         }
     }
     // Remove the socket from the response buffer map
-    _responseBuffer.erase(fd);
+    this->_responseBuffer.erase(fd);
     // Close and Remove the socket from the poll set
-    _pollFds.erase(i);
+    this->_pollFds.erase(i);
     // Decrement i to compensate for the removal
     i--;
 }
