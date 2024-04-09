@@ -1,6 +1,6 @@
-Set up the configuration | Configuration class
+Set up the configuration | Configuration class (Yves is working on this)
 
-Set up a TCP connection | Server class
+Set up a TCP connection | Server class (DONE)
 
 Set up the client communication | ClientHandler class
 
@@ -21,10 +21,11 @@ Implement the response creator classes: | ARequestHandler class
 
 Define the fields we need for the 'Response' | Response class
 
-Do exception handling | ExceptionHandler class
+Do exception handling | ExceptionHandler class (DONE)
+
 Write some tests
 
-Implement Logging | Logger class
+Implement Logging | Logger class (DONE)
 
 Add clear comments and explanations throughout the codebase
 

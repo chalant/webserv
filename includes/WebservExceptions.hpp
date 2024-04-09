@@ -128,6 +128,27 @@ public:
     : WebservException(CRITICAL, "Failed to bind socket.", 1) {};
 };
 
+class ServerSocketError : public WebservException
+{
+public:
+    ServerSocketError()
+    : WebservException(CRITICAL, "Error on server socket.", 1) {};
+};
+
+class ServerSocketClosedError : public WebservException
+{
+public:
+    ServerSocketClosedError()
+    : WebservException(CRITICAL, "Server socket closed.", 1) {};
+};
+
+class ServerSocketInvalidError : public WebservException
+{
+public:
+    ServerSocketInvalidError()
+    : WebservException(CRITICAL, "Invalid server socket.", 1) {};
+};
+
 class LogFileOpenError : public WebservException
 {
 public:

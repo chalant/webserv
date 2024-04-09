@@ -1,7 +1,7 @@
 #include "../includes/Server.hpp"
 
 /*
- * The Server class is responsible for managing core operations of the HTTP server, including initialization, connection handling, and termination.
+ * The Server class is responsible for managing core operations of webserv, including initialization, connection handling, and termination.
  * 
  * It oversees socket creation, binding, and listening for incoming connections, all configured for non-blocking operation.
  * Leveraging the poll() polling mechanism, Server monitors events on the server socket, log file descriptors, and client connections,
@@ -38,8 +38,11 @@ Server::Server(Configuration &configuration, Logger &errorLogger, Logger &access
         throw SocketSetError();
     this->_errorLogger.errorLog(DEBUG, "Server socket set to non-blocking.");
 
+    // Set polling mask for server socket
+    this->_pollMask = POLLIN | POLLERR | POLLHUP | POLLNVAL;
+
     // Add server socket to polling list
-    this->_pollFds.push({server_fd, POLLIN, 0});
+    this->_pollFds.push({server_fd, this->_pollMask, 0});
 
     // Add error logger file descriptor to polling list
     this->_pollFds.push({this->_errorLogger.getLogFileDescriptor(), POLLOUT, 0});
@@ -64,6 +67,22 @@ void Server::pollEvents()
 /*Accept incoming connections*/
 void Server::acceptConnection()
 {
+    // If server socket has events return immediately
+    if (this->_pollFds[0].revents == 0)
+        return;
+
+    // Check for errors on server socket
+    if (this->_pollFds[0].revents & POLLERR)
+        throw ServerSocketError();
+
+    // Check for server socket closed
+    if (this->_pollFds[0].revents & POLLHUP)
+        throw ServerSocketClosedError();
+    
+    // Check for invalid request on server socket
+    if (this->_pollFds[0].revents & POLLNVAL)
+        throw ServerSocketInvalidError();
+
     // Check if server socket is ready to accept incoming connections
     if (this->_pollFds[0].revents & POLLIN)
     {
@@ -79,7 +98,11 @@ void Server::acceptConnection()
         // Add client socket to polling list
         if (client_fd < 0)
             throw ConnectionEstablishingError();
-        this->_pollFds.push({client_fd, POLLIN, 0});
+        this->_pollFds.push({client_fd, this->_pollMask, 0});
+
+        // Set socket to non-blocking mode
+        if (fcntl(client_fd, F_SETFL, O_NONBLOCK) < 0)
+            throw SocketSetError();
 
         // Log accepted connection
         this->_errorLogger.errorLog(VERBOSE, "Accepted new connection.");
@@ -89,6 +112,12 @@ void Server::acceptConnection()
         // Log no incoming connection
         this->_errorLogger.errorLog(VERBOSE, "No incoming connection.");
     }
+}
+
+/* Return a reference to the PollfdQueue object*/
+PollfdQueue &Server::getPollfdQueue()
+{
+    return this->_pollFds;
 }
 
 /* Destructor to close file descriptors*/

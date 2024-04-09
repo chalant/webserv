@@ -46,7 +46,7 @@
 
 // Constructor: Initializes a PollfdQueue object with the specified capacity.
 // The size and capacity parameters are set to zero and the specified capacity, respectively.
-PollfdQueue::PollfdQueue(size_t capacity) : _pollfdArray(capacity), _size(0), _capacity(capacity) {}
+PollfdQueue::PollfdQueue(size_t capacity) : _pollfdArray(capacity), _size(0), _capacity(capacity), _pollMask(POLLOUT | POLLERR | POLLHUP | POLLNVAL) {}
 
 // Operator []: Provides access to pollfd objects in the PollfdQueue by index.
 pollfd &PollfdQueue::operator[](size_t index) { return this->_pollfdArray[index]; }
@@ -67,9 +67,10 @@ void PollfdQueue::push(const pollfd &newPollfd)
 
 // Erase: Removes the pollfd object at the specified index from the PollfdQueue.
 // The pollfd object at the specified index is replaced with the last pollfd object in the queue,
-// and the size is decremented.
+// and the size is decremented. The erased file descriptor is closed.
 void PollfdQueue::erase(size_t index)
 {
+    close(this->_pollfdArray[index].fd);
     this->_pollfdArray[index] = this->_pollfdArray[_size - 1];
     this->_size--;
 }
@@ -77,7 +78,7 @@ void PollfdQueue::erase(size_t index)
 // Pollout: Sets the events field of the pollfd object at the specified index to POLLOUT.
 void PollfdQueue::pollout(size_t index)
 {
-    this->_pollfdArray[index].events = POLLOUT;
+    this->_pollfdArray[index].events = this->_pollMask;
 }
 
 // HasReachedCapacity: Checks if the PollfdQueue has reached its maximum capacity.

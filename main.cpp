@@ -57,9 +57,9 @@ int main(int argc, char **argv)
                 // Process events.
                 sessions.processEvents();
                 // Write error logs.
-                errorLogger.writeBufferToFile();
+                errorLogger.writeLogBufferToFile();
                 // Write access logs.
-                accessLogger.writeBufferToFile();
+                accessLogger.writeLogBufferToFile();
             }
             catch (WebservException &e)
             {

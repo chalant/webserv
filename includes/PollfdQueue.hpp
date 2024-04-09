@@ -46,6 +46,7 @@
  */
 
 #include <vector>
+#include <unistd.h>
 #include <poll.h>
 #include "WebservExceptions.hpp"
 
@@ -56,6 +57,7 @@ private:
     std::vector<pollfd> _pollfdArray; // Internal storage for pollfd objects
     size_t _size;                     // Current number of elements in the queue
     size_t _capacity;                 // Maximum capacity of the queue
+    short _pollMask;                  // Poll mask for polling events;
 
 public:
     // Constructor: Initializes a PollfdQueue object with the specified capacity.
