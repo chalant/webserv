@@ -28,7 +28,7 @@ class Server
 {
 private:
     PollfdQueue _pollFds;                // Queue for storing polling file descriptors
-    Configuration &_configuration;       // Reference to the server configuration settings
+    const Configuration &_configuration; // Reference to the server configuration settings
     Logger &_errorLogger;                // Reference to the error logger
     Logger &_accessLogger;               // Reference to the access logger
     ExceptionHandler &_exceptionHandler; // Reference to the exception handler
@@ -36,13 +36,13 @@ private:
     short _pollMask;                     // Poll mask for polling events
 
 public:
-    Server(Configuration &configuration,
+    Server(const Configuration &configuration,
            Logger &errorLogger, Logger &accessLogger,
            ExceptionHandler &exceptionHandler); // Constructor for Server class
     const Server &operator=(const Server &src); // Assignment operator overload
     ~Server();                                  // Destructor for Server class
     void addpollfd(pollfd pollFd);              // Method to add a polling file descriptor
-    PollfdQueue &getPollfdQueue();      // Method to get a reference to the PollfdQueue
+    PollfdQueue &getPollfdQueue();              // Method to get a reference to the PollfdQueue
     void acceptConnection();                    // Method to accept incoming connections
     void pollEvents();                          // Method to poll events
     void terminate(int exit_code);              // Method to terminate the server

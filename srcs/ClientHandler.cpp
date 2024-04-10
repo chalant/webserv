@@ -8,7 +8,9 @@
  */
 
 // Constructor
-ClientHandler::ClientHandler(Logger &errorLogger, ExceptionHandler &exceptionHandler) : _errorLogger(errorLogger), _exceptionHandler(exceptionHandler) {}
+ClientHandler::ClientHandler(Logger &errorLogger, const ExceptionHandler &exceptionHandler)
+    : _errorLogger(errorLogger),
+      _exceptionHandler(exceptionHandler) {}
 
 // Destructor
 ClientHandler::~ClientHandler() {}

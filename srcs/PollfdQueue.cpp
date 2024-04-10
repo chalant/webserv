@@ -46,7 +46,11 @@
 
 // Constructor: Initializes a PollfdQueue object with the specified capacity.
 // The size and capacity parameters are set to zero and the specified capacity, respectively.
-PollfdQueue::PollfdQueue(size_t capacity) : _pollfdArray(capacity), _size(0), _capacity(capacity), _pollMask(POLLOUT | POLLERR | POLLHUP | POLLNVAL) {}
+PollfdQueue::PollfdQueue(size_t capacity)
+    : _pollfdArray(capacity),
+      _size(0),
+      _capacity(capacity),
+      _pollMask(POLLOUT | POLLERR | POLLHUP | POLLNVAL) {}
 
 // Operator []: Provides access to pollfd objects in the PollfdQueue by index.
 pollfd &PollfdQueue::operator[](size_t index) { return this->_pollfdArray[index]; }

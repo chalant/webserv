@@ -7,7 +7,7 @@
  * The HttpHeaderHelper class provides functionality for working with HTTP headers.
  * It defines an enum HttpHeader to represent standard HTTP headers and provides methods
  * to retrieve string representations of headers and vice versa.
- * 
+ *
  * NOTE: Header strings representations in this class are all lowercase.
  *
  */

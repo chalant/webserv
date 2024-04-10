@@ -10,8 +10,10 @@
  */
 
 // Constructor initializes member variables using helper functions
-HttpHeaderHelper::HttpHeaderHelper() 
-    : _headerList(_setHeaderList()), _stringHttpHeaderMap(_setStringHttpHeaderMap()), _httpHeaderStringMap(_setHttpHeaderStringMap()) {}
+HttpHeaderHelper::HttpHeaderHelper()
+    : _headerList(_setHeaderList()),
+      _stringHttpHeaderMap(_setStringHttpHeaderMap()),
+      _httpHeaderStringMap(_setHttpHeaderStringMap()) {}
 
 // Get string representation of HttpHeader enum value
 const std::string &HttpHeaderHelper::httpHeaderStringMap(HttpHeader header) const

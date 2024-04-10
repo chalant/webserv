@@ -7,14 +7,13 @@
  * It defines an enum HttpMethod to represent standard HTTP methods and provides methods
  * to retrieve string representations of methods and vice versa.
  *
- * NOTE: The order of the HttpMethod enum values must match the order of the strings in the MethodList.
- *       The string representations of the HTTP methods are case-sensitive.
- *       The string representations of the HTTP methods must be in uppercase.
  */
 
 // Constructor initializes member variables using helper functions
-HttpMethodHelper::HttpMethodHelper() 
-    : _methodList(_setMethodList()), _stringHttpMethodMap(_setStringHttpMethodMap()), _httpMethodStringMap(_setHttpMethodStringMap()) {}
+HttpMethodHelper::HttpMethodHelper()
+    : _methodList(_setMethodList()),
+      _stringHttpMethodMap(_setStringHttpMethodMap()),
+      _httpMethodStringMap(_setHttpMethodStringMap()) {}
 
 // Get string representation of HttpMethod enum value
 const std::string &HttpMethodHelper::httpMethodStringMap(HttpMethod method) const

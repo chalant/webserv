@@ -9,8 +9,11 @@
  */
 
 // Constructor to initialize the RequestParser with required references
-RequestParser::RequestParser(Configuration &configuration, Logger &errorLogger, ExceptionHandler &exceptionHandler) 
-    : _configuration(configuration), _errorLogger(errorLogger), _exceptionHandler(exceptionHandler), _requestHelper() {}
+RequestParser::RequestParser(const Configuration &configuration, Logger &errorLogger, const ExceptionHandler &exceptionHandler)
+    : _configuration(configuration),
+      _errorLogger(errorLogger),
+      _exceptionHandler(exceptionHandler),
+      _requestHelper() {}
 
 // Function to parse a raw HTTP request and convert it into a Request object
 Request RequestParser::parseRequest(const std::vector<char> &rawRequest) const

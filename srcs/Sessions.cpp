@@ -19,8 +19,16 @@
  * exceptions effectively.
  */
 
-Sessions::Sessions(Configuration &configuration, Logger &errorLogger, Logger &accessLogger, ExceptionHandler &exceptionHandler, Server &server)
-    : _pollFds(server.getPollfdQueue()), _errorLogger(errorLogger), _accessLogger(accessLogger), _exceptionHandler(exceptionHandler), _pollExceptionMask(POLLHUP | POLLERR | POLLNVAL), _clientHandler(errorLogger, exceptionHandler), _requestParser(configuration, errorLogger, exceptionHandler), _router(configuration, errorLogger, exceptionHandler), _request(RequestHelper(), Configuration(nullptr))
+Sessions::Sessions(const Configuration &configuration, Logger &errorLogger, Logger &accessLogger, const ExceptionHandler &exceptionHandler, Server &server)
+    : _pollFds(server.getPollfdQueue()),
+      _errorLogger(errorLogger),
+      _accessLogger(accessLogger),
+      _exceptionHandler(exceptionHandler),
+      _pollExceptionMask(POLLHUP | POLLERR | POLLNVAL),
+      _clientHandler(errorLogger, exceptionHandler),
+      _requestParser(configuration, errorLogger, exceptionHandler),
+      _router(configuration, errorLogger, exceptionHandler),
+      _request(RequestHelper(), Configuration(nullptr))
 {
     // Log the creation of the Sessions instance.
     errorLogger.errorLog(DEBUG, "Sessions instance created.");

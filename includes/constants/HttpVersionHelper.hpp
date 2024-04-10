@@ -26,7 +26,7 @@ class HttpVersionHelper
 {
 private:
     // Member variables
-    const std::vector<std::string> _versionList;                   // List of string representations of HTTP versions
+    const std::vector<std::string> _versionList;                    // List of string representations of HTTP versions
     const std::map<std::string, HttpVersion> _stringHttpVersionMap; // Map of string representations to HttpVersion enum values
     const std::map<HttpVersion, std::string> _httpVersionStringMap; // Map of HttpVersion enum values to string representations
 

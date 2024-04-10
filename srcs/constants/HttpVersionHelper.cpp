@@ -10,8 +10,10 @@
  */
 
 // Constructor initializes member variables using helper functions
-HttpVersionHelper::HttpVersionHelper() 
-    : _versionList(_setVersionList()), _stringHttpVersionMap(_setStringHttpVersionMap()), _httpVersionStringMap(_setHttpVersionStringMap()) {}
+HttpVersionHelper::HttpVersionHelper()
+    : _versionList(_setVersionList()),
+      _stringHttpVersionMap(_setStringHttpVersionMap()),
+      _httpVersionStringMap(_setHttpVersionStringMap()) {}
 
 // Get string representation of HttpVersion enum value
 const std::string &HttpVersionHelper::httpVersionStringMap(HttpVersion version) const

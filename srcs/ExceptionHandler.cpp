@@ -22,7 +22,9 @@
  */
 
 // Constructor: Initializes ExceptionHandler with an errorLogger instance, _server linking is deferred
-ExceptionHandler::ExceptionHandler(Logger &errorLogger) : _errorLogger(errorLogger), _server(nullptr)
+ExceptionHandler::ExceptionHandler(Logger &errorLogger)
+    : _errorLogger(errorLogger),
+      _server(nullptr)
 {
     // Log debug message indicating the creation of an ExceptionHandler instance.
     this->_errorLogger.errorLog(DEBUG, "ExceptionHandler instance created.");
@@ -39,14 +41,14 @@ ExceptionHandler::~ExceptionHandler()
 void ExceptionHandler::handleException(const WebservException &e, const std::string &context) const
 {
     // Log the exception details, including context and error message.
-    _errorLogger.errorLog(e.getLogLevel(), "[EXCEPTION] " + context + " : " + e.what());
+    this->_errorLogger.errorLog(e.getLogLevel(), "[EXCEPTION] " + context + " : " + e.what());
 
     // Check if the exception's log level is critical.
     if (e.getLogLevel() == CRITICAL)
     {
         // If critical, log termination message and terminate the server.
-        _errorLogger.errorLog(CRITICAL, "webserv will now terminate.");
-        _server->terminate(e.getErrorCode());
+        this->_errorLogger.errorLog(CRITICAL, "webserv will now terminate.");
+        this->_server->terminate(e.getErrorCode());
     }
 }
 

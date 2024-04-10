@@ -9,10 +9,10 @@
  *
  * It takes responsability to verifying the validity of its components and throws exceptions if
  * any component is invalid.
- * 
+ *
  * Instances of this class are typically created by the RequestParser class, which parses raw
  * HTTP request strings and constructs Request objects from them.
- * 
+ *
  * Usage:
  * - Use getter methods to retrieve the properties of the request.
  *
@@ -22,17 +22,18 @@
  * request.getHttpVersion(); // Get the HTTP version
  * request.getHeaders(); // Get the request headers
  * request.getBody(); // Get the request body
- * 
+ *
  * NOTE: for string representations use the string getters where available:
  * request.getMethodString(); // Get the request method as a string
  * request.getHttpVersionString(); // Get the HTTP version as a string
  * request.getHeadersStrings(); // Get the request headers as a string-keyed map
- * 
+ *
  */
 
 // Constructor initializes the Request object with a RequestHelper and a Configuration object
 Request::Request(const RequestHelper &requestHelper, const Configuration &configuration)
-    : _requestHelper(requestHelper), _configuration(configuration) {}
+    : _requestHelper(requestHelper),
+      _configuration(configuration) {}
 
 // Copy assignment operator
 Request &Request::operator=(const Request &src)
@@ -59,13 +60,13 @@ HttpMethod Request::getMethod() const
 }
 
 // Getter function for retrieving the string representation of the HTTP method
-const std::string Request::getMethodString() const
+std::string Request::getMethodString() const
 {
     return this->_requestHelper.httpMethodStringMap(this->_method);
 }
 
 // Getter function for retrieving the URI of the request
-const std::string Request::getUri() const
+std::string Request::getUri() const
 {
     return this->_uri;
 }
@@ -77,7 +78,7 @@ HttpVersion Request::getHttpVersion() const
 }
 
 // Getter function for retrieving the string representation of the HTTP version
-const std::string Request::getHttpVersionString() const
+std::string Request::getHttpVersionString() const
 {
     return this->_requestHelper.httpVersionStringMap(this->_httpVersion);
 }
@@ -107,7 +108,7 @@ const std::vector<char> Request::getBody() const
 }
 
 // Getter function for retrieving the body of the request as a string
-const std::string Request::getBodyString() const
+std::string Request::getBodyString() const
 {
     return std::string(this->_body.begin(), this->_body.end());
 }

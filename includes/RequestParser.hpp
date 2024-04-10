@@ -29,7 +29,7 @@ private:
 
 public:
     // Constructor to initialize the RequestParser with required references
-    RequestParser(Configuration &configuration, Logger &errorLogger, ExceptionHandler &exceptionHandler);
+    RequestParser(const Configuration &configuration, Logger &errorLogger, const ExceptionHandler &exceptionHandler);
 
     // Function to parse a raw HTTP request and convert it into a Request object
     Request parseRequest(const std::vector<char> &rawRequest) const;

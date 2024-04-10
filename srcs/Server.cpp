@@ -2,16 +2,22 @@
 
 /*
  * The Server class is responsible for managing core operations of webserv, including initialization, connection handling, and termination.
- * 
+ *
  * It oversees socket creation, binding, and listening for incoming connections, all configured for non-blocking operation.
  * Leveraging the poll() polling mechanism, Server monitors events on the server socket, log file descriptors, and client connections,
  * facilitating the acceptance of incoming connections and their inclusion in the monitoring queue.
- * 
+ *
  */
 
 /* Constructor - Initializes the Server object and sets up the server socket and polling file descriptors.*/
-Server::Server(Configuration &configuration, Logger &errorLogger, Logger &accessLogger, ExceptionHandler &exceptionHandler)
-    : _pollFds(configuration.getMaxConnections() + 3), _configuration(configuration), _errorLogger(errorLogger), _accessLogger(accessLogger), _exceptionHandler(exceptionHandler), _maxConnections(configuration.getMaxConnections())
+Server::Server(const Configuration &configuration, Logger &errorLogger, Logger &accessLogger, ExceptionHandler &exceptionHandler)
+    : _pollFds(configuration.getMaxConnections() + 3),
+      _configuration(configuration),
+      _errorLogger(errorLogger),
+      _accessLogger(accessLogger),
+      _exceptionHandler(exceptionHandler),
+      _maxConnections(configuration.getMaxConnections()),
+      _pollMask(POLLIN | POLLERR | POLLHUP | POLLNVAL)
 {
     // Create server socket
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -39,7 +45,6 @@ Server::Server(Configuration &configuration, Logger &errorLogger, Logger &access
     this->_errorLogger.errorLog(DEBUG, "Server socket set to non-blocking.");
 
     // Set polling mask for server socket
-    this->_pollMask = POLLIN | POLLERR | POLLHUP | POLLNVAL;
 
     // Add server socket to polling list
     this->_pollFds.push({server_fd, this->_pollMask, 0});
@@ -53,6 +58,9 @@ Server::Server(Configuration &configuration, Logger &errorLogger, Logger &access
     // Set polling file descriptors for loggers
     errorLogger.setLogFilePollFd(&this->_pollFds[ERROR_LOG_POLL_FD]);
     accessLogger.setLogFilePollFd(&this->_pollFds[ACCESS_LOG_POLL_FD]);
+
+    // Link server instance to exception handler
+    exceptionHandler.linkServer(this);
 
     this->_errorLogger.errorLog(INFO, "Server initialized. Listening on port " + std::to_string(_configuration.getPort()) + ".");
 }
@@ -78,7 +86,7 @@ void Server::acceptConnection()
     // Check for server socket closed
     if (this->_pollFds[0].revents & POLLHUP)
         throw ServerSocketClosedError();
-    
+
     // Check for invalid request on server socket
     if (this->_pollFds[0].revents & POLLNVAL)
         throw ServerSocketInvalidError();

@@ -1,21 +1,6 @@
 #ifndef SESSIONS_HPP
 #define SESSIONS_HPP
 
-#include <string>
-#include <map>
-#include <cstring>
-#include <vector>
-#include "constants/PollfdQueueFixedPositions.hpp"
-#include "Server.hpp"
-#include "ClientHandler.hpp"
-#include "RequestParser.hpp"
-#include "Router.hpp"
-#include "Request.hpp"
-#include "Response.hpp"
-#include "Logger.hpp"
-#include "ExceptionHandler.hpp"
-#include "ARequestHandler.hpp"
-
 /*
  * The Sessions class serves as the orchestrator for handling client requests within webserv.
  *
@@ -35,24 +20,39 @@
  * exceptions effectively.
  */
 
+#include <string>
+#include <map>
+#include <cstring>
+#include <vector>
+#include "constants/PollfdQueueFixedPositions.hpp"
+#include "Server.hpp"
+#include "ClientHandler.hpp"
+#include "RequestParser.hpp"
+#include "Router.hpp"
+#include "Request.hpp"
+#include "Response.hpp"
+#include "Logger.hpp"
+#include "ExceptionHandler.hpp"
+#include "ARequestHandler.hpp"
+
 class Sessions
 {
 private:
     // Private member variables
 
     std::map<int, std::vector<char>> _responseBuffer; // Buffer for storing incompletely sent responses
-    PollfdQueue &_pollFds;                                      // Reference to a queue of poll file descriptors
-    ClientHandler _clientHandler;                               // Handles communication with clients
-    RequestParser _requestParser;                               // Parses incoming requests
-    Router _router;                                             // Routes requests to appropriate handlers
-    ARequestHandler *_requestHandler;                           // Pointer to the recruited request handler
-    Request _request;                                           // Represents an HTTP request
-    Response _response;                                         // Represents an HTTP response
-    Logger &_errorLogger;                                       // Reference to the error logger
-    Logger &_accessLogger;                                      // Reference to the access logger
-    ExceptionHandler &_exceptionHandler;                        // Reference to the exception handler
-    short _pollExceptionMask;                                   // Mask for poll exceptions
-    
+    PollfdQueue &_pollFds;                            // Reference to a queue of poll file descriptors
+    ClientHandler _clientHandler;                     // Handles communication with clients
+    const RequestParser _requestParser;               // Parses incoming requests
+    const Router _router;                             // Routes requests to appropriate handlers
+    ARequestHandler *_requestHandler;                 // Pointer to the recruited request handler
+    Request _request;                                 // Represents an HTTP request
+    Response _response;                               // Represents an HTTP response
+    Logger &_errorLogger;                             // Reference to the error logger
+    Logger &_accessLogger;                            // Reference to the access logger
+    const ExceptionHandler &_exceptionHandler;        // Reference to the exception handler
+    short _pollExceptionMask;                         // Mask for poll exceptions
+
     // Private member functions
 
     // Processes an incoming request
@@ -66,7 +66,7 @@ private:
 
 public:
     // Constructor
-    Sessions(Configuration &Configuration, Logger &errorLogger, Logger &accessLogger, ExceptionHandler &ExceptionHandler, Server &server);
+    Sessions(const Configuration &Configuration, Logger &errorLogger, Logger &accessLogger, const ExceptionHandler &ExceptionHandler, Server &server);
 
     // Copy assignment operator
     const Sessions &operator=(const Sessions &src);

@@ -1,20 +1,6 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
-#include <string>
-#include <ctime>
-#include <sstream>
-#include <poll.h>
-#include <fcntl.h>    // for open(), O_WRONLY, O_CREAT, O_APPEND
-#include <sys/stat.h> // for S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH
-#include <unistd.h>   // for close()
-#include <iomanip>    // for std::put_time
-#include "constants/LogLevel.hpp"
-#include "Request.hpp"
-#include "Response.hpp"
-#include "Configuration.hpp"
-#include "WebservExceptions.hpp"
-
 /*
  * Logger Class:
  * Provides functionality to log errors and access events to separate files.
@@ -47,6 +33,20 @@
  * Output in access log: timestamp="2011-01-01T01:11:11" clientIP="127.0.0.1" method="GET" requestURI="/index.php" httpVersion="HTTP/1.1" etc.
  */
 
+#include <string>
+#include <ctime>
+#include <sstream>
+#include <poll.h>
+#include <fcntl.h>    // for open(), O_WRONLY, O_CREAT, O_APPEND
+#include <sys/stat.h> // for S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH
+#include <unistd.h>   // for close()
+#include <iomanip>    // for std::put_time
+#include "constants/LogLevelHelper.hpp"
+#include "Request.hpp"
+#include "Response.hpp"
+#include "Configuration.hpp"
+#include "WebservExceptions.hpp"
+
 enum LoggerType
 {
     ERRORLOGGER,
@@ -56,38 +56,35 @@ enum LoggerType
 class Logger
 {
 private:
-    LoggerType _type;
-    std::string _logFile;
+    const LoggerType _type;
+    const std::string _logFile;
     std::ostringstream _logBufferStream;
-    LogLevel _logLevel;
-    size_t _bufferSize;
+    const LogLevel _logLevel;
+    const size_t _bufferSize;
     pollfd *_logFilePollFd;
-    int _logFileDescriptor;
-    bool _enabled;
+    const int _logFileDescriptor;
+    const bool _enabled;
+    const LogLevelHelper _logLevelHelper;
 
     // Private methods
-    const std::string getCurrentTimestamp();                                                                                                // Method to get the current timestamp
-    void appendMapToLog(std::ostringstream &ss, const std::string &fieldName, const std::map<std::string, std::string> &dataMap); // Method to append a map to the log message
+    std::string getCurrentTimestamp() const;                                                                                            // Method to get the current timestamp
+    void appendMapToLog(std::ostringstream &ss, const std::string &fieldName, const std::map<std::string, std::string> &dataMap) const; // Method to append a map to the log message
 
 public:
     // Constructors and Destructor
-    Logger();                                              // Default constructor
-    Logger(LoggerType type, Configuration &configuration); // Constructor with type and configuration
-    Logger &operator=(const Logger &other);                // Copy assignment operator
-    ~Logger();                                             // Destructor
+    Logger();                                                          // Default constructor
+    Logger(const LoggerType type, const Configuration &configuration); // Constructor with type and configuration
+    ~Logger();                                                         // Destructor
 
-    // Setter methods
-    void setLogLevel(LogLevel logLevel);              // Setter method for log level
-    void setLogFile(const std::string &logFile);      // Setter method for log file
-    void setLogFileDescriptor(int logFileDescriptor); // Setter method for log file descriptor
-    void setLogFilePollFd(pollfd *logFilePollFd);     // Setter method for poll file descriptors pointer
+    // Setter method
+    void setLogFilePollFd(pollfd *logFilePollFd); // Setter method for poll file descriptors pointer
 
-    // Getter methods
+    // Getter method
     int getLogFileDescriptor() const; // Getter method for log file descriptor
 
     // Logging methods
-    void errorLog(LogLevel logLevel, const std::string &message);     // Method to log error messages
-    void accessLog(const Request &request, const Response &response); // Method to log access events
+    void errorLog(const LogLevel logLevel, const std::string &message); // Method to log error messages
+    void accessLog(const Request &request, const Response &response);   // Method to log access events
 
     // Buffer methods
     void writeLogBufferToFile();         // Method to write the log buffer to the log file

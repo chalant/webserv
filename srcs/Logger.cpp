@@ -34,34 +34,37 @@
 
 // Constructor for incomplete Logger instance used during configuration parsing
 Logger::Logger()
+    : _bufferSize(99999),
+      _type(ERRORLOGGER),
+      _logLevel(INFO),
+      _enabled(true),
+      _logFile(""),
+      _logFileDescriptor(fileno(stderr)),
+      _logLevelHelper()
 {
-    this->_enabled = true;
-    this->_logLevel = INFO;
-    this->_bufferSize = 99999;
-    this->_logFileDescriptor = fileno(stderr);
     this->errorLog(DEBUG, "Incomplete Logger instance created");
 }
 
 // Constructor for initializing Logger instance based on type (ERRORLOGGER/ACCESSLOGGER) and configuration
-Logger::Logger(LoggerType type, Configuration &configuration)
+Logger::Logger(const LoggerType type, const Configuration &configuration)
+    : _bufferSize(configuration.getLogBufferSize()),
+      _type(type),
+      _logLevel((type == ERRORLOGGER) ? configuration.getLogLevel() : INFO),
+      _enabled((type == ERRORLOGGER) ? configuration.getErrorLogEnabled() : configuration.getAccessLogEnabled()),
+      _logFile((type == ERRORLOGGER) ? configuration.getErrorLogFile() : configuration.getAccessLogFile()),
+      _logFileDescriptor(open(this->_logFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
+      _logLevelHelper()
 {
+    if (this->_logFileDescriptor == -1)
+        throw LogFileOpenError(); // Opening log file failed
     if (type == ERRORLOGGER)
     {
-        this->_logLevel = configuration.getLogLevel();
-        this->_enabled = configuration.getErrorLogEnabled();
-        this->_logFile = configuration.getErrorLogFile();
         this->errorLog(DEBUG, "Error Logger created");
     }
     else
     {
-        this->_logLevel = INFO;
-        this->_enabled = configuration.getAccessLogEnabled();
-        this->_logFile = configuration.getAccessLogFile();
         this->errorLog(DEBUG, "Access Logger created");
     }
-    this->_logFileDescriptor = open(this->_logFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    if (this->_logFileDescriptor == -1)
-        throw LogFileOpenError(); // Opening log file failed
 }
 
 // Destructor: Handles cleanup tasks like flushing buffer and closing log file descriptor
@@ -70,24 +73,6 @@ Logger::~Logger()
     this->errorLog(DEBUG, "Logger instance destroyed");
     this->writeLogBufferToFile();
     close(this->_logFileDescriptor);
-}
-
-// Setter method for log level
-void Logger::setLogLevel(LogLevel logLevel)
-{
-    this->_logLevel = logLevel;
-}
-
-// Setter method for log file
-void Logger::setLogFile(const std::string &logFile)
-{
-    this->_logFile = logFile;
-}
-
-// Setter method for log file descriptor
-void Logger::setLogFileDescriptor(int logFileDescriptor)
-{
-    this->_logFileDescriptor = logFileDescriptor;
 }
 
 // Getter method for log file descriptor
@@ -140,7 +125,7 @@ void Logger::writeLogBufferToFile()
 }
 
 // Method to get the current timestamp
-const std::string getCurrentTimestamp()
+std::string getCurrentTimestamp() const
 {
     std::stringstream stream;
 
@@ -155,7 +140,7 @@ void Logger::errorLog(LogLevel logLevel, const std::string &message)
     if (this->_enabled == false || logLevel < this->_logLevel)
         return;
 
-    std::string logMessage = "timestamp=" + getCurrentTimestamp() + " loglevel=" + LogLevelStrings[static_cast<int>(logLevel)] + " message=" + message + "\n";
+    std::string logMessage = "timestamp=\"" + getCurrentTimestamp() + "\" loglevel=\"" + this->_logLevelHelper.logLevelStringMap(logLevel) + "\" message=\"" + message + "\"\n";
     this->_logBufferStream << logMessage;
 }
 
@@ -167,15 +152,15 @@ void Logger::accessLog(const Request &request, const Response &response)
 
     // Create a temporary stringstream object to construct the log message
     std::ostringstream logBufferStream;
-    logBufferStream << "timestamp=" << this->getCurrentTimestamp() << " "
-                    << "clientIP=" << request.getClientIP() << " "
-                    << "method=" << request.getMethodString() << " "
-                    << "requestURI=" << request.getRequestURI() << " "
-                    << "httpVersion=" << request.getHttpVersion() << " "
-                    << "statusCode=" << response.getStatusCode() << " "
-                    << "responseSize=" << response.getResponseSize() << " "
-                    << "userAgent=" << request.getUserAgent() << " "
-                    << "referrer=" << request.getReferrer() << " ";
+    logBufferStream << "timestamp=\"" << this->getCurrentTimestamp() << "\" "
+                    << "clientIP=\"" << request.getClientIP() << "\" "
+                    << "method=\"" << request.getMethodString() << "\" "
+                    << "requestUri=\"" << request.getRequestURI() << "\" "
+                    << "httpVersion=\"" << request.getHttpVersion() << "\" "
+                    << "statusCode=\"" << response.getStatusCode() << "\" "
+                    << "responseSize=\"" << response.getResponseSize() << "\" "
+                    << "userAgent=\"" << request.getUserAgent() << "\" "
+                    << "referrer=\"" << request.getReferrer() << "\" ";
 
     // Add request headers to the log message
     appendMapToLog(logBufferStream, "requestHeaders", request.getRequestHeaders());
@@ -191,7 +176,7 @@ void Logger::accessLog(const Request &request, const Response &response)
 }
 
 // Method to append map to log message
-void Logger::appendMapToLog(std::ostringstream &logBufferStream, const std::string &fieldName, const std::map<std::string, std::string> &map)
+void Logger::appendMapToLog(std::ostringstream &logBufferStream, const std::string &fieldName, const std::map<std::string, std::string> &map) const
 {
     std::ostringstream mapStream;
 
@@ -226,7 +211,15 @@ void Logger::writeLogBufferToFileBlocking()
         // Write the remaining bytes of the batch to the log file
         ssize_t result = write(this->_logFileDescriptor, batch.c_str() + bytesWritten, batch.size() - bytesWritten);
         if (result == -1)
-            return; // Writing to log file failed, return without writing the rest of the batch
+            return;             // Writing to log file failed, return without writing the rest of the batch
         bytesWritten += result; // Increment bytesWritten by the number of bytes written in this iteration
     }
 }
+
+// Setter method for poll file descriptors pointer
+void Logger::setLogFilePollFd(pollfd *logFilePollFd)
+{
+    this->_logFilePollFd = logFilePollFd;
+}
+
+// Path: includes/WebservExceptions.hpp

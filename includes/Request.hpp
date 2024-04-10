@@ -10,10 +10,10 @@
  *
  * It takes responsability to verifying the validity of its components and throws exceptions if
  * any component is invalid.
- * 
+ *
  * Instances of this class are typically created by the RequestParser class, which parses raw
  * HTTP request strings and constructs Request objects from them.
- * 
+ *
  * Usage:
  * - Use getter methods to retrieve the properties of the request.
  *
@@ -23,12 +23,12 @@
  * request.getHttpVersion(); // Get the HTTP version
  * request.getHeaders(); // Get the request headers
  * request.getBody(); // Get the request body
- * 
+ *
  * NOTE: for string representations use the string getters where available:
  * request.getMethodString(); // Get the request method as a string
  * request.getHttpVersionString(); // Get the HTTP version as a string
  * request.getHeadersStrings(); // Get the request headers as a string-keyed map
- * 
+ *
  */
 
 #include <string>
@@ -61,20 +61,19 @@ private:
     // Helper;
     const RequestHelper &_requestHelper;
 
-
 public:
     Request(const RequestHelper &requestHelper, const Configuration &configuration);
     Request &operator=(const Request &src);
     ~Request();
     HttpMethod getMethod() const;
-    const std::string getMethodString() const;
-    const std::string getUri() const;
+    std::string getMethodString() const;
+    std::string getUri() const;
     HttpVersion getHttpVersion() const;
-    const std::string getHttpVersionString() const;
+    std::string getHttpVersionString() const;
     const std::map<HttpHeader, std::string> getHeaders() const;
     const std::map<std::string, std::string> getHeadersStrings() const;
     const std::vector<char> getBody() const;
-    const std::string getBodyString() const;
+    std::string getBodyString() const;
     void setMethod(const std::string &method);
     void setUri(const std::string &uri);
     void setHttpVersion(const std::string &httpVersion);

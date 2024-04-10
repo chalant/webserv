@@ -16,13 +16,13 @@
 class ClientHandler
 {
 private:
-    int _socketDescriptor;               // Socket descriptor for client connection
-    Logger &_errorLogger;                // Reference to the error logger object
-    ExceptionHandler &_exceptionHandler; // Reference to the exception handler object
+    int _socketDescriptor;                     // Socket descriptor for client connection
+    Logger &_errorLogger;                      // Reference to the error logger object
+    const ExceptionHandler &_exceptionHandler; // Reference to the exception handler object
 
 public:
     // Constructor: Initializes the ClientHandler with an error logger and exception handler
-    ClientHandler(Logger &errorLogger, ExceptionHandler &exceptionHandler);
+    ClientHandler(Logger &errorLogger, const ExceptionHandler &exceptionHandler);
 
     // Destructor
     ~ClientHandler();

@@ -1,10 +1,6 @@
 #ifndef WEBSERVEXCEPTIONS_HPP
 #define WEBSERVEXCEPTIONS_HPP
 
-#include <exception>
-#include <string>
-#include "constants/LogLevel.hpp"
-
 /*
  * Webserv Error Handling System
  *
@@ -40,18 +36,24 @@
  * }
  */
 
+#include <exception>
+#include <string>
+#include "constants/LogLevelHelper.hpp"
+
 // Base class for all custom exceptions in Webserv
 class WebservException : public std::exception
 {
 private:
     LogLevel _logLevel;
-    std::string _message;
+    const std::string _message;
     size_t _errorCode;
 
 public:
     // Constructor
     WebservException(LogLevel logLevel, const std::string &message, size_t errorCode)
-        : _logLevel(logLevel), _message(message), _errorCode(errorCode){};
+        : _logLevel(logLevel),
+          _message(message),
+          _errorCode(errorCode){};
 
     // Override what() method
     const char *what() const throw()
@@ -239,6 +241,15 @@ public:
         : WebservException(ERROR, "Invalid header value.", 1){};
     InvalidHeaderValue(const std::string &value)
         : WebservException(ERROR, "Invalid header value: \"" + value + "\"", 1){};
+};
+
+class UnknownLogLevelError : public WebservException
+{
+public:
+    UnknownLogLevelError()
+        : WebservException(ERROR, "Unknown log level.", 1){};
+    UnknownLogLevelError(const std::string &logLevel)
+        : WebservException(ERROR, "Unknown log level: \"" + logLevel + "\"", 1){};
 };
 
 #endif // WEBSERVEXCEPTIONS_HPP
