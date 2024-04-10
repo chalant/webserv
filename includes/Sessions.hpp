@@ -2,7 +2,7 @@
 #define SESSIONS_HPP
 
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <cstring>
 #include <vector>
 #include "constants/PollfdQueueFixedPositions.hpp"
@@ -40,7 +40,7 @@ class Sessions
 private:
     // Private member variables
 
-    std::unordered_map<int, std::vector<char>> _responseBuffer; // Buffer for storing incompletely sent responses
+    std::map<int, std::vector<char>> _responseBuffer; // Buffer for storing incompletely sent responses
     PollfdQueue &_pollFds;                                      // Reference to a queue of poll file descriptors
     ClientHandler _clientHandler;                               // Handles communication with clients
     RequestParser _requestParser;                               // Parses incoming requests

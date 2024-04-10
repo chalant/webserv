@@ -20,7 +20,7 @@
  */
 
 Sessions::Sessions(Configuration &configuration, Logger &errorLogger, Logger &accessLogger, ExceptionHandler &exceptionHandler, Server &server)
-    : _pollFds(server.getPollfdQueue()), _errorLogger(errorLogger), _accessLogger(accessLogger), _exceptionHandler(exceptionHandler), _pollExceptionMask(POLLHUP | POLLERR | POLLNVAL), _clientHandler(errorLogger, exceptionHandler), _router(configuration, errorLogger, exceptionHandler)
+    : _pollFds(server.getPollfdQueue()), _errorLogger(errorLogger), _accessLogger(accessLogger), _exceptionHandler(exceptionHandler), _pollExceptionMask(POLLHUP | POLLERR | POLLNVAL), _clientHandler(errorLogger, exceptionHandler), _requestParser(configuration, errorLogger, exceptionHandler), _router(configuration, errorLogger, exceptionHandler), _request(RequestHelper(), Configuration(nullptr))
 {
     // Log the creation of the Sessions instance.
     errorLogger.errorLog(DEBUG, "Sessions instance created.");
@@ -78,16 +78,17 @@ void Sessions::processRequest(size_t &i)
     int fd = this->_pollFds[i].fd;
     this->_clientHandler.setSocketDescriptor(fd);
 
-    // Read the raw request
-    std::vector<char> rawRequest;
     try
     {
-        rawRequest = this->_clientHandler.readRequest();
+        // Read the raw request from the client
+        std::vector<char> rawRequest = this->_clientHandler.readRequest();
+        // 'RequestParser' produces a 'Request' from the raw request string
+        this->_request = this->_requestParser.parseRequest(rawRequest);
     }
     catch (const WebservException &e)
     {
-        // Log the exception
-        this->_exceptionHandler.handleException(e, "ClientHandler::readRequest");
+        // Log the exceptions
+        this->_exceptionHandler.handleException(e, "Sessions::processRequest socket=\"" + std::to_string(fd) + "\"");
         // Remove the socket from the poll set
         this->_pollFds.erase(i);
         // Decrement i to compensate for the removal
@@ -95,11 +96,8 @@ void Sessions::processRequest(size_t &i)
         return;
     }
 
-    // 'RequestParser' produces a 'Request' from the raw request string
-    this->_request = this->_requestParser.parseRequest(rawRequest);
-
     // 'Router' selects the right 'RequestHandler' for the job
-    this->_requestHandler = this->_router.route(_request);
+    this->_requestHandler = this->_router.route(this->_request);
 
     // 'ARequesthandler' produces the 'Response'
     this->_response = this->_requestHandler->handleRequest(this->_request);

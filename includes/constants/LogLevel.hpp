@@ -1,9 +1,12 @@
 #ifndef LOGLEVEL_H
 #define LOGLEVEL_H
 
-// Enumerated type representing different log levels
+// Log levels
 
 #include <string>
+#include <map>
+
+// Enum representing different log levels
 
 enum LogLevel
 {
@@ -15,6 +18,8 @@ enum LogLevel
     CRITICAL = 5 // Critical errors
 };
 
+// Array of log level strings
+
 const std::string LogLevelStrings[] = {
     "[VERBOSE]",
     "[DEBUG]",
@@ -22,6 +27,16 @@ const std::string LogLevelStrings[] = {
     "[WARNING]",
     "[ERROR]",
     "[CRITICAL]"};
+
+// Map of log level strings to LogLevel enum values
+
+const std::map<std::string, LogLevel> LogLevelMap{
+    {"VERBOSE", LogLevel::VERBOSE},
+    {"DEBUG", LogLevel::DEBUG},
+    {"INFO", LogLevel::INFO},
+    {"WARNING", LogLevel::WARNING},
+    {"ERROR", LogLevel::ERROR},
+    {"CRITICAL", LogLevel::CRITICAL}};
 
 #endif // LOGLEVEL_H
 // Path: includes/constants/LogLevel.hpp

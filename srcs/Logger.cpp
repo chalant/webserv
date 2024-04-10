@@ -191,12 +191,12 @@ void Logger::accessLog(const Request &request, const Response &response)
 }
 
 // Method to append map to log message
-void Logger::appendMapToLog(std::ostringstream &logBufferStream, const std::string &fieldName, const std::unordered_map<std::string, std::string> &map)
+void Logger::appendMapToLog(std::ostringstream &logBufferStream, const std::string &fieldName, const std::map<std::string, std::string> &map)
 {
     std::ostringstream mapStream;
 
     mapStream << fieldName << "={";
-    for (std::unordered_map<std::string, std::string>::const_iterator it = map.begin(); it != map.end(); ++it)
+    for (std::map<std::string, std::string>::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         mapStream << it->first << ": " << it->second;
         if (std::next(it) != map.end())

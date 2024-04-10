@@ -67,7 +67,7 @@ private:
 
     // Private methods
     const std::string getCurrentTimestamp();                                                                                                // Method to get the current timestamp
-    void appendMapToLog(std::ostringstream &ss, const std::string &fieldName, const std::unordered_map<std::string, std::string> &dataMap); // Method to append a map to the log message
+    void appendMapToLog(std::ostringstream &ss, const std::string &fieldName, const std::map<std::string, std::string> &dataMap); // Method to append a map to the log message
 
 public:
     // Constructors and Destructor

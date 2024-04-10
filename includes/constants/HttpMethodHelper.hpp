@@ -1,0 +1,54 @@
+#ifndef HTTPMETHODHELPER_HPP
+#define HTTPMETHODHELPER_HPP
+
+/*
+ * HttpMethodHelper.hpp
+ *
+ * The HttpMethodHelper class provides functionality for working with HTTP methods.
+ * It defines an enum HttpMethod to represent standard HTTP methods and provides methods
+ * to retrieve string representations of methods and vice versa.
+ *
+ */
+
+#include <string>
+#include <vector>
+#include <map>
+#include "../WebservExceptions.hpp"
+
+enum HttpMethod
+{
+    GET = 0,     // The GET method requests a representation of the specified resource.
+    POST = 1,    // The POST method is used to submit an entity to the specified resource, often causing a change in state or side effects on the server.
+    PUT = 2,     // The PUT method replaces all current representations of the target resource with the request payload.
+    DELETE = 3,  // The DELETE method deletes the specified resource.
+    HEAD = 4,    // The HEAD method asks for a response identical to that of a GET request, but without the response body.
+    OPTIONS = 5, // The OPTIONS method is used to describe the communication options for the target resource.
+    PATCH = 6,   // The PATCH method applies partial modifications to a resource.
+    TRACE = 7,   // The TRACE method performs a message loop-back test along the path to the target resource.
+    CONNECT = 8  // The CONNECT method establishes a tunnel to the server identified by the target resource.
+};
+
+class HttpMethodHelper
+{
+private:
+    // Member variables
+    const std::vector<std::string> _methodList;                   // List of string representations of HTTP methods
+    const std::map<std::string, HttpMethod> _stringHttpMethodMap; // Map of string representations to HttpMethod enum values
+    const std::map<HttpMethod, std::string> _httpMethodStringMap; // Map of HttpMethod enum values to string representations
+
+    // Private member functions for initialization
+    static std::vector<std::string> _setMethodList();
+    static std::map<std::string, HttpMethod> _setStringHttpMethodMap();
+    static std::map<HttpMethod, std::string> _setHttpMethodStringMap();
+
+public:
+    // Constructor
+    HttpMethodHelper();
+
+    // Member functions to access data
+    const std::string &httpMethodStringMap(HttpMethod method) const; // Get string representation of HttpMethod
+    HttpMethod stringHttpMethodMap(const std::string &method) const; // Get HttpMethod enum value from string representation
+};
+
+#endif // HTTPMETHODHELPER_HPP
+// Path: includes/constants/HttpMethodHelper.hpp
