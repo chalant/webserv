@@ -6,13 +6,14 @@
 #    By: llapage <llapage@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 10:54:31 by llapage           #+#    #+#              #
-#    Updated: 2024/04/10 14:16:46 by llapage          ###   ########.fr        #
+#    Updated: 2024/04/10 14:18:25 by llapage          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= webserv
 #-------------------SOURCES PATH----------------------
-HEADER_PWD  = 
+SOURCES     = src/
+HEADER_PWD  = includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
 FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
