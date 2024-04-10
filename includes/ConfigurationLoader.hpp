@@ -7,7 +7,7 @@
 class ConfigurationLoader
 {
 	public:
-		ConfigurationLoader(const ExceptionHandler &exc_handler);
+		ConfigurationLoader(const ExceptionHandler& exc_handler);
 		~ConfigurationLoader();
 		Configuration*	loadConfiguration(const std::string *path);
 };
