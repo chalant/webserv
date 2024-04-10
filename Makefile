@@ -6,7 +6,7 @@
 #    By: llapage <llapage@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 10:54:31 by llapage           #+#    #+#              #
-#    Updated: 2024/04/10 14:14:11 by llapage          ###   ########.fr        #
+#    Updated: 2024/04/10 14:16:46 by llapage          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,11 +46,10 @@ SRCS        =	main.cpp \
 				CGIRequestHandler.cpp \
 				ClientHandler.cpp \
 				Configuration.cpp \
-				ConfigurationLoader.cpp \
 				DeleteMethodRequestHandler.cpp \
 				ErrorPageRequestHandler.cpp \
 				ExceptionHandler.cpp \
-				GetMethodRequestHandler \
+				GetMethodRequestHandler.cpp \
 				Logger.cpp \
 				PollfdQueue.cpp \
 				PostMethodRequestHandler.cpp \
@@ -62,7 +61,6 @@ SRCS        =	main.cpp \
 				Sessions.cpp \
 				StaticFileRequestHandler.cpp \
 				UploadRequestHandler.cpp \
-				WebservExceptions.cpp \
 				
 #-------------------OBJECTS----------------------
 OBJS        =   $(SRCS:.cpp=.o)
