@@ -8,6 +8,19 @@
  * It defines an enum HttpMethod to represent standard HTTP methods and provides methods
  * to retrieve string representations of methods and vice versa.
  *
+ * Example:
+ * 
+ * HttpMethodHelper helper;
+ * std::string method = "GET";
+ * HttpMethod httpMethod = helper.stringHttpMethodMap(method);
+ * std::string method = helper.httpMethodStringMap(httpMethod);
+ * 
+ * std::string method = "PATCH";
+ * if (helper.isMethod(method)) {std::cout << "Valid HTTP method." << std::endl;}
+ * 
+ * Note: Invalid input to Map searches will throw an UnknownMethodError exception.
+ * 
+ * IMPORTANT: Method strings representations in this class are all UPPERCASE.
  */
 
 #include <string>
@@ -48,6 +61,9 @@ public:
     // Member functions to access data
     const std::string &httpMethodStringMap(HttpMethod method) const; // Get string representation of HttpMethod
     HttpMethod stringHttpMethodMap(const std::string &method) const; // Get HttpMethod enum value from string representation
+
+    // Member function to check if a string is a valid HTTP method
+    bool isMethod(const std::string &method) const; // Check if a string is a valid HTTP method   
 };
 
 #endif // HTTPMETHODHELPER_HPP

@@ -38,6 +38,7 @@
 
 #include <exception>
 #include <string>
+#include <sstream>
 #include "constants/LogLevelHelper.hpp"
 
 // Base class for all custom exceptions in Webserv
@@ -46,11 +47,11 @@ class WebservException : public std::exception
 private:
     LogLevel _logLevel;
     const std::string _message;
-    size_t _errorCode;
+    int _errorCode;
 
 public:
     // Constructor
-    WebservException(LogLevel logLevel, const std::string &message, size_t errorCode)
+    WebservException(LogLevel logLevel, const std::string &message, int errorCode)
         : _logLevel(logLevel),
           _message(message),
           _errorCode(errorCode){};
@@ -63,7 +64,7 @@ public:
 
     // Getter methods
     LogLevel getLogLevel() const { return this->_logLevel; }
-    size_t getErrorCode() const { return this->_errorCode; }
+    int getErrorCode() const { return this->_errorCode; }
 };
 
 // Derived error classes
@@ -85,7 +86,7 @@ class MaximumConnectionsReachedError : public WebservException
 {
 public:
     MaximumConnectionsReachedError()
-        : WebservException(WARNING, "Maximum Connections reached.", 1){};
+        : WebservException(WARN, "Maximum Connections reached.", 1){};
 };
 
 class ConnectionEstablishingError : public WebservException
@@ -250,6 +251,22 @@ public:
         : WebservException(ERROR, "Unknown log level.", 1){};
     UnknownLogLevelError(const std::string &logLevel)
         : WebservException(ERROR, "Unknown log level: \"" + logLevel + "\"", 1){};
+};
+
+class UnknownHttpStatusCodeError : public WebservException
+{
+public:
+    UnknownHttpStatusCodeError()
+        : WebservException(ERROR, "Unknown HTTP status code.", 1){};
+    UnknownHttpStatusCodeError(const std::string &statusCode)
+        : WebservException(ERROR, "Unknown HTTP status code: \"" + statusCode + "\"", 1){};
+};
+
+class HttpStatusCodeException : public WebservException
+{
+public:
+    HttpStatusCodeException(int statusCode)
+        : WebservException(INFO, ("Http Status Code: \"" + (std::ostringstream() << statusCode).str() + "\""), statusCode) {}
 };
 
 #endif // WEBSERVEXCEPTIONS_HPP

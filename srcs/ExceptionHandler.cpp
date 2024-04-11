@@ -38,10 +38,10 @@ ExceptionHandler::~ExceptionHandler()
 }
 
 // handleException method: Logs exception details and handles critical exceptions.
-void ExceptionHandler::handleException(const WebservException &e, const std::string &context) const
+int ExceptionHandler::handleException(const WebservException &e, const std::string &context) const
 {
     // Log the exception details, including context and error message.
-    this->_errorLogger.errorLog(e.getLogLevel(), "[EXCEPTION] " + context + " : " + e.what());
+    this->_errorLogger.errorLog(e.getLogLevel(), "[EXCEPTION] " + context + (context.empty() ? ": " : " : ") + e.what());
 
     // Check if the exception's log level is critical.
     if (e.getLogLevel() == CRITICAL)
@@ -50,6 +50,7 @@ void ExceptionHandler::handleException(const WebservException &e, const std::str
         this->_errorLogger.errorLog(CRITICAL, "webserv will now terminate.");
         this->_server->terminate(e.getErrorCode());
     }
+    return e.getErrorCode();
 }
 
 // linkServer method: Sets the server instance to be referenced for termination.
@@ -57,3 +58,5 @@ void ExceptionHandler::linkServer(Server *server)
 {
     this->_server = server;
 }
+
+// Path: srcs/ExceptionHandler.cpp

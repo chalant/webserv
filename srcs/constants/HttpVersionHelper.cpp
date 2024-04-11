@@ -41,6 +41,12 @@ HttpVersion HttpVersionHelper::stringHttpVersionMap(const std::string &version) 
     }
 }
 
+// Member function to check if a string is a valid HTTP version
+bool HttpVersionHelper::isHttpVersion(const std::string &version) const
+{
+    return _stringHttpVersionMap.find(version) != _stringHttpVersionMap.end();
+}
+
 // Helper function to initialize VersionList with string representations of HTTP versions
 std::vector<std::string> HttpVersionHelper::_setVersionList()
 {

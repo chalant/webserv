@@ -15,7 +15,7 @@
  *     // Some code that may throw exceptions
  *     throw Exception();
  * } catch (const WebservException& e) {
- *      exceptionHandler.handleException(e, "Main function");
+ *      exceptionHandler.handleException(e, "Main function"); // returns the error code of the exception
  * }
  *
  * Note: 'CRITICAL' log level will cause webserv to terminate.
@@ -23,15 +23,20 @@
  */
 
 #include <string>
-#include "Logger.hpp"            // Include necessary dependencies
-#include "WebservExceptions.hpp" // Include necessary dependencies
-#include "Server.hpp"            // Include necessary dependencies
+#include "constants/HttpStatusCodeHelper.hpp" // Include necessary dependencies
+#include "Logger.hpp"                         // Include necessary dependencies
+#include "WebservExceptions.hpp"              // Include necessary dependencies
+#include "Server.hpp"                         // Include necessary dependencies
 
 class ExceptionHandler
 {
 private:
-    Logger &_errorLogger; // Reference to the errorLogger instance
-    Server *_server;      // Pointer to the server instance
+    Logger &_errorLogger;                             // Reference to the errorLogger instance
+    Server *_server;                                  // Pointer to the server instance
+    const HttpStatusCodeHelper _httpStatusCodeHelper; // Helper instance for HTTP status codes
+
+    // _makeHtmlPage method: Generates an HTML page with the specified HTTP status code.
+    static std::string _makeHtmlPage(HttpStatusCode statusCode);
 
 public:
     // Constructor: Initializes ExceptionHandler with an errorLogger instance.
@@ -44,7 +49,7 @@ public:
     void linkServer(Server *_server);
 
     // handleException method: Logs exception details and handles critical exceptions.
-    void handleException(const WebservException &e, const std::string &context) const;
+    int handleException(const WebservException &e, const std::string &context="") const;
 };
 
 #endif // EXCEPTIONHANDLER_HPP

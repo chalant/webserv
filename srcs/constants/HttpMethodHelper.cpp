@@ -41,6 +41,12 @@ HttpMethod HttpMethodHelper::stringHttpMethodMap(const std::string &method) cons
     }
 }
 
+// Member function to check if a string is a valid HTTP method
+bool HttpMethodHelper::isMethod(const std::string &method) const
+{
+    return _stringHttpMethodMap.find(method) != _stringHttpMethodMap.end();
+}
+
 // Helper function to initialize MethodList with string representations of HTTP methods
 std::vector<std::string> HttpMethodHelper::_setMethodList()
 {

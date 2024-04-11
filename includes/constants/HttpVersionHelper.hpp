@@ -8,6 +8,19 @@
  * It defines an enum HttpVersion to represent standard HTTP versions and provides methods
  * to retrieve string representations of versions and vice versa.
  *
+ * Example:
+ * 
+ * HttpVersionHelper helper;
+ * std::string version = "HTTP/1.1";
+ * HttpVersion httpVersion = helper.stringHttpVersionMap(version);
+ * std::string version = helper.httpVersionStringMap(httpVersion);
+ * 
+ * std::string version = "HTTP/3.0";
+ * if (helper.isHttpVersion(version)) {std::cout << "Valid HTTP version." << std::endl;}
+ * 
+ * Note: Invalid input to Map searches will throw an UnknownHttpVersionError exception.
+ * 
+ * IMPORTANT: Version strings representations in this class are all UPPERCASE.
  */
 
 #include <string>
@@ -42,6 +55,9 @@ public:
     // Member functions to access data
     const std::string &httpVersionStringMap(HttpVersion version) const; // Get string representation of HttpVersion
     HttpVersion stringHttpVersionMap(const std::string &version) const; // Get HttpVersion enum value from string representation
+
+    // Member function to check if a string represents a valid HTTP version
+    bool isHttpVersion(const std::string &version) const;
 };
 
 #endif // HTTPVERSIONHELPER_HPP

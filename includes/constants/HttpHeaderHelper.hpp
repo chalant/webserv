@@ -7,8 +7,20 @@
  * The HttpHeaderHelper class provides functionality for working with HTTP headers.
  * It defines an enum HttpHeader to represent standard HTTP headers and provides methods
  * to retrieve string representations of headers and vice versa.
- *
- * NOTE: Header strings representations in this class are all lowercase.
+ * 
+ * Example:
+ * 
+ * HttpHeaderHelper helper;
+ * std::string header = "accept";
+ * HttpHeader httpHeader = helper.stringHttpHeaderMap(header);
+ * std::string header = helper.httpHeaderStringMap(httpHeader);
+ * 
+ * std::string header = "proxy-autohorization";
+ * if (helper.isHeaderName(header)) {std::cout << "Valid header name." << std::endl;}
+ * 
+ * Note: Invalid input to Map searches will throw an UnknownHeaderError exception.
+ * 
+ * IMPORTANT: Header strings representations in this class are all lowercase.
  *
  */
 
@@ -119,6 +131,9 @@ public:
     // Member functions to access data
     const std::string &httpHeaderStringMap(HttpHeader header) const; // Get string representation of HttpHeader
     HttpHeader stringHttpHeaderMap(const std::string &header) const; // Get HttpHeader enum value from string representation
+
+    // Member function to check if a string is a valid HTTP header
+    bool isHeaderName(const std::string &header) const; // Check if a string is a valid HTTP header
 };
 
 #endif // HTTPHEADERHELPER_HPP

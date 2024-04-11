@@ -41,6 +41,12 @@ HttpHeader HttpHeaderHelper::stringHttpHeaderMap(const std::string &header) cons
     }
 }
 
+// Check if a string is a valid HTTP header name
+bool HttpHeaderHelper::isHeaderName(const std::string &header) const
+{
+    return _stringHttpHeaderMap.find(header) != _stringHttpHeaderMap.end();
+}
+
 // Helper function to initialize headerList with string representations of HTTP headers
 std::vector<std::string> HttpHeaderHelper::_setHeaderList()
 {

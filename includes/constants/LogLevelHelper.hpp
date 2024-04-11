@@ -7,7 +7,7 @@
  * The LogLevelHelper class provides functionality for working with log levels.
  * It defines an enum LogLevel to represent log levels and provides methods
  * to retrieve string representations of log levels and vice versa.
- *
+ * 
  */
 
 #include <string>
@@ -20,7 +20,7 @@ enum LogLevel
     VERBOSE = 0, // VERBOSE messages
     DEBUG = 1,   // Debugging information
     INFO = 2,    // Informational messages
-    WARNING = 3, // Warnings
+    WARN = 3, // Warnings
     ERROR = 4,   // Errors
     CRITICAL = 5 // Critical errors
 };
