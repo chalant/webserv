@@ -26,6 +26,29 @@ private:
     const ExceptionHandler &_exceptionHandler; // Reference to the exception handler
     const Configuration &_configuration;       // Reference to the server configuration
     const RequestHelper _requestHelper;        // Helper class for requests
+    
+    // Function to parse the request line of an HTTP request
+    void _parseRequestLine(std::vector<char>::const_iterator& it,
+                          const std::vector<char>& rawRequest,
+                          Request& parsedRequest) const;
+    
+    // Functions to parse the components of the request line
+    std::string RequestParser::_parseMethod(std::vector<char>::const_iterator &it,
+                                       const std::vector<char> &rawRequest) const;
+    std::string RequestParser::_parseUri(std::vector<char>::const_iterator &it,
+                                    const std::vector<char> &rawRequest) const;
+    std::string RequestParser::_parseHttpVersion(std::vector<char>::const_iterator &it,
+                                            const std::vector<char> &rawRequest) const;
+
+    // Function to parse the headers of an HTTP request
+    void _parseHeaders(std::vector<char>::const_iterator& it,
+                      const std::vector<char>& rawRequest,
+                      Request& parsedRequest) const;
+
+    // Function to parse the body of an HTTP request
+    void _parseBody(std::vector<char>::const_iterator& it,
+                   const std::vector<char>& rawRequest,
+                   Request& parsedRequest) const;
 
 public:
     // Constructor to initialize the RequestParser with required references

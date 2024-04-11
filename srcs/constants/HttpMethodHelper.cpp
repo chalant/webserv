@@ -10,8 +10,9 @@
  */
 
 // Constructor initializes member variables using helper functions
-HttpMethodHelper::HttpMethodHelper()
+HttpMethodHelper::HttpMethodHelper(const Configuration &configuration)
     : _methodList(_setMethodList()),
+      _supportedMethods(configuration.getSupportedMethods()),
       _stringHttpMethodMap(_setStringHttpMethodMap()),
       _httpMethodStringMap(_setHttpMethodStringMap()) {}
 
@@ -45,6 +46,12 @@ HttpMethod HttpMethodHelper::stringHttpMethodMap(const std::string &method) cons
 bool HttpMethodHelper::isMethod(const std::string &method) const
 {
     return _stringHttpMethodMap.find(method) != _stringHttpMethodMap.end();
+}
+
+// Member function to check if a string is a supported HTTP method
+bool HttpMethodHelper::isSupportedMethod(const std::string &method) const
+{
+    return _supportedMethods.find(method) != _supportedMethods.end();
 }
 
 // Helper function to initialize MethodList with string representations of HTTP methods

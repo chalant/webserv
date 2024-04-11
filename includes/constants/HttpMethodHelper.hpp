@@ -26,6 +26,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
+#include "../Configuration.hpp"
 #include "../WebservExceptions.hpp"
 
 enum HttpMethod
@@ -46,6 +48,7 @@ class HttpMethodHelper
 private:
     // Member variables
     const std::vector<std::string> _methodList;                   // List of string representations of HTTP methods
+    const std::set<std::string> &_supportedMethods;               // Set of string representations of HTTP methods
     const std::map<std::string, HttpMethod> _stringHttpMethodMap; // Map of string representations to HttpMethod enum values
     const std::map<HttpMethod, std::string> _httpMethodStringMap; // Map of HttpMethod enum values to string representations
 
@@ -56,14 +59,15 @@ private:
 
 public:
     // Constructor
-    HttpMethodHelper();
+    HttpMethodHelper(const Configuration &configuration);
 
     // Member functions to access data
     const std::string &httpMethodStringMap(HttpMethod method) const; // Get string representation of HttpMethod
     HttpMethod stringHttpMethodMap(const std::string &method) const; // Get HttpMethod enum value from string representation
 
     // Member function to check if a string is a valid HTTP method
-    bool isMethod(const std::string &method) const; // Check if a string is a valid HTTP method   
+    bool isMethod(const std::string &method) const; // Check if a string is a valid HTTP method
+    bool isSupportedMethod(const std::string &method) const; // Check if a string is a supported HTTP method
 };
 
 #endif // HTTPMETHODHELPER_HPP

@@ -22,6 +22,18 @@ HttpMethod RequestHelper::stringHttpMethodMap(const std::string &method) const
     return _methodHelper.stringHttpMethodMap(method);
 }
 
+// Check if a string is a valid HTTP method
+bool RequestHelper::isMethod(const std::string &method) const
+{
+    return _methodHelper.isMethod(method);
+}
+
+// Check if a string is a supported HTTP method
+bool RequestHelper::isSupportedMethod(const std::string &method) const
+{
+    return _methodHelper.isSupportedMethod(method);
+}
+
 // Get string representation of HttpVersion enum value
 const std::string &RequestHelper::httpVersionStringMap(HttpVersion version) const
 {
@@ -34,6 +46,12 @@ HttpVersion RequestHelper::stringHttpVersionMap(const std::string &version) cons
     return _versionHelper.stringHttpVersionMap(version);
 }
 
+// Check if a string represents a valid HTTP version
+bool RequestHelper::isHttpVersion(const std::string &version) const
+{
+    return _versionHelper.isHttpVersion(version);
+}
+
 // Get string representation of HttpHeader enum value
 const std::string &RequestHelper::httpHeaderStringMap(HttpHeader header) const
 {
@@ -44,6 +62,30 @@ const std::string &RequestHelper::httpHeaderStringMap(HttpHeader header) const
 HttpHeader RequestHelper::stringHttpHeaderMap(const std::string &header) const
 {
     return _headerHelper.stringHttpHeaderMap(header);
+}
+
+// Check if a string represents a valid HTTP header
+bool RequestHelper::isHeaderName(const std::string &header) const
+{
+    return _headerHelper.isHeaderName(header);
+}
+
+// Get string representation of HttpStatusCode enum value
+const std::string &RequestHelper::httpStatusCodeStringMap(HttpStatusCode statusCode) const
+{
+    return _statusCodeHelper.httpStatusCodeStringMap(statusCode);
+}
+
+// Get HttpStatusCode enum value from string representation
+HttpStatusCode RequestHelper::stringHttpStatusCodeMap(const std::string &statusCode) const
+{
+    return _statusCodeHelper.stringHttpStatusCodeMap(statusCode);
+}
+
+// Get HTML page for a given HttpStatusCode
+std::string RequestHelper::getHtmlPage(HttpStatusCode statusCode) const
+{
+    return _statusCodeHelper.getHtmlPage(statusCode);
 }
 
 // Path: srcs/constants/HttpHeaderHelper.cpp

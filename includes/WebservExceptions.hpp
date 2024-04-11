@@ -166,13 +166,6 @@ public:
         : WebservException(ERROR, "Failed to write to log file.", 1){};
 };
 
-class InvalidRequestLineError : public WebservException
-{
-public:
-    InvalidRequestLineError()
-        : WebservException(ERROR, "Invalid request line.", 1){};
-};
-
 class InvalidHeaderError : public WebservException
 {
 public:
@@ -187,25 +180,11 @@ public:
         : WebservException(ERROR, "Invalid method.", 1){};
 };
 
-class InvalidUriError : public WebservException
-{
-public:
-    InvalidUriError()
-        : WebservException(ERROR, "Invalid URI.", 1){};
-};
-
 class InvalidHttpVersionError : public WebservException
 {
 public:
     InvalidHttpVersionError()
         : WebservException(ERROR, "Invalid HTTP version.", 1){};
-};
-
-class RequestBodyTooLargeError : public WebservException
-{
-public:
-    RequestBodyTooLargeError()
-        : WebservException(ERROR, "Request body too large.", 1){};
 };
 
 class UnknownMethodError : public WebservException
@@ -235,15 +214,6 @@ public:
         : WebservException(ERROR, "Unknown header: \"" + header + "\"", 1){};
 };
 
-class InvalidHeaderValue : public WebservException
-{
-public:
-    InvalidHeaderValue()
-        : WebservException(ERROR, "Invalid header value.", 1){};
-    InvalidHeaderValue(const std::string &value)
-        : WebservException(ERROR, "Invalid header value: \"" + value + "\"", 1){};
-};
-
 class UnknownLogLevelError : public WebservException
 {
 public:
@@ -266,7 +236,9 @@ class HttpStatusCodeException : public WebservException
 {
 public:
     HttpStatusCodeException(int statusCode)
-        : WebservException(INFO, ("Http Status Code: \"" + (std::ostringstream() << statusCode).str() + "\""), statusCode) {}
+        : WebservException(INFO, ("Http Status Code: \"" + (std::ostringstream() << statusCode).str() + "\""), statusCode) {};
+    HttpStatusCodeException(int statusCode, const std::string &message)
+        : WebservException(INFO, ("Http Status Code " + (std::ostringstream() << statusCode).str() + ": " + message), statusCode) {}
 };
 
 #endif // WEBSERVEXCEPTIONS_HPP

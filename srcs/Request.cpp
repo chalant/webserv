@@ -116,18 +116,29 @@ std::string Request::getBodyString() const
 // Setter function for setting the method of the request
 void Request::setMethod(const std::string &method)
 {
+    if (this->_requestHelper.isMethod(method) == false)
+        throw HttpStatusCodeException(METHOD_NOT_ALLOWED, // Throw '405' status error
+            "unknown method: \"" + method + "\""); 
+    else if (this->_requestHelper.isSupportedMethod(method) == false)
+        throw HttpStatusCodeException(NOT_IMPLEMENTED, // Throw '501' status error
+            "unsupported method: \"" + method + "\"");
+
     // Set the method of the request
-    // Use the RequestHelper to map the string representation of the method to an HttpMethod enum value
-    // If the method is not recognized, an UnknownMethodError is thrown
     this->_method = this->_requestHelper.stringHttpMethodMap(method);
 }
 
 // Setter function for setting the URI of the request
 void Request::setUri(const std::string &uri)
 {
+    // Check if the URI size exceeds the maximum allowed URI size
+    if (uri.size() > this->_configuration.getClientMaxUriSize())
+        throw HttpStatusCodeException(URI_TOO_LONG); // Throw '414' status error
+
     // Check if the URI contains any whitespace characters
     if (uri.find_first_of(" \t") != std::string::npos)
-        throw InvalidUriError();
+        throw HttpStatusCodeException(BAD_REQUEST, // Throw '400' status error
+            "whitespace in URI");
+
     // Set the URI
     this->_uri = uri;
 }
@@ -144,6 +155,13 @@ void Request::setHttpVersion(const std::string &httpVersion)
 // Function for adding a header to the request
 void Request::addHeader(const std::string key, std::string value)
 {
+    // Check if the value contains any whitespace characters
+    if (value.find_first_of(" \t") != std::string::npos)
+    {
+        throw HttpStatusCodeException(BAD_REQUEST, // Throw '400' status error
+            "whitespace in header value"); 
+    }
+
     // Convert the key to lowercase
     std::string lowercaseKey = key;
     for (std::string::iterator it = lowercaseKey.begin(); it != lowercaseKey.end(); ++it)
@@ -156,21 +174,14 @@ void Request::addHeader(const std::string key, std::string value)
     try
     {
         name = this->_requestHelper.stringHttpHeaderMap(lowercaseKey);
+        // Add the header to the internal headers map
+        this->_headers[name] = value;
     }
     catch (const UnknownHeaderError &e)
     {
         // Re-throw with original key
-        throw UnknownHeaderError(key);
+        throw UnknownHeaderError(key); // We will skip to the next header
     }
-
-    // Check if the value contains any whitespace characters
-    if (value.find_first_of(" \t") != std::string::npos)
-    {
-        throw InvalidHeaderValue(value);
-    }
-
-    // Add the header to the internal headers map
-    this->_headers[name] = value;
 }
 
 // Setter function for setting the body of the request
@@ -182,8 +193,8 @@ void Request::setBody(const std::vector<char> &body)
 
     // Check if the body size exceeds the maximum allowed body size
     if (body.size() > this->_configuration.getMaxBodySize())
-        throw RequestBodyTooLargeError(); // Throw an error if the body size is too large
-
+        throw HttpStatusCodeException(PAYLOAD_TOO_LARGE); // Throw '413' status error
+     
     // Set the body of the request
     this->_body = body;
 }

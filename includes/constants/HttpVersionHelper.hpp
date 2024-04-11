@@ -9,17 +9,17 @@
  * to retrieve string representations of versions and vice versa.
  *
  * Example:
- * 
+ *
  * HttpVersionHelper helper;
  * std::string version = "HTTP/1.1";
  * HttpVersion httpVersion = helper.stringHttpVersionMap(version);
  * std::string version = helper.httpVersionStringMap(httpVersion);
- * 
+ *
  * std::string version = "HTTP/3.0";
  * if (helper.isHttpVersion(version)) {std::cout << "Valid HTTP version." << std::endl;}
- * 
+ *
  * Note: Invalid input to Map searches will throw an UnknownHttpVersionError exception.
- * 
+ *
  * IMPORTANT: Version strings representations in this class are all UPPERCASE.
  */
 
@@ -30,9 +30,11 @@
 
 enum HttpVersion
 {
-    HTTP_1_0 = 10, // HTTP/1.0
-    HTTP_1_1 = 11, // HTTP/1.1
-    HTTP_2_0 = 20  // HTTP/2.0
+    HTTP_0_9, // HTTP/0.9: The initial version of HTTP, introduced in 1991. Simple protocol with support only for GET requests and no headers.
+    HTTP_1_0, // HTTP/1.0: Introduced in 1996, added support for additional request methods (POST, HEAD), headers, status codes, and more.
+    HTTP_1_1, // HTTP/1.1: Released in 1997, the most widely used version of HTTP. Introduced persistent connections, chunked transfer encoding, and more.
+    HTTP_2_0, // HTTP/2: Introduced in 2015, a major overhaul of the protocol focused on performance and efficiency. Introduced features like multiplexing and header compression.
+    HTTP_3_0  // HTTP/3: Still in development, based on the QUIC protocol. Aims to improve performance and security, especially for web applications.
 };
 
 class HttpVersionHelper
