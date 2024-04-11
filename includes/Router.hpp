@@ -8,20 +8,12 @@ locationblock)*/
 #ifndef ROUTER_HPP
 #define ROUTER_HPP
 
-#include <string>
-#include <map>
+# include <string>
+# include <map>
+# include "HttpMethodHelper.hpp" 
 
-// Forward declarations
 class Request;
 class Response;
-
-// Enum for HTTP methods
-enum HttpMethod {
-    GET = 0,
-    POST = 1,
-    PUT = 2,
-    DELETE = 3,
-};
 
 // Route structure with function pointer for handler
 struct Route {
