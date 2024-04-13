@@ -75,7 +75,7 @@ public:
     // Erase: Removes the pollfd object at the specified index from the PollfdQueue.
     void erase(size_t index);
 
-    // Pollout: Sets the events field of the pollfd object at the specified index to POLLOUT.
+    // Pollout: Adds the POLLOUT event to the revents field of the pollfd object at the specified index.
     void pollout(size_t index);
 
     // HasReachedCapacity: Checks if the PollfdQueue has reached its maximum capacity.

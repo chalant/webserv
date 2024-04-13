@@ -18,27 +18,26 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <iostream>
-#include "constants/PollfdQueueFixedPositions.hpp"
-#include "Configuration.hpp"
-#include "Logger.hpp"
-#include "ExceptionHandler.hpp"
-#include "PollfdQueue.hpp"
+#include "IConfiguration.hpp"
+#include "ILogger.hpp"
+#include "IExceptionHandler.hpp"
+#include "PollfdManager.hpp"
 
 class Server
 {
 private:
-    PollfdQueue _pollFds;                // Queue for storing polling file descriptors
-    const Configuration &_configuration; // Reference to the server configuration settings
-    Logger &_errorLogger;                // Reference to the error logger
-    Logger &_accessLogger;               // Reference to the access logger
-    ExceptionHandler &_exceptionHandler; // Reference to the exception handler
-    size_t _maxConnections;              // Maximum allowed connections
-    short _pollMask;                     // Poll mask for polling events
+    PollfdManager &_pollfdManager;        // Reference to the PollfdManager
+    const IConfiguration &_configuration; // Reference to the server IConfiguration settings
+    ILogger &_errorLogger;                // Reference to the error logger
+    ILogger &_accessLogger;               // Reference to the access logger
+    IExceptionHandler &_exceptionHandler;  // Reference to the exception handler
+    size_t _maxConnections;               // Maximum allowed connections
+    short _pollMask;                      // Poll mask for polling events
 
 public:
-    Server(const Configuration &configuration,
-           Logger &errorLogger, Logger &accessLogger,
-           ExceptionHandler &exceptionHandler); // Constructor for Server class
+    Server(PollfdManager &pollfdManager, const IConfiguration &configuration,
+           ILogger &errorLogger, ILogger &accessLogger,
+           IExceptionHandler &exceptionHandler); // Constructor for Server class
     const Server &operator=(const Server &src); // Assignment operator overload
     ~Server();                                  // Destructor for Server class
     void addpollfd(pollfd pollFd);              // Method to add a polling file descriptor

@@ -24,33 +24,36 @@
 #include <map>
 #include <cstring>
 #include <vector>
-#include "constants/PollfdQueueFixedPositions.hpp"
-#include "Server.hpp"
 #include "ClientHandler.hpp"
 #include "RequestParser.hpp"
+#include "constants/RequestHelper.hpp"
 #include "Router.hpp"
+#include "IRequest.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
-#include "Logger.hpp"
-#include "ExceptionHandler.hpp"
+#include "ILogger.hpp"
+#include "IExceptionHandler.hpp"
 #include "ARequestHandler.hpp"
+#include "PollfdManager.hpp"
+#include "IConfiguration.hpp"
+#include "Configuration.hpp"
 
 class Sessions
 {
 private:
     // Private member variables
-
     std::map<int, std::vector<char>> _responseBuffer; // Buffer for storing incompletely sent responses
-    PollfdQueue &_pollFds;                            // Reference to a queue of poll file descriptors
+    PollfdManager &_pollfdManager;              // Reference to a queue of poll file descriptors
     ClientHandler _clientHandler;                     // Handles communication with clients
     const RequestParser _requestParser;               // Parses incoming requests
     const Router _router;                             // Routes requests to appropriate handlers
     ARequestHandler *_requestHandler;                 // Pointer to the recruited request handler
+    RequestHelper _requestHelper;                     // Helper class for request-related operations
     Request _request;                                 // Represents an HTTP request
     Response _response;                               // Represents an HTTP response
-    Logger &_errorLogger;                             // Reference to the error logger
-    Logger &_accessLogger;                            // Reference to the access logger
-    const ExceptionHandler &_exceptionHandler;        // Reference to the exception handler
+    ILogger &_errorLogger;                            // Reference to the error logger
+    ILogger &_accessLogger;                           // Reference to the access logger
+    const IExceptionHandler &_exceptionHandler;        // Reference to the exception handler
     short _pollExceptionMask;                         // Mask for poll exceptions
 
     // Private member functions
@@ -66,7 +69,7 @@ private:
 
 public:
     // Constructor
-    Sessions(const Configuration &Configuration, Logger &errorLogger, Logger &accessLogger, const ExceptionHandler &ExceptionHandler, Server &server);
+    Sessions(PollfdManager &PollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &IExceptionHandler, Server &server);
 
     // Copy assignment operator
     const Sessions &operator=(const Sessions &src);

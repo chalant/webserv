@@ -118,6 +118,7 @@ std::vector<std::string> HttpHeaderHelper::_setHeaderList()
     headerList.push_back("x-content-type-options");
     headerList.push_back("x-frame-options");
     headerList.push_back("x-xss-protection");
+    headerList.push_back("x-forwarded-for");
     headerList.push_back("cookie");
     headerList.push_back("set-cookie");
 
@@ -195,6 +196,7 @@ std::map<std::string, HttpHeader> HttpHeaderHelper::_setStringHttpHeaderMap()
     stringHttpHeaderMap["x-content-type-options"] = HttpHeader::X_CONTENT_TYPE_OPTIONS;
     stringHttpHeaderMap["x-frame-options"] = HttpHeader::X_FRAME_OPTIONS;
     stringHttpHeaderMap["x-xss-protection"] = HttpHeader::X_XSS_PROTECTION;
+    stringHttpHeaderMap["x-forwarded-for"] = HttpHeader::X_FORWARDED_FOR;
     stringHttpHeaderMap["cookie"] = HttpHeader::COOKIE;
     stringHttpHeaderMap["set-cookie"] = HttpHeader::SET_COOKIE;
 
@@ -272,6 +274,7 @@ std::map<HttpHeader, std::string> HttpHeaderHelper::_setHttpHeaderStringMap()
     httpHeaderStringMap[HttpHeader::X_CONTENT_TYPE_OPTIONS] = "x-content-type-options";
     httpHeaderStringMap[HttpHeader::X_FRAME_OPTIONS] = "x-frame-options";
     httpHeaderStringMap[HttpHeader::X_XSS_PROTECTION] = "x-xss-protection";
+    httpHeaderStringMap[HttpHeader::X_FORWARDED_FOR] = "x-forwarded-for";
     httpHeaderStringMap[HttpHeader::COOKIE] = "cookie";
     httpHeaderStringMap[HttpHeader::SET_COOKIE] = "set-cookie";
 

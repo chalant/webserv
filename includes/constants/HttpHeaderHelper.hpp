@@ -105,6 +105,7 @@ enum HttpHeader
     X_CONTENT_TYPE_OPTIONS,              // Mitigates the risk of content sniffing vulnerabilities
     X_FRAME_OPTIONS,                     // Specifies whether a browser should be allowed to render a page in a frame, iframe, embed, or object
     X_XSS_PROTECTION,                    // Enables a cross-site scripting (XSS) filter in supported web browsers
+    X_FORWARDED_FOR,                     // Contains the IP address of the client that initiated the request
 
     // Cookie Headers
     COOKIE,     // Request header for receiving cookies

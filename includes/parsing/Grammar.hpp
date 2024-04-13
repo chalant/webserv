@@ -1,5 +1,5 @@
-#ifndef ConfigurationGrammar_HPP
-# define ConfigurationGrammar_HPP
+#ifndef IConfigurationGrammar_HPP
+# define IConfigurationGrammar_HPP
 
 #include <iostream>
 #include <vector>

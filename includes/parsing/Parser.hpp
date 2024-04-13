@@ -1,5 +1,5 @@
-#ifndef CONFIGURATIONPARSER_HPP
-# define CONFIGURATIONPARSER_HPP
+#ifndef IConfigurationPARSER_HPP
+# define IConfigurationPARSER_HPP
 
 #include <vector>
 #include "Grammar.hpp"

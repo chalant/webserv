@@ -79,10 +79,10 @@ void PollfdQueue::erase(size_t index)
     this->_size--;
 }
 
-// Pollout: Sets the events field of the pollfd object at the specified index to POLLOUT.
+// Pollout: Adds POLLOUT to the events field of the pollfd object at the specified index.
 void PollfdQueue::pollout(size_t index)
 {
-    this->_pollfdArray[index].events = this->_pollMask;
+    this->_pollfdArray[index].events |= this->_pollMask;
 }
 
 // HasReachedCapacity: Checks if the PollfdQueue has reached its maximum capacity.

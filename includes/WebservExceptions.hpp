@@ -5,7 +5,7 @@
  * Webserv Error Handling System
  *
  * Error handling, logging, and if necessary gracefully terminating is taken care of
- * by the Webserv ExceptionHandler instance in combination with custom error classes.
+ * by the Webserv IExceptionHandler instance in combination with custom error classes.
  *
  * This file contains the definitions of custom error classes used by webserv.
  * All custom error classes are inherited from the base class WebservException, which is a subclass of std::exception.
@@ -17,15 +17,15 @@
  *
  * Usage:
  * - Throw custom errors when exceptional conditions occur during the execution of the server.
- * - Catch custom errors and pass them to the ExceptionHandler for logging and handling.
- * - NOTE: Setting the log level to CRITICAL will cause the ExceptionHandler to terminate Webserv.
+ * - Catch custom errors and pass them to the IExceptionHandler for logging and handling.
+ * - NOTE: Setting the log level to CRITICAL will cause the IExceptionHandler to terminate Webserv.
  *
  * Example:
  * // Define a new custom error class
  * class NoConfigFileError : public WebservException {
  * public:
  *     NoConfigFileError()
- *         : WebservException(CRITICAL, "No configuration file found.", 1) {}
+ *         : WebservException(CRITICAL, "No IConfiguration file found.", 1) {}
  * };
  *
  * // Throw and catch a custom error
@@ -72,14 +72,14 @@ class NoConfigFileError : public WebservException
 {
 public:
     NoConfigFileError()
-        : WebservException(CRITICAL, "No configuration file found.", 1){};
+        : WebservException(CRITICAL, "No IConfiguration file found.", 1){};
 };
 
 class InvalidConfigFileError : public WebservException
 {
 public:
     InvalidConfigFileError()
-        : WebservException(CRITICAL, "Invalid configuration file.", 1){};
+        : WebservException(CRITICAL, "Invalid IConfiguration file.", 1){};
 };
 
 class MaximumConnectionsReachedError : public WebservException

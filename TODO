@@ -1,14 +1,16 @@
-Set up the configuration | Configuration class (Yves is working on this)
+Set up the Configuration | Configuration class (Yves is working on this)
 
-Set up a TCP connection | Server class (DONE)
+Do the config parsing (also Yves)
 
-Set up the client communication | ClientHandler class
+Possibly re-evaluate polling system (which one, and timeout)
 
-Do the request parsing | RequestParser class
+Set up the client communication | ClientHandler class (DONE)
 
-Define the fields we want out of the parser | Request class
+Do the request parsing | RequestParser class (Maarten is working on this)
 
-Do the Router initialisation | Router class
+Define the fields we want out of the parser | Request class (DONE)
+
+Do the Router initialisation | Router class (Lorenzo is working on this)
 
 Implement the response creator classes: | ARequestHandler class
     -StaticFileRequestHandler class
@@ -16,17 +18,19 @@ Implement the response creator classes: | ARequestHandler class
     -GetMethodRequestHandler class
     -PostMethodRequestHandler class
     -DeleteMethodRequestHandler class
-    -CGIRequestHandler class
+    -CGRequestHandler class
     -ErrorPageRequestHandler class
 
 Define the fields we need for the 'Response' | Response class
 
-Do exception handling | ExceptionHandler class (DONE)
+Do exception handling | IExceptionHandler class (DONE)
 
-Write some tests
+Write Unit tests.
+    -RequestParser_test (needs extending)
+    -etc.
 
-Implement Logging | Logger class (DONE)
+Implement Logging | ILogger class (DONE)
 
-Add clear comments and explanations throughout the codebase
+Continue adding clear comments and explanations throughout the codebase
 
 Keep this TODO up-to-date with new ideas and developments

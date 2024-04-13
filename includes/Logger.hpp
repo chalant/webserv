@@ -41,11 +41,13 @@
 #include <sys/stat.h> // for S_IRUSR, S_IWUSR, S_IRGRP, S_IROTH
 #include <unistd.h>   // for close()
 #include <iomanip>    // for std::put_time
+#include "ILogger.hpp"
 #include "constants/LogLevelHelper.hpp"
-#include "Request.hpp"
+#include "IRequest.hpp"
 #include "Response.hpp"
-#include "Configuration.hpp"
+#include "IConfiguration.hpp"
 #include "WebservExceptions.hpp"
+#include "PollfdManager.hpp"
 
 enum LoggerType
 {
@@ -53,7 +55,7 @@ enum LoggerType
     ACCESSLOGGER
 };
 
-class Logger
+class Logger : public ILogger
 {
 private:
     const LoggerType _type;
@@ -61,20 +63,19 @@ private:
     std::ostringstream _logBufferStream;
     const LogLevel _logLevel;
     const size_t _bufferSize;
-    pollfd *_logFilePollFd;
     const int _logFileDescriptor;
     const bool _enabled;
     const LogLevelHelper _logLevelHelper;
 
     // Private methods
-    std::string getCurrentTimestamp() const;                                                                                            // Method to get the current timestamp
-    void appendMapToLog(std::ostringstream &ss, const std::string &fieldName, const std::map<std::string, std::string> &dataMap) const; // Method to append a map to the log message
+    std::string _getCurrentTimestamp() const;                                                                                            // Method to get the current timestamp
+    void _appendMapToLog(std::ostringstream &ss, const std::string &fieldName, const std::map<std::string, std::string> &dataMap) const; // Method to append a map to the log message
 
 public:
     // Constructors and Destructor
-    Logger();                                                          // Default constructor
-    Logger(const LoggerType type, const Configuration &configuration); // Constructor with type and configuration
-    ~Logger();                                                         // Destructor
+    Logger();                                                                                         // Default constructor
+    Logger(const LoggerType type, const IConfiguration &configuration, PollfdManager &pollfdManager); // Constructor with type and IConfiguration
+    ~Logger();                                                                                        // Destructor
 
     // Setter method
     void setLogFilePollFd(pollfd *logFilePollFd); // Setter method for poll file descriptors pointer
@@ -83,8 +84,8 @@ public:
     int getLogFileDescriptor() const; // Getter method for log file descriptor
 
     // Logging methods
-    void errorLog(const LogLevel logLevel, const std::string &message); // Method to log error messages
-    void accessLog(const Request &request, const Response &response);   // Method to log access events
+    virtual void errorLog(const LogLevel logLevel, const std::string &message); // Method to log error messages
+    virtual void accessLog(const IRequest &request, const Response &response);   // Method to log access events
 
     // Buffer methods
     void writeLogBufferToFile();         // Method to write the log buffer to the log file

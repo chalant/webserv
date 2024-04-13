@@ -13,7 +13,9 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "../WebservExceptions.hpp"
+
+// Forward declaration of WebServer exceptions
+class WebservExceptions;
 
 enum LogLevel
 {
@@ -22,7 +24,8 @@ enum LogLevel
     INFO = 2,    // Informational messages
     WARN = 3, // Warnings
     ERROR = 4,   // Errors
-    CRITICAL = 5 // Critical errors
+    CRITICAL = 5, // Critical errors
+    UNKNOWN = 6 // Unknown log level
 };
 
 class LogLevelHelper

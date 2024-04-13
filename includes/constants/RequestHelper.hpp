@@ -27,6 +27,9 @@ private:
     HttpStatusCodeHelper _statusCodeHelper; // Helper for HTTP status codes
 
 public:
+    // Constructor to initialize helper classes
+    RequestHelper(const IConfiguration &configuration);
+
     // Http Method Helper Functions
     const std::string &httpMethodStringMap(HttpMethod method) const; // Get string representation of HttpMethod
     HttpMethod stringHttpMethodMap(const std::string &method) const; // Get HttpMethod enum value from string representation

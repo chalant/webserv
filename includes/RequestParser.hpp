@@ -5,57 +5,56 @@
  * RequestParser.hpp
  *
  * The RequestParser class provides functionality for parsing raw HTTP requests and converting
- * them into Request objects.
+ * them into IRequest objects.
  *
  */
 
 #include <vector>
 #include <string>
-#include "Configuration.hpp"
-#include "Request.hpp"
+#include "IConfiguration.hpp"
+#include "IRequest.hpp"
 #include "Response.hpp"
-#include "Logger.hpp"
-#include "ExceptionHandler.hpp"
+#include "ILogger.hpp"
+#include "IExceptionHandler.hpp"
 #include "WebservExceptions.hpp"
-#include "../constants/RequestHelper.hpp"
+#include "./constants/RequestHelper.hpp"
 
 class RequestParser
 {
 private:
-    const Logger &_errorLogger;                // Reference to the error logger
-    const ExceptionHandler &_exceptionHandler; // Reference to the exception handler
-    const Configuration &_configuration;       // Reference to the server configuration
-    const RequestHelper _requestHelper;        // Helper class for requests
-    
+    const ILogger &_errorLogger;                // Reference to the error logger
+    const IExceptionHandler &_exceptionHandler; // Reference to the exception handler
+    const IConfiguration &_configuration;       // Reference to the server IConfiguration
+
     // Function to parse the request line of an HTTP request
-    void _parseRequestLine(std::vector<char>::const_iterator& it,
-                          const std::vector<char>& rawRequest,
-                          Request& parsedRequest) const;
-    
+    void _parseRequestLine(std::vector<char>::const_iterator &it,
+                           const std::vector<char> &rawRequest,
+                           IRequest &parsedRequest) const;
+
     // Functions to parse the components of the request line
-    std::string RequestParser::_parseMethod(std::vector<char>::const_iterator &it,
-                                       const std::vector<char> &rawRequest) const;
-    std::string RequestParser::_parseUri(std::vector<char>::const_iterator &it,
-                                    const std::vector<char> &rawRequest) const;
-    std::string RequestParser::_parseHttpVersion(std::vector<char>::const_iterator &it,
-                                            const std::vector<char> &rawRequest) const;
+    std::string _parseMethod(std::vector<char>::const_iterator &it,
+                             const std::vector<char> &rawRequest) const;
+    std::string _parseUri(std::vector<char>::const_iterator &it,
+                          const std::vector<char> &rawRequest) const;
+    std::string _parseHttpVersion(std::vector<char>::const_iterator &it,
+                                  const std::vector<char> &rawRequest) const;
 
     // Function to parse the headers of an HTTP request
-    void _parseHeaders(std::vector<char>::const_iterator& it,
-                      const std::vector<char>& rawRequest,
-                      Request& parsedRequest) const;
+    void _parseHeaders(std::vector<char>::const_iterator &it,
+                       const std::vector<char> &rawRequest,
+                       IRequest &parsedRequest) const;
 
     // Function to parse the body of an HTTP request
-    void _parseBody(std::vector<char>::const_iterator& it,
-                   const std::vector<char>& rawRequest,
-                   Request& parsedRequest) const;
+    void _parseBody(std::vector<char>::const_iterator &it,
+                    const std::vector<char> &rawRequest,
+                    IRequest &parsedRequest) const;
 
 public:
     // Constructor to initialize the RequestParser with required references
-    RequestParser(const Configuration &configuration, Logger &errorLogger, const ExceptionHandler &exceptionHandler);
+    RequestParser(const IConfiguration &configuration, ILogger &errorLogger, const IExceptionHandler &exceptionHandler);
 
-    // Function to parse a raw HTTP request and convert it into a Request object
-    Request parseRequest(const std::vector<char> &rawRequest) const;
+    // Function to parse a raw HTTP request and convert it into a IRequest object
+    void parseRequest(const std::vector<char> &rawRequest, IRequest &parsedRequest) const;
 };
 
 #endif // REQUESTPARSER_HPP

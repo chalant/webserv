@@ -36,19 +36,22 @@
 #include <map>
 #include "constants/RequestHelper.hpp"
 #include "WebservExceptions.hpp"
-#include "Configuration.hpp"
+#include "IConfiguration.hpp"
+#include "IRequest.hpp"
 
-class Request
-{
+class Request : public IRequest{
 private:
     // Request line components
     HttpMethod _method;
     std::string _uri;
     HttpVersion _httpVersion;
+    
     // Request headers
     std::map<HttpHeader, std::string> _headers;
+    
     // Request body
     std::vector<char> _body;
+    
     // Included Request parameters
     std::map<std::string, std::string> _queryParameters;
     std::pair<std::string, std::string> _remoteAddress;
@@ -57,29 +60,46 @@ private:
     std::map<std::string, std::string> _bodyParameters;
     std::string _requestId;
     std::string _rawRequest;
-    const Configuration &_configuration;
-    // Helper;
+    const IConfiguration &_configuration;
+    
+    // Helper
     const RequestHelper &_requestHelper;
 
 public:
-    Request(const RequestHelper &requestHelper, const Configuration &configuration);
-    Request &operator=(const Request &src);
+    // Constructor and Destructor
+    Request(const RequestHelper &requestHelper, const IConfiguration &configuration);
+    Request(const Request &src);
     ~Request();
+    
+    // Assignment operator
+    Request &operator=(const Request &src);
+
+    // Clear the request object
+    void clear();
+    
+    // Getters
     HttpMethod getMethod() const;
     std::string getMethodString() const;
     std::string getUri() const;
     HttpVersion getHttpVersion() const;
     std::string getHttpVersionString() const;
     const std::map<HttpHeader, std::string> getHeaders() const;
-    const std::map<std::string, std::string> getHeadersStrings() const;
+    std::string getHeaderValue(HttpHeader header) const;
+    const std::map<std::string, std::string> getHeadersString() const;
+    std::map<std::string, std::string> getQueryParameters() const;
     const std::vector<char> getBody() const;
     std::string getBodyString() const;
+    std::string getClientIp() const;
+    std::map<std::string, std::string> getCookies() const { return _cookies; }
+    
+    // Setters
     void setMethod(const std::string &method);
     void setUri(const std::string &uri);
     void setHttpVersion(const std::string &httpVersion);
-    void addHeader(const std::string key, std::string value);
+    void addHeader(const std::string &key, const std::string &value);
     void setBody(const std::vector<char> &body);
 };
+
 
 #endif // REQUEST_HPP
        // Path: includes/Response.hpp
