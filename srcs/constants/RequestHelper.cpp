@@ -10,6 +10,13 @@
  * Path: includes/constants/RequestHelper.hpp
  */
 
+// Constructor to initialize helper classes
+RequestHelper::RequestHelper(const IConfiguration &configuration)
+    : _methodHelper(configuration),
+      _versionHelper(),
+      _headerHelper(),
+      _statusCodeHelper() {}
+
 // Get string representation of HttpMethod enum value
 const std::string &RequestHelper::httpMethodStringMap(HttpMethod method) const
 {

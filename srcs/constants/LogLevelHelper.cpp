@@ -1,3 +1,4 @@
+#include "../includes/WebservExceptions.hpp"
 #include "../includes/constants/LogLevelHelper.hpp"
 
 /*
@@ -50,9 +51,10 @@ std::vector<std::string> LogLevelHelper::_setLogLevelList()
     logLevelList.push_back("VERBOSE");
     logLevelList.push_back("DEBUG");
     logLevelList.push_back("INFO");
-    logLevelList.push_back("WARNING");
+    logLevelList.push_back("WARN");
     logLevelList.push_back("ERROR");
     logLevelList.push_back("CRITICAL");
+    logLevelList.push_back("UNKNOWN");
 
     return logLevelList;
 }
@@ -66,9 +68,10 @@ std::map<std::string, LogLevel> LogLevelHelper::_setStringLogLevelMap()
     stringLogLevelMap["VERBOSE"] = LogLevel::VERBOSE;
     stringLogLevelMap["DEBUG"] = LogLevel::DEBUG;
     stringLogLevelMap["INFO"] = LogLevel::INFO;
-    stringLogLevelMap["WARNING"] = LogLevel::WARNING;
+    stringLogLevelMap["WARN"] = LogLevel::WARN;
     stringLogLevelMap["ERROR"] = LogLevel::ERROR;
     stringLogLevelMap["CRITICAL"] = LogLevel::CRITICAL;
+    stringLogLevelMap["UNKNOWN"] = LogLevel::UNKNOWN;
 
     return stringLogLevelMap;
 }
@@ -82,9 +85,10 @@ std::map<LogLevel, std::string> LogLevelHelper::_setLogLevelStringMap()
     logLevelStringMap[LogLevel::VERBOSE] = "VERBOSE";
     logLevelStringMap[LogLevel::DEBUG] = "DEBUG";
     logLevelStringMap[LogLevel::INFO] = "INFO";
-    logLevelStringMap[LogLevel::WARNING] = "WARNING";
+    logLevelStringMap[LogLevel::WARN] = "WARN";
     logLevelStringMap[LogLevel::ERROR] = "ERROR";
     logLevelStringMap[LogLevel::CRITICAL] = "CRITICAL";
+    logLevelStringMap[LogLevel::UNKNOWN] = "UNKNOWN";
 
     return logLevelStringMap;
 }

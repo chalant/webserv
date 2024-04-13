@@ -1,15 +1,15 @@
-#ifndef CONFIGURATIONLOADER_HPP
-# define CONFIGURATIONLOADER_HPP
+#ifndef IConfigurationLOADER_HPP
+# define IConfigurationLOADER_HPP
 
-#include "Configuration.hpp"
-#include "ExceptionHandler.hpp"
+#include "IConfiguration.hpp"
+#include "IExceptionHandler.hpp"
 
-class ConfigurationLoader
+class IConfigurationLoader
 {
 	public:
-		ConfigurationLoader(const ExceptionHandler& exc_handler);
-		~ConfigurationLoader();
-		Configuration*	loadConfiguration(const std::string *path);
+		IConfigurationLoader(const IExceptionHandler& exc_handler);
+		~IConfigurationLoader();
+		IConfiguration*	loadIConfiguration(const std::string *path);
 };
 
-#endif // CONFIGURATION_HPP
+#endif // IConfiguration_HPP

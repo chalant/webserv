@@ -10,7 +10,7 @@
  */
 
 // Constructor initializes member variables using helper functions
-HttpMethodHelper::HttpMethodHelper(const Configuration &configuration)
+HttpMethodHelper::HttpMethodHelper(const IConfiguration &configuration)
     : _methodList(_setMethodList()),
       _supportedMethods(configuration.getSupportedMethods()),
       _stringHttpMethodMap(_setStringHttpMethodMap()),

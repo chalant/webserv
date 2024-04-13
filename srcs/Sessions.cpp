@@ -19,8 +19,8 @@
  * exceptions effectively.
  */
 
-Sessions::Sessions(const Configuration &configuration, Logger &errorLogger, Logger &accessLogger, const ExceptionHandler &exceptionHandler, Server &server)
-    : _pollFds(server.getPollfdQueue()),
+Sessions::Sessions(PollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &exceptionHandler, Server &server)
+    : _pollfdManager(pollfdManager),
       _errorLogger(errorLogger),
       _accessLogger(accessLogger),
       _exceptionHandler(exceptionHandler),
@@ -28,7 +28,8 @@ Sessions::Sessions(const Configuration &configuration, Logger &errorLogger, Logg
       _clientHandler(errorLogger, exceptionHandler),
       _requestParser(configuration, errorLogger, exceptionHandler),
       _router(configuration, errorLogger, exceptionHandler),
-      _request(RequestHelper(), Configuration(nullptr))
+      _requestHelper(configuration),
+      _request(Request(_requestHelper, configuration))
 {
     // Log the creation of the Sessions instance.
     errorLogger.errorLog(DEBUG, "Sessions instance created.");
@@ -54,9 +55,9 @@ void Sessions::processEvents()
     this->_errorLogger.errorLog(DEBUG, "Processing events.");
 
     // Process events
-    for (size_t i = FIRST_CLIENT_POLL_FD; i < this->_pollFds.size(); i++)
+    for (size_t i = FIRST_CLIENT_POLL_FD; i < this->_pollfdManager.getPollfdQueueSize(); i++)
     {
-        short revents = this->_pollFds[i].revents;
+        short revents = this->_pollfdManager.getEvents(i);
 
         // If there are no events, continue
         if (revents == 0)
@@ -78,27 +79,45 @@ void Sessions::processEvents()
             this->processBufferedResponse(i);
         }
     }
+
+    // Check if the error log file descriptor is ready for writing
+    short errorLogEvents = this->_pollfdManager.getEvents(ERROR_LOG_POLL_FD);
+    if ((errorLogEvents & POLLOUT) != 0)
+    {
+        // Write error logs.
+        this->_errorLogger.writeLogBufferToFile();
+    }
+
+    // Check if the access log file descriptor is ready for writing
+    short accessLogEvents = this->_pollfdManager.getEvents(ACCESS_LOG_POLL_FD);
+    if ((accessLogEvents & POLLOUT) != 0)
+    {
+        // Write access logs.
+        this->_accessLogger.writeLogBufferToFile();
+    }
 }
 
 void Sessions::processRequest(size_t &i)
 {
     // Give the 'ClientHandler' the current socket descriptor
-    int fd = this->_pollFds[i].fd;
+    int fd = this->_pollfdManager.getFd(i);
     this->_clientHandler.setSocketDescriptor(fd);
 
     try
     {
         // Read the raw request from the client
         std::vector<char> rawRequest = this->_clientHandler.readRequest();
-        // 'RequestParser' produces a 'Request' from the raw request string
-        this->_request = this->_requestParser.parseRequest(rawRequest);
+        // Clear the request instance
+        this->_request.clear();
+        // 'RequestParser' produces a 'IRequest' from the raw request string
+        this->_requestParser.parseRequest(rawRequest, this->_request);
     }
     catch (const WebservException &e)
     {
         // Log the exceptions
         this->_exceptionHandler.handleException(e, "Sessions::processRequest socket=\"" + std::to_string(fd) + "\"");
         // Remove the socket from the poll set
-        this->_pollFds.erase(i);
+        this->_pollfdManager.removePollfd(i);
         // Decrement i to compensate for the removal
         i--;
         return;
@@ -107,12 +126,12 @@ void Sessions::processRequest(size_t &i)
     // 'Router' selects the right 'RequestHandler' for the job
     this->_requestHandler = this->_router.route(this->_request);
 
-    // 'ARequesthandler' produces the 'Response'
+    // 'ARequestHandler' produces the 'Response'
     this->_response = this->_requestHandler->handleRequest(this->_request);
     delete this->_requestHandler;
 
     // Create the raw response string
-    std::vector<char> rawResponse = this->_requestParser.rawResponse(this->_response);
+    std::vector<char> rawResponse = this->_response.serialise(this->_response);
 
     // 'ClientHandler' sends out a response to the client
     size_t sentBytes = this->_clientHandler.sendResponse(rawResponse);
@@ -126,21 +145,24 @@ void Sessions::processRequest(size_t &i)
         // Save the remaining bytes to the buffer
         this->_responseBuffer[fd] = buffer;
         // Update the events for the socket to include POLLOUT
-        this->_pollFds.pollout(i);
+        this->_pollfdManager.addPollOut(i);
     }
     else // The entire response was sent or an error occurred
     {
         // Remove the socket from the poll set
-        this->_pollFds.erase(i);
+        this->_pollfdManager.removePollfd(i);
         // Decrement i to compensate for the removal
         i--;
     }
+
+    // create an access log entry
+    this->_accessLogger.accessLog(this->_request, this->_response);
 }
 
 void Sessions::processBufferedResponse(size_t &i)
 {
     // Initialize the 'ClientHandler' with the socket descriptor
-    int fd = this->_pollFds[i].fd;
+    int fd = this->_pollfdManager.getFd(i);
     this->_clientHandler.setSocketDescriptor(fd);
 
     // Get the remaining bytes to send
@@ -161,7 +183,7 @@ void Sessions::processBufferedResponse(size_t &i)
     else
     {
         // Remove the socket from the poll set
-        this->_pollFds.erase(i);
+        this->_pollfdManager.removePollfd(i);
         // Remove the socket from the response buffer map
         this->_responseBuffer.erase(fd);
         // Decrement i to compensate for the removal
@@ -171,8 +193,8 @@ void Sessions::processBufferedResponse(size_t &i)
 
 void Sessions::handleException(size_t &i)
 {
-    short revents = this->_pollFds[i].revents;
-    int fd = this->_pollFds[i].fd;
+    short revents = this->_pollfdManager.getEvents(i);
+    int fd = this->_pollfdManager.getFd(i);
 
     if (revents & POLLHUP)
     {
@@ -209,7 +231,7 @@ void Sessions::handleException(size_t &i)
     // Remove the socket from the response buffer map
     this->_responseBuffer.erase(fd);
     // Close and Remove the socket from the poll set
-    this->_pollFds.erase(i);
+    this->_pollfdManager.removePollfd(i);
     // Decrement i to compensate for the removal
     i--;
 }

@@ -53,9 +53,11 @@ std::vector<std::string> HttpVersionHelper::_setVersionList()
     std::vector<std::string> VersionList;
 
     // Add string representations of HTTP versions to VersionList
+    VersionList.push_back("HTTP/0.9");
     VersionList.push_back("HTTP/1.0");
     VersionList.push_back("HTTP/1.1");
     VersionList.push_back("HTTP/2.0");
+    VersionList.push_back("HTTP/3.0");
 
     return VersionList;
 }
@@ -66,9 +68,11 @@ std::map<std::string, HttpVersion> HttpVersionHelper::_setStringHttpVersionMap()
     std::map<std::string, HttpVersion> stringHttpVersionMap;
 
     // Add mappings from string representations to HttpVersion enum values
+    stringHttpVersionMap["HTTP/0.9"] = HttpVersion::HTTP_0_9;
     stringHttpVersionMap["HTTP/1.0"] = HttpVersion::HTTP_1_0;
     stringHttpVersionMap["HTTP/1.1"] = HttpVersion::HTTP_1_1;
     stringHttpVersionMap["HTTP/2.0"] = HttpVersion::HTTP_2_0;
+    stringHttpVersionMap["HTTP/3.0"] = HttpVersion::HTTP_3_0;
 
     return stringHttpVersionMap;
 }
@@ -79,9 +83,11 @@ std::map<HttpVersion, std::string> HttpVersionHelper::_setHttpVersionStringMap()
     std::map<HttpVersion, std::string> httpVersionStringMap;
 
     // Add mappings from HttpVersion enum values to string representations
+    httpVersionStringMap[HttpVersion::HTTP_0_9] = "HTTP/0.9";
     httpVersionStringMap[HttpVersion::HTTP_1_0] = "HTTP/1.0";
     httpVersionStringMap[HttpVersion::HTTP_1_1] = "HTTP/1.1";
     httpVersionStringMap[HttpVersion::HTTP_2_0] = "HTTP/2.0";
+    httpVersionStringMap[HttpVersion::HTTP_3_0] = "HTTP/3.0";
 
     return httpVersionStringMap;
 }

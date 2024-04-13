@@ -4,23 +4,19 @@
  * RequestParser.cpp
  *
  * The RequestParser class provides functionality for parsing raw HTTP requests and converting
- * them into Request objects.
+ * them into IRequest objects.
  *
  */
 
 // Constructor to initialize the RequestParser with required references
-RequestParser::RequestParser(const Configuration &configuration, Logger &errorLogger, const ExceptionHandler &exceptionHandler)
-    : _configuration(configuration),
-      _errorLogger(errorLogger),
+RequestParser::RequestParser(const IConfiguration &configuration, ILogger &errorLogger, const IExceptionHandler &exceptionHandler)
+    : _errorLogger(errorLogger),
       _exceptionHandler(exceptionHandler),
-      _requestHelper(configuration) {}
+      _configuration(configuration) {}
 
 // Function to parse a raw HTTP request and convert it into a Request object
-Request RequestParser::parseRequest(const std::vector<char> &rawRequest) const
+void RequestParser::parseRequest(const std::vector<char> &rawRequest, IRequest &parsedRequest) const
 {
-    // Request object to store parsed request
-    Request parsedRequest(this->_requestHelper, this->_configuration);
-
     // Iterator to traverse the raw request
     std::vector<char>::const_iterator it = rawRequest.begin();
 
@@ -39,15 +35,12 @@ Request RequestParser::parseRequest(const std::vector<char> &rawRequest) const
 
     // Parse the body
     this->_parseBody(it, rawRequest, parsedRequest);
-
-    // Return parsed request
-    return parsedRequest;
 }
 
 // Function to parse the request line of an HTTP request
 void RequestParser::_parseRequestLine(std::vector<char>::const_iterator &requestIterator,
                                       const std::vector<char> &rawRequest,
-                                      Request &parsedRequest) const
+                                      IRequest &parsedRequest) const
 {
     // Parse method, URI, and HTTP version
     std::string method = this->_parseMethod(requestIterator, rawRequest);
@@ -150,7 +143,7 @@ std::string RequestParser::_parseHttpVersion(std::vector<char>::const_iterator &
 // Function to parse the headers of an HTTP request
 void RequestParser::_parseHeaders(std::vector<char>::const_iterator &requestIterator,
                                   const std::vector<char> &rawRequest,
-                                  Request &parsedRequest) const
+                                  IRequest &parsedRequest) const
 {
     // Parse headers
     while (requestIterator != rawRequest.end() && !(*requestIterator == '\r' && *(requestIterator + 1) == '\n'))
@@ -229,22 +222,23 @@ void RequestParser::_parseHeaders(std::vector<char>::const_iterator &requestIter
 // Function to parse the body of an HTTP request
 void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterator,
                                const std::vector<char> &rawRequest,
-                               Request &parsedRequest) const
+                               IRequest &parsedRequest) const
 {
     // Extract body (if present)
     if (parsedRequest.getMethod() != POST && parsedRequest.getMethod() != PUT)
         return; // No need to parse body for other methods
 
     // Find body size
-    std::string contentLengthString = parsedRequest.getHeader("content-length");
+    std::string contentLengthString = parsedRequest.getHeaderValue(CONTENT_LENGTH);
 
     // Check if 'Content-Length' header is missing
-    if (contentLengthString.empty())
+    if (
+        contentLengthString.empty())
         throw HttpStatusCodeException(LENGTH_REQUIRED, // throw '411' status error
                                       "no content-length header found");
 
     // Convert 'Content-Length' header value to integer
-    int bodySize = atoi(contentLengthString.c_str());
+    size_t bodySize = atoi(contentLengthString.c_str());
 
     // Check if conversion was successful
     if (bodySize <= 0)
@@ -256,7 +250,7 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
         throw HttpStatusCodeException(PAYLOAD_TOO_LARGE); // throw '413' status error
 
     // Check if body size exceeds remaining request size
-    int remainingRequestSize = rawRequest.end() - requestIterator;
+    size_t remainingRequestSize = rawRequest.end() - requestIterator;
     if (remainingRequestSize < bodySize)
         throw HttpStatusCodeException(BAD_REQUEST,
                                       "body size exceeds remaining request size"); // throw '400' status error

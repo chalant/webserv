@@ -22,16 +22,16 @@ FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
 HEADERS     =	ArequestHandler.hpp \
 				CGIRequestHandler.hpp \
 				ClientHandler.hpp \
-				Configuration.hpp \
-				ConfigurationLoader.hpp \
+				IConfiguration.hpp \
+				IConfigurationLoader.hpp \
 				DeleteMethodRequestHandler.hpp \
 				ErrorPageRequestHandler.hpp \
-				ExceptionHandler.hpp \
+				IExceptionHandler.hpp \
 				GetMethodRequestHandler \
-				Logger.hpp \
+				ILogger.hpp \
 				PollfdQueue.hpp \
 				PostMethodRequestHandler.hpp \
-				Request.hpp \
+				IRequest.hpp \
 				RequestParser.hpp \
 				Response.hpp \
 				Router.hpp \
@@ -46,15 +46,15 @@ SRCS        =	main.cpp \
 				ArequestHandler.cpp \
 				CGIRequestHandler.cpp \
 				ClientHandler.cpp \
-				Configuration.cpp \
+				IConfiguration.cpp \
 				DeleteMethodRequestHandler.cpp \
 				ErrorPageRequestHandler.cpp \
-				ExceptionHandler.cpp \
+				IExceptionHandler.cpp \
 				GetMethodRequestHandler.cpp \
-				Logger.cpp \
+				ILogger.cpp \
 				PollfdQueue.cpp \
 				PostMethodRequestHandler.cpp \
-				Request.cpp \
+				IRequest.cpp \
 				RequestParser.cpp \
 				Response.cpp \
 				Router.cpp \

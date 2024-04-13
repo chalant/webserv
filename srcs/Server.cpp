@@ -10,13 +10,12 @@
  */
 
 /* Constructor - Initializes the Server object and sets up the server socket and polling file descriptors.*/
-Server::Server(const Configuration &configuration, Logger &errorLogger, Logger &accessLogger, ExceptionHandler &exceptionHandler)
-    : _pollFds(configuration.getMaxConnections() + 3),
+Server::Server(PollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, IExceptionHandler &exceptionHandler)
+    : _pollfdManager(pollfdManager),
       _configuration(configuration),
       _errorLogger(errorLogger),
       _accessLogger(accessLogger),
       _exceptionHandler(exceptionHandler),
-      _maxConnections(configuration.getMaxConnections()),
       _pollMask(POLLIN | POLLERR | POLLHUP | POLLNVAL)
 {
     // Create server socket
@@ -44,20 +43,8 @@ Server::Server(const Configuration &configuration, Logger &errorLogger, Logger &
         throw SocketSetError();
     this->_errorLogger.errorLog(DEBUG, "Server socket set to non-blocking.");
 
-    // Set polling mask for server socket
-
     // Add server socket to polling list
-    this->_pollFds.push({server_fd, this->_pollMask, 0});
-
-    // Add error logger file descriptor to polling list
-    this->_pollFds.push({this->_errorLogger.getLogFileDescriptor(), POLLOUT, 0});
-
-    // Add access logger file descriptor to polling list
-    this->_pollFds.push({this->_errorLogger.getLogFileDescriptor(), POLLOUT, 0});
-
-    // Set polling file descriptors for loggers
-    errorLogger.setLogFilePollFd(&this->_pollFds[ERROR_LOG_POLL_FD]);
-    accessLogger.setLogFilePollFd(&this->_pollFds[ACCESS_LOG_POLL_FD]);
+    this->_pollfdManager.setServerSocketPollFd({server_fd, this->_pollMask, 0});
 
     // Link server instance to exception handler
     exceptionHandler.linkServer(this);
@@ -65,51 +52,62 @@ Server::Server(const Configuration &configuration, Logger &errorLogger, Logger &
     this->_errorLogger.errorLog(INFO, "Server initialized. Listening on port " + std::to_string(_configuration.getPort()) + ".");
 }
 
-/* Poll events on file descriptors*/
+/* Poll events on server socket */
 void Server::pollEvents()
 {
-    if (poll(&this->_pollFds[0], this->_pollFds.size(), 100) < 0)
+    // Get the pollfd array
+    pollfd &pollfdArray = this->_pollfdManager.getPollfd(SERVER_SOCKET_POLL_FD);
+
+    // Get pollfd queue size
+    size_t pollfdQueueSize = this->_pollfdManager.getPollfdQueueSize();
+
+    // Poll events on server socket
+    if (poll(&pollfdArray, pollfdQueueSize, 100) < 0)
         throw PollError();
 }
 
 /*Accept incoming connections*/
 void Server::acceptConnection()
 {
-    // If server socket has events return immediately
-    if (this->_pollFds[0].revents == 0)
+    // Get Server Socket events
+    int serverSocketEvents = this->_pollfdManager.getEvents(SERVER_SOCKET_POLL_FD);
+
+    // If server socket has no events, return immediately
+    if (serverSocketEvents == 0)
         return;
 
     // Check for errors on server socket
-    if (this->_pollFds[0].revents & POLLERR)
+    if (serverSocketEvents & POLLERR)
         throw ServerSocketError();
 
     // Check for server socket closed
-    if (this->_pollFds[0].revents & POLLHUP)
+    if (serverSocketEvents & POLLHUP)
         throw ServerSocketClosedError();
 
     // Check for invalid request on server socket
-    if (this->_pollFds[0].revents & POLLNVAL)
+    if (serverSocketEvents & POLLNVAL)
         throw ServerSocketInvalidError();
 
     // Check if server socket is ready to accept incoming connections
-    if (this->_pollFds[0].revents & POLLIN)
+    if (serverSocketEvents & POLLIN)
     {
         // Ensure maximum connections limit has not been reached
-        if (this->_pollFds.hasReachedCapacity())
+        if (this->_pollfdManager.hasReachedCapacity())
             throw MaximumConnectionsReachedError();
 
         // Accept incoming connection
+        int serverSocketFd = this->_pollfdManager.getFd(SERVER_SOCKET_POLL_FD);
         struct sockaddr_in client_addr;
         socklen_t client_addr_len = sizeof(client_addr);
-        int client_fd = accept(this->_pollFds[0].fd, (struct sockaddr *)&client_addr, &client_addr_len);
+        int clientFd = accept(serverSocketFd, (struct sockaddr *)&client_addr, &client_addr_len);
 
         // Add client socket to polling list
-        if (client_fd < 0)
+        if (clientFd < 0)
             throw ConnectionEstablishingError();
-        this->_pollFds.push({client_fd, this->_pollMask, 0});
+        this->_pollfdManager.addPollfd({clientFd, this->_pollMask, 0});
 
         // Set socket to non-blocking mode
-        if (fcntl(client_fd, F_SETFL, O_NONBLOCK) < 0)
+        if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
             throw SocketSetError();
 
         // Log accepted connection
@@ -122,29 +120,15 @@ void Server::acceptConnection()
     }
 }
 
-/* Return a reference to the PollfdQueue object*/
-PollfdQueue &Server::getPollfdQueue()
-{
-    return this->_pollFds;
-}
-
 /* Destructor to close file descriptors*/
 Server::~Server()
 {
-    // Close server socket
-    close(this->_pollFds[0].fd);
-
-    // Close client sockets
-    for (size_t i = 1; i < this->_pollFds.size(); ++i)
-    {
-        close(this->_pollFds[i].fd);
-    }
+    // Close all socket file descriptors
+    this->_pollfdManager.closeAllFileDescriptors();
 }
 
 /* Terminate server*/
 void Server::terminate(int exit_code)
 {
-    this->_errorLogger.writeLogBufferToFileBlocking();
-    this->_accessLogger.writeLogBufferToFileBlocking();
     exit(exit_code);
 }

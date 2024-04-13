@@ -8,7 +8,7 @@
  */
 
 // Constructor
-ClientHandler::ClientHandler(Logger &errorLogger, const ExceptionHandler &exceptionHandler)
+ClientHandler::ClientHandler(ILogger &errorLogger, const IExceptionHandler &exceptionHandler)
     : _errorLogger(errorLogger),
       _exceptionHandler(exceptionHandler) {}
 

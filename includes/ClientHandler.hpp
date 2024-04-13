@@ -9,20 +9,20 @@
  */
 
 #include <string>
-#include "Logger.hpp"
-#include "ExceptionHandler.hpp"
+#include "ILogger.hpp"
+#include "IExceptionHandler.hpp"
 #include "Response.hpp"
 
 class ClientHandler
 {
 private:
     int _socketDescriptor;                     // Socket descriptor for client connection
-    Logger &_errorLogger;                      // Reference to the error logger object
-    const ExceptionHandler &_exceptionHandler; // Reference to the exception handler object
+    ILogger &_errorLogger;                      // Reference to the error logger object
+    const IExceptionHandler &_exceptionHandler; // Reference to the exception handler object
 
 public:
     // Constructor: Initializes the ClientHandler with an error logger and exception handler
-    ClientHandler(Logger &errorLogger, const ExceptionHandler &exceptionHandler);
+    ClientHandler(ILogger &errorLogger, const IExceptionHandler &exceptionHandler);
 
     // Destructor
     ~ClientHandler();

@@ -1,5 +1,5 @@
 /*Router: Selects the right 'RequestHandler' based on URI (etc.) 
-in the 'Request' (each locationblock in the conf file corresponds 
+in the 'IRequest' (each locationblock in the conf file corresponds 
 to a 'RequestHandler' mapping, ie the Router selects the correct 
 locationblock)*/
 
@@ -12,14 +12,14 @@ locationblock)*/
 # include <map>
 # include "HttpMethodHelper.hpp" 
 
-class Request;
+class IRequest;
 class Response;
 
 // Route structure with function pointer for handler
 struct Route {
 public:
     std::string path;
-    void (*handler)(const Request&, Response&);
+    void (*handler)(const IRequest&, Response&);
     HttpMethod method;
 
     // Static path matching function
@@ -30,7 +30,7 @@ public:
 class Router {
 public:
     void addRoute(const Route& route);
-    Route* findRoute(const Request& request);
+    Route* findRoute(const IRequest& request);
 
 private:
     std::map<std::string, Route> routes_;
