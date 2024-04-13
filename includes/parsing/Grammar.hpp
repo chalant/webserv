@@ -1,40 +1,51 @@
-#ifndef ConfigurationGrammar_HPP
-# define ConfigurationGrammar_HPP
+#ifndef GRAMMAR_HPP
+# define GRAMMAR_HPP
 
 #include <iostream>
 #include <vector>
 #include "Tokenizer.hpp"
 #include "SemanticAction.hpp"
 
-class	AGrammarSymbol {
-	private:
-		const std::string	m_name;
-		int					m_id;
+enum GrammarSymbolType {
+	EMPTY,
+	TERMINAL,
+	NON_TERMINAL
+};
+
+class	GrammarSymbol {
+	protected:
+		const std::string	m_value;
+		int					m_rule_idx;
+		GrammarSymbolType	m_type;
 	public:
-		AGrammarSymbol(const std::string name);
-		const std::string&		getName(void);
-		int						getID(void);
-		bool					operator==(const AGrammarSymbol& other);
-		virtual	bool 			match(const Token& token) = 0;
+		GrammarSymbol(const std::string value, GrammarSymbolType type);
+		~GrammarSymbol();
+		const std::string&		getValue(void) const;
+		GrammarSymbolType		getType(void) const;
+		int						getRuleIndex(void) const;
+		void					setRuleIndex(int index);
+		bool 					match(const Token& token);
 };
 
 class	GrammarRule {
 	private:
-		int							rule_id;
-		const std::string			name;
-		std::vector<AGrammarSymbol>	symbols;
+		int								m_rule_idx;
+		const std::string				m_name;
+		std::vector<GrammarSymbol*>		m_symbols;
 	public:
-		GrammarRule(ASemanticAction& action);
-		void					applySemanticAction(GrammarRule *left, GrammarRule *right);
-		int						getRuleID() const;
-		void					setRuleID(int rule_idx);
+		GrammarRule(ASemanticAction	*action, const std::string name);
+		GrammarRule(const std::string name);
+		~GrammarRule();
+		void					applySemanticAction(std::vector<GrammarSymbol>& symbols);
+		int						getRuleIndex() const;
 		const std::string&		getName() const;
-		void					addSymbol(AGrammarSymbol *symbol);
+		void					setRuleIndex(int rule_idx);
+		void					addSymbol(GrammarSymbol *symbol);
 };
 
 class Grammar {
 	private:
-		std::vector<GrammarRule> rules;
+		std::vector<GrammarRule*> rules;
 	public:
 		Grammar();
 		~Grammar();

@@ -5,16 +5,16 @@ file data. This data is used to initiate the 'Server' and the 'Router'*/
 # define CONFIGURATION_HPP
 
 #include <iostream>
-#include <unordered_map>
+#include <map>
 #include <list>
 
 class	Configuration {
 	private:
-		std::unordered_map<std::string, std::string> *fields;
+		std::map<std::string, std::string> *fields;
 		std::list<Configuration> sub_configurations;
 	public:
-		Configuration(std::unordered_map<std::string, std::string> *fields);
-		Configuration(std::unordered_map<std::string, std::string> *fields, std::list<Configuration> *sub_conf);
+		Configuration(std::map<std::string, std::string> *fields);
+		Configuration(std::map<std::string, std::string> *fields, std::list<Configuration> *sub_conf);
 		~Configuration();
 		std::string&	operator[](const std::string field);
 };

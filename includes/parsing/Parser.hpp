@@ -1,5 +1,5 @@
-#ifndef CONFIGURATIONPARSER_HPP
-# define CONFIGURATIONPARSER_HPP
+#ifndef PARSER_HPP
+# define PARSER_HPP
 
 #include <vector>
 #include "Grammar.hpp"
@@ -10,11 +10,20 @@ struct EarleyEdge {
 	int	rule_idx;
 };
 
-struct EarleyItem {
-	int		rule_idx;
-	int		start;
-	int		next;
-	bool	completed;
+class EarleyItem {
+	private:
+		int		m_rule_idx;
+		int		m_start;
+		int		m_next;
+		bool	m_completed;
+	public:
+		EarleyItem(int rule_idx, int start, int next);
+		bool	operator==(const EarleyItem& other);
+		int		getRuleIndex() const;
+		int		getStart() const;
+		int		getNext() const;
+		int		isCompleted() const;
+		void	setCompleted(bool value);
 };
 
 struct ParseTree {
