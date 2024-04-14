@@ -23,9 +23,10 @@
  * Note: To use Webserv custom exceptions, include the WebservExceptions.hpp file.
  */
 
+#include "IExceptionHandler.hpp"
 #include <string>
 #include "constants/HttpStatusCodeHelper.hpp" // Include necessary dependencies
-#include "ILogger.hpp"                        // Include necessary dependencies
+#include "Logger.hpp"                         // Include necessary dependencies
 #include "WebservExceptions.hpp"              // Include necessary dependencies
 
 // Forward declaration of Server class
@@ -51,7 +52,7 @@ public:
     void linkServer(Server *_server);
 
     // handleException method: Logs exception details and handles critical exceptions.
-    int handleException(const WebservException &e, const std::string &context = "") const;
+    int handleException(const std::exception &e, const std::string &context = "") const;
 };
 
 #endif // EXCEPTIONHANDLER_HPP

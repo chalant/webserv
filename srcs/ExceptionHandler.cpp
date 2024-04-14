@@ -64,7 +64,7 @@ int ExceptionHandler::_handleStandardException(const std::exception &e, const st
 }
 
 // handleException method: Verifies the type of exception and calls the appropriate handler.
-int ExceptionHandler::handleException(const WebservException &e, const std::string &context) const
+int ExceptionHandler::handleException(const std::exception &e, const std::string &context) const
 {
     if (const WebservException *wse = dynamic_cast<const WebservException *>(&e))
     {

@@ -1,6 +1,17 @@
 #ifndef ILOGGER_HPP
 #define ILOGGER_HPP
 
+/*
+ * ILogger.hpp
+ * Abstract base class for Logger in webserv
+ *
+ * This file defines the Logger interface, which serves as the abstract base
+ * class for the Logger in webserv. 
+ * ILogger allows for polymorphic behavior and dependency injection,
+ * thereby enabling us to create a MockLogger class for isolated unit testing.
+ * 
+ */
+
 #include <string>
 #include "constants/LogLevelHelper.hpp"
 

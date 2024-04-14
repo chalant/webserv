@@ -1,13 +1,15 @@
-#include "includes/configuration.hpp"
+#include "includes/IConfiguration.hpp"
 #include "includes/Server.hpp"
 #include "includes/Router.hpp"
-#include "includes/ClientHandler.hpp"
+#include "includes/IClientHandler.hpp"
 #include "includes/RequestParser.hpp"
 #include "includes/ARequestHandler.hpp"
 #include "includes/Response.hpp"
 #include "includes/ILogger.hpp"
 #include "includes/Logger.hpp"
 #include "includes/IExceptionHandler.hpp"
+#include "includes/ExceptionHandler.hpp"
+#include "includes/Socket.hpp"
 #include "includes/Sessions.hpp"
 
 /*
@@ -31,22 +33,24 @@ int main(int argc, char **argv)
     // Instantiate the errorLogger.
     Logger errorLogger;
     // Instantiate the exceptionHandler.
-    IExceptionHandler exceptionHandler(errorLogger);
+    ExceptionHandler exceptionHandler(errorLogger);
 
     try
     {
         // Instantiate the IConfiguration instance. Verifies, reads, parses, and stores the config file data.
-        IConfiguration configuration(argc, argv, errorLogger, exceptionHandler);
-        // Re-instantiate the errorLogger to apply configuration.
-        errorLogger = ILogger(ERRORLOGGER, configuration);
-        // Instantiate the accessLogger, primarily for use by the RequestHandler class to handle access event logging.
-        ILogger accessLogger(ACCESSLOGGER, configuration);
+        Configuration configuration(argc, argv, errorLogger, exceptionHandler);
         // Instantiate the PollfdManager. Manages the pollfd array
         PollfdManager pollfdManager(configuration.getMaxConnections());
+        // Re-instantiate the errorLogger to apply configuration.
+        //errorLogger Logger(ERRORLOGGER, configuration, pollfdManager);
+        // Instantiate the accessLogger, primarily for use by the RequestHandler class to handle access event logging.
+        Logger accessLogger(ACCESSLOGGER, configuration, pollfdManager);
+        // Instantiate the Socket instance. Provides utility functions for socket operations.
+        Socket socket;
         // Instantiate the Server. Sets up connectivity, responsible for polling and accepting connections.
-        Server server(pollfdManager, configuration, errorLogger, accessLogger,exceptionHandler);
+        Server server(socket, pollfdManager, configuration, errorLogger, accessLogger, exceptionHandler);
         // Instantiate the Sessions. Coordinates request processing utilizing the poll fd array.
-        Sessions sessions(pollfdManager, configuration, errorLogger, accessLogger, exceptionHandler);
+        Sessions sessions(socket, pollfdManager, configuration, errorLogger, accessLogger, exceptionHandler);
 
         // Start the webserv core cycle.
         while (true)

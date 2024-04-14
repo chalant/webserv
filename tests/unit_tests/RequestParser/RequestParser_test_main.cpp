@@ -1,8 +1,10 @@
 #include <cassert>
 #include <iostream>
+
 // include the header file for the class under test
 #include "../../includes/RequestParser.hpp"
-// include the header files for the mock class
+
+// include the header files for the mock classes
 #include "../../mock_includes/MockConfiguration.hpp"
 #include "../../mock_includes/MockLogger.hpp"
 #include "../../mock_includes/MockRequest.hpp"
@@ -23,10 +25,10 @@ int main()
 
     // test case 1: A Valid IRequest
     // GET /index.html HTTP/1.1
-    // Host: example.com
+    // Host: 42.fr
     std::vector<char> rawRequest = {
         'G', 'E', 'T', ' ', '/', 'i', 'n', 'd', 'e', 'x', '.', 'h', 't', 'm', 'l', ' ', 'H', 'T', 'T', 'P', '/', '1', '.', '1', '\r', '\n',
-        'H', 'o', 's', 't', ':', ' ', 'e', 'x', 'a', 'm', 'p', 'l', 'e', '.', 'c', 'o', 'm', '\r', '\n',
+        'H', 'o', 's', 't', ':', ' ', '4', '2', '.', 'f', 'r', '\r', '\n',
         '\r', '\n'};
     // Parse the raw request
     requestParser.parseRequest(rawRequest, mockRequest);
@@ -36,7 +38,7 @@ int main()
     assert(mockRequest.getTestMethod() == "GET");
     assert(mockRequest.getUri() == "/index.html");
     assert(mockRequest.getTestHttpVersion() == "HTTP/1.1");
-    std::map<std::string, std::string> expectedHeaders = {{"Host", "example.com"}};
+    std::map<std::string, std::string> expectedHeaders = {{"Host", "42.fr"}};
     assert(mockRequest.getHeaders() == expectedHeaders);
     // Clear the contents of the Request object for the next test
     mockRequest.clear();

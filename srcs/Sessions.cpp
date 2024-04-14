@@ -19,13 +19,14 @@
  * exceptions effectively.
  */
 
-Sessions::Sessions(PollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &exceptionHandler, Server &server)
-    : _pollfdManager(pollfdManager),
+Sessions::Sessions(const ISocket &socket,PollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &exceptionHandler)
+    : _socket(socket), 
+    _pollfdManager(pollfdManager),
       _errorLogger(errorLogger),
       _accessLogger(accessLogger),
       _exceptionHandler(exceptionHandler),
       _pollExceptionMask(POLLHUP | POLLERR | POLLNVAL),
-      _clientHandler(errorLogger, exceptionHandler),
+      _clientHandler(new ClientHandler(errorLogger, exceptionHandler)),
       _requestParser(configuration, errorLogger, exceptionHandler),
       _router(configuration, errorLogger, exceptionHandler),
       _requestHelper(configuration),
@@ -42,6 +43,7 @@ Sessions::Sessions(PollfdManager &pollfdManager, const IConfiguration &configura
  */
 Sessions::~Sessions()
 {
+    delete this->_clientHandler;
     // Log the destruction of the Sessions instance.
     this->_errorLogger.errorLog(DEBUG, "Sessions instance destroyed.");
 }
@@ -101,12 +103,12 @@ void Sessions::processRequest(size_t &i)
 {
     // Give the 'ClientHandler' the current socket descriptor
     int fd = this->_pollfdManager.getFd(i);
-    this->_clientHandler.setSocketDescriptor(fd);
+    this->_clientHandler->setSocketDescriptor(fd);
 
     try
     {
         // Read the raw request from the client
-        std::vector<char> rawRequest = this->_clientHandler.readRequest();
+        std::vector<char> rawRequest = this->_clientHandler->readRequest();
         // Clear the request instance
         this->_request.clear();
         // 'RequestParser' produces a 'IRequest' from the raw request string
@@ -134,7 +136,7 @@ void Sessions::processRequest(size_t &i)
     std::vector<char> rawResponse = this->_response.serialise(this->_response);
 
     // 'ClientHandler' sends out a response to the client
-    size_t sentBytes = this->_clientHandler.sendResponse(rawResponse);
+    size_t sentBytes = this->_clientHandler->sendResponse(rawResponse);
 
     // Verify if the entire response was sent
     if (sentBytes < rawResponse.size())
@@ -163,13 +165,13 @@ void Sessions::processBufferedResponse(size_t &i)
 {
     // Initialize the 'ClientHandler' with the socket descriptor
     int fd = this->_pollfdManager.getFd(i);
-    this->_clientHandler.setSocketDescriptor(fd);
+    this->_clientHandler->setSocketDescriptor(fd);
 
     // Get the remaining bytes to send
     std::vector<char> &buffer = this->_responseBuffer[fd];
 
     // Send the remaining bytes
-    size_t sentBytes = this->_clientHandler.sendResponse(buffer);
+    size_t sentBytes = this->_clientHandler->sendResponse(buffer);
 
     // Verify if the entire response was sent
     if (sentBytes < buffer.size())
@@ -208,7 +210,7 @@ void Sessions::handleException(size_t &i)
         this->_errorLogger.errorLog(ERROR, "Invalid request on socket: " + std::to_string(fd));
 
         // Send a 400 response to the client
-        if (this->_clientHandler.sendResponse("HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n") == -1)
+        if (this->_clientHandler->sendResponse("HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n") == -1)
         {
             // Log the error
             this->_errorLogger.errorLog(ERROR, "Error sending 400 response to socket: " + std::to_string(fd));
@@ -222,7 +224,7 @@ void Sessions::handleException(size_t &i)
         this->_errorLogger.errorLog(ERROR, "Error on socket: " + std::to_string(fd));
 
         // Send a 500 response to the client
-        if (this->_clientHandler.sendResponse("HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n") == -1)
+        if (this->_clientHandler->sendResponse("HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n") == -1)
         {
             // Log the error
             this->_errorLogger.errorLog(ERROR, "Error sending 500 response to socket: " + std::to_string(fd));

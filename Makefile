@@ -21,7 +21,7 @@ FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
 #-------------------SOURCES FILES----------------------
 HEADERS     =	ArequestHandler.hpp \
 				CGIRequestHandler.hpp \
-				ClientHandler.hpp \
+				IClientHandler.hpp \
 				IConfiguration.hpp \
 				IConfigurationLoader.hpp \
 				DeleteMethodRequestHandler.hpp \
@@ -45,7 +45,7 @@ HEADERS     =	ArequestHandler.hpp \
 SRCS        =	main.cpp \
 				ArequestHandler.cpp \
 				CGIRequestHandler.cpp \
-				ClientHandler.cpp \
+				IClientHandler.cpp \
 				IConfiguration.cpp \
 				DeleteMethodRequestHandler.cpp \
 				ErrorPageRequestHandler.cpp \

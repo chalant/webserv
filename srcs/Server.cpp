@@ -10,8 +10,9 @@
  */
 
 /* Constructor - Initializes the Server object and sets up the server socket and polling file descriptors.*/
-Server::Server(PollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, IExceptionHandler &exceptionHandler)
-    : _pollfdManager(pollfdManager),
+Server::Server(ISocket &socket, PollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, IExceptionHandler &exceptionHandler)
+    : _socket(socket),
+      _pollfdManager(pollfdManager),
       _configuration(configuration),
       _errorLogger(errorLogger),
       _accessLogger(accessLogger),

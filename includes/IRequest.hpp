@@ -1,6 +1,17 @@
 #ifndef IREQUEST_HPP
 #define IREQUEST_HPP
 
+/*
+ * IRequest.hpp
+ * Abstract base class for Request in webserv
+ *
+ * This file defines the Request interface, which serves as the abstract base
+ * class for the Request in webserv. 
+ * IRequest allows for polymorphic behavior and dependency injection,
+ * thereby enabling us to create a MockRequest class for isolated unit testing.
+ * 
+ */
+
 #include <string>
 #include <map>
 #include <vector>

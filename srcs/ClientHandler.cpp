@@ -8,8 +8,9 @@
  */
 
 // Constructor
-ClientHandler::ClientHandler(ILogger &errorLogger, const IExceptionHandler &exceptionHandler)
-    : _errorLogger(errorLogger),
+ClientHandler::ClientHandler(const ISocket &socket, ILogger &errorLogger, const IExceptionHandler &exceptionHandler)
+    : _socket(socket),
+      _errorLogger(errorLogger),
       _exceptionHandler(exceptionHandler) {}
 
 // Destructor
@@ -26,16 +27,16 @@ const std::vector<char> ClientHandler::readRequest() const
 {
     size_t offSet = 0;
     size_t bufferSize = 4096;
-    size_t maxReadSize = bufferSize - offSet;
-    int bytesRead = 0;
+    ssize_t maxReadSize = bufferSize - offSet;
+    ssize_t bytesRead = 0;
     std::vector<char> buffer(bufferSize);
 
     // Read data from the client socket
     // Double the buffer as long as necessary
-    while ((bytesRead = recv(this->_socketDescriptor, &buffer[offSet], maxReadSize, MSG_DONTWAIT)) == maxReadSize)
+    while ((bytesRead = this->_socket.recv(this->_socketDescriptor, &buffer[offSet], maxReadSize)) == maxReadSize)
     {
         // Move the offset to the end of the buffer
-        offSet = bufferSize;
+        offSet += bytesRead;
         // Double the buffer size
         bufferSize *= 2;
         // Calculate the new maximum read size
@@ -43,9 +44,6 @@ const std::vector<char> ClientHandler::readRequest() const
         // Resize the buffer
         buffer.resize(bufferSize);
     }
-
-    // Resize the buffer to the actual size of the data read
-    buffer.resize(offSet + bytesRead);
 
     // Handle read errors
     // NOTE that MSG_DONTWAIT might cause -1 to be returned
@@ -56,13 +54,16 @@ const std::vector<char> ClientHandler::readRequest() const
         throw WebservException(ERROR, "Error reading request from client on socket: " + std::to_string(this->_socketDescriptor), 1);
     }
 
+    // Resize the buffer to the actual size of the data read
+    buffer.resize(offSet + bytesRead);
+
     return buffer;
 }
 
 // Method to send a response to the client as a vector of characters
 ssize_t ClientHandler::sendResponse(const std::vector<char> &response) const
 {
-    ssize_t bytesSent = send(this->_socketDescriptor, response.data(), response.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
+    ssize_t bytesSent = this->_socket.send(this->_socketDescriptor, response);
     if (bytesSent == -1)
         this->_errorLogger.errorLog(ERROR, "Error sending response to client on socket: " + std::to_string(this->_socketDescriptor));
 

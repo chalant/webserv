@@ -42,9 +42,10 @@ class Sessions
 {
 private:
     // Private member variables
+    const ISocket &_socket;                           // Reference to the Socket instance
     std::map<int, std::vector<char>> _responseBuffer; // Buffer for storing incompletely sent responses
-    PollfdManager &_pollfdManager;              // Reference to a queue of poll file descriptors
-    ClientHandler _clientHandler;                     // Handles communication with clients
+    PollfdManager &_pollfdManager;                    // Reference to a queue of poll file descriptors
+    IClientHandler *_clientHandler;                   // Handles communication with clients
     const RequestParser _requestParser;               // Parses incoming requests
     const Router _router;                             // Routes requests to appropriate handlers
     ARequestHandler *_requestHandler;                 // Pointer to the recruited request handler
@@ -53,7 +54,7 @@ private:
     Response _response;                               // Represents an HTTP response
     ILogger &_errorLogger;                            // Reference to the error logger
     ILogger &_accessLogger;                           // Reference to the access logger
-    const IExceptionHandler &_exceptionHandler;        // Reference to the exception handler
+    const IExceptionHandler &_exceptionHandler;       // Reference to the exception handler
     short _pollExceptionMask;                         // Mask for poll exceptions
 
     // Private member functions
@@ -69,7 +70,7 @@ private:
 
 public:
     // Constructor
-    Sessions(PollfdManager &PollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &IExceptionHandler, Server &server);
+    Sessions(const ISocket &socket, PollfdManager &PollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &IExceptionHandler);
 
     // Copy assignment operator
     const Sessions &operator=(const Sessions &src);

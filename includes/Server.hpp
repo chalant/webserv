@@ -21,11 +21,13 @@
 #include "IConfiguration.hpp"
 #include "ILogger.hpp"
 #include "IExceptionHandler.hpp"
+#include "Socket.hpp"
 #include "PollfdManager.hpp"
 
 class Server
 {
 private:
+    const ISocket &_socket;                     // Reference to the Socket instance
     PollfdManager &_pollfdManager;        // Reference to the PollfdManager
     const IConfiguration &_configuration; // Reference to the server IConfiguration settings
     ILogger &_errorLogger;                // Reference to the error logger
@@ -35,7 +37,7 @@ private:
     short _pollMask;                      // Poll mask for polling events
 
 public:
-    Server(PollfdManager &pollfdManager, const IConfiguration &configuration,
+    Server(const ISocket &socket, PollfdManager &pollfdManager, const IConfiguration &configuration,
            ILogger &errorLogger, ILogger &accessLogger,
            IExceptionHandler &exceptionHandler); // Constructor for Server class
     const Server &operator=(const Server &src); // Assignment operator overload
