@@ -32,39 +32,43 @@
  * Output in access log: timestamp="2011-01-01T01:11:11" clientIP="127.0.0.1" method="GET" requestURI="/index.php" httpVersion="HTTP/1.1" etc.
  */
 
-// Constructor for incomplete Logger instance used during IConfiguration parsing
-Logger::Logger()
-    : _type(ERRORLOGGER),
-      _logFile(""),
+
+// Constructor for initializing an un-configured Logger instance
+Logger::Logger(const LoggerType type)
+    : _type(type),
+      _logFile((type == ERRORLOGGER) ? "./error.log" : "./access.log"),
       _logLevel(INFO),
       _bufferSize(99999),
-      _logFileDescriptor(fileno(stderr)),
+      _logFileDescriptor(open(this->_logFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
       _enabled(true),
       _logLevelHelper()
 {
-    this->errorLog(DEBUG, "Incomplete Logger instance created");
+    if (this->_logFileDescriptor == -1)
+        throw LogFileOpenError(); // Opening log file failed
+    if (type == ERRORLOGGER)
+        this->errorLog(DEBUG, "Error Logger created");
+    else // type == ACCESSLOGGER
+        this->errorLog(DEBUG, "Access Logger created");
 }
 
 // Constructor for initializing Logger instance based on type (ERRORLOGGER/ACCESSLOGGER) and IConfiguration
-Logger::Logger(const LoggerType type, const IConfiguration &configuration, PollfdManager &pollfdManager)
+Logger::Logger(const LoggerType type, const IConfiguration *configuration)
     : _type(type),
-      _logFile((type == ERRORLOGGER) ? configuration.getErrorLogFile() : configuration.getAccessLogFile()),
-      _logLevel((type == ERRORLOGGER) ? configuration.getLogLevel() : INFO),
-      _bufferSize(configuration.getLogBufferSize()),
+      _logFile((type == ERRORLOGGER) ? configuration->getErrorLogFile() : configuration->getAccessLogFile()),
+      _logLevel((type == ERRORLOGGER) ? configuration->getLogLevel() : INFO),
+      _bufferSize(configuration->getLogBufferSize()),
       _logFileDescriptor(open(this->_logFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
-      _enabled((type == ERRORLOGGER) ? configuration.getErrorLogEnabled() : configuration.getAccessLogEnabled()),
+      _enabled((type == ERRORLOGGER) ? configuration->getErrorLogEnabled() : configuration->getAccessLogEnabled()),
       _logLevelHelper()
 {
     if (this->_logFileDescriptor == -1)
         throw LogFileOpenError(); // Opening log file failed
     if (type == ERRORLOGGER)
     {
-        pollfdManager.setErrorLogFilePollFd({this->_logFileDescriptor, POLLOUT, 0});
         this->errorLog(DEBUG, "Error Logger created");
     }
     else // type == ACCESSLOGGER
     {
-        pollfdManager.setAccessLogFilePollFd({this->_logFileDescriptor, POLLOUT, 0});
         this->errorLog(DEBUG, "Access Logger created");
     }
 }
@@ -208,6 +212,18 @@ void Logger::writeLogBufferToFileBlocking()
             return;             // Writing to log file failed, return without writing the rest of the batch
         bytesWritten += result; // Increment bytesWritten by the number of bytes written in this iteration
     }
+}
+
+// Configuration method
+void Logger::configure(const IConfiguration *configuration)
+{
+    this->_logFile = (this->_type == ERRORLOGGER) ? configuration->getErrorLogFile() : configuration->getAccessLogFile();
+    this->_logLevel = configuration->getLogLevel();
+    this->_bufferSize = configuration->getLogBufferSize();
+    this->_logFileDescriptor = open(this->_logFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    if (this->_logFileDescriptor == -1)
+        throw LogFileOpenError(); // Opening log file failed
+    this->_enabled = (this->_type == ERRORLOGGER) ? configuration->getErrorLogEnabled() : configuration->getAccessLogEnabled();
 }
 
 // Path: includes/WebservExceptions.hpp

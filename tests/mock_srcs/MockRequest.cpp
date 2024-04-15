@@ -25,6 +25,8 @@ MockRequest &MockRequest::operator=(const MockRequest &src)
 // Getters
 HttpMethod MockRequest::getMethod() const { return HttpMethod::GET; };
 
+std::string MockRequest::getMethodString() const { return _testMethod; };
+
 std::string MockRequest::getTestMethod() const { return _testMethod; };
 
 std::string MockRequest::getUri() const { return _testUri; };
@@ -40,6 +42,8 @@ std::string MockRequest::getHeaderValue(HttpHeader header) const
     static_cast<void>(header);
     return "";
 };
+
+std::map<std::string, std::string> MockRequest::getHeadersString() const { return _testHeaders; };
 
 std::map<std::string, std::string> MockRequest::getQueryParameters() const { return std::map<std::string, std::string>(); };
 

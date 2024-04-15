@@ -13,23 +13,19 @@ MockSocket::MockSocket() {}
 MockSocket::~MockSocket() {}
 
 // Creates a socket
-int MockSocket::socket(int domain, int type, int protocol) const
+int MockSocket::socket() const
 {
     // Mock implementation for creating a socket
     // Returns a mock file descriptor for the socket
-    static_cast<void>(domain);
-    static_cast<void>(type);
-    static_cast<void>(protocol);
     return 1;
 }
 
 // Binds the socket to an IP address and port
-int MockSocket::bind(int fd, const std::string &ip, int port) const
+int MockSocket::bind(int fd, int port) const
 {
     // Mock implementation for binding the socket to an address
     // Returns 0 on success
     static_cast<void>(fd);
-    static_cast<void>(ip);
     static_cast<void>(port);
     return 0;
 }
@@ -52,6 +48,15 @@ int MockSocket::fcntl(int fd, int cmd, int arg) const
     static_cast<void>(fd);
     static_cast<void>(cmd);
     static_cast<void>(arg);
+    return 0;
+}
+
+// Sets the socket to non-blocking mode
+int MockSocket::setNonBlocking(int fd) const
+{
+    // Mock implementation for setting the socket to non-blocking mode
+    // Returns 0 on success
+    static_cast<void>(fd);
     return 0;
 }
 

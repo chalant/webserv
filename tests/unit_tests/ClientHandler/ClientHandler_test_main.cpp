@@ -20,7 +20,7 @@ int main()
     MockSocket mockSocket;
 
     // Instantiate the ClientHandler class
-    ClientHandler clientHandler(mockSocket, mockErrorLogger, mockExceptionHandler);
+    ClientHandler clientHandler(&mockSocket, &mockErrorLogger, &mockExceptionHandler);
 
     // Instantiate test variables
     int MOCK_CLIENT_SOCKET_DESCRIPTOR = 44998;

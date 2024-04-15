@@ -22,16 +22,19 @@ public:
     virtual ~ISocket() {};
 
     // Creates a socket
-    virtual int socket(int domain, int type, int protocol) const = 0;
+    virtual int socket() const = 0;
 
     // Binds the socket to an IP address and port
-    virtual int bind(int fd, const std::string &ip, int port) const = 0;
+    virtual int bind(int fd, int port) const = 0;
 
     // Listens for incoming connections
     virtual int listen(int fd, int maxConnections) const = 0;
 
     // Performs file control operations on a socket
     virtual int fcntl(int fd, int cmd, int arg) const = 0;
+
+    // Sets the socket to non-blocking mode
+    virtual int setNonBlocking(int fd) const = 0;
 
     // Accepts an incoming connection
     virtual std::pair<int, std::pair<std::string, std::string>> accept(int fd) const = 0;

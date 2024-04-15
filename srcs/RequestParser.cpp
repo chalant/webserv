@@ -9,7 +9,7 @@
  */
 
 // Constructor to initialize the RequestParser with required references
-RequestParser::RequestParser(const IConfiguration &configuration, ILogger &errorLogger, const IExceptionHandler &exceptionHandler)
+RequestParser::RequestParser(const IConfiguration *configuration, ILogger *errorLogger, const IExceptionHandler *exceptionHandler)
     : _errorLogger(errorLogger),
       _exceptionHandler(exceptionHandler),
       _configuration(configuration) {}
@@ -157,7 +157,7 @@ void RequestParser::_parseHeaders(std::vector<char>::const_iterator &requestIter
         // Parse header name and value
         std::string headerName;
         std::string headerValue;
-        int clientHeaderBufferSize = this->_configuration.getClientHeaderBufferSize();
+        int clientHeaderBufferSize = this->_configuration->getClientHeaderBufferSize();
 
         // Find colon to separate header name and value
         while (requestIterator != rawRequest.end() && *requestIterator != ':')
@@ -246,7 +246,7 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
                                       "content-length header conversion failed (" + contentLengthString + ")");
 
     // Check if body size exceeds client body buffer size
-    if (bodySize > this->_configuration.getClientBodyBufferSize())
+    if (bodySize > this->_configuration->getClientBodyBufferSize())
         throw HttpStatusCodeException(PAYLOAD_TOO_LARGE); // throw '413' status error
 
     // Check if body size exceeds remaining request size

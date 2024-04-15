@@ -87,6 +87,9 @@ public:
 
     // Capacity: Returns the maximum number of pollfd objects that can be stored in the PollfdQueue.
     size_t capacity() const;
+
+    // data: Returns a pointer to the internal array of pollfd objects.
+    pollfd *data();
 };
 
 #endif // POLLFDQUEUE_HPP

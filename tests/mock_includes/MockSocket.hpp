@@ -26,16 +26,19 @@ public:
     // These methods are overridden to provide custom behavior for testing.
 
     // Creates a socket
-    virtual int socket(int domain, int type, int protocol) const;
+    virtual int socket() const;
 
     // Binds the socket to an IP address and port
-    virtual int bind(int fd, const std::string &ip, int port) const;
+    virtual int bind(int fd, int port) const;
 
     // Listens for incoming connections
     virtual int listen(int fd, int maxConnections) const;
 
     // Performs file control operations on a socket
     virtual int fcntl(int fd, int cmd, int arg) const;
+
+    // Sets the socket to non-blocking mode
+    virtual int setNonBlocking(int fd) const;
 
     // Accepts an incoming connection
     virtual std::pair<int, std::pair<std::string, std::string>> accept(int fd) const;

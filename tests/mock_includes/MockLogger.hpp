@@ -22,7 +22,9 @@ public:
     // These methods are overridden to provide custom behavior for testing.
     virtual void errorLog(const LogLevel logLevel, const std::string &message); // Method to log error events
     virtual void accessLog(const IRequest &request, const Response &response);  // Method to log access events
-    virtual void writeLogBufferToFile();                                      // Method to write the log buffer to the log file
+    virtual void writeLogBufferToFile();                                        // Method to write the log buffer to the log file
+    virtual int getLogFileDescriptor() const;                                   // Getter method for log file descriptor
+    virtual void configure(const IConfiguration *);                             // Method to configure the Logger instance
 };
 
 #endif // MOCKLOGGER_HPP

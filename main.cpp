@@ -2,6 +2,7 @@
 #include "includes/Server.hpp"
 #include "includes/Router.hpp"
 #include "includes/IClientHandler.hpp"
+#include "includes/IBufferManager.hpp"
 #include "includes/RequestParser.hpp"
 #include "includes/ARequestHandler.hpp"
 #include "includes/Response.hpp"
@@ -30,25 +31,50 @@
 
 int main(int argc, char **argv)
 {
-    // Instantiate the errorLogger.
-    Logger errorLogger;
-    // Instantiate the exceptionHandler.
-    ExceptionHandler exceptionHandler(errorLogger);
+    ILogger *errorLogger;
+    ILogger *accessLogger;
+    IExceptionHandler *exceptionHandler;
+    ISocket *socket;
+    IConfiguration *configuration;
+    IPollfdManager *pollfdManager;
+    Server *server;
+    // ISessions *sessions;
+    IClientHandler *clientHandler;
+    // IRequestParser *requestParser;
+    // IRouter *router;
+    // IRequestHandler *requestHandler;
+    // IBufferManager *bufferManager;
 
     try
     {
-        // Instantiate the IConfiguration instance. Verifies, reads, parses, and stores the config file data.
-        Configuration configuration(argc, argv, errorLogger, exceptionHandler);
-        // Instantiate the PollfdManager. Manages the pollfd array
-        PollfdManager pollfdManager(configuration.getMaxConnections());
-        // Re-instantiate the errorLogger to apply configuration.
-        //errorLogger Logger(ERRORLOGGER, configuration, pollfdManager);
+
+        // Instantiate the errorLogger.
+        errorLogger = new Logger(ERRORLOGGER);
+        
+        // Instantiate the exceptionHandler.
+        exceptionHandler = new ExceptionHandler(errorLogger);
+        
+        // Instantiate the Socket instance.
+        socket = new Socket();
+        
+        // Instantiate the IConfiguration instance.
+        configuration = new Configuration();
+
+        // parse the configuration file
+        
+
+        // Configure errorLogger
+        errorLogger->configure(configuration);
+        
         // Instantiate the accessLogger, primarily for use by the RequestHandler class to handle access event logging.
-        Logger accessLogger(ACCESSLOGGER, configuration, pollfdManager);
-        // Instantiate the Socket instance. Provides utility functions for socket operations.
-        Socket socket;
+        accessLogger = new Logger(ACCESSLOGGER, configuration);
+       
         // Instantiate the Server. Sets up connectivity, responsible for polling and accepting connections.
-        Server server(socket, pollfdManager, configuration, errorLogger, accessLogger, exceptionHandler);
+        server = new Server(socket, pollfdManager, configuration, errorLogger, accessLogger, exceptionHandler);
+        
+        // Instantiate the PollfdManager. Manages the pollfd array
+        pollfdManager = new PollfdManager(configuration, errorLogger, accessLogger, server);
+    
         // Instantiate the Sessions. Coordinates request processing utilizing the poll fd array.
         Sessions sessions(socket, pollfdManager, configuration, errorLogger, accessLogger, exceptionHandler);
 
@@ -58,20 +84,22 @@ int main(int argc, char **argv)
             try
             {
                 // Poll events in a non-blocking way.
-                server.pollEvents();
+                server->pollEvents();
+
                 // Accept new connections.
-                server.acceptConnection();
+                server->acceptConnection();
+
                 // Process events.
                 sessions.processEvents();
             }
             catch (WebservException &e)
             {
-                exceptionHandler.handleException(e, "webserv core cycle: ");
+                exceptionHandler->handleException(e, "webserv core cycle: ");
             }
         }
     }
     catch (WebservException &e)
     {
-        exceptionHandler.handleException(e, "webserv setup: ");
+        exceptionHandler->handleException(e, "webserv setup: ");
     }
 }

@@ -24,33 +24,43 @@
  */
 
 // Constructor: Initializes ExceptionHandler with an errorLogger instance, _server linking is deferred
-ExceptionHandler::ExceptionHandler(ILogger &errorLogger)
+ExceptionHandler::ExceptionHandler(ILogger *errorLogger)
     : _errorLogger(errorLogger),
       _server(nullptr)
 {
     // Log debug message indicating the creation of an ExceptionHandler instance.
-    this->_errorLogger.errorLog(DEBUG, "ExceptionHandler instance created.");
+    this->_errorLogger->errorLog(DEBUG, "ExceptionHandler instance created.");
+}
+
+// Constructor: Initializes ExceptionHandler with an errorLogger instance and a pointer to the server instance.
+ExceptionHandler::ExceptionHandler(ILogger *errorLogger, Server *server)
+    : _errorLogger(errorLogger),
+      _server(server)
+{
+    // Log debug message indicating the creation of an ExceptionHandler instance.
+    this->_errorLogger->errorLog(DEBUG, "ExceptionHandler instance created.");
 }
 
 // Destructor: No dynamic memory management, so a default destructor is sufficient.
 ExceptionHandler::~ExceptionHandler()
 {
     // Log debug message indicating the destruction of an ExceptionHandler instance.
-    this->_errorLogger.errorLog(DEBUG, "ExceptionHandler instance destroyed.");
+    this->_errorLogger->errorLog(DEBUG, "ExceptionHandler instance destroyed.");
 }
 
 // _handleWebservException method: Logs exception details and handles critical exceptions.
 int ExceptionHandler::_handleWebservException(const WebservException &e, const std::string &context) const
 {
     // Log the exception details, including context and error message.
-    this->_errorLogger.errorLog(e.getLogLevel(), "[EXCEPTION] " + context + (context.empty() ? ": " : " : ") + e.what());
+    this->_errorLogger->errorLog(e.getLogLevel(), "[EXCEPTION] " + context + (context.empty() ? ": " : " : ") + e.what());
 
     // Check if the exception's log level is critical.
     if (e.getLogLevel() == CRITICAL)
     {
         // If critical, log termination message and terminate the server.
-        this->_errorLogger.errorLog(CRITICAL, "webserv will now terminate.");
-        this->_server->terminate(e.getErrorCode());
+        this->_errorLogger->errorLog(CRITICAL, "webserv will now terminate.");
+        if (this->_server)
+            this->_server->terminate(e.getErrorCode());
     }
     return e.getErrorCode();
 }
@@ -59,7 +69,7 @@ int ExceptionHandler::_handleWebservException(const WebservException &e, const s
 int ExceptionHandler::_handleStandardException(const std::exception &e, const std::string &context) const
 {
     // Log the exception details, including context and error message.
-    this->_errorLogger.errorLog(UNKNOWN, "[EXCEPTION] " + context + (context.empty() ? ": " : " : ") + e.what());
+    this->_errorLogger->errorLog(UNKNOWN, "[EXCEPTION] " + context + (context.empty() ? ": " : " : ") + e.what());
     return 0;
 }
 
@@ -74,12 +84,6 @@ int ExceptionHandler::handleException(const std::exception &e, const std::string
     {
         return this->_handleStandardException(e, context);
     }
-}
-
-// linkServer method: Sets the server instance to be referenced for termination.
-void ExceptionHandler::linkServer(Server *server)
-{
-    this->_server = server;
 }
 
 // Path: srcs/ExceptionHandler.cpp

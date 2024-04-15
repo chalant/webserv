@@ -35,7 +35,7 @@ class Server;
 class ExceptionHandler : public IExceptionHandler
 {
 private:
-    ILogger &_errorLogger;                            // Reference to the errorLogger instance
+    ILogger *_errorLogger;                            // Reference to the errorLogger instance
     Server *_server;                                  // Pointer to the server instance
     const HttpStatusCodeHelper _httpStatusCodeHelper; // Helper instance for HTTP status codes
     int _handleWebservException(const WebservException &e, const std::string &context = "") const;
@@ -43,13 +43,13 @@ private:
 
 public:
     // Constructor: Initializes ExceptionHandler with an errorLogger instance.
-    ExceptionHandler(ILogger &errorLogger);
+    ExceptionHandler(ILogger *errorLogger);
+
+    // Constructor: Initializes ExceptionHandler with an errorLogger instance and a pointer to the server instance.
+    ExceptionHandler(ILogger *errorLogger, Server *server);
 
     // Destructor: No dynamic memory management, so a default destructor is sufficient.
     ~ExceptionHandler();
-
-    // linkServer method: Sets the server instance to be referenced for termination.
-    void linkServer(Server *_server);
 
     // handleException method: Logs exception details and handles critical exceptions.
     int handleException(const std::exception &e, const std::string &context = "") const;

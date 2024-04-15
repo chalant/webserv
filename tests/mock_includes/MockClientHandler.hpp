@@ -29,3 +29,6 @@ public:
     virtual ssize_t sendResponse(const std::vector<char> &response) const;
     virtual ssize_t sendResponse(const std::string &response) const;
 };
+
+#endif // MOCKCLIENTHANDLER_HPP
+// Path: tests/mock_includes/MockClientHandler.hpp

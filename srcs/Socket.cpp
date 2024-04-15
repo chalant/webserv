@@ -12,19 +12,19 @@
 // Destructor
 Socket::~Socket() {}
 
-// Creates a socket
-int Socket::socket(int domain, int type, int protocol) const
+// Creates a IPv4 TCP socket
+int Socket::socket() const
 {
     // return the file descriptor for the socket
     // -1 is returned on error
     // domain: communication domain (AF_INET for IPv4)
     // type: communication semantics (SOCK_STREAM for TCP)
     // protocol: protocol to be used with the socket (0 for default protocol)
-    return ::socket(domain, type, protocol);
+    return ::socket(AF_INET, SOCK_STREAM, 0);
 }
 
 // Binds the socket to an address
-int Socket::bind(int socketDescriptor, const std::string &ip, int port) const
+int Socket::bind(int socketDescriptor, int port) const
 {
     // return the result of binding the socket to the address
     // 0 is returned on success, -1 on error
@@ -39,18 +39,7 @@ int Socket::bind(int socketDescriptor, const std::string &ip, int port) const
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
-    if (ip.empty())
-    {
-        addr.sin_addr.s_addr = INADDR_ANY;
-    }
-    else
-    {
-        addr.sin_addr.s_addr = inet_addr(ip.c_str());
-        if (addr.sin_addr.s_addr == INADDR_NONE)
-        {
-            return -1;
-        }
-    }
+    addr.sin_addr.s_addr = INADDR_ANY;
     return ::bind(socketDescriptor, (struct sockaddr *)&addr, sizeof(addr));
 }
 
@@ -69,6 +58,20 @@ int Socket::fcntl(int socketDescriptor, int cmd, int arg) const
     // cmd: operation to be performed
     // arg: argument to the operation
     return ::fcntl(socketDescriptor, cmd, arg);
+}
+
+// Sets the socket to non-blocking mode
+int Socket::setNonBlocking(int socketDescriptor) const
+{
+    // Add non-blocking mode to the current flags of the socket
+    // socketDescriptor: file descriptor of the socket
+    // Returns: 0 on success, -1 on error
+    int flags = ::fcntl(socketDescriptor, F_GETFL, 0);
+    if (flags == -1)
+    {
+        return -1;
+    }
+    return ::fcntl(socketDescriptor, F_SETFL, flags | O_NONBLOCK);
 }
 
 // Accept an incoming connection

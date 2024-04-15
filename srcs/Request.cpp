@@ -31,7 +31,7 @@
  */
 
 // Constructor initializes the Request object with a RequestHelper and a IConfiguration object
-Request::Request(const RequestHelper &requestHelper, const IConfiguration &configuration)
+Request::Request(const RequestHelper &requestHelper, const IConfiguration *configuration)
     : _configuration(configuration),
       _requestHelper(requestHelper) {}
 
@@ -109,7 +109,7 @@ const std::map<HttpHeader, std::string> Request::getHeaders() const
 }
 
 // Getter function for retrieving the headers of the request as string-keyed map
-const std::map<std::string, std::string> Request::getHeadersString() const
+std::map<std::string, std::string> Request::getHeadersString() const
 {
     std::map<std::string, std::string> headersStrings;
     for (std::map<HttpHeader, std::string>::const_iterator it = this->_headers.begin(); it != this->_headers.end(); ++it)
@@ -182,7 +182,7 @@ void Request::setMethod(const std::string &method)
 void Request::setUri(const std::string &uri)
 {
     // Check if the URI size exceeds the maximum allowed URI size
-    if (uri.size() > this->_configuration.getClientMaxUriSize())
+    if (uri.size() > this->_configuration->getClientMaxUriSize())
         throw HttpStatusCodeException(URI_TOO_LONG); // Throw '414' status error
 
     // Check if the URI contains any whitespace characters
@@ -243,7 +243,7 @@ void Request::setBody(const std::vector<char> &body)
         return; // If empty, do nothing (no body to set)
 
     // Check if the body size exceeds the maximum allowed body size
-    if (body.size() > this->_configuration.getClientMaxBodySize())
+    if (body.size() > this->_configuration->getClientMaxBodySize())
         throw HttpStatusCodeException(PAYLOAD_TOO_LARGE); // Throw '413' status error
 
     // Set the body of the request

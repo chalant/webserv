@@ -59,7 +59,7 @@ private:
 
 public:
     // Constructor
-    HttpMethodHelper(const IConfiguration &configuration);
+    HttpMethodHelper(const IConfiguration *configuration);
 
     // Member functions to access data
     const std::string &httpMethodStringMap(HttpMethod method) const; // Get string representation of HttpMethod
