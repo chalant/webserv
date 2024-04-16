@@ -13,7 +13,7 @@ GrammarSymbol	*next_symbol(const Grammar& grammar, EarleyItem& item) {
 }
 
 Recognizer::Recognizer(const Grammar& grammar):m_grammar(grammar) {
-	
+	m_sets = std::vector<std::vector<EarleyItem>>();
 }
 
 Recognizer::~Recognizer() {
@@ -57,8 +57,18 @@ void	Recognizer::predict() {
 void	Recognizer::recognize(std::vector<Token*>& tokens) {
 	std::vector<EarleyItem> *set;
 	GrammarSymbol			*m_symbol;
-	//todo: initialize set first
-
+	//initialize sets to the number of tokens.
+	m_sets.clear();
+	for (size_t i = 0; i < tokens.size(); i++) {
+		m_sets.push_back(std::vector<EarleyItem>());
+	}
+	// populate first set.
+	for (size_t i = 0; i < m_grammar.size(); i++) {
+		if (m_grammar.getRule(0)->getName() == m_grammar.getRule(i)->getName()) {
+			m_sets[0].push_back(EarleyItem(i, 0, 0));
+		}
+	}
+	// populate the rest of the sets.
 	for (size_t i = 0; i < tokens.size(); i++) {
 		m_set = &m_sets[i];
 		m_state_idx = i;

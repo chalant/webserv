@@ -1,4 +1,5 @@
 #include "Grammar.hpp"
+#include "Parser.hpp"
 #include "TestSemanticActions.hpp"
 
 int	main(void) {
@@ -9,17 +10,18 @@ int	main(void) {
 	RelayAction	relay;
 
 	GrammarRuleID	sum_id;
+	GrammarRuleID	product_id;
+	GrammarRuleID	factor_id;
+	GrammarRuleID	number_id;
+
 	sum_id.id = 0;
 	sum_id.name = std::string("sum");
-	GrammarRuleID	product_id;
 	product_id.id = 1;
 	product_id.name = std::string("product");
-	GrammarRuleID	factor_id;
-	product_id.id = 2;
-	product_id.name = std::string("factor");
-	GrammarRuleID	number_id;
-	product_id.id = 3;
-	product_id.name = std::string("number");
+	factor_id.id = 2;
+	factor_id.name = std::string("factor");
+	number_id.id = 3;
+	number_id.name = std::string("number");
 
 
 	GrammarRule		sum1(sum_action, sum_id);
@@ -60,6 +62,19 @@ int	main(void) {
 	arithmetic.addRule(&factor1);
 	arithmetic.addRule(&factor2);
 	arithmetic.addRule(&number);
+
+	std::vector<Token*> tokens = std::vector<Token*>();
+	tokens.push_back(new Token("1", 0));
+	tokens.push_back(new Token("+", 0));
+	tokens.push_back(new Token("2", 0));
+	tokens.push_back(new Token("*", 0));
+	tokens.push_back(new Token("(", 0));
+	tokens.push_back(new Token("3", 0));
+	tokens.push_back(new Token("+", 0));
+	tokens.push_back(new Token("4", 0));
+	tokens.push_back(new Token(")", 0));
+	Recognizer	recognizer(arithmetic);
+	recognizer.recognize(tokens);
 
 	return 0;
 }

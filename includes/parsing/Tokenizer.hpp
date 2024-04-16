@@ -7,6 +7,7 @@ struct Token
 {
 	const std::string	value;
 	int					flags;
+	Token(const std::string value, int flags);
 };
 
 
