@@ -21,31 +21,32 @@
 #include "IConfiguration.hpp"
 #include "ILogger.hpp"
 #include "IExceptionHandler.hpp"
+#include "Socket.hpp"
 #include "PollfdManager.hpp"
 
 class Server
 {
 private:
-    PollfdManager &_pollfdManager;        // Reference to the PollfdManager
-    const IConfiguration &_configuration; // Reference to the server IConfiguration settings
-    ILogger &_errorLogger;                // Reference to the error logger
-    ILogger &_accessLogger;               // Reference to the access logger
-    IExceptionHandler &_exceptionHandler;  // Reference to the exception handler
+    const ISocket *_socket;                     // Reference to the Socket instance
+    IPollfdManager *_pollfdManager;        // Reference to the PollfdManager
+    const IConfiguration *_configuration; // Reference to the server IConfiguration settings
+    ILogger *_errorLogger;                // Reference to the error logger
+    ILogger *_accessLogger;               // Reference to the access logger
+    IExceptionHandler *_exceptionHandler;  // Reference to the exception handler
     size_t _maxConnections;               // Maximum allowed connections
     short _pollMask;                      // Poll mask for polling events
+    const int _serverSocketDescriptor;          // File descriptor for the server socket
 
 public:
-    Server(PollfdManager &pollfdManager, const IConfiguration &configuration,
-           ILogger &errorLogger, ILogger &accessLogger,
-           IExceptionHandler &exceptionHandler); // Constructor for Server class
-    const Server &operator=(const Server &src); // Assignment operator overload
+    Server(const ISocket *socket, IPollfdManager *pollfdManager, const IConfiguration *configuration,
+           ILogger *errorLogger, ILogger *accessLogger,
+           IExceptionHandler *exceptionHandler); // Constructor for Server class
     ~Server();                                  // Destructor for Server class
-    void addpollfd(pollfd pollFd);              // Method to add a polling file descriptor
     PollfdQueue &getPollfdQueue();              // Method to get a reference to the PollfdQueue
     void acceptConnection();                    // Method to accept incoming connections
     void pollEvents();                          // Method to poll events
-    void terminate(int exit_code);              // Method to terminate the server
-                                                // Closes file descriptors, clears memory, writes log buffers to file, and exits
+    void terminate(int exit_code);              // Method to terminate the server Closes file descriptors, clears memory, writes log buffers to file, and exits
+    int getServerSocketDescriptor() const;      // Method to get the server socket descriptor
 };
 
 #endif // SERVER_HPP

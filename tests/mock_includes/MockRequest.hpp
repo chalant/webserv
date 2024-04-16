@@ -46,9 +46,11 @@ public:
 
     // Getters
     virtual HttpMethod getMethod() const;
+    virtual std::string getMethodString() const;
     virtual std::string getUri() const;
     virtual HttpVersion getHttpVersion() const;
     virtual std::string getHeaderValue(HttpHeader header) const;
+    virtual std::map<std::string, std::string> getHeadersString() const;
     virtual std::map<std::string, std::string> getQueryParameters() const;
     virtual std::string getClientIp() const;
     virtual std::map<std::string, std::string> getCookies() const;

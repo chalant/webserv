@@ -2,12 +2,14 @@
 #define IConfiguration_HPP
 
 /*
- * File: IConfiguration.hpp
- * ------------------------
- * This file defines the IIConfiguration interface, which serves as the abstract base
- * class for IConfigurations in webserv. IIConfiguration provides a contract
- * for classes that represent different IConfigurations, allowing for polymorphic behavior
- * and dependency injection.
+ * IConfiguration.hpp
+ * Abstract base class for Configuration in webserv
+ *
+ * This file defines the Configuration interface, which serves as the abstract base
+ * class for the Configuration in webserv. 
+ * IConfiguration allows for polymorphic behavior and dependency injection,
+ * thereby enabling us to create a MockConfiguration class for isolated unit testing.
+ * 
  */
 
 #include <set>

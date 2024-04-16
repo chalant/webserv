@@ -1,6 +1,17 @@
 #ifndef IREQUEST_HPP
 #define IREQUEST_HPP
 
+/*
+ * IRequest.hpp
+ * Abstract base class for Request in webserv
+ *
+ * This file defines the Request interface, which serves as the abstract base
+ * class for the Request in webserv. 
+ * IRequest allows for polymorphic behavior and dependency injection,
+ * thereby enabling us to create a MockRequest class for isolated unit testing.
+ * 
+ */
+
 #include <string>
 #include <map>
 #include <vector>
@@ -19,12 +30,15 @@ public:
 
     // Getters
     virtual HttpMethod getMethod() const = 0;
+    virtual std::string getMethodString() const = 0;
     virtual std::string getUri() const = 0;
     virtual HttpVersion getHttpVersion() const = 0;
     virtual std::string getHeaderValue(HttpHeader header) const = 0;
+    virtual std::map<std::string, std::string> getHeadersString() const = 0;
     virtual std::map<std::string, std::string> getQueryParameters() const = 0;
     virtual std::map<std::string, std::string> getCookies() const = 0;
     virtual const std::vector<char> getBody() const = 0;
+    virtual std::string getClientIp() const = 0;
 
     // Setters
     virtual void setMethod(const std::string &method) = 0;

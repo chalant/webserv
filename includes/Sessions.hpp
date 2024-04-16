@@ -42,18 +42,19 @@ class Sessions
 {
 private:
     // Private member variables
+    const ISocket *_socket;                           // Reference to the Socket instance
     std::map<int, std::vector<char>> _responseBuffer; // Buffer for storing incompletely sent responses
-    PollfdManager &_pollfdManager;              // Reference to a queue of poll file descriptors
-    ClientHandler _clientHandler;                     // Handles communication with clients
+    IPollfdManager *_pollfdManager;                    // Reference to a queue of poll file descriptors
+    IClientHandler *_clientHandler;                   // Handles communication with clients
     const RequestParser _requestParser;               // Parses incoming requests
     const Router _router;                             // Routes requests to appropriate handlers
-    ARequestHandler *_requestHandler;                 // Pointer to the recruited request handler
+    //ARequestHandler *_requestHandler;                 // Pointer to the recruited request handler
     RequestHelper _requestHelper;                     // Helper class for request-related operations
     Request _request;                                 // Represents an HTTP request
     Response _response;                               // Represents an HTTP response
-    ILogger &_errorLogger;                            // Reference to the error logger
-    ILogger &_accessLogger;                           // Reference to the access logger
-    const IExceptionHandler &_exceptionHandler;        // Reference to the exception handler
+    ILogger *_errorLogger;                            // Reference to the error logger
+    ILogger *_accessLogger;                           // Reference to the access logger
+    const IExceptionHandler *_exceptionHandler;       // Reference to the exception handler
     short _pollExceptionMask;                         // Mask for poll exceptions
 
     // Private member functions
@@ -69,10 +70,7 @@ private:
 
 public:
     // Constructor
-    Sessions(PollfdManager &PollfdManager, const IConfiguration &configuration, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &IExceptionHandler, Server &server);
-
-    // Copy assignment operator
-    const Sessions &operator=(const Sessions &src);
+    Sessions(const ISocket *socket, IPollfdManager *PollfdManager, const IConfiguration *configuration, ILogger *errorLogger, ILogger *accessLogger, const IExceptionHandler *IExceptionHandler);
 
     // Destructor
     ~Sessions();

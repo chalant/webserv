@@ -59,12 +59,12 @@ class Logger : public ILogger
 {
 private:
     const LoggerType _type;
-    const std::string _logFile;
+    std::string _logFile;
     std::ostringstream _logBufferStream;
-    const LogLevel _logLevel;
-    const size_t _bufferSize;
-    const int _logFileDescriptor;
-    const bool _enabled;
+    LogLevel _logLevel;
+    size_t _bufferSize;
+    int _logFileDescriptor;
+    bool _enabled;
     const LogLevelHelper _logLevelHelper;
 
     // Private methods
@@ -73,15 +73,12 @@ private:
 
 public:
     // Constructors and Destructor
-    Logger();                                                                                         // Default constructor
-    Logger(const LoggerType type, const IConfiguration &configuration, PollfdManager &pollfdManager); // Constructor with type and IConfiguration
+    Logger(const LoggerType type);                                                                                // Default constructor
+    Logger(const LoggerType type, const IConfiguration *configuration); // Constructor with type and IConfiguration
     ~Logger();                                                                                        // Destructor
 
-    // Setter method
-    void setLogFilePollFd(pollfd *logFilePollFd); // Setter method for poll file descriptors pointer
-
     // Getter method
-    int getLogFileDescriptor() const; // Getter method for log file descriptor
+    virtual int getLogFileDescriptor() const; // Getter method for log file descriptor
 
     // Logging methods
     virtual void errorLog(const LogLevel logLevel, const std::string &message); // Method to log error messages
@@ -90,6 +87,9 @@ public:
     // Buffer methods
     void writeLogBufferToFile();         // Method to write the log buffer to the log file
     void writeLogBufferToFileBlocking(); // Method to write the log buffer to the log file in a blocking manner
+
+    // Configuration method
+    void configure(const IConfiguration *configuration); // Method to configure the Logger instance
 };
 
 #endif // LOGGER_HPP

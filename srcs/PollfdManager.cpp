@@ -1,4 +1,5 @@
 #include "../includes/PollfdManager.hpp"
+#include "../includes/Server.hpp"
 
 /*
  * PollfdManager.hpp
@@ -12,13 +13,24 @@
  */
 
 // Constructor for PollFdManager class
-PollfdManager::PollfdManager(size_t maxConnections)
-    : _pollfds(maxConnections + 3) // + 3 for server socket, error log, and access log
+PollfdManager::PollfdManager(const IConfiguration* configuration, const ILogger* errorLogger, const ILogger* accessLogger, const Server* server)
+    : _pollfds(configuration ? configuration->getMaxConnections() + 3 : 0) // + 3 for server socket, error log, and access log
 {
-    // Zero-initialize reserved positions in the PollfdQueue
-    this->_pollfds[SERVER_SOCKET_POLL_FD] = {-1, 0, 0};
-    this->_pollfds[ERROR_LOG_POLL_FD] = {-1, 0, 0};
-    this->_pollfds[ACCESS_LOG_POLL_FD] = {-1, 0, 0};
+    // Validate dependencies
+    if (!configuration || !errorLogger || !accessLogger || !server)
+    {
+        throw std::invalid_argument("Null pointer encountered in constructor dependencies");
+    }
+
+    // Obtain necessary descriptors from dependencies
+    int serverSocketDescriptor = server->getServerSocketDescriptor();
+    int errorLogFileDescriptor = errorLogger->getLogFileDescriptor();
+    int accessLogFileDescriptor = accessLogger->getLogFileDescriptor();
+
+    // Make pollfds entries for server socket, error log, and access log
+    this->_pollfds[SERVER_SOCKET_POLL_FD] = {serverSocketDescriptor, POLLIN, 0};
+    this->_pollfds[ERROR_LOG_POLL_FD] = {errorLogFileDescriptor, POLLOUT, 0};
+    this->_pollfds[ACCESS_LOG_POLL_FD] = {accessLogFileDescriptor, POLLOUT, 0};
 }
 
 // Destructor for PollFdManager class
@@ -76,34 +88,10 @@ bool PollfdManager::hasReachedCapacity() const
     return this->_pollfds.size() == this->_pollfds.capacity();
 }
 
-// Setter method for server socket poll file descriptor
-void PollfdManager::setServerSocketPollFd(pollfd serverSocketPollFd)
+// Method to get a pointer to the pollfd array
+pollfd *PollfdManager::getPollfdArray()
 {
-    this->_pollfds[SERVER_SOCKET_POLL_FD] = serverSocketPollFd;
-}
-
-// Setter method for error log file poll file descriptor
-void PollfdManager::setErrorLogFilePollFd(pollfd logFilePollFd)
-{
-    this->_pollfds[ERROR_LOG_POLL_FD] = logFilePollFd;
-}
-
-// Setter method for access log file poll file descriptor
-void PollfdManager::setAccessLogFilePollFd(pollfd logFilePollFd)
-{
-    this->_pollfds[ACCESS_LOG_POLL_FD] = logFilePollFd;
-}
-
-// Method to get a reference to a specific pollfd
-pollfd &PollfdManager::getPollfd(int position)
-{
-    return this->_pollfds[position];
-}
-
-// Method to get a reference to the PollfdQueue
-PollfdQueue &PollfdManager::getPollfdQueue()
-{
-    return this->_pollfds;
+    return this->_pollfds.data();
 }
 
 // Path: srcs/PollfdManager.cpp

@@ -104,4 +104,10 @@ size_t PollfdQueue::capacity() const
     return this->_capacity;
 }
 
+// data: Returns a pointer to the internal array of pollfd objects.
+pollfd *PollfdQueue::data()
+{
+    return this->_pollfdArray.data();
+}
+
 // Path: srcs/PollfdQueue.cpp

@@ -27,6 +27,7 @@ Do exception handling | IExceptionHandler class (DONE)
 
 Write Unit tests.
     -RequestParser_test (needs extending)
+    -ClientHandler_test (needs extending + refactoring)
     -etc.
 
 Implement Logging | ILogger class (DONE)
