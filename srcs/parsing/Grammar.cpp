@@ -13,3 +13,7 @@ void	Grammar::addRule(GrammarRule* rule) {
 const	GrammarRule*	Grammar::getRule(int index) const {
 	return m_rules.at(index);
 }
+
+size_t	Grammar::size() const {
+	return m_size;
+}

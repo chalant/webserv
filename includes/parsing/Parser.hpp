@@ -36,10 +36,13 @@ struct ParseTree {
 class Recognizer {
 	private:
 		const Grammar&	m_grammar;
-		Token			*m_token;
-		GrammarSymbol	*m_symbol;
 		int				m_state_idx;
 		std::vector<std::vector<EarleyItem>>	m_sets;
+		// variables.
+		std::vector<EarleyItem>	*m_set;
+		Token			*m_token;
+		GrammarSymbol	*m_symbol;
+		EarleyItem		*m_item;
 		void			scan(void);
 		void			complete(void);
 		void			predict(void);
