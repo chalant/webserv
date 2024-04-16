@@ -18,7 +18,7 @@
 #include "ILogger.hpp"
 
 // Forward declaration of Server class
-class Server;
+class IServer;
 
 // Enumeration for fixed positions in the PollfdQueue
 enum PollfdQueueFixedPositions
@@ -37,7 +37,7 @@ private:
 
 public:
     // Constructor for PollfdManager class
-    PollfdManager(const IConfiguration *configuration, const ILogger *errorLogger, const ILogger *accessLogger, const Server *server);
+    PollfdManager(const IConfiguration *configuration, const ILogger *errorLogger, const ILogger *accessLogger, const IServer *server);
 
     // Destructor for PollfdManager class
     ~PollfdManager();
@@ -60,14 +60,32 @@ public:
     // Method to get the events at a specific position in the PollfdQueue
     virtual int getEvents(int position);
 
+    // Method to get the server socket events
+    virtual int getServersocketEvents();
+
+    // Method to get the error log events
+    virtual int getErrorLogEvents();
+
+    // Method to get the access log events
+    virtual int getAccessLogEvents();
+
     // Method to get the file descriptor at a specific position in the PollfdQueue
     virtual int getFd(int position);
+
+    // Method to get the error log file descriptor
+    virtual int getErrorLogFd();
+
+    // Method to get the access log file descriptor
+    virtual int getAccessLogFd();
 
     // Method to check if the PollfdQueue has reached its capacity
     virtual bool hasReachedCapacity() const;
 
+    // Method to get the start index of the client sockets in PollfdQueue
+    virtual int getClientsIndex();
+
     // Method to get a pointer to the pollfd array
-    pollfd *getPollfdArray();
+    virtual pollfd *getPollfdArray();
 };
 
 #endif // POLLFDMANAGER_HPP

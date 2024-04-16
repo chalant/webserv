@@ -26,9 +26,6 @@ void MockLogger::accessLog(const IRequest &request, const Response &response)
     static_cast<void>(response);
 };
 
-// Method to write the log buffer to the log file
-void MockLogger::writeLogBufferToFile(){}; // Method to write the log buffer to the log file
-
 // Getter method for log file descriptor
 int MockLogger::getLogFileDescriptor() const
 {

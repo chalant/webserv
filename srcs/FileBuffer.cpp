@@ -1,8 +1,7 @@
 #include "../includes/FileBuffer.hpp"
 
-FileBuffer::FileBuffer(int fileDescriptor, size_t maxSize, size_t flushThreshold)
-    : _fileDescriptor(fileDescriptor),
-      _maxSize(maxSize),
+FileBuffer::FileBuffer(size_t maxSize, size_t flushThreshold)
+    : _maxSize(maxSize),
       _flushThreshold(flushThreshold),
       _size(0)
 {
@@ -11,7 +10,6 @@ FileBuffer::FileBuffer(int fileDescriptor, size_t maxSize, size_t flushThreshold
 
 FileBuffer::~FileBuffer()
 {
-    this->flush();
     this->_buffer.clear();
 }
 
@@ -28,13 +26,13 @@ ssize_t FileBuffer::push(const std::vector<char> &data)
     return data.size();
 }
 
-ssize_t FileBuffer::flush()
+ssize_t FileBuffer::flush(int fileDescriptor)
 {
     if (this->_size < this->_flushThreshold)
     {
         return 0;
     }
-    ssize_t bytesWritten = ::write(this->_fileDescriptor, this->_buffer.data(), this->_size);
+    ssize_t bytesWritten = ::write(fileDescriptor, this->_buffer.data(), this->_size);
 
     if (bytesWritten == -1)
     {
@@ -49,5 +47,5 @@ ssize_t FileBuffer::flush()
             memmove(&this->_buffer[0], &this->_buffer[bytesWritten], this->_size);
         }
     }
-    return bytesWritten;
+    return this->_size;
 }

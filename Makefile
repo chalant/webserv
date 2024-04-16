@@ -20,48 +20,48 @@ FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
 #FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
 HEADERS     =	ArequestHandler.hpp \
-				CGIRequestHandler.hpp \
+				CGIResponseGenerator.hpp \
 				IClientHandler.hpp \
 				IConfiguration.hpp \
 				IConfigurationLoader.hpp \
-				DeleteMethodRequestHandler.hpp \
-				ErrorPageRequestHandler.hpp \
+				DeleteMethodResponseGenerator.hpp \
+				ErrorPageResponseGenerator.hpp \
 				IExceptionHandler.hpp \
-				GetMethodRequestHandler \
+				GetMethodResponseGenerator \
 				ILogger.hpp \
 				PollfdQueue.hpp \
-				PostMethodRequestHandler.hpp \
+				PostMethodResponseGenerator.hpp \
 				IRequest.hpp \
 				RequestParser.hpp \
 				Response.hpp \
 				Router.hpp \
 				Server.hpp \
-				Sessions.hpp \
-				StaticFileRequestHandler.hpp \
-				UploadRequestHandler.hpp \
+				RequestHandler.hpp \
+				StaticFileResponseGenerator.hpp \
+				UploadResponseGenerator.hpp \
 				WebservExceptions.hpp \
 
 				
 SRCS        =	main.cpp \
 				ArequestHandler.cpp \
-				CGIRequestHandler.cpp \
+				CGIResponseGenerator.cpp \
 				IClientHandler.cpp \
 				IConfiguration.cpp \
-				DeleteMethodRequestHandler.cpp \
-				ErrorPageRequestHandler.cpp \
+				DeleteMethodResponseGenerator.cpp \
+				ErrorPageResponseGenerator.cpp \
 				IExceptionHandler.cpp \
-				GetMethodRequestHandler.cpp \
+				GetMethodResponseGenerator.cpp \
 				ILogger.cpp \
 				PollfdQueue.cpp \
-				PostMethodRequestHandler.cpp \
+				PostMethodResponseGenerator.cpp \
 				IRequest.cpp \
 				RequestParser.cpp \
 				Response.cpp \
 				Router.cpp \
 				Server.cpp \
-				Sessions.cpp \
-				StaticFileRequestHandler.cpp \
-				UploadRequestHandler.cpp \
+				RequestHandler.cpp \
+				StaticFileResponseGenerator.cpp \
+				UploadResponseGenerator.cpp \
 				
 #-------------------OBJECTS----------------------
 OBJS        =   $(SRCS:.cpp=.o)

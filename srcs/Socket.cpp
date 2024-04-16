@@ -117,7 +117,7 @@ int Socket::send(int socketDescriptor, const std::vector<char> &data) const
     // data: data to be sent
     // returns the number of bytes sent
     // -1 is returned on error
-    return ::send(socketDescriptor, data.data(), data.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
+    return ::send(socketDescriptor, data, strlen(data), MSG_DONTWAIT | MSG_NOSIGNAL);
 }
 
 // Receives data from the socket Non-Blockingly
@@ -129,17 +129,4 @@ ssize_t Socket::recv(int socketDescriptor, char *buffer, size_t len) const
     // returns the received data
     // an empty vector is returned on error
     return ::recv(socketDescriptor, buffer, len, MSG_DONTWAIT);
-}
-
-// Polls the socket for events
-int Socket::poll(struct pollfd *fds, nfds_t nfds) const
-{
-    // poll the socket for events
-    // fds: array of pollfd structures
-    // nfds: number of pollfd structures
-    // timeout: timeout in milliseconds
-    // returns the number of file descriptors with events
-    // -1 is returned on error
-    int timeout = 100;
-    return ::poll(fds, nfds, timeout);
 }

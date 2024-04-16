@@ -111,14 +111,4 @@ ssize_t MockSocket::recv(int socketDescriptor, char *buffer, size_t len) const
     }
 }
 
-// Polls the socket for events
-int MockSocket::poll(struct pollfd *fds, nfds_t nfds) const
-{
-    // Mock implementation for polling the socket for events
-    // Returns the number of file descriptors with events
-    static_cast<void>(fds);
-    static_cast<void>(nfds);
-    return 1;
-}
-
 // Path: tests/mock_srcs/MockServer.cpp

@@ -2,53 +2,63 @@
 #include "../includes/FileBuffer.hpp"
 #include "../includes/SocketBuffer.hpp"
 
-BufferManager::BufferManager()
-{
-}
+BufferManager::BufferManager() {}
 
 BufferManager::~BufferManager()
 {
-    for (int i = 0; i < this->_buffers.size(); i++)
+    std::map<int, IBuffer *>::iterator it;
+    for (it = this->_buffers.begin(); it != this->_buffers.end(); it++)
     {
-        delete this->_buffers[i];
+        while (it->second->flush(it->first) > 0)
+            ; // flush remaining data blockingly
+        this->destroyBuffer(it->first);
     }
-    this->_buffers.clear();
 }
 
-void BufferManager::newFileBuffer(int fileDescriptor)
+void BufferManager::pushFileBuffer(int fileDescriptor, const std::vector<char> &data)
 {
-    this->_buffers.push_back(new FileBuffer(fileDescriptor));
+    if (this->_buffers.find(fileDescriptor) == this->_buffers.end())
+    {
+        this->_buffers[fileDescriptor] = new FileBuffer();
+    }
+    this->_buffers[fileDescriptor]->push(data);
 }
 
-void BufferManager::newSocketBuffer(int socketDescriptor)
+void BufferManager::pushSocketBuffer(int socketDescriptor, const std::vector<char> &data)
 {
-    this->_buffers.push_back(new SocketBuffer(socketDescriptor));
+    if (this->_buffers.find(socketDescriptor) == this->_buffers.end())
+    {
+        this->_buffers[socketDescriptor] = new SocketBuffer();
+    }
+    this->_buffers[socketDescriptor]->push(data);
 }
 
-void BufferManager::pushBuffer(IBuffer *buffer, const std::vector<char> &data)
+ssize_t BufferManager::flushBuffer(int descriptor)
 {
-    buffer->push(data);
+    // returns bytes remaining in buffer
+    // returns -1 in case of error
+    if (this->_buffers.find(descriptor) != this->_buffers.end())
+    {
+        return (this->_buffers[descriptor]->flush(descriptor));
+    }
+    return -1;
 }
 
 void BufferManager::flushBuffers()
 {
-    ssize_t returnValue;
-    for (int i = 0; i < this->_buffers.size();)
+    std::map<int, IBuffer *>::iterator it;
+    for (it = this->_buffers.begin(); it != this->_buffers.end(); it++)
     {
-        returnValue = this->_buffers[i]->flush();
-        if (returnValue == -1)
-        {
-            // Log error
-            // Handle error logging here
-        }
-        else if (dynamic_cast<SocketBuffer *>(this->_buffers[i]) && returnValue == 0)
-        {
-            delete this->_buffers[i];
-            this->_buffers.erase(this->_buffers.begin() + i);
-            continue;
-        }
-        // Increment i only if no elements were erased
-        ++i;
+        this->flushBuffer(it->first);
+    }
+}
+
+void BufferManager::destroyBuffer(int descriptor)
+{
+    if (this->_buffers.find(descriptor) != this->_buffers.end())
+    {
+        delete this->_buffers[descriptor];
+        this->_buffers.erase(descriptor);
     }
 }
 

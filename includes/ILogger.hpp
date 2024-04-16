@@ -28,9 +28,6 @@ public:
     virtual void errorLog(const LogLevel, const std::string &) = 0; // Method to log error messages
     virtual void accessLog(const IRequest &, const Response &) = 0;  // Method to log access events
 
-    // Buffer method
-    virtual void writeLogBufferToFile() = 0; // Method to write the log buffer to the log file
-
     // Getter method
     virtual int getLogFileDescriptor() const = 0; // Getter method for log file descriptor
 

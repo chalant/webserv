@@ -3,15 +3,15 @@
 
 /*
  * Socket - Class for socket operations.
- * 
- * This class provides methods for socket-related operations such as 
+ *
+ * This class provides methods for socket-related operations such as
  * creating a socket, binding to an address, listening for connections,
  * accepting connections, sending and receiving data, polling for events,
  * controlling socket file descriptor flags, and closing the socket.
  */
 
 #include "ISocket.hpp"
-#include <string>
+#include <cstring>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
@@ -39,7 +39,6 @@ public:
     // Sets the socket to non-blocking mode
     virtual int setNonBlocking(int fd) const;
 
-
     // Accepts an incoming connection
     virtual std::pair<int, std::pair<std::string, std::string>> accept(int fd) const;
 
@@ -48,10 +47,7 @@ public:
 
     // Receives data from the socket
     virtual ssize_t recv(int socketDescriptor, char *buffer, size_t len) const;
-
-    // Polls the socket for events
-    virtual int poll(struct pollfd *fds, nfds_t nfds) const;
 };
 
 #endif // SOCKET_HPP
-// Path: includes/ISocket.hpp
+       // Path: includes/ISocket.hpp

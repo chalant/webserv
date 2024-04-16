@@ -1,6 +1,6 @@
 #include "IBufferManager.hpp"
 #include "IBuffer.hpp"
-#include <vector>
+#include <map>
 
 class FileBuffer;
 class SocketBuffer;
@@ -8,17 +8,16 @@ class SocketBuffer;
 class BufferManager : public IBufferManager
 {
 private:
-    std::vector<IBuffer *> _buffers;
+    std::map<int, IBuffer *> _buffers;
 
 public:
     BufferManager();
     ~BufferManager();
 
-    // Factory methods to create new buffers
-    void newFileBuffer(int fileDescriptor);
-    void newSocketBuffer(int socketDescriptor);
-
     // Other methods for managing buffers
-    void pushBuffer(IBuffer *buffer, const std::vector<char> &data);
+    void pushFileBuffer(int fileDescriptor, const std::vector<char> &data);
+    void pushSocketBuffer(int socketDescriptor, const std::vector<char> &data);
+    ssize_t flushBuffer(int descriptor);
     void flushBuffers();
+    void destroyBuffer(int descriptor);
 };
