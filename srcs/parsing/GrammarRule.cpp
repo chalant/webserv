@@ -1,29 +1,32 @@
-#include "Grammar.hpp"
+#include "GrammarRule.hpp"
 
-GrammarRule::GrammarRule(ASemanticAction* action, const std::string name) {
-
+GrammarRule::GrammarRule(ASemanticAction& action, GrammarRuleID& rule_id): m_action(action), m_rule_id(rule_id) {
 }
 
 GrammarRule::~GrammarRule() {
 
 }
 
-void	GrammarRule::addSymbol(GrammarSymbol *symbol) {
-
-}
-
-const std::string&	GrammarRule::getName() const {
-
+const ASemanticAction&	GrammarRule::getSemanticAction() const {
+	return m_action;
 }
 
 int	GrammarRule::getRuleIndex() const {
+	return m_rule_idx;
+}
 
+const std::string&	GrammarRule::getName() const {
+	return m_rule_id.name;
 }
 
 void	GrammarRule::setRuleIndex(int rule_idx) {
-
+	m_rule_idx = rule_idx;
 }
 
-void	GrammarRule::applySemanticAction(std::vector<GrammarSymbol>& symbols) {
+void	GrammarRule::addSymbol(GrammarSymbol* symbol) {
+	m_symbols.push_back(symbol);
+}
 
+GrammarSymbol*	GrammarRule::getSymbol(int index) const {
+	return	m_symbols[index];
 }

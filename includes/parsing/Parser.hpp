@@ -27,30 +27,36 @@ class EarleyItem {
 };
 
 struct ParseTree {
+	int		start;
+	int		end;
+	bool	is_leaf;
 	std::vector<ParseTree>	subtrees;
 };
 
-
-class EarleyRecognizer {
+class Recognizer {
 	private:
-		Grammar	grammar;
-		void	scan(void);
-		void	complete(void);
-		void	predict(void);
+		const Grammar&	m_grammar;
+		Token			*m_token;
+		GrammarSymbol	*m_symbol;
+		int				m_state_idx;
+		std::vector<std::vector<EarleyItem>>	m_sets;
+		void			scan(void);
+		void			complete(void);
+		void			predict(void);
 	public:
-		EarleyRecognizer(const Grammar& grammar);
-		void	recognize(std::vector<std::vector<EarleyItem>> &sets);
+		Recognizer(const Grammar& grammar);
+		~Recognizer();
+		void			recognize(std::vector<Token*>& tokens);
 };
 
 class EarleyParser {
 	private:
 		std::vector<std::vector<EarleyItem>>	m_earley_sets;
 		std::vector<std::vector<EarleyEdge>>	m_chart;
-		EarleyRecognizer						m_recognizer;
+		Recognizer								m_recognizer;
 		ParseTree								m_parse_tree;
 	public:
-		EarleyParser(const Grammar& grammar);
-		void	parse();
+		void			parse(const Grammar& grammar);
 };
 
 #endif

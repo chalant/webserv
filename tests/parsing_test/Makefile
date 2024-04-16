@@ -1,57 +1,42 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: llapage <llapage@student.42.fr>            +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/05/15 10:54:31 by llapage           #+#    #+#              #
-#    Updated: 2024/04/10 14:18:25 by llapage          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+NAME            = parser_test
 
-NAME		= parser_test
-#-------------------SOURCES PATH----------------------
-SOURCES     = src/
-HEADER_PWD  = includes/
-#-------------------COMPILATION----------------------
-CC        	=   c++
-FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
-#FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
-#-------------------SOURCES FILES----------------------
-HEADERS     =	Grammar.hpp \
-				Parser.hpp \
-				SemanticAction.hpp \
-				Tokenizer.hpp
+SRC_DIR			= ../../srcs
+INCLUDES_DIR	= ../../includes
+HPARSER_DIR		= ../../includes/parsing/
+SSRC_DIR		= ../../srcs/parsing/
 
-SRCS        =	main.cpp
-				
-#-------------------OBJECTS----------------------
-OBJS        =   $(SRCS:.cpp=.o)
-#-------------------HEADERS----------------------
-I_H_LIB     =   $(addprefix( -include, $(H_LIB)))
-#-------------------COLORS-----------------------
-RED         =   \x1b[31m
-YELLOW      =   \x1b[33m
-GREEN       =   \x1b[32m
-NO_COLOR    =   \x1b[0m
-BOLD        =   \x1b[1m
-BOLD_OFF    =   \x1b[21m
-#-------------------RULES-----------------------
+SOURCES         = main.cpp \
+				  TestSemanticActions.cpp \
+				  ../../srcs/parsing/Grammar.cpp \
+				  ../../srcs/parsing/GrammarRule.cpp \
+				  ../../srcs/parsing/GrammarSymbol.cpp \
+				  ../../srcs/parsing/SymbolMatching.cpp
+
+OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
+
+CC              = c++
+CPPFLAGS        = -Wall -Wextra -Werror -I$(SRC_DIR) -I$(INCLUDES_DIR) -I$(HPARSER_DIR) -I$(SSRC_DIR)
+# Optional flags - uncomment to enable
+#CPPFLAGS += -std=c++98
+#CPPFLAGS += -g
+#CPPFLAGS += -fsanitize=address
+#CPPFLAGS += -O3
+
+all: $(NAME)
+	rm -f $(OBJECTS) 
+
+$(NAME): $(OBJECTS)
+	$(CC) $(CPPFLAGS) $(SANITIZE_FLAGS) $^ -o $@
+
 %.o: %.cpp
-			@printf "$(YELLOW)Generating $(NAME) objects... %-33.33s\r$(NO_COLOR)" $@
-			@$(CC) $(FLAGS) -c $< -o $@
-$(NAME):	$(OBJS)
-			@printf "$(GREEN)Compiling $(NAME)... %33s\r$(NO_COLOR)" " "
-			@$(CC) $(FLAGS) $(OBJS)  -o $(NAME)
-			@echo "\n$(GREEN)$(BOLD)$@ done !$(BOLD_OFF)$(NO_COLOR)"
-all:	$(NAME)
+	$(CC) $(CPPFLAGS) $(SANITIZE_FLAGS) -c $< -o $@
 
 clean:
-		@echo "$(RED)Deleting objects...$(NO_COLOR)"
-		@rm -rf $(OBJS)
-fclean:	clean
-		@echo "$(RED)Deleting executables...$(NO_COLOR)"
-		@rm -f $(NAME)
-re:	fclean all
-.PHONY: all clean fclean bonus re
+	rm -f $(OBJECTS)
+
+fclean: clean
+	rm -f $(NAME)
+
+re: fclean all
+
+.PHONY: all clean fclean re
