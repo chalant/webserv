@@ -1,6 +1,6 @@
-/*Router: Selects the right 'RequestHandler' based on URI (etc.) 
+/*Router: Selects the right 'ResponseGenerator' based on URI (etc.) 
 in the 'IRequest' (each locationblock in the conf file corresponds 
-to a 'RequestHandler' mapping, ie the Router selects the correct 
+to a 'ResponseGenerator' mapping, ie the Router selects the correct 
 locationblock)*/
 
 // Router class using std::map for route storage

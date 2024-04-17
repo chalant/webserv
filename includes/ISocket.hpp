@@ -3,8 +3,8 @@
 
 /*
  * ISocket - Interface for socket operations.
- * 
- * This interface defines methods for socket-related operations such as 
+ *
+ * This interface defines methods for socket-related operations such as
  * creating a socket, binding to an address, listening for connections,
  * accepting connections, sending and receiving data, polling for events,
  * controlling socket file descriptor flags, and closing the socket.
@@ -19,7 +19,7 @@
 class ISocket
 {
 public:
-    virtual ~ISocket() {};
+    virtual ~ISocket(){};
 
     // Creates a socket
     virtual int socket() const = 0;
@@ -44,9 +44,6 @@ public:
 
     // Receives data from the socket
     virtual ssize_t recv(int socketDescriptor, char *buffer, size_t len) const = 0;
-
-    // Polls the socket for events
-    virtual int poll(struct pollfd *fds, nfds_t nfds) const = 0;
 };
 
 #endif // ISOCKET_HPP

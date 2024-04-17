@@ -1,15 +1,13 @@
 #include "../includes/SocketBuffer.hpp"
 
-SocketBuffer::SocketBuffer(int socketDescriptor)
-    : _socketDescriptor(socketDescriptor),
-      _size(0)
+SocketBuffer::SocketBuffer()
+    : _size(0)
 {
     this->_buffer.reserve(4096);
 }
 
 SocketBuffer::~SocketBuffer()
 {
-    this->flush();
     this->_buffer.clear();
 }
 
@@ -26,9 +24,9 @@ ssize_t SocketBuffer::push(const std::vector<char> &data)
 
 // Sends the buffer to the socket descriptor
 // returns its remaining size (or -1 in case of error)
-ssize_t SocketBuffer::flush()
+ssize_t SocketBuffer::flush(int socketDescriptor)
 {
-    ssize_t bytesSent = send(this->_socketDescriptor, &this->_buffer[0], this->_size, MSG_DONTWAIT | MSG_NOSIGNAL);
+    ssize_t bytesSent = send(socketDescriptor, &this->_buffer[0], this->_size, MSG_DONTWAIT | MSG_NOSIGNAL);
     if (bytesSent == -1)
     {
         // without checking errno, we do not know the cause

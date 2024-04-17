@@ -11,16 +11,15 @@ class FileBuffer : public IBuffer
 {
 private:
     std::vector<char> _buffer;
-    const int _fileDescriptor;
     const size_t _maxSize;
     const size_t _flushThreshold;
     size_t _size;
 
 public:
-    FileBuffer(int fileDescriptor, size_t maxSize = DEFAULT_MAX_SIZE, size_t flushThreshold = DEFAULT_FLUSH_THRESHOLD);
+    FileBuffer(size_t maxSize = DEFAULT_MAX_SIZE, size_t flushThreshold = DEFAULT_FLUSH_THRESHOLD);
     ~FileBuffer();
     ssize_t push(const std::vector<char> &data);
-    ssize_t flush();
+    ssize_t flush(int fileDescriptor);
 };
 
 #endif // FILEBUFFER_HPP

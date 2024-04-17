@@ -48,9 +48,6 @@ public:
 
     // Receives data from the socket
     virtual ssize_t recv(int socketDescriptor, char *buffer, size_t len) const;
-
-    // Polls the socket for events
-    virtual int poll(struct pollfd *fds, nfds_t nfds) const;
 };
 
 #endif // MOCKSOCKET_HPP

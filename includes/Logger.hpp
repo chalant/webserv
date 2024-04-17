@@ -17,7 +17,7 @@
  * - Batch Processing: Log messages are processed in batches rather than individually to improve efficiency.
  * There are two instances of the Logger class in webserv:
  * 1. An error Logger, referenced for use in most classes.
- * 2. An access Logger, mainly intended for logging by the RequestHandler class.
+ * 2. An access Logger, mainly intended for logging by the ResponseGenerator class.
  *
  * Usage:
  * - When adding logging functionality to new components or modules, use the errorLog() and accessLog() methods to add log messages to the buffer.
@@ -46,6 +46,7 @@
 #include "IRequest.hpp"
 #include "Response.hpp"
 #include "IConfiguration.hpp"
+#include "BufferManager.hpp"
 #include "WebservExceptions.hpp"
 #include "PollfdManager.hpp"
 
@@ -60,7 +61,7 @@ class Logger : public ILogger
 private:
     const LoggerType _type;
     std::string _logFile;
-    std::ostringstream _logBufferStream;
+    IBufferManager *_bufferManager;
     LogLevel _logLevel;
     size_t _bufferSize;
     int _logFileDescriptor;
@@ -73,8 +74,8 @@ private:
 
 public:
     // Constructors and Destructor
-    Logger(const LoggerType type);                                                                                // Default constructor
-    Logger(const LoggerType type, const IConfiguration *configuration); // Constructor with type and IConfiguration
+    Logger(const LoggerType type, IBufferManager *bufferManager);                                                                                // Default constructor
+    Logger(const LoggerType type, IBufferManager *BufferManager,const IConfiguration *configuration); // Constructor with type and IConfiguration
     ~Logger();                                                                                        // Destructor
 
     // Getter method
@@ -83,10 +84,6 @@ public:
     // Logging methods
     virtual void errorLog(const LogLevel logLevel, const std::string &message); // Method to log error messages
     virtual void accessLog(const IRequest &request, const Response &response);   // Method to log access events
-
-    // Buffer methods
-    void writeLogBufferToFile();         // Method to write the log buffer to the log file
-    void writeLogBufferToFileBlocking(); // Method to write the log buffer to the log file in a blocking manner
 
     // Configuration method
     void configure(const IConfiguration *configuration); // Method to configure the Logger instance

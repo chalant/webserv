@@ -10,14 +10,13 @@ class SocketBuffer : public IBuffer
 {
 private:
     std::vector<char> _buffer;
-    const int _socketDescriptor;
     size_t _size;
 
 public:
-    SocketBuffer(int socketDescriptor);
+    SocketBuffer();
     ~SocketBuffer();
     ssize_t push(const std::vector<char> &data);
-    ssize_t flush();
+    ssize_t flush(int socketDescriptor);
 };
 
 #endif // SOCKETBUFFER_HPP

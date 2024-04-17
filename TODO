@@ -12,14 +12,14 @@ Define the fields we want out of the parser | Request class (DONE)
 
 Do the Router initialisation | Router class (Lorenzo is working on this)
 
-Implement the response creator classes: | ARequestHandler class
-    -StaticFileRequestHandler class
-    -UploadRequestHandler class
-    -GetMethodRequestHandler class
-    -PostMethodRequestHandler class
-    -DeleteMethodRequestHandler class
-    -CGRequestHandler class
-    -ErrorPageRequestHandler class
+Implement the response creator classes: | AResponseGenerator class
+    -StaticFileResponseGenerator class
+    -UploadResponseGenerator class
+    -GetMethodResponseGenerator class
+    -PostMethodResponseGenerator class
+    -DeleteMethodResponseGenerator class
+    -CGResponseGenerator class
+    -ErrorPageResponseGenerator class
 
 Define the fields we need for the 'Response' | Response class
 

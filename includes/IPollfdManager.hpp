@@ -37,11 +37,29 @@ public:
     // Method to get the events at a specific position in the pollfdQueue
     virtual int getEvents(int position) = 0;
 
+    // Method to get the server socket events
+    virtual int getServersocketEvents() = 0;
+
+    // Method to get the error log events
+    virtual int getErrorLogEvents() = 0;
+
+    // Method to get the access log events
+    virtual int getAccessLogEvents() = 0;
+
     // Method to get the file descriptor at a specific position in the pollfdQueue
     virtual int getFd(int position) = 0;
 
+    // Method to get the error log file descriptor
+    virtual int getErrorLogFd() = 0;
+
+    // Method to get the access log file descriptor
+    virtual int getAccessLogFd() = 0;
+    
     // Method to check if the pollfdQueue has reached its capacity
     virtual bool hasReachedCapacity() const = 0;
+
+    // Method to get the start index of the client sockets in pollfdQueue
+    virtual int getClientsIndex() = 0;
 
     // Method to get a pointer to the pollfd array
     virtual pollfd *getPollfdArray() = 0;
