@@ -9,20 +9,10 @@ int	main(void) {
 	Number		number_action;
 	RelayAction	relay;
 
-	GrammarRuleID	sum_id;
-	GrammarRuleID	product_id;
-	GrammarRuleID	factor_id;
-	GrammarRuleID	number_id;
-
-	sum_id.id = 0;
-	sum_id.name = std::string("sum");
-	product_id.id = 1;
-	product_id.name = std::string("product");
-	factor_id.id = 2;
-	factor_id.name = std::string("factor");
-	number_id.id = 3;
-	number_id.name = std::string("number");
-
+	GrammarRuleID	sum_id("sum", 0);
+	GrammarRuleID	product_id("product", 1);
+	GrammarRuleID	factor_id("factor", 2);
+	GrammarRuleID	number_id("number", 3);
 
 	GrammarRule		sum1(sum_action, sum_id);
 	GrammarRule		sum2(relay, sum_id);
@@ -63,18 +53,21 @@ int	main(void) {
 	arithmetic.addRule(&factor2);
 	arithmetic.addRule(&number);
 
-	std::vector<Token*> tokens = std::vector<Token*>();
-	tokens.push_back(new Token("1", 0));
-	tokens.push_back(new Token("+", 0));
-	tokens.push_back(new Token("2", 0));
-	tokens.push_back(new Token("*", 0));
-	tokens.push_back(new Token("(", 0));
-	tokens.push_back(new Token("3", 0));
-	tokens.push_back(new Token("+", 0));
-	tokens.push_back(new Token("4", 0));
-	tokens.push_back(new Token(")", 0));
+	std::vector<Token> tokens = std::vector<Token>();
+	tokens.push_back(Token("1", 0));
+	tokens.push_back(Token("+", 0));
+	tokens.push_back(Token("2", 0));
+	tokens.push_back(Token("*", 0));
+	tokens.push_back(Token("(", 0));
+	tokens.push_back(Token("3", 0));
+	tokens.push_back(Token("+", 0));
+	tokens.push_back(Token("4", 0));
+	tokens.push_back(Token(")", 0));
 	Recognizer	recognizer(arithmetic);
 	recognizer.recognize(tokens);
+
+	std::cout << "Hello\n" << std::endl;
+	recognizer.print();
 
 	return 0;
 }

@@ -10,7 +10,10 @@ SOURCES         = main.cpp \
 				  ../../srcs/parsing/Grammar.cpp \
 				  ../../srcs/parsing/GrammarRule.cpp \
 				  ../../srcs/parsing/GrammarSymbol.cpp \
-				  ../../srcs/parsing/SymbolMatching.cpp
+				  ../../srcs/parsing/SymbolMatching.cpp \
+				  ../../srcs/parsing/Recognizer.cpp \
+				  ../../srcs/parsing/EarleyItem.cpp \
+				  ../../srcs/parsing/Tokenizer.cpp
 
 OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 
@@ -18,7 +21,7 @@ CC              = c++
 CPPFLAGS        = -Wall -Wextra -Werror -I$(SRC_DIR) -I$(INCLUDES_DIR) -I$(HPARSER_DIR) -I$(SSRC_DIR)
 # Optional flags - uncomment to enable
 CPPFLAGS += -std=c++98
-#CPPFLAGS += -g
+CPPFLAGS += -g
 #CPPFLAGS += -fsanitize=address
 #CPPFLAGS += -O3
 
