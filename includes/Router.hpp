@@ -9,7 +9,8 @@ locationblock)*/
 #define ROUTER_HPP
 
 # include <string>
-# include <map>
+# include <vector>
+# include "Request.hpp"
 # include "HttpMethodHelper.hpp" 
 
 class IRequest;
@@ -18,22 +19,30 @@ class Response;
 // Route structure with function pointer for handler
 struct Route {
 public:
-    std::string path;
+    
     void (*handler)(const IRequest&, Response&);
-    HttpMethod method;
+    std::string getUri()const ;
+    void setUri(std::string newUri);
+    HttpMethod getMethod() const;
+    void setMethod(HttpMethod newMethod);
+    void (*handler)(Request*, Response*);
+
 
     // Static path matching function
     static bool matchPath(const std::string& path, const std::string& pattern);
+    private:
+        std::string _uri;
+        HttpMethod _method;
 };
 
 // Router class using std::map for route storage
 class Router {
 public:
-    void addRoute(const Route& route);
-    Route* findRoute(const IRequest& request);
+    void addRoute(const Request& request, void (*newHandler)(Request*, Response*));
+    void execRoute(Request* req, Response* res);
 
 private:
-    std::map<std::string, Route> routes_;
+    std::vector<Route> _routes;
 };
 
 #endif
