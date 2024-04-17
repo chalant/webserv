@@ -2,18 +2,25 @@
 
 bool	contains_item(std::vector<EarleyItem>& set, EarleyItem& item) {
 	for (size_t i = 0; i < set.size(); i++) {
-		if (set[i] == item)
+		if (set[i] == item) {
 			return true;
+		}
 	}
 	return false;
 }
 
 GrammarSymbol	*next_symbol(const Grammar& grammar, EarleyItem& item) {
+	const GrammarRule*	rule;
+
+	rule = grammar.getRule(item.ruleIndex());
+	if (static_cast<size_t>(item.next()) >= rule->size())
+		return (NULL);
 	return grammar.getRule(item.ruleIndex())->getSymbol(item.next());
 }
 
 Recognizer::Recognizer(const Grammar& grammar):m_grammar(grammar) {
 	m_sets = std::vector<std::vector<EarleyItem> >();
+	m_item = NULL;
 }
 
 Recognizer::~Recognizer() {
@@ -22,7 +29,7 @@ Recognizer::~Recognizer() {
 
 void	Recognizer::scan() {
 	if (m_symbol->match(*m_token)) {
-		EarleyItem	item(m_item->next() + 1, m_item->start(), m_item->ruleIndex());
+		EarleyItem	item(m_item->ruleIndex(), m_item->start(), m_item->next() + 1);
 		m_sets[m_state_idx + 1].push_back(item);
 	}
 }
@@ -37,6 +44,7 @@ void	Recognizer::complete() {
 		next = next_symbol(m_grammar, *old_item);
 		if (next->getValue() == m_grammar.getRule(i)->getName()) {
 			EarleyItem	new_item(old_item->ruleIndex(), old_item->start(), old_item->next() + 1);
+			contains_item(*m_set, new_item);
 			if (!contains_item(*m_set, new_item)) {
 				m_set->push_back(new_item);
 			}
@@ -47,9 +55,10 @@ void	Recognizer::complete() {
 void	Recognizer::predict() {
 	for (size_t i = 0; i < m_grammar.size(); i++) {
 		if (m_symbol->getValue() == m_grammar.getRule(i)->getName()) {
-			EarleyItem	item(i, 0, m_state_idx);
-			if (!contains_item(*m_set, item))
+			EarleyItem	item(i, m_state_idx, 0);
+			if (!contains_item(*m_set, item)) {
 				m_set->push_back(item);
+			}
 		}
 	}
 }
@@ -70,15 +79,19 @@ void	Recognizer::recognize(std::vector<Token>& tokens) {
 	for (size_t i = 0; i < tokens.size(); i++) {
 		m_set = &m_sets[i];
 		m_state_idx = i;
+		m_token = &tokens[i];
 		for (size_t j = 0; j < m_set->size(); j++) {
-			m_item = &m_set->at(j);
+			m_item = &(*m_set)[j];
 			m_symbol = next_symbol(m_grammar, *m_item);
-			if (m_symbol->getType() == TERMINAL)
-				scan();
-			else if (m_symbol->getType() == NON_TERMINAL)
-				predict();
-			else if (m_symbol->getType() == EMPTY)
+			if (m_symbol == NULL) {
 				complete();
+			}
+			else if (m_symbol->getType() == TERMINAL) {
+				scan();
+			}
+			else if (m_symbol->getType() == NON_TERMINAL) {
+				predict();
+			}
 		}
 	}
 }

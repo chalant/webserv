@@ -1,2 +1,3 @@
 .vscode
 .parsing_tester.cpp
+*.dSYM

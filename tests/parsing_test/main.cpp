@@ -63,10 +63,9 @@ int	main(void) {
 	tokens.push_back(Token("+", 0));
 	tokens.push_back(Token("4", 0));
 	tokens.push_back(Token(")", 0));
+
 	Recognizer	recognizer(arithmetic);
 	recognizer.recognize(tokens);
-
-	std::cout << "Hello\n" << std::endl;
 	recognizer.print();
 
 	return 0;
