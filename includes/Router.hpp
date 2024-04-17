@@ -13,23 +13,18 @@ locationblock)*/
 # include "Request.hpp"
 # include "HttpMethodHelper.hpp" 
 
-class IRequest;
 class Response;
 
 // Route structure with function pointer for handler
 struct Route {
 public:
     
-    void (*handler)(const IRequest&, Response&);
     std::string getUri()const ;
     void setUri(std::string newUri);
     HttpMethod getMethod() const;
     void setMethod(HttpMethod newMethod);
     void (*handler)(Request*, Response*);
 
-
-    // Static path matching function
-    static bool matchPath(const std::string& path, const std::string& pattern);
     private:
         std::string _uri;
         HttpMethod _method;
