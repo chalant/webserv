@@ -19,11 +19,11 @@ class EarleyItem {
 	public:
 		EarleyItem(int rule_idx, int start, int next);
 		bool	operator==(const EarleyItem& other);
-		int		getRuleIndex() const;
-		int		getStart() const;
-		int		getNext() const;
-		int		isCompleted() const;
-		void	setCompleted(bool value);
+		int		ruleIndex() const;
+		int		start() const;
+		int		next() const;
+		bool	completed() const;
+		void	completed(bool value);
 };
 
 struct ParseTree {
@@ -37,7 +37,7 @@ class Recognizer {
 	private:
 		const Grammar&	m_grammar;
 		int				m_state_idx;
-		std::vector<std::vector<EarleyItem>>	m_sets;
+		std::vector<std::vector<EarleyItem> >	m_sets;
 		// variables.
 		std::vector<EarleyItem>	*m_set;
 		Token			*m_token;
@@ -49,13 +49,14 @@ class Recognizer {
 	public:
 		Recognizer(const Grammar& grammar);
 		~Recognizer();
-		void			recognize(std::vector<Token*>& tokens);
+		void			recognize(std::vector<Token>& tokens);
+		void			print(void);
 };
 
 class EarleyParser {
 	private:
-		std::vector<std::vector<EarleyItem>>	m_earley_sets;
-		std::vector<std::vector<EarleyEdge>>	m_chart;
+		std::vector<std::vector<EarleyItem> >	m_earley_sets;
+		std::vector<std::vector<EarleyEdge> >	m_chart;
 		Recognizer								m_recognizer;
 		ParseTree								m_parse_tree;
 	public:

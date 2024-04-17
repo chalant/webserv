@@ -6,8 +6,9 @@
 #include "GrammarSymbol.hpp"
 
 struct GrammarRuleID {
-	std::string		name;
-	int				id;
+	const std::string	name;
+	int					id;
+	GrammarRuleID(const std::string name, int id);
 };
 
 class	GrammarRule {
@@ -25,6 +26,7 @@ class	GrammarRule {
 		void						setRuleIndex(int rule_idx);
 		void						addSymbol(GrammarSymbol *symbol);
 		GrammarSymbol*				getSymbol(int index) const;
+		size_t						size() const;
 };
 
 #endif

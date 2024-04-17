@@ -1,12 +1,14 @@
 #include "Grammar.hpp"
 
 Grammar::Grammar() {
+	m_size = 0;
 }
 
 Grammar::~Grammar() {
 }
 
 void	Grammar::addRule(GrammarRule* rule) {
+	m_size++;
 	m_rules.push_back(rule);
 }
 

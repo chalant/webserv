@@ -1,5 +1,8 @@
 #include "GrammarRule.hpp"
 
+GrammarRuleID::GrammarRuleID(const std::string name, int id): name(name), id(id) {
+}
+
 GrammarRule::GrammarRule(ASemanticAction& action, GrammarRuleID& rule_id): m_action(action), m_rule_id(rule_id) {
 }
 
@@ -29,4 +32,8 @@ void	GrammarRule::addSymbol(GrammarSymbol* symbol) {
 
 GrammarSymbol*	GrammarRule::getSymbol(int index) const {
 	return	m_symbols[index];
+}
+
+size_t	GrammarRule::size() const {
+	return m_symbols.size();
 }

@@ -9,11 +9,11 @@ bool	contains_item(std::vector<EarleyItem>& set, EarleyItem& item) {
 }
 
 GrammarSymbol	*next_symbol(const Grammar& grammar, EarleyItem& item) {
-	return grammar.getRule(item.getRuleIndex())->getSymbol(item.getNext());
+	return grammar.getRule(item.ruleIndex())->getSymbol(item.next());
 }
 
 Recognizer::Recognizer(const Grammar& grammar):m_grammar(grammar) {
-	m_sets = std::vector<std::vector<EarleyItem>>();
+	m_sets = std::vector<std::vector<EarleyItem> >();
 }
 
 Recognizer::~Recognizer() {
@@ -22,7 +22,7 @@ Recognizer::~Recognizer() {
 
 void	Recognizer::scan() {
 	if (m_symbol->match(*m_token)) {
-		EarleyItem	item(m_item->getNext() + 1, m_item->getStart(), m_item->getRuleIndex());
+		EarleyItem	item(m_item->next() + 1, m_item->start(), m_item->ruleIndex());
 		m_sets[m_state_idx + 1].push_back(item);
 	}
 }
@@ -31,12 +31,12 @@ void	Recognizer::complete() {
 	EarleyItem		*old_item;
 	GrammarSymbol	*next;
 
-	m_item->setCompleted(true);
-	for (size_t i = 0; i < m_sets[m_item->getStart()].size(); i++) {
-		old_item = &m_sets[m_item->getStart()][i];
+	m_item->completed(true);
+	for (size_t i = 0; i < m_sets[m_item->start()].size(); i++) {
+		old_item = &m_sets[m_item->start()][i];
 		next = next_symbol(m_grammar, *old_item);
 		if (next->getValue() == m_grammar.getRule(i)->getName()) {
-			EarleyItem	new_item(old_item->getRuleIndex(), old_item->getStart(), old_item->getNext() + 1);
+			EarleyItem	new_item(old_item->ruleIndex(), old_item->start(), old_item->next() + 1);
 			if (!contains_item(*m_set, new_item)) {
 				m_set->push_back(new_item);
 			}
@@ -54,9 +54,7 @@ void	Recognizer::predict() {
 	}
 }
 
-void	Recognizer::recognize(std::vector<Token*>& tokens) {
-	std::vector<EarleyItem> *set;
-	GrammarSymbol			*m_symbol;
+void	Recognizer::recognize(std::vector<Token>& tokens) {
 	//initialize sets to the number of tokens.
 	m_sets.clear();
 	for (size_t i = 0; i < tokens.size(); i++) {
@@ -82,5 +80,27 @@ void	Recognizer::recognize(std::vector<Token*>& tokens) {
 			else if (m_symbol->getType() == EMPTY)
 				complete();
 		}
+	}
+}
+
+void	Recognizer::print() {
+	EarleyItem			*item;
+	const GrammarRule	*rule;
+
+	for (size_t i = 0; i < m_sets.size(); i++) {
+		std::cout << "===========" << "(" << i << ")"<< "===========" << std::endl << std::endl;
+		for (size_t j = 0; j < m_sets[i].size(); j++) {
+			item = &m_sets[i][j];
+			rule = m_grammar.getRule(item->ruleIndex());
+			std::cout << rule->getName() << " -> ";
+			for (int k = 0; k < (int)rule->size(); k++) {
+				if (k == item->next())
+					std::cout << ". ";
+				if (k != (int)rule->size() - 1)
+					std::cout << rule->getSymbol(k)->getValue() << " ";
+			}
+			std::cout << "(" << item->start() << ")" << std::endl;
+		}
+		std::cout << std::endl;
 	}
 }

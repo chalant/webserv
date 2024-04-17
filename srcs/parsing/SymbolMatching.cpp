@@ -2,7 +2,7 @@
 
 bool	SubsetSymbolMatching::match(const Token& token, const std::string& value) {
 	for (size_t i = 0; i < token.value.size(); i++) {
-		if (value.find_first_of(token.value[i] == std::string::npos))
+		if (value.find_first_of(token.value[i]) == std::string::npos)
 			return false;
 	}
 	return true;
