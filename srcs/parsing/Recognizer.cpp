@@ -32,7 +32,6 @@ void	Recognizer::scan() {
 
 	current_item = &m_set->at(m_j);
 	if (m_symbol->match(*m_token)) {
-		std::cout << "Match " << m_token->value << std::endl;
 		EarleyItem	item(current_item->ruleIndex(), current_item->start(), current_item->next() + 1);
 		m_sets[m_state_idx + 1].push_back(item);
 	}
@@ -70,7 +69,7 @@ void	Recognizer::predict() {
 }
 
 void	Recognizer::recognize(std::vector<Token>& tokens) {
-	//initialize sets to the number of tokens.
+	//initialize sets to the number of tokens + 1.
 	m_sets.clear();
 	for (size_t i = 0; i < tokens.size() + 1; i++) {
 		m_sets.push_back(std::vector<EarleyItem>());
@@ -113,7 +112,7 @@ void	Recognizer::print() {
 			item = &m_sets[i][j];
 			rule = m_grammar.getRule(item->ruleIndex());
 			std::cout << rule->getName() << " -> ";
-			for (int k = 0; k < (int)rule->size(); k++) {
+			for (int k = 0; k < (int)rule->size() + 1; k++) {
 				if (k == item->next())
 					std::cout << "• ";
 				if (k != (int)rule->size())
