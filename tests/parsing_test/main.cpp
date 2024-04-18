@@ -20,16 +20,20 @@ int	main(void) {
 	GrammarRule		product2(relay, product_id);
 	GrammarRule		factor1(relay, factor_id);
 	GrammarRule		factor2(relay, factor_id);
-	GrammarRule		number(number_action, number_id);
+	GrammarRule		number1(relay, number_id);
+	GrammarRule		number2(number_action, number_id);
 
 	SubsetSymbolMatching	subset_matching;
-	FalseSymbolMatching	false_matching;
+	FalseSymbolMatching		false_matching;
+	EqualSymbolMatching		equal_matching;
 
 	GrammarSymbol	sum(sum_id.name, NON_TERMINAL, false_matching);
 	GrammarSymbol	product(product_id.name, NON_TERMINAL, false_matching);
 	GrammarSymbol	factor(factor_id.name, NON_TERMINAL, false_matching);
 	GrammarSymbol	pm("+-", TERMINAL, subset_matching);
 	GrammarSymbol	md("*/", TERMINAL, subset_matching);
+	GrammarSymbol	open_par("(", TERMINAL, subset_matching);
+	GrammarSymbol	close_par(")", TERMINAL, subset_matching);
 	GrammarSymbol	num("number", NON_TERMINAL, false_matching);;
 	GrammarSymbol	numbers("0123456789", TERMINAL, subset_matching);
 
@@ -41,9 +45,15 @@ int	main(void) {
 	product1.addSymbol(&md);
 	product1.addSymbol(&factor);
 	product2.addSymbol(&factor);
+
+	factor1.addSymbol(&open_par);
 	factor1.addSymbol(&sum);
+	factor1.addSymbol(&close_par);
 	factor2.addSymbol(&num);
-	number.addSymbol(&numbers);
+	number1.addSymbol(&numbers);
+	number1.addSymbol(&num);
+	number2.addSymbol(&numbers);
+
 
 	arithmetic.addRule(&sum1);
 	arithmetic.addRule(&sum2);
@@ -51,18 +61,20 @@ int	main(void) {
 	arithmetic.addRule(&product2);
 	arithmetic.addRule(&factor1);
 	arithmetic.addRule(&factor2);
-	arithmetic.addRule(&number);
+	arithmetic.addRule(&number1);
+	arithmetic.addRule(&number2);
 
 	std::vector<Token> tokens = std::vector<Token>();
 	tokens.push_back(Token("1", 0));
 	tokens.push_back(Token("+", 0));
+	tokens.push_back(Token("(", 0));
 	tokens.push_back(Token("2", 0));
 	tokens.push_back(Token("*", 0));
-	tokens.push_back(Token("(", 0));
 	tokens.push_back(Token("3", 0));
 	tokens.push_back(Token("+", 0));
 	tokens.push_back(Token("4", 0));
 	tokens.push_back(Token(")", 0));
+	//tokens.push_back(Token(")", 0));
 
 	Recognizer	recognizer(arithmetic);
 	recognizer.recognize(tokens);

@@ -28,27 +28,33 @@ Recognizer::~Recognizer() {
 }
 
 void	Recognizer::scan() {
+	EarleyItem		*current_item;
+
+	current_item = &m_set->at(m_j);
 	if (m_symbol->match(*m_token)) {
-		EarleyItem	item(m_item->ruleIndex(), m_item->start(), m_item->next() + 1);
+		std::cout << "Match " << m_token->value << std::endl;
+		EarleyItem	item(current_item->ruleIndex(), current_item->start(), current_item->next() + 1);
 		m_sets[m_state_idx + 1].push_back(item);
 	}
 }
 
 void	Recognizer::complete() {
 	EarleyItem		*old_item;
+	EarleyItem		*current_item;
 	GrammarSymbol	*next;
 
-	m_item->completed(true);
-	for (size_t i = 0; i < m_sets[m_item->start()].size(); i++) {
-		old_item = &m_sets[m_item->start()][i];
+	current_item = &m_set->at(m_j);
+	for (size_t i = 0; i < m_sets[current_item->start()].size(); i++) {
+		current_item->completed(true);
+		old_item = &m_sets[current_item->start()][i];
 		next = next_symbol(m_grammar, *old_item);
-		if (next->getValue() == m_grammar.getRule(i)->getName()) {
+		if (next->getValue() == m_grammar.getRule(current_item->ruleIndex())->getName()) {
 			EarleyItem	new_item(old_item->ruleIndex(), old_item->start(), old_item->next() + 1);
-			contains_item(*m_set, new_item);
 			if (!contains_item(*m_set, new_item)) {
 				m_set->push_back(new_item);
 			}
 		}
+		current_item = &m_set->at(m_j);
 	}
 }
 
@@ -66,7 +72,7 @@ void	Recognizer::predict() {
 void	Recognizer::recognize(std::vector<Token>& tokens) {
 	//initialize sets to the number of tokens.
 	m_sets.clear();
-	for (size_t i = 0; i < tokens.size(); i++) {
+	for (size_t i = 0; i < tokens.size() + 1; i++) {
 		m_sets.push_back(std::vector<EarleyItem>());
 	}
 	// populate first set.
@@ -76,12 +82,13 @@ void	Recognizer::recognize(std::vector<Token>& tokens) {
 		}
 	}
 	// populate the rest of the sets.
-	for (size_t i = 0; i < tokens.size(); i++) {
+	for (size_t i = 0; i < tokens.size() + 1; i++) {
 		m_set = &m_sets[i];
 		m_state_idx = i;
 		m_token = &tokens[i];
 		for (size_t j = 0; j < m_set->size(); j++) {
-			m_item = &(*m_set)[j];
+			m_j = j;
+			m_item = &m_set->at(j);
 			m_symbol = next_symbol(m_grammar, *m_item);
 			if (m_symbol == NULL) {
 				complete();
@@ -108,8 +115,8 @@ void	Recognizer::print() {
 			std::cout << rule->getName() << " -> ";
 			for (int k = 0; k < (int)rule->size(); k++) {
 				if (k == item->next())
-					std::cout << ". ";
-				if (k != (int)rule->size() - 1)
+					std::cout << "• ";
+				if (k != (int)rule->size())
 					std::cout << rule->getSymbol(k)->getValue() << " ";
 			}
 			std::cout << "(" << item->start() << ")" << std::endl;

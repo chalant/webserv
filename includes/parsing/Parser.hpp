@@ -43,6 +43,7 @@ class Recognizer {
 		Token			*m_token;
 		GrammarSymbol	*m_symbol;
 		EarleyItem		*m_item;
+		int				m_j;
 		void			scan(void);
 		void			complete(void);
 		void			predict(void);
