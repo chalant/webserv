@@ -2,6 +2,7 @@
 // #include "includes/ConfigurationLoader.hpp"
 #include "includes/Server.hpp"
 #include "includes/ClientHandler.hpp"
+#include "includes/LoggerConfiguration.hpp"
 #include "includes/BufferManager.hpp"
 #include "includes/BufferManager.hpp"
 #include "includes/EventManager.hpp"
@@ -54,7 +55,10 @@ int main(int argc, char **argv)
         socket = new Socket();
 
         // Instantiate the errorLogger.
-        errorLogger = new Logger(ERRORLOGGER, bufferManager);
+        errorLogger = new Logger();
+
+        // Instantiate the accessLogger, primarily for use by the ResponseGenerator class to handle access event logging.
+        accessLogger = new Logger();
 
         // Instantiate the exceptionHandler.
         exceptionHandler = new ExceptionHandler(errorLogger);
@@ -64,17 +68,20 @@ int main(int argc, char **argv)
 
         // parse the configuration file
 
-        // Configure errorLogger
-        errorLogger->configure(configuration);
 
-        // Instantiate the accessLogger, primarily for use by the ResponseGenerator class to handle access event logging.
-        accessLogger = new Logger(ACCESSLOGGER, bufferManager, configuration);
+        // Instantiate the PollfdManager. Manages the pollfd array
+        pollfdManager = new PollfdManager(configuration);
+
+        // Configure errorLogger
+        LoggerConfiguration errorLoggerConfiguration(ERRORLOGGER, bufferManager, configuration, pollfdManager);
+        errorLogger->configure(&errorLoggerConfiguration);
+
+        LoggerConfiguration accessLoggerConfiguration(ACCESSLOGGER, bufferManager, configuration, pollfdManager);
+        accessLogger->configure(&accessLoggerConfiguration);
 
         // Instantiate the Server. Sets up connectivity, responsible for polling and accepting connections.
         server = new Server(socket, pollfdManager, configuration, errorLogger);
 
-        // Instantiate the PollfdManager. Manages the pollfd array
-        pollfdManager = new PollfdManager(configuration, errorLogger, accessLogger, server);
 
         // Instantiate the PollingService. Manages polling operations.
         pollingService = new PollingService(pollfdManager);

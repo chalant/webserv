@@ -10,40 +10,45 @@
  * It provides methods for adding, accessing, and manipulating poll file descriptors,
  * as well as managing the pollfd queue size and checking for capacity limits.
  *
+ * NOTE - pollfds referring to file descriptors, server sockets and client sockets are stored sequentially in the PollfdQueue,
+ *          in this order: file descriptors, server sockets, client sockets.
  */
 
 #include "IPollfdManager.hpp" // Include the header file for IPollfdManager
-#include "PollfdQueue.hpp" // Include the header file for PollfdQueue
+#include "PollfdQueue.hpp"    // Include the header file for PollfdQueue
 #include "IConfiguration.hpp"
 #include "ILogger.hpp"
 
 // Forward declaration of Server class
 class IServer;
 
-// Enumeration for fixed positions in the PollfdQueue
-enum PollfdQueueFixedPositions
-{
-    SERVER_SOCKET_POLL_FD = 0, // The server socket file descriptor position
-    ERROR_LOG_POLL_FD = 1,     // The error log file descriptor position
-    ACCESS_LOG_POLL_FD = 2,    // The access log file descriptor position
-    FIRST_CLIENT_POLL_FD = 3   // The first client file descriptor position
-};
-
 // Class for managing poll file descriptors
 class PollfdManager : public IPollfdManager
 {
 private:
-    PollfdQueue _pollfds; // Queue for storing polling file descriptors
+    PollfdQueue _pollfds;      // Queue for storing polling file descriptors
+    ssize_t _fileDescriptorsIndex; // Index for the access log file descriptor in the PollfdQueue
+    ssize_t _serverSocketsIndex;   // Index for the server sockets in the PollfdQueue
+    ssize_t _clientSocketsIndex;   // Index for the start of client sockets in the PollfdQueue
 
 public:
     // Constructor for PollfdManager class
-    PollfdManager(const IConfiguration *configuration, const ILogger *errorLogger, const ILogger *accessLogger, const IServer *server);
+    PollfdManager(const IConfiguration *configuration);
 
     // Destructor for PollfdManager class
     ~PollfdManager();
 
     // Method to add a polling file descriptor
     virtual void addPollfd(pollfd pollFd);
+
+    // Method to add a file descriptor pollfd to the pollfdQueue
+    virtual void addFileDescriptorPollfd(pollfd pollFd);
+
+    // Method to add a server socket pollfd to the pollfdQueue
+    virtual void addServerSocketPollfd(pollfd pollFd);
+
+    // Method to add a client socket pollfd to the pollfdQueue
+    virtual void addClientSocketPollfd(pollfd pollFd);
 
     // Method to remove a polling file descriptor
     virtual void removePollfd(int position);
@@ -58,31 +63,22 @@ public:
     virtual size_t getPollfdQueueSize() const;
 
     // Method to get the events at a specific position in the PollfdQueue
-    virtual int getEvents(int position);
-
-    // Method to get the server socket events
-    virtual int getServersocketEvents();
-
-    // Method to get the error log events
-    virtual int getErrorLogEvents();
-
-    // Method to get the access log events
-    virtual int getAccessLogEvents();
+    virtual short getEvents(int position);
 
     // Method to get the file descriptor at a specific position in the PollfdQueue
-    virtual int getFd(int position);
+    virtual int getDescriptor(int position);
 
-    // Method to get the error log file descriptor
-    virtual int getErrorLogFd();
+    // Method to get the first file descriptor index
+    virtual ssize_t getFileDescriptorsIndex();
 
-    // Method to get the access log file descriptor
-    virtual int getAccessLogFd();
+    // Method to get the first server socket index
+    virtual ssize_t getServerSocketsIndex();
+
+    // Method to get the first client socket index
+    virtual ssize_t getClientSocketsIndex();
 
     // Method to check if the PollfdQueue has reached its capacity
     virtual bool hasReachedCapacity() const;
-
-    // Method to get the start index of the client sockets in PollfdQueue
-    virtual int getClientsIndex();
 
     // Method to get a pointer to the pollfd array
     virtual pollfd *getPollfdArray();

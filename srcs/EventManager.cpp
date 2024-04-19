@@ -12,16 +12,26 @@ EventManager::~EventManager() {}
 
 void EventManager::handleEvents()
 {
-    this->_handleServerSocketEvents();
-    this->_handleClientSocketEvents();
-    this->_handleFileDescriptorEvents();
+    this->_handleFileDescriptorsEvents();
+    this->_handleServerSocketsEvents();
+    this->_handleClientSocketsEvents();
 }
 
-void EventManager::_handleServerSocketEvents()
+void EventManager::_handleServerSocketsEvents()
 {
-    // Get Server Socket events
-    int serverSocketEvents = this->_pollfdManager->getServersocketEvents();
+    this->_errorLogger->errorLog(DEBUG, "Processing Server Socket Events.");
 
+    for (ssize_t serverSocketIndex = this->_pollfdManager->getServerSocketsIndex();
+         serverSocketIndex < this->_pollfdManager->getClientSocketsIndex();
+         serverSocketIndex++)
+    {
+        this->_handleServerSocketEvents(serverSocketIndex);
+    }
+}
+
+void EventManager::_handleServerSocketEvents(ssize_t serverSocketIndex)
+{
+    short serverSocketEvents = this->_pollfdManager->getEvents(serverSocketIndex);
     // If server socket has no events, return immediately
     if (serverSocketEvents == 0)
         return;
@@ -42,7 +52,8 @@ void EventManager::_handleServerSocketEvents()
     if (serverSocketEvents & POLLIN)
     {
         // Accept incoming connection
-        this->_server->acceptConnection();
+        int serverSocketDescriptor = this->_pollfdManager->getDescriptor(serverSocketIndex);
+        this->_server->acceptConnection(serverSocketDescriptor);
     }
     else
     {
@@ -51,129 +62,130 @@ void EventManager::_handleServerSocketEvents()
     }
 }
 
-void EventManager::_handleClientSocketEvents()
+void EventManager::_handleClientSocketsEvents()
 {
-    this->_errorLogger->errorLog(DEBUG, "Processing events.");
+    this->_errorLogger->errorLog(DEBUG, "Processing Client Socket Events.");
 
-    // Process events
-    for (size_t i = this->_pollfdManager->getClientsIndex(); i < this->_pollfdManager->getPollfdQueueSize(); i++)
+    for (ssize_t clientSocketIndex = this->_pollfdManager->getClientSocketsIndex();
+         clientSocketIndex < this->_pollfdManager->getPollfdQueueSize();
+         clientSocketIndex++)
     {
-        short revents = this->_pollfdManager->getEvents(i);
+        this->_handleClientSocketEvents(clientSocketIndex);
+    }
+}
+void EventManager::_handleClientSocketEvents(ssize_t &clientSocketIndex)
+{
+    int clientSocketDescriptor = this->_pollfdManager->getDescriptor(clientSocketIndex);
+    short clientSocketEvents = this->_pollfdManager->getEvents(clientSocketIndex);
 
-        // If there are no events, continue
-        if (revents == 0)
-            continue;
+    // If there are no events, return immediately
+    if (clientSocketEvents == 0)
+        return;
 
-        // Check for exceptions
-        short pollExceptionMask = POLLHUP | POLLERR | POLLNVAL;
-        if (revents & pollExceptionMask)
+    // Check for exceptions
+    short pollExceptionMask = POLLHUP | POLLERR | POLLNVAL;
+    if (clientSocketEvents & pollExceptionMask)
+    {
+        this->_handleException(clientSocketIndex);
+    }
+    // Read and process a new request
+    else if (clientSocketEvents & POLLIN)
+    {
+        int fd = this->_pollfdManager->getDescriptor(clientSocketIndex);
+        if (this->_requestHandler->handleRequest(clientSocketDescriptor) == -1)
         {
-            this->_handleException(i);
+            // Remove the socket from the poll set
+            this->_pollfdManager->removePollfd(clientSocketIndex);
+            // Decrement i to compensate for the removal
+            clientSocketIndex--;
         }
-        // Read and process a new request
-        else if (revents & POLLIN)
+        else
         {
-            int fd = this->_pollfdManager->getFd(i);
-            if (this->_requestHandler->handleRequest(fd) == -1)
-            {
-                // Remove the socket from the poll set
-                this->_pollfdManager->removePollfd(i);
-                // Decrement i to compensate for the removal
-                i--;
-            }
-            else
-            {
-                // Add the POLLOUT event for the socket
-                this->_pollfdManager->addPollOut(i);
-            }
+            // Add the POLLOUT event for the socket
+            this->_pollfdManager->addPollOut(clientSocketIndex);
         }
-        // Write buffered response
-        else if (revents & POLLOUT)
+    }
+    // Write buffered response
+    else if (clientSocketEvents & POLLOUT)
+    {
+        this->_processBufferedResponse(clientSocketIndex);
+    }
+}
+
+void EventManager::_handleFileDescriptorsEvents()
+{
+    for (ssize_t fileDescriptorIndex = this->_pollfdManager->getFileDescriptorsIndex();
+         fileDescriptorIndex < this->_pollfdManager->getServerSocketsIndex();
+         fileDescriptorIndex++)
+    {
+        short fileDescriptorEvents = this->_pollfdManager->getEvents(fileDescriptorIndex);
+        if (fileDescriptorEvents & POLLOUT)
         {
-            this->_processBufferedResponse(i);
+            // Flush error logs buffer
+            int fileDescriptor = this->_pollfdManager->getDescriptor(fileDescriptorIndex);
+            this->_bufferManager->flushBuffer(fileDescriptor);
         }
     }
 }
 
-void EventManager::_handleFileDescriptorEvents()
-{
-    // Check if the error log file descriptor is ready for writing
-    short errorLogEvents = this->_pollfdManager->getErrorLogEvents();
-    if ((errorLogEvents & POLLOUT) != 0)
-    {
-        // Flush error logs buffer
-        int fd = this->_pollfdManager->getErrorLogFd();
-        this->_bufferManager->flushBuffer(fd);
-    }
-
-    // Check if the access log file descriptor is ready for writing
-    short accessLogEvents = this->_pollfdManager->getAccessLogEvents();
-    if ((accessLogEvents & POLLOUT) != 0)
-    {
-        // Flush access logs buffer
-        int fd = this->_pollfdManager->getAccessLogFd();
-        this->_bufferManager->flushBuffer(fd);
-    }
-}
-
-void EventManager::_processBufferedResponse(size_t &i)
+void EventManager::_processBufferedResponse(ssize_t clientSocketIndex)
 {
     // Get the socket descriptor
-    int fd = this->_pollfdManager->getFd(i);
+    int clientSocketDescriptor = this->_pollfdManager->getDescriptor(clientSocketIndex);
 
     // Flush the buffer
-    if (this->_bufferManager->flushBuffer(fd) == 0) // check if all bytes were sent
+    if (this->_bufferManager->flushBuffer(clientSocketDescriptor) == 0) // check if all bytes were sent
     {
         // Remove the socket from the poll set
-        this->_pollfdManager->removePollfd(i);
+        this->_pollfdManager->removePollfd(clientSocketIndex);
     }
 }
 
-void EventManager::_handleException(size_t &i)
+void EventManager::_handleException(ssize_t &clientSocketIndex)
 {
-    short revents = this->_pollfdManager->getEvents(i);
-    int fd = this->_pollfdManager->getFd(i);
+    int clientSocketDescriptor = this->_pollfdManager->getDescriptor(clientSocketIndex);
+    short clientSocketEvents = this->_pollfdManager->getEvents(clientSocketIndex);
 
-    if (revents & POLLHUP)
+    if (clientSocketEvents & POLLHUP)
     {
         // Log the disconnection
-        this->_errorLogger->errorLog(INFO, "Client disconnected socket: " + std::to_string(fd));
+        this->_errorLogger->errorLog(INFO, "Client disconnected socket: " + std::to_string(clientSocketDescriptor));
     }
 
-    if (revents & POLLNVAL)
+    if (clientSocketEvents & POLLNVAL)
     {
         // Log the error
-        this->_errorLogger->errorLog(ERROR, "Invalid request on socket: " + std::to_string(fd));
+        this->_errorLogger->errorLog(ERROR, "Invalid request on socket: " + std::to_string(clientSocketDescriptor));
 
         // Send a 400 response to the client
         std::vector<char> response = {'H', 'T', 'T', 'P', '/', '1', '.', '1', ' ', '4', '0', '0', ' ', 'B', 'a', 'd', ' ', 'R', 'e', 'q', 'u', 'e', 's', 't', '\r', '\n',
                                       'C', 'o', 'n', 't', 'e', 'n', 't', '-', 'L', 'e', 'n', 'g', 't', 'h', ':', ' ', '0', '\r', '\n', '\r', '\n'};
-        if (this->_socket->send(fd, response) == -1)
+        if (this->_socket->send(clientSocketDescriptor, response) == -1)
         {
             // Log the error
-            this->_errorLogger->errorLog(ERROR, "Error sending 400 response to socket: " + std::to_string(fd));
+            this->_errorLogger->errorLog(ERROR, "Error sending 400 response to socket: " + std::to_string(clientSocketDescriptor));
         }
     }
 
     // Check for errors on the socket
-    if (revents & POLLERR)
+    if (clientSocketEvents & POLLERR)
     {
         // Log the error
-        this->_errorLogger->errorLog(ERROR, "Error on socket: " + std::to_string(fd));
+        this->_errorLogger->errorLog(ERROR, "Error on socket: " + std::to_string(clientSocketDescriptor));
 
         // Send a 500 response to the client
         std::vector<char> response = {'H', 'T', 'T', 'P', '/', '1', '.', '1', ' ', '5', '0', '0', ' ', 'I', 'n', 't', 'e', 'r', 'n', 'a', 'l', ' ', 'S', 'e', 'r', 'v', 'e', 'r', ' ', 'E', 'r', 'r', 'o', 'r', '\r', '\n',
                                       'C', 'o', 'n', 't', 'e', 'n', 't', '-', 'L', 'e', 'n', 'g', 't', 'h', ':', ' ', '0', '\r', '\n', '\r', '\n'};
-        if (this->_socket->send(fd, response) == -1)
+        if (this->_socket->send(clientSocketDescriptor, response) == -1)
         {
             // Log the error
-            this->_errorLogger->errorLog(ERROR, "Error sending 500 response to socket: " + std::to_string(fd));
+            this->_errorLogger->errorLog(ERROR, "Error sending 500 response to socket: " + std::to_string(clientSocketDescriptor));
         }
     }
     // Destroy the buffer associated with the socket
-    this->_bufferManager->destroyBuffer(fd);
+    this->_bufferManager->destroyBuffer(clientSocketDescriptor);
     // Close and Remove the socket from the poll set
-    this->_pollfdManager->removePollfd(i);
+    this->_pollfdManager->removePollfd(clientSocketIndex);
     // Decrement i to compensate for the removal
-    i--;
+    clientSocketIndex--;
 }

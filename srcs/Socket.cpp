@@ -24,7 +24,7 @@ int Socket::socket() const
 }
 
 // Binds the socket to an address
-int Socket::bind(int socketDescriptor, int port) const
+int Socket::bind(int socketDescriptor, int ip, int port) const
 {
     // return the result of binding the socket to the address
     // 0 is returned on success, -1 on error
@@ -39,7 +39,14 @@ int Socket::bind(int socketDescriptor, int port) const
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
-    addr.sin_addr.s_addr = INADDR_ANY;
+    if (ip == 0)
+    {
+        addr.sin_addr.s_addr = INADDR_ANY;
+    }
+    else
+    {
+        addr.sin_addr.s_addr = htonl(ip);
+    }
     return ::bind(socketDescriptor, (struct sockaddr *)&addr, sizeof(addr));
 }
 
@@ -110,15 +117,15 @@ std::pair<int, std::pair<std::string, std::string>> Socket::accept(int serverSoc
 }
 
 // Sends data over the socket Non-Blockingly
-int Socket::send(int socketDescriptor, const std::vector<char> &data) const
-{
-    // send data over the socket
-    // socketDescriptor: file descriptor of the socket
-    // data: data to be sent
-    // returns the number of bytes sent
+int Socket::send(int socketDescriptor, const std::vector<char> &data) const {
+    // Send data over the socket
+    // socketDescriptor: File descriptor of the socket
+    // data: Data to be sent
+    // Returns the number of bytes sent
     // -1 is returned on error
-    return ::send(socketDescriptor, data, strlen(data), MSG_DONTWAIT | MSG_NOSIGNAL);
+    return ::send(socketDescriptor, data.data(), data.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
 }
+
 
 // Receives data from the socket Non-Blockingly
 ssize_t Socket::recv(int socketDescriptor, char *buffer, size_t len) const

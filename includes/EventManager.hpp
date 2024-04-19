@@ -20,11 +20,13 @@ private:
     IRequestHandler *_requestHandler;
     ILogger *_errorLogger;
 
-    void _handleServerSocketEvents();
-    void _handleClientSocketEvents();
-    void _handleFileDescriptorEvents();
-    void _processBufferedResponse(size_t &i);
-    void _handleException(size_t &i);
+    void _handleServerSocketsEvents();
+    void _handleServerSocketEvents(ssize_t serverSocketIndex);
+    void _handleClientSocketsEvents();
+    void _handleClientSocketEvents(ssize_t &clientSocketIndex);
+    void _handleFileDescriptorsEvents();
+    void _processBufferedResponse(ssize_t clientSocketIndex);
+    void _handleException(ssize_t &clientSocketIndex);
 
 public:
     EventManager(IPollfdManager *pollfdManager, IBufferManager *bufferManager, ISocket *socket, IServer *server, IRequestHandler *requestHandler, ILogger *errorLogger);

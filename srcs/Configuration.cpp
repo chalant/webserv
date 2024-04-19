@@ -3,18 +3,30 @@
 /*'Configuration': Verifies, reads, parses and stores the config 
 file data. This data is used to initiate the 'Server' and the 'Router'*/
 
-Configuration::Configuration(std::unordered_map<std::string, std::string> *fields, std::list<Configuration> *sub_conf)
+Configuration::Configuration()
 {
-    this->fields = fields;
-    this->sub_configurations = *sub_conf;
-}
-
-Configuration::Configuration(std::unordered_map<std::string, std::string> *fields)
-{
-    this->fields = fields;
 }
 
 Configuration::~Configuration()
 {
-    delete this->fields;
+}
+
+const std::vector<Block> Configuration::getBlocks(const std::string &parameter) const
+{
+    return _blocks.at(parameter);
+}
+
+const std::string Configuration::getString(const std::string &parameter) const
+{
+    return _strings.at(parameter);
+}
+
+int Configuration::getInt(const std::string &parameter) const
+{
+    return _ints.at(parameter);
+}
+
+bool Configuration::getBool(const std::string &parameter) const
+{
+    return _bools.at(parameter);
 }

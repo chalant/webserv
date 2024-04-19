@@ -17,7 +17,7 @@
 
 class IRequest;
 class Response;
-class IConfiguration;
+class ILoggerConfiguration;
 
 class ILogger
 {
@@ -28,11 +28,8 @@ public:
     virtual void errorLog(const LogLevel, const std::string &) = 0; // Method to log error messages
     virtual void accessLog(const IRequest &, const Response &) = 0;  // Method to log access events
 
-    // Getter method
-    virtual int getLogFileDescriptor() const = 0; // Getter method for log file descriptor
-
     // Configuration method
-    virtual void configure(const IConfiguration *) = 0; // Method to configure the Logger instance
+    virtual void configure(ILoggerConfiguration *) = 0; // Method to configure the Logger instance
 };
 
 #endif // ILOGGER_HPP

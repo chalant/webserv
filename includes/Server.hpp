@@ -15,23 +15,24 @@
 #include "IConfiguration.hpp"
 #include "ILogger.hpp"
 #include "IPollfdManager.hpp"
+#include "IBlock.hpp"
 #include "WebservExceptions.hpp"
 
 class Server : public IServer
 {
 private:
-    const ISocket *_socket;            // Reference to the Socket instance
-    IPollfdManager *_pollfdManager;    // Reference to the PollfdManager
-    ILogger *_errorLogger;             // Reference to the error logger
-    const int _serverSocketDescriptor; // File descriptor for the server socket
+    const ISocket *_socket;         // Reference to the Socket instance
+    IPollfdManager *_pollfdManager; // Reference to the PollfdManager
+    ILogger *_errorLogger;          // Reference to the error logger
+
+    void _initializeServerSocket(int ip, int port, int maxConnections); // Method to initialize the server socket
 
 public:
     Server(const ISocket *socket, IPollfdManager *pollfdManager, const IConfiguration *configuration, ILogger *errorLogger); // Constructor for Server class
     ~Server();                                                                                                               // Destructor for Server class
 
-    void acceptConnection();                       // Method to accept a new client connection
-    virtual void terminate(int exit_code);         // Method to terminate the server Closes file descriptors, clears memory, writes log buffers to file, and exits
-    virtual int getServerSocketDescriptor() const; // Method to get the server socket descriptor
+    virtual void acceptConnection(int serverSocketDescriptor); // Method to accept a new client connection
+    virtual void terminate(int exit_code);                     // Method to terminate the server Closes file descriptors, clears memory, writes log buffers to file, and exits
 };
 
 #endif // SERVER_HPP

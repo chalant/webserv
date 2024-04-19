@@ -33,7 +33,7 @@
  */
 
 // Constructor for initializing an un-configured Logger instance
-Logger::Logger(const LoggerType type, IBufferManager *bufferManager)
+/*Logger::Logger(const LoggerType type, IBufferManager *bufferManager)
     : _type(type),
       _logFile((type == ERRORLOGGER) ? "./error.log" : "./access.log"),
       _bufferManager(bufferManager),
@@ -42,7 +42,7 @@ Logger::Logger(const LoggerType type, IBufferManager *bufferManager)
       _enabled(true),
       _logLevelHelper()
 {
-    if (this->_logFileDescriptor == -1)
+    if (this->_configuration->getLogFileDescriptor() == -1)
         throw LogFileOpenError(); // Opening log file failed
     if (type == ERRORLOGGER)
         this->errorLog(DEBUG, "Error Logger created");
@@ -60,7 +60,7 @@ Logger::Logger(const LoggerType type, IBufferManager *BufferManager, const IConf
       _enabled((type == ERRORLOGGER) ? configuration->getErrorLogEnabled() : configuration->getAccessLogEnabled()),
       _logLevelHelper()
 {
-    if (this->_logFileDescriptor == -1)
+    if (this->_configuration->getLogFileDescriptor() == -1)
         throw LogFileOpenError(); // Opening log file failed
     if (type == ERRORLOGGER)
     {
@@ -71,18 +71,16 @@ Logger::Logger(const LoggerType type, IBufferManager *BufferManager, const IConf
         this->errorLog(DEBUG, "Access Logger created");
     }
 }
+*/
+
+Logger::Logger()
+: _configuration(nullptr),
+   _logLevelHelper() {}
 
 // Destructor: Handles cleanup tasks like flushing buffer and closing log file descriptor
 Logger::~Logger()
 {
     this->errorLog(DEBUG, "Logger instance destruction started");
-    close(this->_logFileDescriptor);
-}
-
-// Getter method for log file descriptor
-int Logger::getLogFileDescriptor() const
-{
-    return this->_logFileDescriptor;
 }
 
 // Method to get the current timestamp
@@ -98,18 +96,18 @@ std::string Logger::_getCurrentTimestamp() const
 // Method to log error messages
 void Logger::errorLog(LogLevel logLevel, const std::string &message)
 {
-    if (this->_enabled == false || logLevel < this->_logLevel)
+    if (this->_configuration->getEnabled() == false || logLevel < this->_configuration->getLogLevel())
         return;
 
     std::string logMessageString = "timestamp=\"" + this->_getCurrentTimestamp() + "\" loglevel=\"" + this->_logLevelHelper.logLevelStringMap(logLevel) + "\" message=\"" + message + "\"\n";
     std::vector<char> logMessage(logMessageString.begin(), logMessageString.end());
-    this->_bufferManager->pushFileBuffer(this->_logFileDescriptor, logMessage);
+    this->_configuration->getBufferManager()->pushFileBuffer(this->_configuration->getLogFileDescriptor(), logMessage);
 }
 
 // Method to log access events
 void Logger::accessLog(const IRequest &request, const Response &response)
 {
-    if (this->_enabled == false)
+    if (this->_configuration->getEnabled() == false)
         return;
 
     // Create a temporary stringstream object to construct the log message
@@ -138,7 +136,7 @@ void Logger::accessLog(const IRequest &request, const Response &response)
     std::vector<char> logMessageVector(logMessage.begin(), logMessage.end());
 
     // Push the log message to the BufferManager
-    this->_bufferManager->pushFileBuffer(this->_logFileDescriptor, logMessageVector);
+    this->_configuration->getBufferManager()->pushFileBuffer(this->_configuration->getLogFileDescriptor(), logMessageVector);
 }
 
 // Method to append map to log message
@@ -161,15 +159,9 @@ void Logger::_appendMapToLog(std::ostringstream &logBufferStream, const std::str
 }
 
 // Configuration method
-void Logger::configure(const IConfiguration *configuration)
+void Logger::configure(ILoggerConfiguration *configuration)
 {
-    this->_logFile = (this->_type == ERRORLOGGER) ? configuration->getErrorLogFile() : configuration->getAccessLogFile();
-    this->_logLevel = configuration->getLogLevel();
-    this->_bufferSize = configuration->getLogBufferSize();
-    this->_logFileDescriptor = open(this->_logFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    if (this->_logFileDescriptor == -1)
-        throw LogFileOpenError(); // Opening log file failed
-    this->_enabled = (this->_type == ERRORLOGGER) ? configuration->getErrorLogEnabled() : configuration->getAccessLogEnabled();
+    this->_configuration = configuration;
 }
 
 // Path: includes/WebservExceptions.hpp

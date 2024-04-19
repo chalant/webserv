@@ -19,8 +19,17 @@ class IPollfdManager
 public:
     virtual ~IPollfdManager() {}
 
-    // Method to add a file descriptor to the pollfdQueue
+    // Method to add a pollfd to the pollfdQueue
     virtual void addPollfd(pollfd pollFd) = 0;
+
+    // Method to add a file descriptor pollfd to the pollfdQueue
+    virtual void addFileDescriptorPollfd(pollfd pollFd) = 0;
+
+    // Method to add a server socket pollfd to the pollfdQueue
+    virtual void addServerSocketPollfd(pollfd pollFd) = 0;
+
+    // Method to add a client socket pollfd to the pollfdQueue
+    virtual void addClientSocketPollfd(pollfd pollFd) = 0;
 
     // Method to remove a file descriptor from the pollfdQueue
     virtual void removePollfd(int position) = 0;
@@ -35,31 +44,22 @@ public:
     virtual size_t getPollfdQueueSize() const = 0;
 
     // Method to get the events at a specific position in the pollfdQueue
-    virtual int getEvents(int position) = 0;
+    virtual short getEvents(int position) = 0;
 
-    // Method to get the server socket events
-    virtual int getServersocketEvents() = 0;
+    // Method to get the file descriptor index
+    virtual ssize_t getFileDescriptorsIndex() = 0;
 
-    // Method to get the error log events
-    virtual int getErrorLogEvents() = 0;
+    // Method to get the server sockets index
+    virtual ssize_t getServerSocketsIndex() = 0;
 
-    // Method to get the access log events
-    virtual int getAccessLogEvents() = 0;
+    // Method to get client sockets index
+    virtual ssize_t getClientSocketsIndex() = 0;
 
     // Method to get the file descriptor at a specific position in the pollfdQueue
-    virtual int getFd(int position) = 0;
-
-    // Method to get the error log file descriptor
-    virtual int getErrorLogFd() = 0;
-
-    // Method to get the access log file descriptor
-    virtual int getAccessLogFd() = 0;
+    virtual int getDescriptor(int position) = 0;
     
     // Method to check if the pollfdQueue has reached its capacity
     virtual bool hasReachedCapacity() const = 0;
-
-    // Method to get the start index of the client sockets in pollfdQueue
-    virtual int getClientsIndex() = 0;
 
     // Method to get a pointer to the pollfd array
     virtual pollfd *getPollfdArray() = 0;

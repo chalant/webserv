@@ -21,20 +21,10 @@ class IConfiguration
 public:
     virtual ~IConfiguration() {}
 
-    // Getters
-    virtual size_t getClientHeaderBufferSize() const = 0;
-    virtual size_t getClientBodyBufferSize() const = 0;
-    virtual size_t getClientMaxBodySize() const = 0;
-    virtual size_t getClientMaxUriSize() const = 0;
-    virtual size_t getLogBufferSize() const = 0;
-    virtual size_t getMaxConnections() const = 0;
-    virtual int getPort() const = 0;
-    virtual LogLevel getLogLevel() const = 0;
-    virtual bool getErrorLogEnabled() const = 0;
-    virtual bool getAccessLogEnabled() const = 0;
-    virtual std::string getErrorLogFile() const = 0;
-    virtual std::string getAccessLogFile() const = 0;
-    virtual std::set<std::string> getSupportedMethods() const = 0;
+    virtual const std::vector<IBlock> getBlocks(const std::string &) const = 0;
+    virtual const std::string getString(const std::string &) const = 0;
+    virtual int getInt(const std::string &) const = 0;
+    virtual bool getBool(const std::string &) const = 0;
 };
 
 #endif

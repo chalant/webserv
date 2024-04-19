@@ -25,7 +25,7 @@ public:
     virtual int socket() const = 0;
 
     // Binds the socket to an IP address and port
-    virtual int bind(int fd, int port) const = 0;
+    virtual int bind(int socketDescriptor, int ip, int port) const = 0;
 
     // Listens for incoming connections
     virtual int listen(int fd, int maxConnections) const = 0;

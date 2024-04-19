@@ -13,19 +13,12 @@
  */
 
 // Constructor for PollFdManager class
-PollfdManager::PollfdManager(const IConfiguration* configuration, const ILogger* errorLogger, const ILogger* accessLogger, const IServer* server)
-    : _pollfds(configuration ? configuration->getMaxConnections() + 3 : 0) // + 3 for server socket, error log, and access log
-{
-    // Obtain necessary descriptors from dependencies
-    int serverSocketDescriptor = server->getServerSocketDescriptor();
-    int errorLogFileDescriptor = errorLogger->getLogFileDescriptor();
-    int accessLogFileDescriptor = accessLogger->getLogFileDescriptor();
-
-    // Make pollfds entries for server socket, error log, and access log
-    this->_pollfds[SERVER_SOCKET_POLL_FD] = {serverSocketDescriptor, POLLIN, 0};
-    this->_pollfds[ERROR_LOG_POLL_FD] = {errorLogFileDescriptor, POLLOUT, 0};
-    this->_pollfds[ACCESS_LOG_POLL_FD] = {accessLogFileDescriptor, POLLOUT, 0};
-}
+PollfdManager::PollfdManager(const IConfiguration *configuration)
+    : _pollfds(configuration ? configuration->getInt("MaxConnections") + 3 : 0), // + 3 for server socket, error log, and access log, or more in case of several server sockets
+      _fileDescriptorsIndex(-1),                                            // Index for log descriptors
+      _serverSocketsIndex(-1),                                              // Index for server sockets
+      _clientSocketsIndex(-1)                                               // Index for client sockets
+{}
 
 // Destructor for PollFdManager class
 PollfdManager::~PollfdManager() {}
@@ -34,6 +27,30 @@ PollfdManager::~PollfdManager() {}
 void PollfdManager::addPollfd(pollfd pollFd)
 {
     this->_pollfds.push(pollFd);
+}
+
+// Method to add a file descriptor pollfd to the pollfdQueue
+void PollfdManager::addFileDescriptorPollfd(pollfd pollFd)
+{
+    this->_fileDescriptorsIndex++;
+    this->_serverSocketsIndex++;
+    this->_clientSocketsIndex++;
+    this->addPollfd(pollFd);
+}
+
+// Method to add a server socket pollfd to the pollfdQueue
+void PollfdManager::addServerSocketPollfd(pollfd pollFd)
+{
+    this->_serverSocketsIndex++;
+    this->_clientSocketsIndex++;
+    this->addPollfd(pollFd);
+}
+
+// Method to add a client socket pollfd to the pollfdQueue
+void PollfdManager::addClientSocketPollfd(pollfd pollFd)
+{
+    this->_clientSocketsIndex++;
+    this->addPollfd(pollFd);
 }
 
 // Method to remove a polling file descriptor
@@ -65,57 +82,39 @@ size_t PollfdManager::getPollfdQueueSize() const
 }
 
 // Method to get the events at a specific position in the PollfdQueue
-int PollfdManager::getEvents(int position)
+short PollfdManager::getEvents(int position)
 {
     return this->_pollfds[position].events;
 }
 
-// Method to get the server socket events
-int PollfdManager::getServersocketEvents()
-{
-    return this->_pollfds[SERVER_SOCKET_POLL_FD].revents;
-}
-
-// Method to get the error log events
-int PollfdManager::getErrorLogEvents()
-{
-    return this->_pollfds[ERROR_LOG_POLL_FD].revents;
-}
-
-// Method to get the access log events
-int PollfdManager::getAccessLogEvents()
-{
-    return this->_pollfds[ACCESS_LOG_POLL_FD].revents;
-}
-
 // Method to get the file descriptor at a specific position in the PollfdQueue
-int PollfdManager::getFd(int position)
+int PollfdManager::getDescriptor(int position)
 {
     return this->_pollfds[position].fd;
 }
 
-// Method to get the error log file descriptor
-int PollfdManager::getErrorLogFd()
+// Method to get the file descriptors index
+ssize_t PollfdManager::getFileDescriptorsIndex()
 {
-    return this->_pollfds[ERROR_LOG_POLL_FD].fd;
+    return this->_fileDescriptorsIndex;
 }
 
-// Method to get the access log file descriptor
-int PollfdManager::getAccessLogFd()
+// Method to get the server sockets index
+ssize_t PollfdManager::getServerSocketsIndex()
 {
-    return this->_pollfds[ACCESS_LOG_POLL_FD].fd;
+    return this->_serverSocketsIndex;
+}
+
+// Method to get the client sockets index
+ssize_t PollfdManager::getClientSocketsIndex()
+{
+    return this->_clientSocketsIndex;
 }
 
 // Method to check if the PollfdQueue has reached its capacity
 bool PollfdManager::hasReachedCapacity() const
 {
     return this->_pollfds.size() == this->_pollfds.capacity();
-}
-
-// Method to get the start index of the client sockets in PollfdQueue
-int PollfdManager::getClientsIndex()
-{
-    return FIRST_CLIENT_POLL_FD;
 }
 
 // Method to get a pointer to the pollfd array
