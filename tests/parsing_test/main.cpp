@@ -74,11 +74,12 @@ int	main(void) {
 	tokens.push_back(Token("+", 0));
 	tokens.push_back(Token("4", 0));
 	tokens.push_back(Token(")", 0));
-	//tokens.push_back(Token(")", 0));
 
-	Recognizer	recognizer(arithmetic);
-	recognizer.recognize(tokens);
-	recognizer.print();
+	std::vector<std::vector<EarleyItem> >	sets =  std::vector<std::vector<EarleyItem> >();
+
+	Recognizer	recognizer;
+	recognizer.recognize(tokens, arithmetic, sets);
+	recognizer.print(arithmetic, sets);
 
 	return 0;
 }

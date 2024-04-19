@@ -35,32 +35,26 @@ struct ParseTree {
 
 class Recognizer {
 	private:
-		const Grammar&	m_grammar;
-		int				m_state_idx;
-		std::vector<std::vector<EarleyItem> >	m_sets;
-		// variables.
-		std::vector<EarleyItem>	*m_set;
-		Token			*m_token;
-		GrammarSymbol	*m_symbol;
-		EarleyItem		*m_item;
-		int				m_j;
-		void			scan(void);
-		void			complete(void);
-		void			predict(void);
+		int						m_state_idx;
+		GrammarSymbol			*m_symbol;
+		void			scan(std::vector<std::vector<EarleyItem> >& sets, Token const & token, EarleyItem const & item);
+		void			complete(Grammar const & grammar, std::vector<std::vector<EarleyItem> >& sets, std::vector<EarleyItem>& current_set, int item_index);
+		void			predict(Grammar const & grammar, std::vector<EarleyItem>& current_set);
 	public:
-		Recognizer(const Grammar& grammar);
+		Recognizer();
 		~Recognizer();
-		void			recognize(std::vector<Token>& tokens);
-		void			print(void);
+		void			recognize(std::vector<Token> const & tokens, Grammar const & grammar, std::vector<std::vector<EarleyItem> >& sets);
+		void			print(Grammar const & grammar, std::vector<std::vector<EarleyItem> >& sets);
 };
 
-class EarleyParser {
+class Parser {
 	private:
 		std::vector<std::vector<EarleyItem> >	m_earley_sets;
 		std::vector<std::vector<EarleyEdge> >	m_chart;
 		Recognizer								m_recognizer;
 		ParseTree								m_parse_tree;
 	public:
+		Parser();
 		void			parse(const Grammar& grammar);
 };
 
