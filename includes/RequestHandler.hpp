@@ -46,10 +46,9 @@ private:
     // Private member variables
     const ISocket *_socket;             // Pointer to the Socket instance
     IBufferManager *_bufferManager;     // Pointer to the buffer manager
-    IPollfdManager *_pollfdManager;     // Pointer to a queue of poll file descriptors
     IClientHandler *_clientHandler;     // Handles communication with clients
     const RequestParser _requestParser; // Parses incoming requests
-    const Router _router;               // Routes requests to appropriate handlers
+    Router _router;               // Routes requests to appropriate handlers
     // AResponseGenerator *_requestHandler;                 // Pointer to the recruited request handler
     RequestHelper _requestHelper;               // Helper class for request-related operations
     Request _request;                           // Represents an HTTP request
@@ -72,7 +71,7 @@ private:
 
 public:
     // Constructor
-    RequestHandler(const ISocket *socket, IPollfdManager *PollfdManager, IBufferManager *bufferManager, const IConfiguration *configuration, ILogger *errorLogger, ILogger *accessLogger, const IExceptionHandler *IExceptionHandler);
+    RequestHandler(const ISocket *socket, IBufferManager *bufferManager, const IConfiguration *configuration, ILogger *errorLogger, ILogger *accessLogger, const IExceptionHandler *IExceptionHandler);
 
     // Destructor
     ~RequestHandler();

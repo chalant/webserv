@@ -80,7 +80,7 @@ int main(int argc, char **argv)
         pollingService = new PollingService(pollfdManager);
 
         // Instantiate the RequestHandler. Coordinates request processing utilizing the poll fd array.
-        requestHandler = new RequestHandler(socket, pollfdManager, bufferManager, configuration, errorLogger, accessLogger, exceptionHandler);
+        requestHandler = new RequestHandler(socket, bufferManager, configuration, errorLogger, accessLogger, exceptionHandler);
 
         // Instantiate the EventManager. Manages events
         eventManager = new EventManager(pollfdManager, bufferManager, socket, server, requestHandler, errorLogger);

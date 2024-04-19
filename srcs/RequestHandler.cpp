@@ -19,9 +19,8 @@
  * exceptions effectively.
  */
 
-RequestHandler::RequestHandler(const ISocket *socket, IPollfdManager *pollfdManager, IBufferManager *bufferManager, const IConfiguration *configuration, ILogger *errorLogger, ILogger *accessLogger, const IExceptionHandler *exceptionHandler)
+RequestHandler::RequestHandler(const ISocket *socket, IBufferManager *bufferManager, const IConfiguration *configuration, ILogger *errorLogger, ILogger *accessLogger, const IExceptionHandler *exceptionHandler)
     : _socket(socket),
-      _pollfdManager(pollfdManager),
       _bufferManager(bufferManager),
       _errorLogger(errorLogger),
       _accessLogger(accessLogger),
@@ -29,6 +28,7 @@ RequestHandler::RequestHandler(const ISocket *socket, IPollfdManager *pollfdMana
       _clientHandler(new ClientHandler(socket, errorLogger, exceptionHandler)),
       _requestParser(configuration, errorLogger, exceptionHandler),
       //_router(configuration, errorLogger, exceptionHandler),
+      _router(),
       _requestHelper(configuration),
       _request(Request(_requestHelper, configuration))
 {
@@ -76,11 +76,7 @@ int RequestHandler::handleRequest(int socketDescriptor)
     }
 
     // 'Router' selects the right 'ResponseGenerator' for the job
-    // this->_requestHandler = this->_router.route(this->_request);
-
-    // 'AResponseGenerator' produces the 'Response'
-    // this->_response = this->_requestHandler->handleRequest(this->_request);
-    // delete this->_requestHandler;
+    this->_router.execRoute(&this->_request, &this->_response);
 
     // Create the raw response string
     // std::vector<char> rawResponse = this->_response.serialise(this->_response);
