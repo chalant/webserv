@@ -44,10 +44,24 @@ private:
                        const std::vector<char> &rawRequest,
                        IRequest &parsedRequest) const;
 
+    // Function to parse an individual header
+    void _parseHeader(std::vector<char>::const_iterator &it,
+                      const std::vector<char> &rawRequest,
+                      IRequest &parsedRequest) const;
+
     // Function to parse the body of an HTTP request
     void _parseBody(std::vector<char>::const_iterator &it,
                     const std::vector<char> &rawRequest,
                     IRequest &parsedRequest) const;
+
+    // Function to check if a character is whitespace
+    bool _isWhitespace(char c) const;
+
+    // Function to check if an iterator points to CRLF (carriage return + line feed)
+    bool _isCRLF(std::vector<char>::const_iterator it) const;
+
+    // Function to check if an iterator points to a character that is in a given set
+    bool _isCharInSet(std::vector<char>::const_iterator it, const std::string &set) const;
 
 public:
     // Constructor to initialize the RequestParser with required references

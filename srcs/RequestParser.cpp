@@ -24,7 +24,7 @@ void RequestParser::parseRequest(const std::vector<char> &rawRequest, IRequest &
     this->_parseRequestLine(it, rawRequest, parsedRequest);
 
     // Check for whitespace between request-line and first header field
-    if (*it == ' ' || *it == '\t' || *it == '\v' || *it == '\f' || *it == '\r' || *it == '\n')
+    if (this->_isWhitespace(*it))
     {
         throw HttpStatusCodeException(BAD_REQUEST, // throw '400' status error
                                       "whitespace between the start-line and the first header field");
@@ -115,14 +115,19 @@ std::string RequestParser::_parseHttpVersion(std::vector<char>::const_iterator &
 {
     std::string httpVersion;
 
-    // Build 'httpVersion' string until CRLF is found
-    while (requestIterator != rawRequest.end() && !(*requestIterator == '\r' && *(requestIterator + 1) == '\n'))
+    // Build 'httpVersion' string
+    while (requestIterator != rawRequest.end())
     {
+        // End of 'httpVersion' string, break loop
+        if (this->_isCRLF(requestIterator))
+            break;
+
         // Check for invalid characters
         if (*requestIterator == '\r' || *requestIterator == '\n')
         {
             throw HttpStatusCodeException(BAD_REQUEST, "Invalid characters in HTTP version"); // throw '400' status error
         }
+
         // Append character to 'httpVersion' string
         httpVersion += *requestIterator;
         ++requestIterator;
@@ -146,70 +151,20 @@ void RequestParser::_parseHeaders(std::vector<char>::const_iterator &requestIter
                                   IRequest &parsedRequest) const
 {
     // Parse headers
-    while (requestIterator != rawRequest.end() && !(*requestIterator == '\r' && *(requestIterator + 1) == '\n'))
+    while (requestIterator != rawRequest.end())
     {
+        // End of headers, break loop
+        if (this->_isCRLF(requestIterator))
+            break;
+
         // Check for invalid characters
-        if (*requestIterator == '\r' || *requestIterator == '\n')
+        if (this->_isCharInSet(requestIterator, "\r\n"))
         {
             throw HttpStatusCodeException(BAD_REQUEST, "Invalid characters in header");
         }
 
-        // Parse header name and value
-        std::string headerName;
-        std::string headerValue;
-
-        // Set start value for client header buffer size
-        int clientHeaderBufferSize = this->_configuration.getInt("ClientHeaderBufferSize");
-
-        // Find colon to separate header name and value
-        while (requestIterator != rawRequest.end() && *requestIterator != ':')
-        {
-            headerName += *requestIterator;
-            clientHeaderBufferSize--;
-            ++requestIterator;
-        }
-
-        // Check if colon was found
-        if (requestIterator == rawRequest.end())
-        {
-            throw HttpStatusCodeException(BAD_REQUEST, "Colon not found in header");
-        }
-
-        // Skip colon
-        ++requestIterator;
-
-        // Skip optional space
-        if (requestIterator != rawRequest.end() && *requestIterator == ' ')
-        {
-            ++requestIterator;
-        }
-
-        // Find end of header value
-        while (requestIterator != rawRequest.end() && !(*requestIterator == '\r' && *(requestIterator + 1) == '\n'))
-        {
-
-            headerValue += *requestIterator;
-            clientHeaderBufferSize--;
-            ++requestIterator;
-        }
-
-        // Check for unexpected end of request
-        if (requestIterator == rawRequest.end())
-        {
-            throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
-        }
-
-        // Check if header size exceeds client header buffer size
-        if (clientHeaderBufferSize < 0)
-        {
-            throw HttpStatusCodeException(REQUEST_HEADER_FIELDS_TOO_LARGE, "Header fields too large");
-        }
-
-        // Move marker passed CRLF
-        requestIterator += 2;
-
-        // Add header to parsed request
-        parsedRequest.addHeader(headerName, headerValue);
+        // Parse individual header
+        this->_parseHeader(requestIterator, rawRequest, parsedRequest);
     }
 
     // Check for unexpected end of request
@@ -222,31 +177,92 @@ void RequestParser::_parseHeaders(std::vector<char>::const_iterator &requestIter
     requestIterator += 2;
 }
 
+// Function to parse an individual header
+void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestIterator,
+                                 const std::vector<char> &rawRequest,
+                                 IRequest &parsedRequest) const
+{
+    // Parse header name and value
+    std::string headerName;
+    std::string headerValue;
+
+    // Set start value for client header buffer size
+    int clientHeaderBufferSize = this->_configuration.getInt("ClientHeaderBufferSize");
+
+    // Find colon to separate header name and value
+    while (requestIterator != rawRequest.end() && *requestIterator != ':')
+    {
+        headerName += *requestIterator;
+        clientHeaderBufferSize--;
+        ++requestIterator;
+    }
+
+    // Check if colon was found
+    if (requestIterator == rawRequest.end())
+    {
+        throw HttpStatusCodeException(BAD_REQUEST, "Colon not found in header");
+    }
+
+    // Skip colon
+    ++requestIterator;
+
+    // Skip optional space
+    if (requestIterator != rawRequest.end() && *requestIterator == ' ')
+    {
+        ++requestIterator;
+    }
+
+    // Find end of header value
+    while (requestIterator != rawRequest.end() && !(*requestIterator == '\r' && *(requestIterator + 1) == '\n'))
+    {
+        headerValue += *requestIterator;
+        clientHeaderBufferSize--;
+        ++requestIterator;
+    }
+
+    // Check for unexpected end of request
+    if (requestIterator == rawRequest.end())
+    {
+        throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
+    }
+    // Check if header size exceeds client header buffer size
+    if (clientHeaderBufferSize < 0)
+    {
+        throw HttpStatusCodeException(REQUEST_HEADER_FIELDS_TOO_LARGE, "Header fields too large");
+    }
+
+    // Move marker passed CRLF
+    requestIterator += 2;
+
+    // Add header to parsed request
+    parsedRequest.addHeader(headerName, headerValue);
+}
 // Function to parse the body of an HTTP request
 void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterator,
                                const std::vector<char> &rawRequest,
                                IRequest &parsedRequest) const
 {
-    // Extract body (if present)
+    // If method is not POST or PUT, no need to parse body
     if (parsedRequest.getMethod() != POST && parsedRequest.getMethod() != PUT)
         return; // No need to parse body for other methods
 
-    // Find body size
-    std::string contentLengthString = parsedRequest.getHeaderValue(CONTENT_LENGTH);
-
     // Check if 'Content-Length' header is missing
-    if (
-        contentLengthString.empty())
-        throw HttpStatusCodeException(LENGTH_REQUIRED, // throw '411' status error
-                                      "no content-length header found");
-
-    // Convert 'Content-Length' header value to integer
-    size_t bodySize = atoi(contentLengthString.c_str());
+    // Get body size
+    std::string contentLengthString = parsedRequest.getHeaderValue(CONTENT_LENGTH);
+    if (contentLengthString.empty())
+    {
+        // throw '411' status error
+        throw HttpStatusCodeException(LENGTH_REQUIRED, "no content-length header found");
+    }
 
     // Check if conversion was successful
+    // Get 'Content-Length' value
+    size_t bodySize = atoi(contentLengthString.c_str());
     if (bodySize <= 0)
-        throw HttpStatusCodeException(BAD_REQUEST, // throw '400' status error
-                                      "content-length header conversion failed (" + contentLengthString + ")");
+    {
+        // throw '400' status error
+        throw HttpStatusCodeException(BAD_REQUEST, "content-length header conversion failed (" + contentLengthString + ")");
+    }
 
     // Check if body size exceeds client body buffer size
     if (bodySize > this->_configuration.getSize_t("ClientBodyBufferSize"))
@@ -262,3 +278,23 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
     std::vector<char> body(requestIterator, requestIterator + bodySize);
     parsedRequest.setBody(body);
 }
+
+// Function to check if a character is whitespace
+bool RequestParser::_isWhitespace(char c) const
+{
+    return c == ' ' || c == '\t' || c == '\v' || c == '\f' || c == '\r' || c == '\n';
+}
+
+// Function to check if an iterator points to CRLF (carriage return + line feed)
+bool RequestParser::_isCRLF(std::vector<char>::const_iterator it) const
+{
+    return *it == '\r' && *(it + 1) == '\n';
+}
+
+// Function to check if an iterator points to a character that is in a given set
+bool RequestParser::_isCharInSet(std::vector<char>::const_iterator it, const std::string &set) const
+{
+    return set.find(*it) != std::string::npos;
+}
+
+// path: srcs/RequestHandler.cpp

@@ -2,18 +2,11 @@
 
 /*
  * Logger Class:
- * Provides functionality to log errors and access events to separate files.
- * Default log files are "./error.log" and "./access.log"; this can be overridden through the config file.
+ * Provides functionality to log errors and access events.
+ * By default logs to std err; this can be overridden through the config file.
  * It supports logging to specified files with customizable log levels. Error and access logs are handled separately.
- * Log messages are not immediately written to the log files but are deferred until an appropriate time, after poll() returns.
+ * Log messages are not immediately written but instead pused to the BufferManager who handles writing without blocking.
  *
- * Logger Buffer Usage Summary:
- * The Logger buffer serves as a centralized mechanism for collecting log messages generated throughout the system.
- * How it Works:
- * - Logging Messages: Various components within the system generate log messages during their operation.
- * - Buffering Log Messages: Log messages are buffered into the Logger buffer instead of directly written to an output file or stream.
- * - Deferred Writing: Log messages remain in the buffer until it's time to write them to the output medium, ensuring non-blocking behavior.
- * - Batch Processing: Log messages are processed in batches rather than individually to improve efficiency.
  * There are two instances of the Logger class in webserv:
  * 1. An error Logger, referenced for use in most classes.
  * 2. An access Logger, mainly intended for logging by the ResponseGenerator class.

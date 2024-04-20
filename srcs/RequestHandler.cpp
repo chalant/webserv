@@ -20,15 +20,13 @@
  */
 
 RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, const IRouter &router, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &exceptionHandler)
-    :  _bufferManager(bufferManager),
-        _router(router),
+    : _bufferManager(bufferManager),
+      _router(router),
       _errorLogger(errorLogger),
       _accessLogger(accessLogger),
       _exceptionHandler(exceptionHandler),
       _clientHandler(new ClientHandler(socket, errorLogger, exceptionHandler)),
       _requestParser(configuration, errorLogger, exceptionHandler),
-      //_router(configuration, errorLogger, exceptionHandler),
-      _router(),
       _requestHelper(configuration),
       _request(Request(_requestHelper, configuration))
 {
@@ -85,7 +83,6 @@ int RequestHandler::handleRequest(int socketDescriptor)
     std::vector<char> rawResponse;
     // Push the raw response to the buffer manager
     this->_bufferManager.pushSocketBuffer(socketDescriptor, rawResponse);
-
 
     // create an access log entry
     this->_accessLogger.accessLog(this->_request, this->_response);
