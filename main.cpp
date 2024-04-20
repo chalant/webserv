@@ -78,7 +78,7 @@ int main(int argc, char **argv)
         RequestHandler requestHandler(socket, bufferManager, configuration, router, errorLogger, accessLogger, exceptionHandler);
 
         // Instantiate the PollingService.
-        PollingService pollingService(pollfdManager);
+        PollingService pollingService(pollfdManager, errorLogger);
 
         // Instantiate the EventManager.
         EventManager eventManager(pollfdManager, bufferManager, socket, server, requestHandler, errorLogger);

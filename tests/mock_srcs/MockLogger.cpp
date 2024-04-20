@@ -17,8 +17,8 @@ void MockLogger::errorLog(const LogLevel logLevel, const std::string &message)
 {
     static_cast<void>(logLevel);
     // Construct the log message string
-    //std::string logMessageString = "timestamp=\"" + this->_getCurrentTimestamp() + "\" loglevel=\"" + this->_logLevelHelper.logLevelStringMap(logLevel) + "\" message=\"" + message + "\"\n";
-    std::string logMessageString = "timestamp=\"" + this->_getCurrentTimestamp() + "\" loglevel=\"" + "LOGLEVEL" + "\" message=\"" + message + "\"\n";
+    //std::string logMessageString = this->_getCurrentTimestamp() + " [" + this->_logLevelHelper.logLevelStringMap(logLevel) + "] " + message + "\n";
+    std::string logMessageString = this->_getCurrentTimestamp() + " [LOGLEVEL] " + message + "\n";
     std::vector<char> logMessage(logMessageString.begin(), logMessageString.end());
 
     std::cout << logMessageString;

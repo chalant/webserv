@@ -96,7 +96,7 @@ void Logger::errorLog(LogLevel logLevel, const std::string &message)
         return;
 
     // Construct the log message string
-    std::string logMessageString = "timestamp=\"" + this->_getCurrentTimestamp() + "\" loglevel=\"" + this->_logLevelHelper.logLevelStringMap(logLevel) + "\" message=\"" + message + "\"\n";
+    std::string logMessageString = this->_getCurrentTimestamp() + " [" + this->_logLevelHelper.logLevelStringMap(logLevel) + "] " + message + "\n";
     std::vector<char> logMessage(logMessageString.begin(), logMessageString.end());
 
     // if the logger is configured, log the log file buffer, otherwise log to stderr buffer

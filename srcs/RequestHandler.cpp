@@ -19,14 +19,14 @@
  * exceptions effectively.
  */
 
-RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, const IRouter &router, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &exceptionHandler)
+RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, IRouter &router, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &exceptionHandler)
     : _bufferManager(bufferManager),
       _router(router),
       _errorLogger(errorLogger),
       _accessLogger(accessLogger),
       _exceptionHandler(exceptionHandler),
-      _clientHandler(new ClientHandler(socket, errorLogger, exceptionHandler)),
-      _requestParser(configuration, errorLogger, exceptionHandler),
+      _clientHandler(&ClientHandler(socket, errorLogger)),
+      _requestParser(configuration, errorLogger),
       _requestHelper(configuration),
       _request(Request(_requestHelper, configuration))
 {

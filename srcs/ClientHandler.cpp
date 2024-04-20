@@ -8,10 +8,9 @@
  */
 
 // Constructor
-ClientHandler::ClientHandler(const ISocket &socket, ILogger &errorLogger, const IExceptionHandler &exceptionHandler)
+ClientHandler::ClientHandler(const ISocket &socket, ILogger &errorLogger)
     : _socket(socket),
-      _errorLogger(errorLogger),
-      _exceptionHandler(exceptionHandler) {}
+      _errorLogger(errorLogger) {}
 
 // Destructor
 ClientHandler::~ClientHandler() {}
@@ -57,6 +56,10 @@ const std::vector<char> ClientHandler::readRequest() const
     // Resize the buffer to the actual size of the data read
     buffer.resize(offSet + bytesRead);
 
+    // Log the request read from the client
+    this->_errorLogger.errorLog(VERBOSE, "[CLIENTHANDLER] Request on socket: " + std::to_string(this->_socketDescriptor) + ": \"" + std::string(buffer.begin(), buffer.end()) + "\"");
+    
+    // Return the buffer containing the request
     return buffer;
 }
 
@@ -67,6 +70,10 @@ ssize_t ClientHandler::sendResponse(const std::vector<char> &response) const
     if (bytesSent == -1)
         this->_errorLogger.errorLog(ERROR, "Error sending response to client on socket: " + std::to_string(this->_socketDescriptor));
 
+    // Log the response sent to the client
+    this->_errorLogger.errorLog(VERBOSE, "[CLIENTHANDLER] Responded on socket: " + std::to_string(this->_socketDescriptor) + ": \"" + std::string(response.begin(), response.end()) + "\"");
+    
+    // Return the number of bytes sent
     return bytesSent;
 }
 

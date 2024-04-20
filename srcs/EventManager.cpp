@@ -114,6 +114,8 @@ void EventManager::_handleClientSocketEvents(ssize_t &clientSocketIndex)
 
 void EventManager::_handleFileDescriptorsEvents()
 {
+    this->_errorLogger.errorLog(DEBUG, "Processing File Descriptor Events.");
+    
     for (ssize_t fileDescriptorIndex = this->_pollfdManager.getFileDescriptorsIndex();
          fileDescriptorIndex < this->_pollfdManager.getServerSocketsIndex();
          fileDescriptorIndex++)
