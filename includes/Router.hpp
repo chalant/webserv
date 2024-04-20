@@ -18,10 +18,10 @@ locationblock)*/
 
 class Response;
 
-typedef std::vector<std::string> authorities;
-typedef std::vector<Route> routes;
-typedef std::pair<const authorities, routes> routeMapEntry;
-typedef std::map<authorities, routes> routeMap;
+typedef std::vector<std::string> authorities_t;
+typedef std::vector<Route> routes_t;
+typedef std::pair<const authorities_t, routes_t> routeMapEntry_t;
+typedef std::map<authorities_t, routes_t> routeMap_t;
 
 // Route structure with function pointer for handler
 struct Route
@@ -47,10 +47,10 @@ public:
     void execRoute(Request *req, Response *res);
 
 private:
-    routeMap _routes;
-    routeMapEntry _createServerRoutes(const IBlock *serverBlock);
-    authorities _createAuthorities(const IBlock *serverBlock);
-    routes _createRoutes(IBlock *serverBlock);
+    routeMap_t _routes;
+    routeMapEntry_t _createServerRoutes(const IBlock *serverBlock);
+    authorities_t _createAuthorities(const IBlock *serverBlock);
+    routes_t _createRoutes(IBlock *serverBlock);
 };
 
 #endif
