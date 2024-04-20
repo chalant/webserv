@@ -28,7 +28,7 @@
 #include "ClientHandler.hpp"
 #include "RequestParser.hpp"
 #include "constants/RequestHelper.hpp"
-#include "Router.hpp"
+#include "IRouter.hpp"
 #include "IRequest.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
@@ -44,34 +44,21 @@ class RequestHandler : public IRequestHandler
 {
 private:
     // Private member variables
-    const ISocket *_socket;             // Pointer to the Socket instance
-    IBufferManager *_bufferManager;     // Pointer to the buffer manager
+    IBufferManager &_bufferManager;     // Pointer to the buffer manager
     IClientHandler *_clientHandler;     // Handles communication with clients
     const RequestParser _requestParser; // Parses incoming requests
-    Router _router;               // Routes requests to appropriate handlers
+    const Router &_router;               // Routes requests to appropriate handlers
     // AResponseGenerator *_requestHandler;                 // Pointer to the recruited request handler
     RequestHelper _requestHelper;               // Helper class for request-related operations
     Request _request;                           // Represents an HTTP request
     Response _response;                         // Represents an HTTP response
-    ILogger *_errorLogger;                      // Pointer to the error logger
-    ILogger *_accessLogger;                     // Pointer to the access logger
-    const IExceptionHandler *_exceptionHandler; // Pointer to the exception handler
-    short _pollExceptionMask;                   // Mask for poll exceptions
-
-    // Private member functions
-
-    // Processes an incoming request
-    void processRequest(size_t &i);
-
-    // Processes buffered responses
-    void processBufferedResponse(size_t &i);
-
-    // Handles exceptions
-    void handleException(size_t &i);
+    ILogger &_errorLogger;                      // Pointer to the error logger
+    ILogger &_accessLogger;                     // Pointer to the access logger
+    const IExceptionHandler &_exceptionHandler; // Pointer to the exception handler
 
 public:
     // Constructor
-    RequestHandler(const ISocket *socket, IBufferManager *bufferManager, const IConfiguration *configuration, ILogger *errorLogger, ILogger *accessLogger, const IExceptionHandler *IExceptionHandler);
+    RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, const IRouter &router, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &IExceptionHandler);
 
     // Destructor
     ~RequestHandler();

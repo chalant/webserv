@@ -13,12 +13,13 @@
  */
 
 // Constructor for PollFdManager class
-PollfdManager::PollfdManager(const IConfiguration *configuration)
-    : _pollfds(configuration ? configuration->getInt("MaxConnections") + 3 : 0), // + 3 for server socket, error log, and access log, or more in case of several server sockets
-      _fileDescriptorsIndex(-1),                                            // Index for log descriptors
-      _serverSocketsIndex(-1),                                              // Index for server sockets
-      _clientSocketsIndex(-1)                                               // Index for client sockets
-{}
+PollfdManager::PollfdManager(const IConfiguration &configuration)
+    : _pollfds(configuration.getInt("MaxConnections") + 3), // + 3 for server socket, error log, and access log, or more in case of several server sockets
+      _fileDescriptorsIndex(-1),                            // Index for log descriptors
+      _serverSocketsIndex(-1),                              // Index for server sockets
+      _clientSocketsIndex(-1)                               // Index for client sockets
+{
+}
 
 // Destructor for PollFdManager class
 PollfdManager::~PollfdManager() {}

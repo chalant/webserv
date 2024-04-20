@@ -17,8 +17,10 @@ int main()
     MockLogger mockErrorLogger;
     MockExceptionHandler mockExceptionHandler;
 
+    mockConfiguration.setInt("ClientHeaderBufferSize", 6000);
+
     // Request Parser instance
-    RequestParser requestParser(&mockConfiguration, &mockErrorLogger, &mockExceptionHandler);
+    RequestParser requestParser(mockConfiguration, mockErrorLogger, mockExceptionHandler);
 
     // Recipient of the Request Parser's output
     MockRequest mockRequest;

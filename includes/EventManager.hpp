@@ -13,12 +13,12 @@
 class EventManager : public IEventManager
 {
 private:
-    IPollfdManager *_pollfdManager;
-    IBufferManager *_bufferManager;
-    ISocket *_socket;
-    IServer *_server;
-    IRequestHandler *_requestHandler;
-    ILogger *_errorLogger;
+    IPollfdManager &_pollfdManager;
+    IBufferManager &_bufferManager;
+    ISocket &_socket;
+    IServer &_server;
+    IRequestHandler &_requestHandler;
+    ILogger &_errorLogger;
 
     void _handleServerSocketsEvents();
     void _handleServerSocketEvents(ssize_t serverSocketIndex);
@@ -29,7 +29,7 @@ private:
     void _handleException(ssize_t &clientSocketIndex);
 
 public:
-    EventManager(IPollfdManager *pollfdManager, IBufferManager *bufferManager, ISocket *socket, IServer *server, IRequestHandler *requestHandler, ILogger *errorLogger);
+    EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager, ISocket &socket, IServer &server, IRequestHandler &requestHandler, ILogger &errorLogger);
     ~EventManager();
 
     virtual void handleEvents();

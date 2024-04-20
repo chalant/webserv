@@ -11,86 +11,77 @@
 #include "includes/Socket.hpp"
 #include "includes/RequestHandler.hpp"
 #include "includes/PollingService.hpp"
+#include "includes/Router.hpp"
 
 /*
  * webserv Workflow:
  *
  * Upon launch, the configuration class reads and parses the configuration file,
  * providing settings for other components.
- * The Server class sets up a TCP connection, monitors events using a poll mechanism,
- * and accepts incoming connections.
- * When an event is detected by the poll mechanism, the RequestHandler class coordinates request processing.
- * It utilizes the ClientHandler to communicate with the client,
- * the RequestParser to parse the request, the Router to select the appropriate AResponseGenerator,
- * and finally, the AResponseGenerator to generate a Response.
- * The generated Response is then sent back to the client by the ClientHandler.
- * After processing a request, the ILogger class writes the log buffers to files.
+ * The Server class creates the required server sockets and binds them to the specified ports.
+ * Once initialisation is complete, the server enters the main loop.
+ * The PollingService class polls the server sockets for events.
+ * When an event is detected or the timeout is reached, the EventManager class handles the event.
+ * Requests are managed by the RequestHandler class, which utilizes the ClientHandler to communicate with the client,
+ * the RequestParser to parse the request, the Router to select the appropriate route and to generate a Response.
+ * The generated Response is then pushed to the BufferManager, who will send it to the client in the next cycle 
+ * if polling indicates the socket is ready.
+ * All the while, the Logger class registers errors and access log entries with the BufferManager, 
+ * who writes them non-blockingly to the log file.
  * This process continues in a loop.
  */
 
 int main(int argc, char **argv)
 {
-    ILogger *errorLogger;
-    ILogger *accessLogger;
-    IExceptionHandler *exceptionHandler;
-    ISocket *socket;
-    IConfiguration *configuration;
-    IPollfdManager *pollfdManager;
-    IBufferManager *bufferManager;
-    IServer *server;
-    IEventManager *eventManager;
-    IRequestHandler *requestHandler;
-    IClientHandler *clientHandler;
-    IPollingService *pollingService;
-    // IRequestParser *requestParser;
-    // IRouter *router;
-    // IResponseGenerator *requestHandler;
+    // Instantiate the bufferManager.
+    BufferManager bufferManager;
+
+    // Instantiate the Socket instance.
+    Socket socket;
+
+    // Instantiate the errorLogger.
+    Logger errorLogger(bufferManager);
+
+    // Instantiate the accessLogger.
+    Logger accessLogger(bufferManager);
+
+    // Instantiate the exceptionHandler.
+    ExceptionHandler exceptionHandler(errorLogger);
 
     try
     {
-        // Instantiate the bufferManager.
-        bufferManager = new BufferManager();
 
-        // Instantiate the Socket instance.
-        socket = new Socket();
-
-        // Instantiate the errorLogger.
-        errorLogger = new Logger();
-
-        // Instantiate the accessLogger, primarily for use by the ResponseGenerator class to handle access event logging.
-        accessLogger = new Logger();
-
-        // Instantiate the exceptionHandler.
-        exceptionHandler = new ExceptionHandler(errorLogger);
-
-        // Instantiate the IConfiguration instance.
-        configuration = new Configuration();
+        // Instantiate the Configuration instance
+        Configuration configuration(errorLogger);
 
         // parse the configuration file
+    
 
+        // Instantiate the PollfdManager.
+        PollfdManager pollfdManager(configuration);
 
-        // Instantiate the PollfdManager. Manages the pollfd array
-        pollfdManager = new PollfdManager(configuration);
-
-        // Configure errorLogger
+        // Configure the errorLogger
         LoggerConfiguration errorLoggerConfiguration(ERRORLOGGER, bufferManager, configuration, pollfdManager);
-        errorLogger->configure(&errorLoggerConfiguration);
+        errorLogger.configure(errorLoggerConfiguration);
 
+        // Configure the accessLogger
         LoggerConfiguration accessLoggerConfiguration(ACCESSLOGGER, bufferManager, configuration, pollfdManager);
-        accessLogger->configure(&accessLoggerConfiguration);
+        accessLogger.configure(accessLoggerConfiguration);
 
-        // Instantiate the Server. Sets up connectivity, responsible for polling and accepting connections.
-        server = new Server(socket, pollfdManager, configuration, errorLogger);
+        // Instantiate the Server.
+        Server server(socket, pollfdManager, configuration, errorLogger);
 
+        // Instantiate the Router.
+        Router router(configuration, errorLogger);
 
-        // Instantiate the PollingService. Manages polling operations.
-        pollingService = new PollingService(pollfdManager);
+        // Instantiate the RequestHandler.
+        RequestHandler requestHandler(socket, bufferManager, configuration, router, errorLogger, accessLogger, exceptionHandler);
 
-        // Instantiate the RequestHandler. Coordinates request processing utilizing the poll fd array.
-        requestHandler = new RequestHandler(socket, bufferManager, configuration, errorLogger, accessLogger, exceptionHandler);
+        // Instantiate the PollingService.
+        PollingService pollingService(pollfdManager);
 
-        // Instantiate the EventManager. Manages events
-        eventManager = new EventManager(pollfdManager, bufferManager, socket, server, requestHandler, errorLogger);
+        // Instantiate the EventManager.
+        EventManager eventManager(pollfdManager, bufferManager, socket, server, requestHandler, errorLogger);
 
         // Start the webserv core cycle.
         while (true)
@@ -98,19 +89,21 @@ int main(int argc, char **argv)
             try
             {
                 // Poll events.
-                pollingService->pollEvents();
+                pollingService.pollEvents();
 
                 // Handle events.
-                eventManager->handleEvents();
+                eventManager.handleEvents();
             }
             catch (WebservException &e)
             {
-                exceptionHandler->handleException(e, "webserv core cycle: ");
+                // Handle exceptions.
+                exceptionHandler.handleException(e, "webserv core cycle: ");
             }
         }
     }
     catch (WebservException &e)
     {
-        exceptionHandler->handleException(e, "webserv setup: ");
+        // Handle setup exceptions.
+        exceptionHandler.handleException(e, "webserv setup: ");
     }
 }

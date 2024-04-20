@@ -8,9 +8,16 @@
  */
 
 #include "../../includes/ILogger.hpp" // Include the base interface header
+#include <iostream>                   // Include for std::cout
+#include <sstream>                    // Include for std::stringstream
+#include <iomanip>                    // Include for std::put_time
 
 class MockLogger : public ILogger
 {
+private:
+    // Helper method to get the current timestamp
+    std::string _getCurrentTimestamp() const;
+
 public:
     // Constructor
     MockLogger();
@@ -20,10 +27,13 @@ public:
 
     // Methods implementing the ILogger interface
     // These methods are overridden to provide custom behavior for testing.
-    virtual void errorLog(const LogLevel logLevel, const std::string &message); // Method to log error events
-    virtual void accessLog(const IRequest &request, const Response &response);  // Method to log access events
-    virtual int getLogFileDescriptor() const;                                   // Getter method for log file descriptor
-    virtual void configure(const IConfiguration *);                             // Method to configure the Logger instance
+
+    // Logging methods
+    virtual void errorLog(const LogLevel, const std::string &); // Method to log error messages
+    virtual void accessLog(const IRequest &, const Response &); // Method to log access events
+
+    // Configuration method
+    virtual void configure(ILoggerConfiguration &); // Method to configure the Logger instance
 };
 
 #endif // MOCKLOGGER_HPP

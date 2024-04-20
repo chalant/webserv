@@ -19,9 +19,9 @@
  * exceptions effectively.
  */
 
-RequestHandler::RequestHandler(const ISocket *socket, IBufferManager *bufferManager, const IConfiguration *configuration, ILogger *errorLogger, ILogger *accessLogger, const IExceptionHandler *exceptionHandler)
-    : _socket(socket),
-      _bufferManager(bufferManager),
+RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, const IRouter &router, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &exceptionHandler)
+    :  _bufferManager(bufferManager),
+        _router(router),
       _errorLogger(errorLogger),
       _accessLogger(accessLogger),
       _exceptionHandler(exceptionHandler),
@@ -33,7 +33,7 @@ RequestHandler::RequestHandler(const ISocket *socket, IBufferManager *bufferMana
       _request(Request(_requestHelper, configuration))
 {
     // Log the creation of the RequestHandler instance.
-    this->_errorLogger->errorLog(DEBUG, "RequestHandler instance created.");
+    this->_errorLogger.errorLog(DEBUG, "RequestHandler instance created.");
 }
 
 /*
@@ -45,7 +45,7 @@ RequestHandler::~RequestHandler()
 {
     delete this->_clientHandler;
     // Log the destruction of the RequestHandler instance.
-    this->_errorLogger->errorLog(DEBUG, "RequestHandler instance destroyed.");
+    this->_errorLogger.errorLog(DEBUG, "RequestHandler instance destroyed.");
 }
 
 int RequestHandler::handleRequest(int socketDescriptor)
@@ -65,12 +65,12 @@ int RequestHandler::handleRequest(int socketDescriptor)
     catch (const HttpStatusCodeException &e)
     {
         // Log the HTTP status code exception and continue processing the request
-        this->_exceptionHandler->handleException(e, "RequestHandler::processRequest socket=\"" + std::to_string(socketDescriptor) + "\"");
+        this->_exceptionHandler.handleException(e, "RequestHandler::processRequest socket=\"" + std::to_string(socketDescriptor) + "\"");
     }
     catch (const WebservException &e)
     {
         // Log the exception and abort processing the request
-        this->_exceptionHandler->handleException(e, "RequestHandler::processRequest socket=\"" + std::to_string(socketDescriptor) + "\"");
+        this->_exceptionHandler.handleException(e, "RequestHandler::processRequest socket=\"" + std::to_string(socketDescriptor) + "\"");
         // return -1 to indicate the aborting of the request
         return -1;
     }
@@ -84,10 +84,10 @@ int RequestHandler::handleRequest(int socketDescriptor)
     // temporary empty response
     std::vector<char> rawResponse;
     // Push the raw response to the buffer manager
-    this->_bufferManager->pushSocketBuffer(socketDescriptor, rawResponse);
+    this->_bufferManager.pushSocketBuffer(socketDescriptor, rawResponse);
 
 
     // create an access log entry
-    this->_accessLogger->accessLog(this->_request, this->_response);
+    this->_accessLogger.accessLog(this->_request, this->_response);
     return (0);
 }

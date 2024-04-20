@@ -29,7 +29,7 @@ public:
     virtual void accessLog(const IRequest &, const Response &) = 0;  // Method to log access events
 
     // Configuration method
-    virtual void configure(ILoggerConfiguration *) = 0; // Method to configure the Logger instance
+    virtual void configure(ILoggerConfiguration &) = 0; // Method to configure the Logger instance
 };
 
 #endif // ILOGGER_HPP

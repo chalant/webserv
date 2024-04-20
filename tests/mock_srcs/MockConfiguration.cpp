@@ -4,78 +4,87 @@
  * MockConfiguration class is a mock implementation of the IConfiguration interface
  * This mock implementation is used for testing purposes to simulate the behavior of the IConfiguration interface
  * during unit testing without relying on the actual implementation.
-*/
+ */
 
 // Constructor
-MockConfiguration::MockConfiguration() : IConfiguration(){};
+MockConfiguration::MockConfiguration() 
+    : _blocks(), 
+      _strings(), 
+      _stringVectors(), 
+      _ints(), 
+      _size_ts(), 
+      _bools() 
+{
+}
 
 // Destructor
 MockConfiguration::~MockConfiguration(){};
 
+// Setters
+void MockConfiguration::setInt(const std::string &parameter, int value)
+{
+    this->_ints[parameter] = value;
+}
+
 // Getters
-size_t MockConfiguration::getClientHeaderBufferSize() const
+const std::vector<IBlock *> MockConfiguration::getBlocks(const std::string &parameter) const
 {
-    return 32768;
+    try {
+        return (_blocks.at(parameter));
+    } catch (const std::out_of_range &e){
+        throw std::out_of_range("Key not found " + parameter);
+    }
+    return  std::vector<IBlock *>();
 }
 
-size_t MockConfiguration::getClientBodyBufferSize() const
+const std::vector<std::string> MockConfiguration::getStringVector(const std::string &parameter) const
 {
-    return 32768;
+    try{
+        return (_stringVectors.at(parameter));
+    } catch (const std::out_of_range &e){
+        throw std::out_of_range("Key not found " + parameter);
+    }
+    return std::vector<std::string>();
 }
 
-size_t MockConfiguration::getClientMaxBodySize() const
+const std::string MockConfiguration::getString(const std::string &parameter) const
 {
-    return 10485760;
-}
-
-size_t MockConfiguration::getClientMaxUriSize() const
-{
-    return 4096;
-}
-
-size_t MockConfiguration::getLogBufferSize() const
-{
-    return 4096;
-}
-
-size_t MockConfiguration::getMaxConnections() const
-{
-    return 1000;
-}
-
-int MockConfiguration::getPort() const
-{
-    return 8080;
-}
-
-LogLevel MockConfiguration::getLogLevel() const
-{
-    return INFO;
-}
-
-bool MockConfiguration::getErrorLogEnabled() const
-{
-    return false;
-}
-
-bool MockConfiguration::getAccessLogEnabled() const
-{
-    return false;
-}
-
-std::string MockConfiguration::getErrorLogFile() const
-{
+    try{
+        return (_strings.at(parameter));
+    } catch (const std::out_of_range &e){
+        throw std::out_of_range("Key not found " + parameter);
+    }
     return "";
 }
 
-std::string MockConfiguration::getAccessLogFile() const
+int MockConfiguration::getInt(const std::string &parameter) const
 {
-    return "";
+    try{
+        return (_ints.at(parameter));
+    } catch (const std::out_of_range &e){
+        throw std::out_of_range("Key not found " + parameter);
+    }
+    return -1;
 }
 
-std::set<std::string> MockConfiguration::getSupportedMethods() const
+size_t MockConfiguration::getSize_t(const std::string &parameter) const
 {
-    return std::set<std::string>();
+    try{
+        return (_size_ts.at(parameter));
+    } catch (const std::out_of_range &e){
+        throw std::out_of_range("Key not found " + parameter);
+    }
+    return -1;
+}
+
+bool MockConfiguration::getBool(const std::string &parameter) const
+{
+    try{
+        return (_bools.at(parameter));
+    } catch (const std::out_of_range &e){
+        throw std::out_of_range("Key not found " + parameter);
+    }
+    return false;
 }
 
 // Path: tests/mock_headers/MockLogger.hpp

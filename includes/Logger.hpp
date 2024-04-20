@@ -47,15 +47,15 @@
 #include "Response.hpp"
 #include "IConfiguration.hpp"
 #include "ILoggerConfiguration.hpp"
-#include "BufferManager.hpp"
+#include "IBufferManager.hpp"
 #include "WebservExceptions.hpp"
 #include "PollfdManager.hpp"
-
 
 class Logger : public ILogger
 {
 private:
     ILoggerConfiguration *_configuration;
+    IBufferManager &_bufferManager;
     const LogLevelHelper _logLevelHelper;
 
     // Private methods
@@ -64,19 +64,18 @@ private:
 
 public:
     // Constructors and Destructor
-    //Logger(const LoggerType type, IBufferManager *bufferManager);                                                                                // Default constructor
-    //Logger(const LoggerType type, IBufferManager *BufferManager,const IConfiguration *configuration); // Constructor with type and IConfiguration
-    ~Logger();                                                                                        // Destructor
+    Logger(IBufferManager &bufferManager); // Constructor
+    virtual ~Logger();                     // Destructor
 
     // Getter method
-    //virtual int getLogFileDescriptor() const; // Getter method for log file descriptor
+    // virtual int getLogFileDescriptor() const; // Getter method for log file descriptor
 
     // Logging methods
     virtual void errorLog(const LogLevel logLevel, const std::string &message); // Method to log error messages
-    virtual void accessLog(const IRequest &request, const Response &response);   // Method to log access events
+    virtual void accessLog(const IRequest &request, const Response &response);  // Method to log access events
 
     // Configuration method
-    void configure(ILoggerConfiguration *configuration); // Method to configure the Logger instance
+    virtual void configure(ILoggerConfiguration &configuration); // Method to configure the Logger instance
 };
 
 #endif // LOGGER_HPP

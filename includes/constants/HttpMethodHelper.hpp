@@ -9,17 +9,17 @@
  * to retrieve string representations of methods and vice versa.
  *
  * Example:
- * 
+ *
  * HttpMethodHelper helper;
  * std::string method = "GET";
  * HttpMethod httpMethod = helper.stringHttpMethodMap(method);
  * std::string method = helper.httpMethodStringMap(httpMethod);
- * 
+ *
  * std::string method = "PATCH";
  * if (helper.isMethod(method)) {std::cout << "Valid HTTP method." << std::endl;}
- * 
+ *
  * Note: Invalid input to Map searches will throw an UnknownMethodError exception.
- * 
+ *
  * IMPORTANT: Method strings representations in this class are all UPPERCASE.
  */
 
@@ -48,7 +48,7 @@ class HttpMethodHelper
 private:
     // Member variables
     const std::vector<std::string> _methodList;                   // List of string representations of HTTP methods
-    const std::set<std::string> _supportedMethods;               // Set of string representations of HTTP methods
+    const std::vector<std::string> _supportedMethods;             // Set of string representations of HTTP methods
     const std::map<std::string, HttpMethod> _stringHttpMethodMap; // Map of string representations to HttpMethod enum values
     const std::map<HttpMethod, std::string> _httpMethodStringMap; // Map of HttpMethod enum values to string representations
 
@@ -59,14 +59,14 @@ private:
 
 public:
     // Constructor
-    HttpMethodHelper(const IConfiguration *configuration);
+    HttpMethodHelper(const IConfiguration &configuration);
 
     // Member functions to access data
     const std::string &httpMethodStringMap(HttpMethod method) const; // Get string representation of HttpMethod
     HttpMethod stringHttpMethodMap(const std::string &method) const; // Get HttpMethod enum value from string representation
 
     // Member function to check if a string is a valid HTTP method
-    bool isMethod(const std::string &method) const; // Check if a string is a valid HTTP method
+    bool isMethod(const std::string &method) const;          // Check if a string is a valid HTTP method
     bool isSupportedMethod(const std::string &method) const; // Check if a string is a supported HTTP method
 };
 

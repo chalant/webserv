@@ -8,7 +8,7 @@
  */
 
 // Constructor
-ClientHandler::ClientHandler(const ISocket *socket, ILogger *errorLogger, const IExceptionHandler *exceptionHandler)
+ClientHandler::ClientHandler(const ISocket &socket, ILogger &errorLogger, const IExceptionHandler &exceptionHandler)
     : _socket(socket),
       _errorLogger(errorLogger),
       _exceptionHandler(exceptionHandler) {}
@@ -33,7 +33,7 @@ const std::vector<char> ClientHandler::readRequest() const
 
     // Read data from the client socket
     // Double the buffer as long as necessary
-    while ((bytesRead = this->_socket->recv(this->_socketDescriptor, &buffer[offSet], maxReadSize)) == maxReadSize)
+    while ((bytesRead = this->_socket.recv(this->_socketDescriptor, &buffer[offSet], maxReadSize)) == maxReadSize)
     {
         // Move the offset to the end of the buffer
         offSet += bytesRead;
@@ -63,9 +63,9 @@ const std::vector<char> ClientHandler::readRequest() const
 // Method to send a response to the client as a vector of characters
 ssize_t ClientHandler::sendResponse(const std::vector<char> &response) const
 {
-    ssize_t bytesSent = this->_socket->send(this->_socketDescriptor, response);
+    ssize_t bytesSent = this->_socket.send(this->_socketDescriptor, response);
     if (bytesSent == -1)
-        this->_errorLogger->errorLog(ERROR, "Error sending response to client on socket: " + std::to_string(this->_socketDescriptor));
+        this->_errorLogger.errorLog(ERROR, "Error sending response to client on socket: " + std::to_string(this->_socketDescriptor));
 
     return bytesSent;
 }

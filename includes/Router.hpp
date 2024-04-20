@@ -12,6 +12,9 @@ locationblock)*/
 # include <vector>
 # include "Request.hpp"
 # include "HttpMethodHelper.hpp" 
+# include "IConfiguration.hpp"
+# include "ILogger.hpp"
+# include "IRouter.hpp"
 
 class Response;
 
@@ -31,8 +34,9 @@ public:
 };
 
 // Router class using std::map for route storage
-class Router {
+class Router : public IRouter{
 public:
+    Router(const IConfiguration &Configuration, ILogger &errorLogger);
     void addRoute(const Request& request, void (*newHandler)(Request*, Response*));
     void execRoute(Request* req, Response* res);
 

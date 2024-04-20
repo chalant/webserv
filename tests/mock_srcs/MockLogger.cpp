@@ -16,7 +16,12 @@ MockLogger::~MockLogger(){};
 void MockLogger::errorLog(const LogLevel logLevel, const std::string &message)
 {
     static_cast<void>(logLevel);
-    static_cast<void>(message);
+    // Construct the log message string
+    //std::string logMessageString = "timestamp=\"" + this->_getCurrentTimestamp() + "\" loglevel=\"" + this->_logLevelHelper.logLevelStringMap(logLevel) + "\" message=\"" + message + "\"\n";
+    std::string logMessageString = "timestamp=\"" + this->_getCurrentTimestamp() + "\" loglevel=\"" + "LOGLEVEL" + "\" message=\"" + message + "\"\n";
+    std::vector<char> logMessage(logMessageString.begin(), logMessageString.end());
+
+    std::cout << logMessageString;
 };
 
 // Method to log access events
@@ -26,13 +31,19 @@ void MockLogger::accessLog(const IRequest &request, const Response &response)
     static_cast<void>(response);
 };
 
-// Getter method for log file descriptor
-int MockLogger::getLogFileDescriptor() const
-{
-    return 0;
+// Method to configure the Logger instance
+void MockLogger::configure(ILoggerConfiguration &configuration){
+    static_cast<void>(configuration);
 };
 
-// Method to configure the Logger instance
-void MockLogger::configure(const IConfiguration *){};
+// Helper method to get the current timestamp
+std::string MockLogger::_getCurrentTimestamp() const
+{
+    std::stringstream stream;
+
+    std::time_t currentTime = std::time(NULL);
+    stream << std::put_time(std::localtime(&currentTime), "%Y-%m-%d %H:%M:%S");
+    return stream.str();
+}
 
 // Path: tests/mock_includes/MockRequest.hpp

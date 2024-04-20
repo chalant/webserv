@@ -60,14 +60,14 @@ private:
     std::map<std::string, std::string> _bodyParameters;
     std::string _requestId;
     std::string _rawRequest;
-    const IConfiguration *_configuration;
+    const IConfiguration &_configuration;
     
     // Helper
     const RequestHelper &_requestHelper;
 
 public:
     // Constructor and Destructor
-    Request(const RequestHelper &requestHelper, const IConfiguration *configuration);
+    Request(const RequestHelper &requestHelper, const IConfiguration &configuration);
     Request(const Request &src);
     ~Request();
     

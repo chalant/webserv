@@ -21,11 +21,12 @@ int MockSocket::socket() const
 }
 
 // Binds the socket to an IP address and port
-int MockSocket::bind(int fd, int port) const
+int MockSocket::bind(int fd, int ip, int port) const
 {
     // Mock implementation for binding the socket to an address
     // Returns 0 on success
     static_cast<void>(fd);
+    static_cast<void>(ip);
     static_cast<void>(port);
     return 0;
 }

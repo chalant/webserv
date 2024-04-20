@@ -11,7 +11,7 @@
  */
 
 // Constructor to initialize helper classes
-RequestHelper::RequestHelper(const IConfiguration *configuration)
+RequestHelper::RequestHelper(const IConfiguration &configuration)
     : _methodHelper(configuration),
       _versionHelper(),
       _headerHelper(),

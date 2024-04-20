@@ -10,10 +10,10 @@
 class PollingService : public IPollingService
 {
 private:
-    IPollfdManager *_pollfdManager;
+    IPollfdManager &_pollfdManager;
     int _timeout;
 public:
-    PollingService(IPollfdManager *pollfdManager, int timeout=100);
+    PollingService(IPollfdManager &pollfdManager, int timeout=100);
     ~PollingService();
 
     virtual void pollEvents();

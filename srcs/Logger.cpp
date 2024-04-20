@@ -73,9 +73,10 @@ Logger::Logger(const LoggerType type, IBufferManager *BufferManager, const IConf
 }
 */
 
-Logger::Logger()
-: _configuration(nullptr),
-   _logLevelHelper() {}
+Logger::Logger(IBufferManager &bufferManager)
+    : _configuration(nullptr),
+      _bufferManager(bufferManager),
+      _logLevelHelper() {}
 
 // Destructor: Handles cleanup tasks like flushing buffer and closing log file descriptor
 Logger::~Logger()
@@ -96,18 +97,25 @@ std::string Logger::_getCurrentTimestamp() const
 // Method to log error messages
 void Logger::errorLog(LogLevel logLevel, const std::string &message)
 {
-    if (this->_configuration->getEnabled() == false || logLevel < this->_configuration->getLogLevel())
+    // If the Logger is configured and confirmed disabled, return without logging
+    if (this->_configuration != nullptr &&
+        (this->_configuration->getEnabled() == false || logLevel < this->_configuration->getLogLevel()))
         return;
 
+    // Construct the log message string
     std::string logMessageString = "timestamp=\"" + this->_getCurrentTimestamp() + "\" loglevel=\"" + this->_logLevelHelper.logLevelStringMap(logLevel) + "\" message=\"" + message + "\"\n";
     std::vector<char> logMessage(logMessageString.begin(), logMessageString.end());
-    this->_configuration->getBufferManager()->pushFileBuffer(this->_configuration->getLogFileDescriptor(), logMessage);
+
+    // if the logger is configured, log the log file buffer, otherwise log to stderr buffer
+    int fileDescriptor = (this->_configuration != nullptr) ? this->_configuration->getLogFileDescriptor() : STDERR_FILENO;
+    this->_bufferManager.pushFileBuffer(fileDescriptor, logMessage);
 }
 
 // Method to log access events
 void Logger::accessLog(const IRequest &request, const Response &response)
 {
-    if (this->_configuration->getEnabled() == false)
+    // If the Logger is configured and confirmed disabled, return without logging
+    if (this->_configuration != nullptr && this->_configuration->getEnabled() == false)
         return;
 
     // Create a temporary stringstream object to construct the log message
@@ -135,8 +143,9 @@ void Logger::accessLog(const IRequest &request, const Response &response)
     std::string logMessage = logBufferStream.str();
     std::vector<char> logMessageVector(logMessage.begin(), logMessage.end());
 
-    // Push the log message to the BufferManager
-    this->_configuration->getBufferManager()->pushFileBuffer(this->_configuration->getLogFileDescriptor(), logMessageVector);
+    // If the logger is configured, log to the the access log file buffer, otherwise log to stderr buffer
+    int fileDescriptor = (this->_configuration != nullptr) ? this->_configuration->getLogFileDescriptor() : STDERR_FILENO;
+    this->_bufferManager.pushFileBuffer(this->_configuration->getLogFileDescriptor(), logMessageVector);
 }
 
 // Method to append map to log message
@@ -159,9 +168,9 @@ void Logger::_appendMapToLog(std::ostringstream &logBufferStream, const std::str
 }
 
 // Configuration method
-void Logger::configure(ILoggerConfiguration *configuration)
+void Logger::configure(ILoggerConfiguration &configuration)
 {
-    this->_configuration = configuration;
+    this->_configuration = &configuration;
 }
 
 // Path: includes/WebservExceptions.hpp
