@@ -49,7 +49,9 @@ public:
     // Http Status Code Helper Functions
     const std::string &httpStatusCodeStringMap(HttpStatusCode statusCode) const; // Get string representation of HttpStatusCode
     HttpStatusCode stringHttpStatusCodeMap(const std::string &statusCode) const; // Get HttpStatusCode enum value from string representation
-    std::string getHtmlPage(HttpStatusCode statusCode) const;                    // Get HTML page for a given HttpStatusCode
+    std::string getStatusLine(HttpStatusCode statusCode) const; // Generate a status line with the specified HTTP status code
+    std::string getHtmlPage(HttpStatusCode statusCode) const;    // Generate an HTML page with the specified HTTP status code
+    std::string getErrorResponse(HttpStatusCode statusCode) const; // Generate an HTML page with the specified HTTP status code
 };
 
 #endif // REQUESTHELPER_HPP

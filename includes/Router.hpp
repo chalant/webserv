@@ -42,7 +42,7 @@ private:
 class Router : public IRouter
 {
 public:
-    Router(const IConfiguration &Configuration, ILogger &errorLogger);
+    Router(const IConfiguration &Configuration, ILogger &logger);
     void addRoute(const Request &request, void (*newHandler)(Request *, Response *));
     void execRoute(Request *req, Response *res);
 

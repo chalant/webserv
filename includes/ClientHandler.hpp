@@ -20,11 +20,11 @@ class ClientHandler : public IClientHandler
 private:
     const ISocket &_socket;                     // Reference to the Socket instance
     int _socketDescriptor;                      // Socket descriptor for client connection
-    ILogger &_errorLogger;                      // Reference to the error logger object
+    ILogger &_logger;                      // Reference to the error logger object
 
 public:
     // Constructor: Initializes the ClientHandler with an error logger and exception handler
-    ClientHandler(const ISocket &socket, ILogger &errorLogger);
+    ClientHandler(const ISocket &socket, ILogger &logger);
 
     // Destructor
     ~ClientHandler();

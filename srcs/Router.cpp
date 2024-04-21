@@ -7,7 +7,7 @@ locationblock)*/
 #include <iostream>
 #include <vector>
 
-Router::Router(const IConfiguration &configuration, ILogger &errorLogger)
+Router::Router(const IConfiguration &configuration, ILogger &logger)
 {
 	// For every server block in the configuration, insert a routeMapEntry into the _routes map
 	std::vector<IBlock *> servers = configuration.getHttp().getBlocks("server");

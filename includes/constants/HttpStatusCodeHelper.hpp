@@ -15,7 +15,7 @@
  * HttpStatusCode code = 502;
  * 
  * std::string meaning = helper.httpStatusCodeStringMap(statusCode);
- * std::string htmlPage = helper.getHtmlPage(statusCode);
+ * std::string htmlPage = helper.getErrorResponse(statusCode);
  * 
  */
 
@@ -121,8 +121,14 @@ public:
     const std::string &httpStatusCodeStringMap(HttpStatusCode version) const; // Get string representation of HttpStatusCode
     HttpStatusCode stringHttpStatusCodeMap(const std::string &version) const; // Get HttpStatusCode enum value from string representation
 
+    // Member function to generate a status line
+    std::string getStatusLine(HttpStatusCode statusCode) const; // Generate a status line with the specified HTTP status code
+
     // Member function to generate an HTML page
     std::string getHtmlPage(HttpStatusCode statusCode) const; // Generate an HTML page with the specified HTTP status code
+
+    // Member function to generate a complete response
+    std::string getErrorResponse(HttpStatusCode statusCode) const; // Generate an HTML page with the specified HTTP status code
 };
 
 #endif // HTTPSTATUSCODEHELPER_HPP

@@ -1,12 +1,6 @@
 #ifndef ILOGGERCONFIGURATION_HPP
 #define ILOGGERCONFIGURATION_HPP
 
-enum LoggerType
-{
-    ERRORLOGGER,
-    ACCESSLOGGER
-};
-
 #include "constants/LogLevelHelper.hpp"
 #include "IBufferManager.hpp"
 
@@ -17,12 +11,16 @@ class ILoggerConfiguration
 public:
     virtual ~ILoggerConfiguration() {}
 
-    virtual int getLogFileDescriptor() const = 0;
+    virtual int getErrorLogFileDescriptor() const = 0;
+    virtual int getAccessLogFileDescriptor() const = 0;
     virtual IBufferManager &getBufferManager() const = 0;
-    virtual LoggerType getLoggerType() const = 0;
-    virtual std::string getLogFile() const = 0;
+    virtual std::string getErrorLogFile() const = 0;
+    virtual std::string getAccessLogFile() const = 0;
     virtual LogLevel getLogLevel() const = 0;
-    virtual bool getEnabled() const = 0;
+    virtual bool getErrorLogEnabled() const = 0;
+    virtual bool getAccessLogEnabled() const = 0;
+    virtual void requestFlush(int descriptor) = 0;
+
 };
 
 #endif // ILOGGERCONFIGURATION_HPP

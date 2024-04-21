@@ -19,19 +19,18 @@
  * exceptions effectively.
  */
 
-RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, IRouter &router, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &exceptionHandler)
+RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &exceptionHandler)
     : _bufferManager(bufferManager),
       _router(router),
-      _errorLogger(errorLogger),
-      _accessLogger(accessLogger),
+      _logger(logger),
       _exceptionHandler(exceptionHandler),
-      _clientHandler(&ClientHandler(socket, errorLogger)),
-      _requestParser(configuration, errorLogger),
+      _clientHandler(&ClientHandler(socket, logger)),
+      _requestParser(configuration, logger),
       _requestHelper(configuration),
       _request(Request(_requestHelper, configuration))
 {
     // Log the creation of the RequestHandler instance.
-    this->_errorLogger.errorLog(DEBUG, "RequestHandler instance created.");
+    this->_logger.log(DEBUG, "RequestHandler instance created.");
 }
 
 /*
@@ -43,9 +42,13 @@ RequestHandler::~RequestHandler()
 {
     delete this->_clientHandler;
     // Log the destruction of the RequestHandler instance.
-    this->_errorLogger.errorLog(DEBUG, "RequestHandler instance destroyed.");
+    this->_logger.log(DEBUG, "RequestHandler instance destroyed.");
 }
 
+// Handles a client request
+// returns -1 if an error occurred
+// returns 0 if static content was served directly
+// otherwise returns the pipe descriptor from which to read the response without blocking
 int RequestHandler::handleRequest(int socketDescriptor)
 {
     // Give the 'ClientHandler' the current socket descriptor
@@ -74,7 +77,12 @@ int RequestHandler::handleRequest(int socketDescriptor)
     }
 
     // 'Router' selects the right 'ResponseGenerator' for the job
-    this->_router.execRoute(&this->_request, &this->_response);
+    int pipeDescriptor = this->_router.execRoute(&this->_request, &this->_response);
+
+    if (pipeDescriptor != 0)
+    {
+        return pipeDescriptor;
+    }
 
     // Create the raw response string
     // std::vector<char> rawResponse = this->_response.serialise(this->_response);
@@ -85,6 +93,6 @@ int RequestHandler::handleRequest(int socketDescriptor)
     this->_bufferManager.pushSocketBuffer(socketDescriptor, rawResponse);
 
     // create an access log entry
-    this->_accessLogger.accessLog(this->_request, this->_response);
+    this->_logger.log(this->_request, this->_response);
     return (0);
 }

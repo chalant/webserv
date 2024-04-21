@@ -1,8 +1,8 @@
 #include "../includes/PollingService.hpp"
 
-PollingService::PollingService(IPollfdManager &pollfdManager, ILogger &errorLogger, int timeout)
+PollingService::PollingService(IPollfdManager &pollfdManager, ILogger &logger, int timeout)
     : _pollfdManager(pollfdManager),
-      _errorLogger(errorLogger),
+      _logger(logger),
       _timeout(timeout) {}
 
 PollingService::~PollingService() {}
@@ -22,9 +22,9 @@ void PollingService::pollEvents()
 
     // Log poll result
     if (pollResult == 0) // Timeout occurred
-        this->_errorLogger.errorLog(VERBOSE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
+        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
     else // Events occurred
-        this->_errorLogger.errorLog(VERBOSE, "[POLLINGSERVICE] Poll returned " + std::to_string(pollResult) + " events.");
+        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " + std::to_string(pollResult) + " events.");
 }
 
 void PollingService::setPollingTimeout(int timeout)

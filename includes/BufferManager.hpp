@@ -36,10 +36,10 @@ public:
     // Destructor
     ~BufferManager();
 
-    // Push a file buffer into the manager
-    void pushFileBuffer(int fileDescriptor, const std::vector<char> &data);
+    // Push into a file buffer
+    ssize_t pushFileBuffer(int fileDescriptor, const std::vector<char> &data);
 
-    // Push a socket buffer into the manager
+    // Push into a socket buffer
     void pushSocketBuffer(int socketDescriptor, const std::vector<char> &data);
 
     // Flush the buffer for a specific descriptor

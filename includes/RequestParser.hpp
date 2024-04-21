@@ -22,7 +22,7 @@
 class RequestParser
 {
 private:
-    ILogger &_errorLogger;                // Reference to the error logger
+    ILogger &_logger;                // Reference to the error logger
     const IConfiguration &_configuration;       // Reference to the server IConfiguration
 
     // Function to parse the request line of an HTTP request
@@ -64,7 +64,7 @@ private:
 
 public:
     // Constructor to initialize the RequestParser with required references
-    RequestParser(const IConfiguration &configuration, ILogger &errorLogger);
+    RequestParser(const IConfiguration &configuration, ILogger &logger);
 
     // Function to parse a raw HTTP request and convert it into a IRequest object
     void parseRequest(const std::vector<char> &rawRequest, IRequest &parsedRequest) const;

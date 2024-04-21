@@ -74,7 +74,6 @@ void PollfdQueue::push(const pollfd &newPollfd)
 // and the size is decremented. The erased file descriptor is closed.
 void PollfdQueue::erase(size_t index)
 {
-    close(this->_pollfdArray[index].fd);
     this->_pollfdArray[index] = this->_pollfdArray[_size - 1];
     this->_size--;
 }

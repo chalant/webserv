@@ -47,18 +47,17 @@ private:
     IBufferManager &_bufferManager;     // Pointer to the buffer manager
     IClientHandler *_clientHandler;     // Handles communication with clients
     const RequestParser _requestParser; // Parses incoming requests
-    IRouter &_router;               // Routes requests to appropriate handlers
+    IRouter &_router;                   // Routes requests to appropriate handlers
     // AResponseGenerator *_requestHandler;                 // Pointer to the recruited request handler
     RequestHelper _requestHelper;               // Helper class for request-related operations
     Request _request;                           // Represents an HTTP request
     Response _response;                         // Represents an HTTP response
-    ILogger &_errorLogger;                      // Pointer to the error logger
-    ILogger &_accessLogger;                     // Pointer to the access logger
+    ILogger &_logger;                           // Pointer to the logger
     const IExceptionHandler &_exceptionHandler; // Pointer to the exception handler
 
 public:
     // Constructor
-    RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, IRouter &router, ILogger &errorLogger, ILogger &accessLogger, const IExceptionHandler &IExceptionHandler);
+    RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &IExceptionHandler);
 
     // Destructor
     ~RequestHandler();

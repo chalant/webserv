@@ -5,7 +5,8 @@
  * FileBuffer.hpp
  *
  * Holds buffers intended for file descriptors.
- * The buffer is flushed when the threshold is reached or when the buffer is full.
+ * Requests a flush when the buffer reaches a certain threshold, by returning 1.
+ *
  */
 
 #include "IBuffer.hpp"
@@ -21,7 +22,7 @@ class FileBuffer : public IBuffer
 private:
     std::vector<char> _buffer;    // Buffer to hold data
     const size_t _maxSize;        // Maximum size of the buffer
-    const size_t _flushThreshold; // Threshold at which to flush the buffer
+    const size_t _flushThreshold; // Threshold at which to request a flush
     size_t _size;                 // Current size of the buffer
 
 public:

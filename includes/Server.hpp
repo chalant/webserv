@@ -23,12 +23,12 @@ class Server : public IServer
 private:
     const ISocket &_socket;         // Reference to the Socket instance
     IPollfdManager &_pollfdManager; // Reference to the PollfdManager
-    ILogger &_errorLogger;          // Reference to the error logger
+    ILogger &_logger;          // Reference to the error logger
 
     void _initializeServerSocket(int ip, int port, int maxConnections); // Method to initialize the server socket
 
 public:
-    Server(const ISocket &_socket, IPollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &errorLogger); // Constructor for Server class
+    Server(const ISocket &_socket, IPollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &logger); // Constructor for Server class
     ~Server();                                                                                                               // Destructor for Server class
 
     virtual void acceptConnection(int serverSocketDescriptor); // Method to accept a new client connection

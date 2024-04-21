@@ -41,13 +41,27 @@ HttpStatusCode HttpStatusCodeHelper::stringHttpStatusCodeMap(const std::string &
     }
 }
 
+// Generate a status line string for an HTTP response
+std::string HttpStatusCodeHelper::getStatusLine(HttpStatusCode statusCode) const
+{
+    return "HTTP/1.1 " + std::to_string(static_cast<size_t>(statusCode)) + " " + this->httpStatusCodeStringMap(statusCode) + "\r\n";
+}
+
+// Generate a complete error response for an HTTP status code
+std::string HttpStatusCodeHelper::getErrorResponse(HttpStatusCode statusCode) const
+{
+    std::string body = this->getHtmlPage(statusCode);
+
+    return this->getStatusLine(statusCode) + "\n" + "Content-Type: text/html\r\n" + "Content-Length: " + std::to_string(body.length()) + "\r\n" + "Connection: close\r\n" + "Server: webserv/1.0\r\n" + "\r\n" + body;
+}
+
 // Generate an HTML page with the specified HTTP status code
 std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode statusCode) const
 {
     // Create a string stream to build the HTML page.
     std::stringstream htmlPage;
 
-    // Write the HTML page header.
+    // Write the HTML page
     htmlPage << "<!DOCTYPE html>\n"
                 "<html lang=\"en\">\n"
                 "<head>\n"
@@ -99,14 +113,16 @@ std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode statusCode) const
                 "    <div class=\"container\">\n"
                 "        <div class=\"error\">\n"
                 "            <h1>Error <span style=\"color: #f90;\">"
-             << static_cast<size_t>(statusCode) << "</span></h1>\n"
-                                                   "            <p> "
-             << this->_httpStatusCodeStringMap.at(statusCode) << "</p>\n"
-                                                                 "            <div class=\"version\">webserv/1.0</div>\n"
-                                                                 "        </div>\n"
-                                                                 "    </div>\n"
-                                                                 "</body>\n"
-                                                                 "</html>\n";
+             << static_cast<size_t>(statusCode)
+             << "</span></h1>\n"
+                "            <p> "
+             << this->_httpStatusCodeStringMap.at(statusCode)
+             << "</p>\n"
+                "            <div class=\"version\">webserv/1.0</div>\n"
+                "        </div>\n"
+                "    </div>\n"
+                "</body>\n"
+                "</html>\n";
 
     // Return the generated HTML page.
     return htmlPage.str();

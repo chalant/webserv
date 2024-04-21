@@ -35,7 +35,7 @@ BufferManager::~BufferManager()
 }
 
 // Push a file buffer into the manager
-void BufferManager::pushFileBuffer(int fileDescriptor, const std::vector<char> &data)
+ssize_t BufferManager::pushFileBuffer(int fileDescriptor, const std::vector<char> &data)
 {
     // If the buffer for this file descriptor doesn't exist, create it
     if (this->_buffers.find(fileDescriptor) == this->_buffers.end())
@@ -43,7 +43,7 @@ void BufferManager::pushFileBuffer(int fileDescriptor, const std::vector<char> &
         this->_buffers[fileDescriptor] = new FileBuffer();
     }
     // Push data into the file buffer
-    this->_buffers[fileDescriptor]->push(data);
+    return (this->_buffers[fileDescriptor]->push(data)); // returns 1 if a flush is requested
 }
 
 // Push a socket buffer into the manager
@@ -90,6 +90,5 @@ void BufferManager::destroyBuffer(int descriptor)
         this->_buffers.erase(descriptor);
     }
 }
-
 
 // Path: srcs/FileBuffer.cpp

@@ -89,10 +89,22 @@ HttpStatusCode RequestHelper::stringHttpStatusCodeMap(const std::string &statusC
     return this->_statusCodeHelper.stringHttpStatusCodeMap(statusCode);
 }
 
-// Get HTML page for a given HttpStatusCode
+// Generate a status line with the specified HTTP status code
+std::string RequestHelper::getStatusLine(HttpStatusCode statusCode) const
+{
+    return this->_statusCodeHelper.getStatusLine(statusCode);
+}
+
+// Generate an HTML page with the specified HTTP status code
 std::string RequestHelper::getHtmlPage(HttpStatusCode statusCode) const
 {
     return this->_statusCodeHelper.getHtmlPage(statusCode);
+}
+
+// Generate an HTML page with the specified HTTP status code
+std::string RequestHelper::getErrorResponse(HttpStatusCode statusCode) const
+{
+    return this->_statusCodeHelper.getErrorResponse(statusCode);
 }
 
 // Path: srcs/constants/HttpHeaderHelper.cpp

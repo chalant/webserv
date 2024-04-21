@@ -1,33 +1,35 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
-/*Response: Contains the elements of the response*/
-
-#include <string>
-#include <map>
-#include "constants/RequestHelper.hpp"
+#include "IResponse.hpp"
 
 class Response
 {
 private:
-    std::string _status_line;
+    std::string _statusLine;
     std::string _body;
     std::map<HttpHeader, std::string> _headers;
+    RequestHelper _requestHelper;
 
 public:
     Response();
-    Response(const Response &copy);
-    Response &operator=(const Response &other);
-    ~Response();
-    std::string get_status_line();
-    std::string get_headers();
-    std::string get_body();
-    void set_status_line(std::string status_line);
-    void set_headers(std::string headers);
-    void set_body(std::string body);
-    std::string getStatusCodeString() const { return "200"; };
-    std::string getResponseSizeString() const { return "0"; };
-    std::map<std::string, std::string> getHeadersString() const { return std::map<std::string, std::string>(); };
+    virtual ~Response() {};
+
+    virtual std::string getStatusLine() const;
+    virtual std::string getHeaders() const;
+    virtual std::string getBody() const;
+    virtual void setStatusLine(std::string statusLine);
+    virtual void setStatusLine(HttpStatusCode statusCode);
+    virtual void setHeaders(std::vector<std::string> headers);
+    virtual void setHeaders(std::string headers);
+    virtual void addHeader(HttpHeader header, std::string value);
+    virtual void addHeader(std::string header, std::string value);
+    virtual void setBody(std::string body);
+    virtual void setErrorResponse(HttpStatusCode statusCode);
+    virtual std::string getStatusCodeString() const;
+    virtual std::string getResponseSizeString() const;
+    virtual std::map<std::string, std::string> getHeadersStringMap() const;
+    virtual std::string getHeadersString() const;
 };
 
 #endif // RESPONSE_HPP

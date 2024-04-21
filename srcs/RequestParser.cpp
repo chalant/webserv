@@ -9,14 +9,14 @@
  */
 
 // Constructor to initialize the RequestParser with required references
-RequestParser::RequestParser(const IConfiguration &configuration, ILogger &errorLogger)
-    : _errorLogger(errorLogger),
+RequestParser::RequestParser(const IConfiguration &configuration, ILogger &logger)
+    : _logger(logger),
       _configuration(configuration) {}
 
 // Function to parse a raw HTTP request and convert it into a Request object
 void RequestParser::parseRequest(const std::vector<char> &rawRequest, IRequest &parsedRequest) const
 {
-    this->_errorLogger.errorLog(DEBUG, "[REQUESTPARSER] Parsing request...");
+    this->_logger.log(DEBUG, "[REQUESTPARSER] Parsing request...");
     // Iterator to traverse the raw request
     std::vector<char>::const_iterator it = rawRequest.begin();
 
@@ -35,7 +35,7 @@ void RequestParser::parseRequest(const std::vector<char> &rawRequest, IRequest &
 
     // Parse the body
     this->_parseBody(it, rawRequest, parsedRequest);
-    this->_errorLogger.errorLog(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
+    this->_logger.log(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
 }
 
 // Function to parse the request line of an HTTP request
@@ -83,7 +83,7 @@ std::string RequestParser::_parseMethod(std::vector<char>::const_iterator &reque
     ++requestIterator;
 
     // Log 'method'
-    this->_errorLogger.errorLog(VERBOSE, "[REQUESTPARSER] Method: \"" + method + "\"");
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] Method: \"" + method + "\"");
     
     // Return 'method' string
     return method;
@@ -112,7 +112,7 @@ std::string RequestParser::_parseUri(std::vector<char>::const_iterator &requestI
     ++requestIterator;
 
     // Log 'uri'
-    this->_errorLogger.errorLog(VERBOSE, "[REQUESTPARSER] URI: \"" + uri + "\"");
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] URI: \"" + uri + "\"");
 
     // Return 'uri' string
     return uri;
@@ -152,7 +152,7 @@ std::string RequestParser::_parseHttpVersion(std::vector<char>::const_iterator &
     requestIterator += 2;
 
     // Log 'httpVersion'
-    this->_errorLogger.errorLog(VERBOSE, "[REQUESTPARSER] HTTP Version: \"" + httpVersion + "\"");
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] HTTP Version: \"" + httpVersion + "\"");
 
     // Return 'httpVersion' string
     return httpVersion;
@@ -248,7 +248,7 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
     requestIterator += 2;
 
     // Log header
-    this->_errorLogger.errorLog(VERBOSE, "[REQUESTPARSER] Header: \"" + headerName + ": " + headerValue + "\"");
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + headerName + ": " + headerValue + "\"");
 
     // Add header to parsed request
     parsedRequest.addHeader(headerName, headerValue);
@@ -299,7 +299,7 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
     std::vector<char> body(requestIterator, requestIterator + bodySize);
 
     // Log body
-    this->_errorLogger.errorLog(VERBOSE, "[REQUESTPARSER] Body: \"" + std::string(body.begin(), body.end()) + "\"");
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" + std::string(body.begin(), body.end()) + "\"");
     
     // Set body in parsed request
     parsedRequest.setBody(body);
