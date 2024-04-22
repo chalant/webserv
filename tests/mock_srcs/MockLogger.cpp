@@ -12,20 +12,30 @@ MockLogger::MockLogger() : ILogger(){};
 // Destructor
 MockLogger::~MockLogger(){};
 
+// Default log method
+void MockLogger::log(const std::string &message)
+{
+    // Construct the log message string
+    std::string logMessageString = this->_getCurrentTimestamp() + " " + message + "\n";
+    std::vector<char> logMessage(logMessageString.begin(), logMessageString.end());
+
+    std::cout << logMessageString;
+};
+
 // Method to log error events
-void MockLogger::errorLog(const LogLevel logLevel, const std::string &message)
+void MockLogger::log(const LogLevel logLevel, const std::string &message)
 {
     static_cast<void>(logLevel);
     // Construct the log message string
-    //std::string logMessageString = "timestamp=\"" + this->_getCurrentTimestamp() + "\" loglevel=\"" + this->_logLevelHelper.logLevelStringMap(logLevel) + "\" message=\"" + message + "\"\n";
-    std::string logMessageString = "timestamp=\"" + this->_getCurrentTimestamp() + "\" loglevel=\"" + "LOGLEVEL" + "\" message=\"" + message + "\"\n";
+    //std::string logMessageString = this->_getCurrentTimestamp() + " [" + this->_logLevelHelper.logLevelStringMap(logLevel) + "] " + message + "\n";
+    std::string logMessageString = this->_getCurrentTimestamp() + " [LOGLEVEL] " + message + "\n";
     std::vector<char> logMessage(logMessageString.begin(), logMessageString.end());
 
     std::cout << logMessageString;
 };
 
 // Method to log access events
-void MockLogger::accessLog(const IRequest &request, const Response &response)
+void MockLogger::log(const IRequest &request, const Response &response)
 {
     static_cast<void>(request);
     static_cast<void>(response);

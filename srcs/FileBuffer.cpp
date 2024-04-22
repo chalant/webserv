@@ -4,7 +4,7 @@
  * FileBuffer.cpp
  *
  * Holds buffers intended for file descriptors.
- * The buffer is flushed when the threshold is reached or when the buffer is full.
+ *
  */
 
 // Constructor
@@ -25,8 +25,10 @@ FileBuffer::~FileBuffer()
 }
 
 // Push data into the buffer
+// Returns -1 if the max size is reached, 1 if the flush threshold is reached, or 0 otherwise
 ssize_t FileBuffer::push(const std::vector<char> &data)
 {
+    // Check if the absolute max size of the buffer is reached
     if (this->_size + data.size() > this->_maxSize)
     {
         return -1; // Buffer full, cannot push more data
@@ -36,7 +38,9 @@ ssize_t FileBuffer::push(const std::vector<char> &data)
     this->_buffer.insert(this->_buffer.end(), data.begin(), data.end());
     this->_size += data.size();
 
-    return data.size(); // Return the number of bytes pushed
+    // Return 1 to request a flush if the buffer size exceeds the flush threshold
+    // Otherwise, return 0
+    return (this->_size > this->_flushThreshold);
 }
 
 // Flush the buffer to the file descriptor

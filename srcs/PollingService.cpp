@@ -1,7 +1,8 @@
 #include "../includes/PollingService.hpp"
 
-PollingService::PollingService(IPollfdManager &pollfdManager, int timeout)
+PollingService::PollingService(IPollfdManager &pollfdManager, ILogger &logger, int timeout)
     : _pollfdManager(pollfdManager),
+      _logger(logger),
       _timeout(timeout) {}
 
 PollingService::~PollingService() {}
@@ -15,8 +16,15 @@ void PollingService::pollEvents()
     size_t pollfdQueueSize = this->_pollfdManager.getPollfdQueueSize();
 
     // Poll registered file descriptors for events
-    if (::poll(pollfdArray, pollfdQueueSize, this->_timeout) < 0)
+    int pollResult = ::poll(pollfdArray, pollfdQueueSize, this->_timeout);
+    if (pollResult < 0)
         throw PollError();
+
+    // Log poll result
+    if (pollResult == 0) // Timeout occurred
+        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
+    else // Events occurred
+        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " + std::to_string(pollResult) + " events.");
 }
 
 void PollingService::setPollingTimeout(int timeout)

@@ -4,7 +4,7 @@
 /*
  * ExceptionHandler Class:
  * Provides functionality to handle webserv exceptions thrown during execution.
- * Logs exception details using the webserv errorLogger instance.
+ * Logs exception details using the webserv logger instance.
  * When it encounters a webserv spcific exception (WebserveException),
  * it will handle them  based on the specified log level, and terminates the server if necessary (e.getLogLevel() == CRITICAL).
  *
@@ -35,18 +35,18 @@ class Server;
 class ExceptionHandler : public IExceptionHandler
 {
 private:
-    ILogger &_errorLogger;                            // Reference to the errorLogger instance
+    ILogger &_logger;                            // Reference to the logger instance
     Server *_server;                                  // Pointer to the server instance
     const HttpStatusCodeHelper _httpStatusCodeHelper; // Helper instance for HTTP status codes
     int _handleWebservException(const WebservException &e, const std::string &context = "") const;
     int _handleStandardException(const std::exception &e, const std::string &context = "") const;
 
 public:
-    // Constructor: Initializes ExceptionHandler with an errorLogger instance.
-    ExceptionHandler(ILogger &errorLogger);
+    // Constructor: Initializes ExceptionHandler with an logger instance.
+    ExceptionHandler(ILogger &logger);
 
-    // Constructor: Initializes ExceptionHandler with an errorLogger instance and a pointer to the server instance.
-    ExceptionHandler(ILogger &errorLogger, Server *server);
+    // Constructor: Initializes ExceptionHandler with an logger instance and a pointer to the server instance.
+    ExceptionHandler(ILogger &logger, Server *server);
 
     // Destructor: No dynamic memory management, so a default destructor is sufficient.
     ~ExceptionHandler();

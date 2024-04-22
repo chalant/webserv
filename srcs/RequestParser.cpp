@@ -9,14 +9,14 @@
  */
 
 // Constructor to initialize the RequestParser with required references
-RequestParser::RequestParser(const IConfiguration &configuration, ILogger &errorLogger, const IExceptionHandler &exceptionHandler)
-    : _errorLogger(errorLogger),
-      _exceptionHandler(exceptionHandler),
+RequestParser::RequestParser(const IConfiguration &configuration, ILogger &logger)
+    : _logger(logger),
       _configuration(configuration) {}
 
 // Function to parse a raw HTTP request and convert it into a Request object
 void RequestParser::parseRequest(const std::vector<char> &rawRequest, IRequest &parsedRequest) const
 {
+    this->_logger.log(DEBUG, "[REQUESTPARSER] Parsing request...");
     // Iterator to traverse the raw request
     std::vector<char>::const_iterator it = rawRequest.begin();
 
@@ -26,8 +26,8 @@ void RequestParser::parseRequest(const std::vector<char> &rawRequest, IRequest &
     // Check for whitespace between request-line and first header field
     if (this->_isWhitespace(*it))
     {
-        throw HttpStatusCodeException(BAD_REQUEST, // throw '400' status error
-                                      "whitespace between the start-line and the first header field");
+        // throw '400' status error
+        throw HttpStatusCodeException(BAD_REQUEST, "whitespace between the start-line and the first header field");
     }
 
     // Parse the headers
@@ -35,6 +35,7 @@ void RequestParser::parseRequest(const std::vector<char> &rawRequest, IRequest &
 
     // Parse the body
     this->_parseBody(it, rawRequest, parsedRequest);
+    this->_logger.log(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
 }
 
 // Function to parse the request line of an HTTP request
@@ -60,7 +61,7 @@ std::string RequestParser::_parseMethod(std::vector<char>::const_iterator &reque
     std::string method;
 
     // Skip leading CRLF
-    while (*requestIterator == '\r' && *(requestIterator + 1) == '\n')
+    while (this->_isCRLF(requestIterator))
     {
         requestIterator += 2;
     }
@@ -81,6 +82,10 @@ std::string RequestParser::_parseMethod(std::vector<char>::const_iterator &reque
     // Move marker to next character
     ++requestIterator;
 
+    // Log 'method'
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] Method: \"" + method + "\"");
+    
+    // Return 'method' string
     return method;
 }
 
@@ -106,6 +111,10 @@ std::string RequestParser::_parseUri(std::vector<char>::const_iterator &requestI
     // Move marker to next character
     ++requestIterator;
 
+    // Log 'uri'
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] URI: \"" + uri + "\"");
+
+    // Return 'uri' string
     return uri;
 }
 
@@ -123,7 +132,7 @@ std::string RequestParser::_parseHttpVersion(std::vector<char>::const_iterator &
             break;
 
         // Check for invalid characters
-        if (*requestIterator == '\r' || *requestIterator == '\n')
+        if (this->_isCharInSet(requestIterator, "\r\n"))
         {
             throw HttpStatusCodeException(BAD_REQUEST, "Invalid characters in HTTP version"); // throw '400' status error
         }
@@ -142,6 +151,10 @@ std::string RequestParser::_parseHttpVersion(std::vector<char>::const_iterator &
     // Move marker passed CRLF
     requestIterator += 2;
 
+    // Log 'httpVersion'
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] HTTP Version: \"" + httpVersion + "\"");
+
+    // Return 'httpVersion' string
     return httpVersion;
 }
 
@@ -213,7 +226,7 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
     }
 
     // Find end of header value
-    while (requestIterator != rawRequest.end() && !(*requestIterator == '\r' && *(requestIterator + 1) == '\n'))
+    while (requestIterator != rawRequest.end() && !this->_isCRLF(requestIterator))
     {
         headerValue += *requestIterator;
         clientHeaderBufferSize--;
@@ -233,6 +246,9 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
 
     // Move marker passed CRLF
     requestIterator += 2;
+
+    // Log header
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + headerName + ": " + headerValue + "\"");
 
     // Add header to parsed request
     parsedRequest.addHeader(headerName, headerValue);
@@ -266,16 +282,26 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
 
     // Check if body size exceeds client body buffer size
     if (bodySize > this->_configuration.getSize_t("ClientBodyBufferSize"))
-        throw HttpStatusCodeException(PAYLOAD_TOO_LARGE); // throw '413' status error
+    {
+        // throw '413' status error
+        throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
+    }
 
     // Check if body size exceeds remaining request size
     size_t remainingRequestSize = rawRequest.end() - requestIterator;
     if (remainingRequestSize < bodySize)
-        throw HttpStatusCodeException(BAD_REQUEST,
-                                      "body size exceeds remaining request size"); // throw '400' status error
+    {
+        // throw '400' status error
+        throw HttpStatusCodeException(BAD_REQUEST, "body size exceeds remaining request size");
+    }
 
     // Extract body
     std::vector<char> body(requestIterator, requestIterator + bodySize);
+
+    // Log body
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" + std::string(body.begin(), body.end()) + "\"");
+    
+    // Set body in parsed request
     parsedRequest.setBody(body);
 }
 

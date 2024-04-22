@@ -14,10 +14,7 @@
 
 // Constructor for PollFdManager class
 PollfdManager::PollfdManager(const IConfiguration &configuration)
-    : _pollfds(configuration.getInt("MaxConnections") + 3), // + 3 for server socket, error log, and access log, or more in case of several server sockets
-      _fileDescriptorsIndex(-1),                            // Index for log descriptors
-      _serverSocketsIndex(-1),                              // Index for server sockets
-      _clientSocketsIndex(-1)                               // Index for client sockets
+    : _pollfds(configuration.getInt("MaxConnections") + 3) // + 3 for server socket, error log, and access log, or more in case of several server sockets
 {
 }
 
@@ -25,38 +22,45 @@ PollfdManager::PollfdManager(const IConfiguration &configuration)
 PollfdManager::~PollfdManager() {}
 
 // Method to add a polling file descriptor
-void PollfdManager::addPollfd(pollfd pollFd)
+void PollfdManager::_addPollfd(pollfd pollFd)
 {
     this->_pollfds.push(pollFd);
 }
 
-// Method to add a file descriptor pollfd to the pollfdQueue
-void PollfdManager::addFileDescriptorPollfd(pollfd pollFd)
+// Method to add a regular file pollfd to the pollfdQueue
+void PollfdManager::addRegularFilePollfd(pollfd pollFd)
 {
-    this->_fileDescriptorsIndex++;
-    this->_serverSocketsIndex++;
-    this->_clientSocketsIndex++;
-    this->addPollfd(pollFd);
+    if (this->_descriptorTypeMap.find(pollFd.fd) != this->_descriptorTypeMap.end())
+        return; // Flush is already pending
+    this->_descriptorTypeMap[pollFd.fd] = REGULAR_FILE;
+    this->_addPollfd(pollFd);
 }
 
 // Method to add a server socket pollfd to the pollfdQueue
 void PollfdManager::addServerSocketPollfd(pollfd pollFd)
 {
-    this->_serverSocketsIndex++;
-    this->_clientSocketsIndex++;
-    this->addPollfd(pollFd);
+    this->_descriptorTypeMap[pollFd.fd] = SERVER_SOCKET;
+    this->_addPollfd(pollFd);
 }
 
 // Method to add a client socket pollfd to the pollfdQueue
 void PollfdManager::addClientSocketPollfd(pollfd pollFd)
 {
-    this->_clientSocketsIndex++;
-    this->addPollfd(pollFd);
+    this->_descriptorTypeMap[pollFd.fd] = CLIENT_SOCKET;
+    this->_addPollfd(pollFd);
+}
+
+// Method to add a pipe pollfd to the pollfdQueue
+void PollfdManager::addPipePollfd(pollfd pollFd)
+{
+    this->_descriptorTypeMap[pollFd.fd] = PIPE;
+    this->_addPollfd(pollFd);
 }
 
 // Method to remove a polling file descriptor
 void PollfdManager::removePollfd(int position)
 {
+    this->_descriptorTypeMap.erase(this->_pollfds[position].fd);
     this->_pollfds.erase(position);
 }
 
@@ -85,31 +89,16 @@ size_t PollfdManager::getPollfdQueueSize() const
 // Method to get the events at a specific position in the PollfdQueue
 short PollfdManager::getEvents(int position)
 {
-    return this->_pollfds[position].events;
+    short type = this->_descriptorTypeMap[this->_pollfds[position].fd];
+
+    // clear unused bits to be sure, then add the type
+    return (this->_pollfds[position].events & 0x3F) | type;
 }
 
 // Method to get the file descriptor at a specific position in the PollfdQueue
 int PollfdManager::getDescriptor(int position)
 {
     return this->_pollfds[position].fd;
-}
-
-// Method to get the file descriptors index
-ssize_t PollfdManager::getFileDescriptorsIndex()
-{
-    return this->_fileDescriptorsIndex;
-}
-
-// Method to get the server sockets index
-ssize_t PollfdManager::getServerSocketsIndex()
-{
-    return this->_serverSocketsIndex;
-}
-
-// Method to get the client sockets index
-ssize_t PollfdManager::getClientSocketsIndex()
-{
-    return this->_clientSocketsIndex;
 }
 
 // Method to check if the PollfdQueue has reached its capacity

@@ -1,51 +1,30 @@
 #include "../includes/LoggerConfiguration.hpp"
 
-LoggerConfiguration::LoggerConfiguration(LoggerType type, IBufferManager &BufferManager, IConfiguration &configuration, IPollfdManager &pollfdManager)
-    : _type(type),
-      _logFile(type == ERRORLOGGER ? configuration.getString("error_log") : configuration.getString("access_log")),
+LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager, IConfiguration &configuration, IPollfdManager &pollfdManager)
+    : _errorLogFile(configuration.getString("errorLog")),
+      _accessLogFile(configuration.getString("accessLog")),
       _bufferManager(BufferManager),
+      _pollfdManager(pollfdManager),
       _logLevel(static_cast<LogLevel>(configuration.getInt("LogLevel"))),
       _bufferSize(configuration.getInt("BufferSize")),
-      _logFileDescriptor(open(this->_logFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
-      _enabled((type == ERRORLOGGER) ? configuration.getBool("ErrorLogEnabled") : configuration.getBool("AccessLogEnabled"))
+      _errorLogFileDescriptor(open(this->_errorLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
+      _accessLogFileDescriptor(open(this->_accessLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
+      _errorLogEnabled(configuration.getBool("errorLogEnabled")),
+      _accessLogEnabled(configuration.getBool("accessLogEnabled"))
 {
-    if (this->_logFileDescriptor == -1)
+    if (this->_errorLogFileDescriptor == -1 || this->_accessLogFileDescriptor == -1)
         throw LogFileOpenError();
-    pollfdManager.addFileDescriptorPollfd({this->_logFileDescriptor, POLLOUT, 0});
 }
 
 LoggerConfiguration::~LoggerConfiguration()
 {
-    if (this->_logFileDescriptor != -1)
-        close(this->_logFileDescriptor);
+    if (this->_errorLogFileDescriptor != -1)
+        close(this->_errorLogFileDescriptor);
+    if (this->_accessLogFileDescriptor != -1)
+        close(this->_accessLogFileDescriptor);
 }
 
-int LoggerConfiguration::getLogFileDescriptor() const
+void LoggerConfiguration::requestFlush(int descriptor)
 {
-    return this->_logFileDescriptor;
-}
-
-IBufferManager &LoggerConfiguration::getBufferManager() const
-{
-    return this->_bufferManager;
-}
-
-LoggerType LoggerConfiguration::getLoggerType() const
-{
-    return this->_type;
-}
-
-std::string LoggerConfiguration::getLogFile() const
-{
-    return this->_logFile;
-}
-
-LogLevel LoggerConfiguration::getLogLevel() const
-{
-    return this->_logLevel;
-}
-
-bool LoggerConfiguration::getEnabled() const
-{
-    return this->_enabled;
+    this->_pollfdManager.addRegularFilePollfd({descriptor, POLLOUT, 0});
 }

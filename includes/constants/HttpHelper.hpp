@@ -2,13 +2,13 @@
 #define REQUESTHELPER_HPP
 
 /*
- * RequestHelper.hpp
+ * HttpHelper.hpp
  *
- * The RequestHelper class provides functionality for working with HTTP request components,
+ * The HttpHelper class provides functionality for working with HTTP request components,
  * including methods, versions, headers and status codes. It encapsulates instances of helper classes
  * for HTTP methods, versions, headers and status codes, providing convenient access to their functionality.
  *
- * Path: includes/constants/RequestHelper.hpp
+ * Path: includes/constants/HttpHelper.hpp
  */
 
 #include <string>
@@ -17,7 +17,7 @@
 #include "HttpHeaderHelper.hpp"
 #include "HttpStatusCodeHelper.hpp"
 
-class RequestHelper
+class HttpHelper
 {
 private:
     // Private member variables for helper classes
@@ -28,7 +28,7 @@ private:
 
 public:
     // Constructor to initialize helper classes
-    RequestHelper(const IConfiguration &configuration);
+    HttpHelper(const IConfiguration &configuration);
 
     // Http Method Helper Functions
     const std::string &httpMethodStringMap(HttpMethod method) const; // Get string representation of HttpMethod
@@ -49,8 +49,11 @@ public:
     // Http Status Code Helper Functions
     const std::string &httpStatusCodeStringMap(HttpStatusCode statusCode) const; // Get string representation of HttpStatusCode
     HttpStatusCode stringHttpStatusCodeMap(const std::string &statusCode) const; // Get HttpStatusCode enum value from string representation
-    std::string getHtmlPage(HttpStatusCode statusCode) const;                    // Get HTML page for a given HttpStatusCode
+    HttpStatusCode intHttpStatusCodeMap(int statusCode) const;                   // Get HttpStatusCode enum value from integer representation
+    std::string getStatusLine(HttpStatusCode statusCode) const;                  // Generate a status line with the specified HTTP status code
+    std::string getHtmlPage(HttpStatusCode statusCode) const;                    // Generate an HTML page with the specified HTTP status code
+    std::string getErrorResponse(HttpStatusCode statusCode) const;               // Generate an HTML page with the specified HTTP status code
 };
 
 #endif // REQUESTHELPER_HPP
-       // Path: includes/constants/RequestHelper.hpp
+       // Path: includes/constants/HttpHelper.hpp

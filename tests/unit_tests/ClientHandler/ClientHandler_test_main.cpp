@@ -16,11 +16,10 @@ int main()
 {
     // Mock objects
     MockLogger mockErrorLogger;
-    MockExceptionHandler mockExceptionHandler;
     MockSocket mockSocket;
 
     // Instantiate the ClientHandler class
-    ClientHandler clientHandler(mockSocket, mockErrorLogger, mockExceptionHandler);
+    ClientHandler clientHandler(mockSocket, mockErrorLogger);
 
     // Instantiate test variables
     int MOCK_CLIENT_SOCKET_DESCRIPTOR = 44998;

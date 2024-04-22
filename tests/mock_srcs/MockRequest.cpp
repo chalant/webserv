@@ -43,7 +43,7 @@ std::string MockRequest::getHeaderValue(HttpHeader header) const
     return "";
 };
 
-std::map<std::string, std::string> MockRequest::getHeadersString() const { return _testHeaders; };
+std::map<std::string, std::string> MockRequest::getHeadersStringMap() const { return _testHeaders; };
 
 std::map<std::string, std::string> MockRequest::getQueryParameters() const { return std::map<std::string, std::string>(); };
 

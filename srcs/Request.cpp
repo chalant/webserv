@@ -30,10 +30,10 @@
  *
  */
 
-// Constructor initializes the Request object with a RequestHelper and a IConfiguration object
-Request::Request(const RequestHelper &requestHelper, const IConfiguration &configuration)
+// Constructor initializes the Request object with a HttpHelper and a IConfiguration object
+Request::Request(const HttpHelper &httpHelper, const IConfiguration &configuration)
     : _configuration(configuration),
-      _requestHelper(requestHelper) {}
+      _httpHelper(httpHelper) {}
 
 // Copy assignment operator
 Request &Request::operator=(const Request &src)
@@ -52,7 +52,7 @@ Request &Request::operator=(const Request &src)
 
 // Copy constructor
 Request::Request(const Request &src) : _configuration(src._configuration),
-                                       _requestHelper(src._requestHelper)
+                                       _httpHelper(src._httpHelper)
 {
     // Copy constructor for copying the contents of another Request object
     *this = src; // Use the assignment operator to copy the contents
@@ -65,11 +65,8 @@ Request::~Request() {}
 void Request::clear()
 {
     // Reset all member variables to their default values
-    this->_method = GET;
-    this->_uri = "";
-    this->_httpVersion = HTTP_1_1;
-    this->_headers.clear();
-    this->_body.clear();
+    Request emptyRequest(this->_httpHelper, this->_configuration);
+    *this = emptyRequest;
 }
 
 // Getter function for retrieving the HTTP method of the request
@@ -81,7 +78,7 @@ HttpMethod Request::getMethod() const
 // Getter function for retrieving the string representation of the HTTP method
 std::string Request::getMethodString() const
 {
-    return this->_requestHelper.httpMethodStringMap(this->_method);
+    return this->_httpHelper.httpMethodStringMap(this->_method);
 }
 
 // Getter function for retrieving the URI of the request
@@ -99,7 +96,7 @@ HttpVersion Request::getHttpVersion() const
 // Getter function for retrieving the string representation of the HTTP version
 std::string Request::getHttpVersionString() const
 {
-    return this->_requestHelper.httpVersionStringMap(this->_httpVersion);
+    return this->_httpHelper.httpVersionStringMap(this->_httpVersion);
 }
 
 // Getter function for retrieving the headers of the request
@@ -109,13 +106,13 @@ const std::map<HttpHeader, std::string> Request::getHeaders() const
 }
 
 // Getter function for retrieving the headers of the request as string-keyed map
-std::map<std::string, std::string> Request::getHeadersString() const
+std::map<std::string, std::string> Request::getHeadersStringMap() const
 {
     std::map<std::string, std::string> headersStrings;
     for (std::map<HttpHeader, std::string>::const_iterator it = this->_headers.begin(); it != this->_headers.end(); ++it)
     {
         // Convert enum keys to string keys and copy values
-        headersStrings[this->_requestHelper.httpHeaderStringMap(it->first)] = it->second;
+        headersStrings[this->_httpHelper.httpHeaderStringMap(it->first)] = it->second;
     }
     return headersStrings;
 }
@@ -167,15 +164,15 @@ std::string Request::getClientIp() const
 // Setter function for setting the method of the request
 void Request::setMethod(const std::string &method)
 {
-    if (this->_requestHelper.isMethod(method) == false)
+    if (this->_httpHelper.isMethod(method) == false)
         throw HttpStatusCodeException(METHOD_NOT_ALLOWED, // Throw '405' status error
                                       "unknown method: \"" + method + "\"");
-    else if (this->_requestHelper.isSupportedMethod(method) == false)
+    else if (this->_httpHelper.isSupportedMethod(method) == false)
         throw HttpStatusCodeException(NOT_IMPLEMENTED, // Throw '501' status error
                                       "unsupported method: \"" + method + "\"");
 
     // Set the method of the request
-    this->_method = this->_requestHelper.stringHttpMethodMap(method);
+    this->_method = this->_httpHelper.stringHttpMethodMap(method);
 }
 
 // Setter function for setting the URI of the request
@@ -198,9 +195,9 @@ void Request::setUri(const std::string &uri)
 void Request::setHttpVersion(const std::string &httpVersion)
 {
     // Set the HTTP version of the request
-    // Use the RequestHelper to map the string representation of the HTTP version to an HttpVersion enum value
+    // Use the HttpHelper to map the string representation of the HTTP version to an HttpVersion enum value
     // If the HTTP version is not recognized, an UnknownHttpVersionError is thrown
-    this->_httpVersion = this->_requestHelper.stringHttpVersionMap(httpVersion);
+    this->_httpVersion = this->_httpHelper.stringHttpVersionMap(httpVersion);
 }
 
 // Function for adding a header to the request
@@ -224,7 +221,7 @@ void Request::addHeader(const std::string &key, const std::string &value)
     HttpHeader name;
     try
     {
-        name = this->_requestHelper.stringHttpHeaderMap(lowercaseKey);
+        name = this->_httpHelper.stringHttpHeaderMap(lowercaseKey);
         // Add the header to the internal headers map
         this->_headers[name] = value;
     }

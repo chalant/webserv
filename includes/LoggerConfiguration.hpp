@@ -11,25 +11,31 @@
 class LoggerConfiguration : public ILoggerConfiguration
 {
 private:
-    const LoggerType _type;
-    std::string _logFile;
+    std::string _errorLogFile;
+    std::string _accessLogFile;
     IBufferManager &_bufferManager;
+    IPollfdManager &_pollfdManager;
     size_t _bufferSize;
     LogLevel _logLevel;
-    int _logFileDescriptor;
-    bool _enabled;
+    int _errorLogFileDescriptor;
+    int _accessLogFileDescriptor;
+    bool _errorLogEnabled;
+    bool _accessLogEnabled;
 
 public:
-    LoggerConfiguration(LoggerType type, IBufferManager &BufferManager, IConfiguration &configuration, IPollfdManager &pollfdManager);
+    LoggerConfiguration(IBufferManager &BufferManager, IConfiguration &configuration, IPollfdManager &pollfdManager);
     ~LoggerConfiguration();
 
-    virtual int getLogFileDescriptor() const;
+    virtual int getErrorLogFileDescriptor() const;
+    virtual int getAccessLogFileDescriptor() const;
     virtual IBufferManager &getBufferManager() const;
-    virtual LoggerType getLoggerType() const;
-    virtual std::string getLogFile() const;
+    virtual std::string getErrorLogFile() const;
+    virtual std::string getAccessLogFile() const;
     virtual LogLevel getLogLevel() const;
-    virtual bool getEnabled() const;
+    virtual bool getErrorLogEnabled() const;
+    virtual bool getAccessLogEnabled() const;
+    virtual void requestFlush(int descriptor);
 };
 
 #endif // LOGGERCONFIGURATION_HPP
-        // Path: includes/LoggerConfiguration.hpp
+       // Path: includes/LoggerConfiguration.hpp

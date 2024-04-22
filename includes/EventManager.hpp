@@ -18,18 +18,22 @@ private:
     ISocket &_socket;
     IServer &_server;
     IRequestHandler &_requestHandler;
-    ILogger &_errorLogger;
+    ILogger &_logger;
 
-    void _handleServerSocketsEvents();
-    void _handleServerSocketEvents(ssize_t serverSocketIndex);
-    void _handleClientSocketsEvents();
-    void _handleClientSocketEvents(ssize_t &clientSocketIndex);
-    void _handleFileDescriptorsEvents();
-    void _processBufferedResponse(ssize_t clientSocketIndex);
-    void _handleException(ssize_t &clientSocketIndex);
+    // Event handling functions for different types of files
+    void _handleRegularFileEvents(ssize_t &pollfdIndex, short events);
+    void _handleServerSocketEvents(ssize_t pollfdIndex, short events);
+    void _handleClientSocketEvents(ssize_t &pollfdIndex, short events);
+    void _handlePipeEvents(ssize_t &pollfdIndex, short events);
+
+    // helper functions
+    void _handleRequest(ssize_t &pollfdIndex);
+    void _handleClientException(ssize_t &pollfdIndex, short events);
+    void _flushClientBuffer(ssize_t pollfdIndex);
+    void _cleanUp(ssize_t &pollfdIndex, int descriptor);
 
 public:
-    EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager, ISocket &socket, IServer &server, IRequestHandler &requestHandler, ILogger &errorLogger);
+    EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager, ISocket &socket, IServer &server, IRequestHandler &requestHandler, ILogger &logger);
     ~EventManager();
 
     virtual void handleEvents();

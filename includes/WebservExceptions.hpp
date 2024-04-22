@@ -236,7 +236,7 @@ class HttpStatusCodeException : public WebservException
 {
 public:
     HttpStatusCodeException(int statusCode)
-        : WebservException(INFO, ("Http Status Code: \"" + (std::ostringstream() << statusCode).str() + "\""), statusCode) {};
+        : WebservException(INFO, ("Http Status Code: \"" + (std::ostringstream() << statusCode).str() + "\""), statusCode){};
     HttpStatusCodeException(int statusCode, const std::string &message)
         : WebservException(INFO, ("Http Status Code " + (std::ostringstream() << statusCode).str() + ": " + message), statusCode) {}
 };

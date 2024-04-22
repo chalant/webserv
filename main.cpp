@@ -39,20 +39,17 @@ int main(int argc, char **argv)
     // Instantiate the Socket instance.
     Socket socket;
 
-    // Instantiate the errorLogger.
-    Logger errorLogger(bufferManager);
-
-    // Instantiate the accessLogger.
-    Logger accessLogger(bufferManager);
+    // Instantiate the logger.
+    Logger logger(bufferManager);
 
     // Instantiate the exceptionHandler.
-    ExceptionHandler exceptionHandler(errorLogger);
+    ExceptionHandler exceptionHandler(logger);
 
     try
     {
 
         // Instantiate the Configuration instance
-        Configuration configuration(errorLogger);
+        Configuration configuration(logger);
 
         // parse the configuration file
     
@@ -60,28 +57,24 @@ int main(int argc, char **argv)
         // Instantiate the PollfdManager.
         PollfdManager pollfdManager(configuration);
 
-        // Configure the errorLogger
-        LoggerConfiguration errorLoggerConfiguration(ERRORLOGGER, bufferManager, configuration, pollfdManager);
-        errorLogger.configure(errorLoggerConfiguration);
-
-        // Configure the accessLogger
-        LoggerConfiguration accessLoggerConfiguration(ACCESSLOGGER, bufferManager, configuration, pollfdManager);
-        accessLogger.configure(accessLoggerConfiguration);
+        // Configure the logger
+        LoggerConfiguration loggerConfiguration(bufferManager, configuration, pollfdManager);
+        logger.configure(loggerConfiguration);
 
         // Instantiate the Server.
-        Server server(socket, pollfdManager, configuration, errorLogger);
+        Server server(socket, pollfdManager, configuration, logger);
 
         // Instantiate the Router.
-        Router router(configuration, errorLogger);
+        Router router(configuration, logger);
 
         // Instantiate the RequestHandler.
-        RequestHandler requestHandler(socket, bufferManager, configuration, router, errorLogger, accessLogger, exceptionHandler);
+        RequestHandler requestHandler(socket, bufferManager, configuration, router, logger, exceptionHandler);
 
         // Instantiate the PollingService.
-        PollingService pollingService(pollfdManager);
+        PollingService pollingService(pollfdManager, logger);
 
         // Instantiate the EventManager.
-        EventManager eventManager(pollfdManager, bufferManager, socket, server, requestHandler, errorLogger);
+        EventManager eventManager(pollfdManager, bufferManager, socket, server, requestHandler, logger);
 
         // Start the webserv core cycle.
         while (true)

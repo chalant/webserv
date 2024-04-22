@@ -14,22 +14,30 @@
 
 #include <poll.h>
 
+enum DescriptorType
+{
+    REGULAR_FILE = 0x0,
+    SERVER_SOCKET = 0x40,
+    CLIENT_SOCKET = 0x80,
+    PIPE = 0xC0,
+};
+
 class IPollfdManager
 {
 public:
     virtual ~IPollfdManager() {}
 
-    // Method to add a pollfd to the pollfdQueue
-    virtual void addPollfd(pollfd pollFd) = 0;
-
-    // Method to add a file descriptor pollfd to the pollfdQueue
-    virtual void addFileDescriptorPollfd(pollfd pollFd) = 0;
+    // Method to add a regular file pollfd to the pollfdQueue
+    virtual void addRegularFilePollfd(pollfd pollFd) = 0;
 
     // Method to add a server socket pollfd to the pollfdQueue
     virtual void addServerSocketPollfd(pollfd pollFd) = 0;
 
     // Method to add a client socket pollfd to the pollfdQueue
     virtual void addClientSocketPollfd(pollfd pollFd) = 0;
+
+    // Method to add a pipe pollfd to the pollfdQueue
+    virtual void addPipePollfd(pollfd pollFd) = 0;
 
     // Method to remove a file descriptor from the pollfdQueue
     virtual void removePollfd(int position) = 0;
@@ -46,18 +54,9 @@ public:
     // Method to get the events at a specific position in the pollfdQueue
     virtual short getEvents(int position) = 0;
 
-    // Method to get the file descriptor index
-    virtual ssize_t getFileDescriptorsIndex() = 0;
-
-    // Method to get the server sockets index
-    virtual ssize_t getServerSocketsIndex() = 0;
-
-    // Method to get client sockets index
-    virtual ssize_t getClientSocketsIndex() = 0;
-
     // Method to get the file descriptor at a specific position in the pollfdQueue
     virtual int getDescriptor(int position) = 0;
-    
+
     // Method to check if the pollfdQueue has reached its capacity
     virtual bool hasReachedCapacity() const = 0;
 

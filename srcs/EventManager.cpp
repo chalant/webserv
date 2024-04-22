@@ -1,191 +1,242 @@
 #include "../includes/EventManager.hpp"
+#define NO_EVENTS 0xC0
 
-EventManager::EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager, ISocket &socket, IServer &server, IRequestHandler &requestHandler, ILogger &errorLogger)
+EventManager::EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager, ISocket &socket, IServer &server, IRequestHandler &requestHandler, ILogger &logger)
     : _pollfdManager(pollfdManager),
       _bufferManager(bufferManager),
       _socket(socket),
       _server(server),
       _requestHandler(requestHandler),
-      _errorLogger(errorLogger) {}
+      _logger(logger) {}
 
 EventManager::~EventManager() {}
 
 void EventManager::handleEvents()
 {
-    this->_handleFileDescriptorsEvents();
-    this->_handleServerSocketsEvents();
-    this->_handleClientSocketsEvents();
-}
-
-void EventManager::_handleServerSocketsEvents()
-{
-    this->_errorLogger.errorLog(DEBUG, "Processing Server Socket Events.");
-
-    for (ssize_t serverSocketIndex = this->_pollfdManager.getServerSocketsIndex();
-         serverSocketIndex < this->_pollfdManager.getClientSocketsIndex();
-         serverSocketIndex++)
+    for (ssize_t pollfdIndex = 0;
+         pollfdIndex < this->_pollfdManager.getPollfdQueueSize();
+         pollfdIndex++)
     {
-        this->_handleServerSocketEvents(serverSocketIndex);
+        short events = this->_pollfdManager.getEvents(pollfdIndex);
+
+        if (events == NO_EVENTS)
+        {
+            continue;
+        }
+        else if (events & REGULAR_FILE)
+        {
+            this->_handleRegularFileEvents(pollfdIndex, events);
+        }
+        else if (events & SERVER_SOCKET)
+        {
+            this->_handleServerSocketEvents(pollfdIndex, events);
+        }
+        else if (events & CLIENT_SOCKET)
+        {
+            this->_handleClientSocketEvents(pollfdIndex, events);
+        }
+        else if (events & PIPE)
+        {
+            this->_handlePipeEvents(pollfdIndex, events);
+        }
     }
 }
 
-void EventManager::_handleServerSocketEvents(ssize_t serverSocketIndex)
+void EventManager::_handleRegularFileEvents(ssize_t &pollfdIndex, short events)
 {
-    short serverSocketEvents = this->_pollfdManager.getEvents(serverSocketIndex);
-    // If server socket has no events, return immediately
-    if (serverSocketEvents == 0)
-        return;
+    // Check if file is ready for writing
+    if (events & POLLOUT)
+    {
+        int fileDescriptor = this->_pollfdManager.getDescriptor(pollfdIndex);
+        // Flush the buffer
+        if (this->_bufferManager.flushBuffer(fileDescriptor) == 0) // check if no bytes remain in the buffer
+        {
+            // Clear buffer, remove from polling and close file
+            this->_cleanUp(pollfdIndex, fileDescriptor);
+        }
+    }
 
+    // Check for invalid request on the file
+    if (events & POLLNVAL)
+    {
+        // Get the file descriptor
+        int fileDescriptor = this->_pollfdManager.getDescriptor(pollfdIndex);
+
+        // Log the error
+        this->_logger.log(ERROR, "Invalid request on file: " + std::to_string(fileDescriptor));
+
+        // Clear buffer, remove from polling and close file
+        this->_cleanUp(pollfdIndex, fileDescriptor);
+    }
+}
+
+void EventManager::_handleServerSocketEvents(ssize_t pollfdIndex, short events)
+{
     // Check for errors on server socket
-    if (serverSocketEvents & POLLERR)
+    if (events & POLLERR)
         throw ServerSocketError();
 
     // Check for server socket closed
-    if (serverSocketEvents & POLLHUP)
+    if (events & POLLHUP)
         throw ServerSocketClosedError();
 
     // Check for invalid request on server socket
-    if (serverSocketEvents & POLLNVAL)
+    if (events & POLLNVAL)
         throw ServerSocketInvalidError();
 
     // Check if server socket is ready to accept incoming connections
-    if (serverSocketEvents & POLLIN)
+    if (events & POLLIN)
     {
         // Accept incoming connection
-        int serverSocketDescriptor = this->_pollfdManager.getDescriptor(serverSocketIndex);
+        int serverSocketDescriptor = this->_pollfdManager.getDescriptor(pollfdIndex);
         this->_server.acceptConnection(serverSocketDescriptor);
     }
-    else
-    {
-        // Log no incoming connection
-        this->_errorLogger.errorLog(VERBOSE, "No incoming connection.");
-    }
 }
 
-void EventManager::_handleClientSocketsEvents()
+void EventManager::_handleClientSocketEvents(ssize_t &pollfdIndex, short events)
 {
-    this->_errorLogger.errorLog(DEBUG, "Processing Client Socket Events.");
-
-    for (ssize_t clientSocketIndex = this->_pollfdManager.getClientSocketsIndex();
-         clientSocketIndex < this->_pollfdManager.getPollfdQueueSize();
-         clientSocketIndex++)
-    {
-        this->_handleClientSocketEvents(clientSocketIndex);
-    }
-}
-void EventManager::_handleClientSocketEvents(ssize_t &clientSocketIndex)
-{
-    int clientSocketDescriptor = this->_pollfdManager.getDescriptor(clientSocketIndex);
-    short clientSocketEvents = this->_pollfdManager.getEvents(clientSocketIndex);
-
-    // If there are no events, return immediately
-    if (clientSocketEvents == 0)
-        return;
-
     // Check for exceptions
-    short pollExceptionMask = POLLHUP | POLLERR | POLLNVAL;
-    if (clientSocketEvents & pollExceptionMask)
+    if (events & (POLLHUP | POLLERR | POLLNVAL))
     {
-        this->_handleException(clientSocketIndex);
+        this->_handleClientException(pollfdIndex, events);
     }
-    // Read and process a new request
-    else if (clientSocketEvents & POLLIN)
+
+    // Read and process a new request if ready
+    else if (events & POLLIN)
     {
-        int fd = this->_pollfdManager.getDescriptor(clientSocketIndex);
-        if (this->_requestHandler.handleRequest(clientSocketDescriptor) == -1)
-        {
-            // Remove the socket from the poll set
-            this->_pollfdManager.removePollfd(clientSocketIndex);
-            // Decrement i to compensate for the removal
-            clientSocketIndex--;
-        }
-        else
-        {
-            // Add the POLLOUT event for the socket
-            this->_pollfdManager.addPollOut(clientSocketIndex);
-        }
+        this->_handleRequest(pollfdIndex);
     }
-    // Write buffered response
-    else if (clientSocketEvents & POLLOUT)
+
+    // Send response
+    else if (events & POLLOUT)
     {
-        this->_processBufferedResponse(clientSocketIndex);
+        this->_flushClientBuffer(pollfdIndex);
     }
 }
 
-void EventManager::_handleFileDescriptorsEvents()
+void EventManager::_handleRequest(ssize_t &pollfdIndex)
 {
-    for (ssize_t fileDescriptorIndex = this->_pollfdManager.getFileDescriptorsIndex();
-         fileDescriptorIndex < this->_pollfdManager.getServerSocketsIndex();
-         fileDescriptorIndex++)
+    int clientSocketDescriptor = this->_pollfdManager.getDescriptor(pollfdIndex);
+
+    int pipeDescriptor = this->_requestHandler.handleRequest(clientSocketDescriptor);
+
+    if (pipeDescriptor == 0) // no pipe; served static files or bad request
     {
-        short fileDescriptorEvents = this->_pollfdManager.getEvents(fileDescriptorIndex);
-        if (fileDescriptorEvents & POLLOUT)
-        {
-            // Flush error logs buffer
-            int fileDescriptor = this->_pollfdManager.getDescriptor(fileDescriptorIndex);
-            this->_bufferManager.flushBuffer(fileDescriptor);
-        }
+        // Add the POLLOUT event for the socket
+        this->_pollfdManager.addPollOut(pollfdIndex);
+    }
+    else // read pipe returned
+    {
+        // Add the pipe to the poll set
+        this->_pollfdManager.addPipePollfd({pipeDescriptor, POLLIN, 0});
     }
 }
 
-void EventManager::_processBufferedResponse(ssize_t clientSocketIndex)
+void EventManager::_flushClientBuffer(ssize_t pollfdIndex)
 {
     // Get the socket descriptor
-    int clientSocketDescriptor = this->_pollfdManager.getDescriptor(clientSocketIndex);
+    int descriptor = this->_pollfdManager.getDescriptor(pollfdIndex);
 
     // Flush the buffer
-    if (this->_bufferManager.flushBuffer(clientSocketDescriptor) == 0) // check if all bytes were sent
+    if (this->_bufferManager.flushBuffer(descriptor) == 0) // check if all bytes were sent
     {
-        // Remove the socket from the poll set
-        this->_pollfdManager.removePollfd(clientSocketIndex);
+        // Clear buffer, remove from polling and close socket
+        this->_cleanUp(pollfdIndex, descriptor);
     }
 }
 
-void EventManager::_handleException(ssize_t &clientSocketIndex)
+void EventManager::_handleClientException(ssize_t &pollfdIndex, short events)
 {
-    int clientSocketDescriptor = this->_pollfdManager.getDescriptor(clientSocketIndex);
-    short clientSocketEvents = this->_pollfdManager.getEvents(clientSocketIndex);
+    int descriptor = this->_pollfdManager.getDescriptor(pollfdIndex);
 
-    if (clientSocketEvents & POLLHUP)
+    // Check for disconnection on the socket
+    if (events & POLLHUP)
     {
         // Log the disconnection
-        this->_errorLogger.errorLog(INFO, "Client disconnected socket: " + std::to_string(clientSocketDescriptor));
+        this->_logger.log(INFO, "Client disconnected socket: " + std::to_string(descriptor));
+
+        // Clear buffer, remove from polling and close socket
+        this->_cleanUp(pollfdIndex, descriptor);
     }
 
-    if (clientSocketEvents & POLLNVAL)
+    // Check for invalid request on the socket
+    if (events & POLLNVAL)
     {
         // Log the error
-        this->_errorLogger.errorLog(ERROR, "Invalid request on socket: " + std::to_string(clientSocketDescriptor));
+        this->_logger.log(ERROR, "Invalid request on socket: " + std::to_string(descriptor));
 
-        // Send a 400 response to the client
-        std::vector<char> response = {'H', 'T', 'T', 'P', '/', '1', '.', '1', ' ', '4', '0', '0', ' ', 'B', 'a', 'd', ' ', 'R', 'e', 'q', 'u', 'e', 's', 't', '\r', '\n',
-                                      'C', 'o', 'n', 't', 'e', 'n', 't', '-', 'L', 'e', 'n', 'g', 't', 'h', ':', ' ', '0', '\r', '\n', '\r', '\n'};
-        if (this->_socket.send(clientSocketDescriptor, response) == -1)
-        {
-            // Log the error
-            this->_errorLogger.errorLog(ERROR, "Error sending 400 response to socket: " + std::to_string(clientSocketDescriptor));
-        }
+        // Destroy the buffer associated with the descriptor
+        this->_bufferManager.destroyBuffer(descriptor);
+
+        // Let the request handler handle the error
+        this->_requestHandler.handleErrorResponse(descriptor, BAD_REQUEST); // 400
+
+        // Add the POLLOUT event for the socket
+        this->_pollfdManager.addPollOut(pollfdIndex);
     }
 
     // Check for errors on the socket
-    if (clientSocketEvents & POLLERR)
+    if (events & POLLERR)
     {
         // Log the error
-        this->_errorLogger.errorLog(ERROR, "Error on socket: " + std::to_string(clientSocketDescriptor));
+        this->_logger.log(ERROR, "Error on socket: " + std::to_string(descriptor));
 
-        // Send a 500 response to the client
-        std::vector<char> response = {'H', 'T', 'T', 'P', '/', '1', '.', '1', ' ', '5', '0', '0', ' ', 'I', 'n', 't', 'e', 'r', 'n', 'a', 'l', ' ', 'S', 'e', 'r', 'v', 'e', 'r', ' ', 'E', 'r', 'r', 'o', 'r', '\r', '\n',
-                                      'C', 'o', 'n', 't', 'e', 'n', 't', '-', 'L', 'e', 'n', 'g', 't', 'h', ':', ' ', '0', '\r', '\n', '\r', '\n'};
-        if (this->_socket.send(clientSocketDescriptor, response) == -1)
-        {
-            // Log the error
-            this->_errorLogger.errorLog(ERROR, "Error sending 500 response to socket: " + std::to_string(clientSocketDescriptor));
-        }
+        // Destroy the buffer associated with the descriptor
+        this->_bufferManager.destroyBuffer(descriptor);
+
+        // Let the request handler handle the error
+        this->_requestHandler.handleErrorResponse(descriptor, INTERNAL_SERVER_ERROR); // 500
+
+        // Add the POLLOUT event for the socket
+        this->_pollfdManager.addPollOut(pollfdIndex);
     }
-    // Destroy the buffer associated with the socket
-    this->_bufferManager.destroyBuffer(clientSocketDescriptor);
-    // Close and Remove the socket from the poll set
-    this->_pollfdManager.removePollfd(clientSocketIndex);
-    // Decrement i to compensate for the removal
-    clientSocketIndex--;
 }
+
+void EventManager::_cleanUp(ssize_t &pollfdIndex, int descriptor)
+{
+    // Destroy the buffer associated with the descriptor
+    this->_bufferManager.destroyBuffer(descriptor);
+
+    // Close the descriptor
+    close(descriptor);
+
+    // Remove the descriptor from the poll set
+    this->_pollfdManager.removePollfd(pollfdIndex);
+
+    // Decrement i to compensate for the removal
+    pollfdIndex--;
+
+    // Log the cleanup
+    this->_logger.log(INFO, "Cleaned up descriptor: " + std::to_string(descriptor));
+}
+
+void EventManager::_handlePipeEvents(ssize_t &pollfdIndex, short events)
+{
+    // Get the pipe descriptor
+    int pipeDescriptor = this->_pollfdManager.getDescriptor(pollfdIndex);
+
+    // Declare the client socket descriptor linked to the pipe
+    int clientSocket;
+
+    // Check for exceptions
+    if (events & (POLLHUP | POLLERR | POLLNVAL))
+    {
+        // Let the request handler handle the exception, returns the client socket descriptor linked to the pipe
+        clientSocket = this->_requestHandler.handlePipeException(pipeDescriptor);
+    }
+
+    // Read and process a new request if ready
+    else if (events & POLLIN)
+    {
+        // Let the request handler handle the pipe read, returns the client socket descriptor linked to the pipe
+        clientSocket = this->_requestHandler.handlePipeRead(pipeDescriptor);
+    }
+
+    // Add the POLLOUT event for the client socket
+    this->_pollfdManager.addPollOut(clientSocket);
+
+    // Clear buffer, remove from polling and close pipe
+    this->_cleanUp(pollfdIndex, pipeDescriptor);
+}
+
+// Path: srcs/EventManager.cpp

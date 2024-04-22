@@ -20,16 +20,16 @@
  * 2. An access Logger, mainly intended for logging by the ResponseGenerator class.
  *
  * Usage:
- * - When adding logging functionality to new components or modules, use the errorLog() and accessLog() methods to add log messages to the buffer.
- * - Classes with access to the error Logger instance can log errors using the errorLog() method.
- * - Classes with access to the access Logger instance can log access events using the accessLog() method.
+ * - When adding logging functionality to new components or modules, use the log() and log() methods to add log messages to the buffer.
+ * - Classes with access to the error Logger instance can log errors using the log() method.
+ * - Classes with access to the access Logger instance can log access events using the log() method.
  *
  * Example error log:
- * this->_errorLogger.errorLog(INFO, "listening on port 8080");
+ * this->_logger.log(INFO, "listening on port 8080");
  * Output in error log: timestamp="2011-01-01T01:11:11" level="[info]" message="listening on port 8080"
  *
  * Example access log:
- * this->_accesLogger.accessLog(request, response);
+ * this->_logger.log(request, response);
  * Output in access log: timestamp="2011-01-01T01:11:11" clientIP="127.0.0.1" method="GET" requestURI="/index.php" httpVersion="HTTP/1.1" etc.
  */
 
@@ -50,6 +50,7 @@
 #include "IBufferManager.hpp"
 #include "WebservExceptions.hpp"
 #include "PollfdManager.hpp"
+#include "constants/LogLevelHelper.hpp"
 
 class Logger : public ILogger
 {
@@ -61,6 +62,7 @@ private:
     // Private methods
     std::string _getCurrentTimestamp() const;                                                                                            // Method to get the current timestamp
     void _appendMapToLog(std::ostringstream &ss, const std::string &fieldName, const std::map<std::string, std::string> &dataMap) const; // Method to append a map to the log message
+    void _pushToBuffer(const std::string &logMessage, const int fileDescriptor);                                                         // Method to push log messages to the buffer
 
 public:
     // Constructors and Destructor
@@ -71,8 +73,9 @@ public:
     // virtual int getLogFileDescriptor() const; // Getter method for log file descriptor
 
     // Logging methods
-    virtual void errorLog(const LogLevel logLevel, const std::string &message); // Method to log error messages
-    virtual void accessLog(const IRequest &request, const Response &response);  // Method to log access events
+    virtual void log(const std::string &message);                  // Default method to log error messages
+    void log(const LogLevel logLevel, const std::string &message); // Method to log error messages
+    void log(const IRequest &request, const Response &response);   // Method to log access events
 
     // Configuration method
     virtual void configure(ILoggerConfiguration &configuration); // Method to configure the Logger instance

@@ -10,7 +10,7 @@ public:
     virtual ~IBufferManager() = default;
 
     // methods for managing buffers
-    virtual void pushFileBuffer(int, const std::vector<char> &) = 0;
+    virtual ssize_t pushFileBuffer(int, const std::vector<char> &) = 0;
     virtual void pushSocketBuffer(int, const std::vector<char> &) = 0;
     virtual ssize_t flushBuffer(int) = 0;
     virtual void flushBuffers() = 0;

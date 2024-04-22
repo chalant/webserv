@@ -10,20 +10,22 @@
  */
 
 /* Constructor - Initializes the Server object and sets up the server socket and polling file descriptors.*/
-Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &errorLogger)
+Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &logger)
     : _socket(socket),
       _pollfdManager(pollfdManager),
-      _errorLogger(errorLogger)
+      _logger(logger)
 {
-    std::vector<IBlock> servers = configuration.getBlocks("server");
-    for (size_t i = 0; i < servers.size(); i++)
+    std::vector<IBlock *> servers = configuration.getBlocks("server");
+    for (std::vector<IBlock *>::iterator serverIterator = servers.begin();
+         serverIterator != servers.end();
+         serverIterator++)
     {
-        int ip = servers[i].getInt("listenIp"); // 0 for all interfaces
-        int port = servers[i].getInt("listenPort");
-        int maxConnections = servers[i].getInt("maxConnections");
+        int ip = (*serverIterator)->getInt("listenIp"); // 0 for all interfaces
+        int port = (*serverIterator)->getInt("listenPort");
+        int maxConnections = (*serverIterator)->getInt("maxConnections");
         this->_initializeServerSocket(ip, port, maxConnections);
     }
-    this->_errorLogger.errorLog(INFO, "Finished Server initialization");
+    this->_logger.log(INFO, "Finished Server initialization");
 }
 
 /* Destructor to close file descriptors*/
@@ -40,29 +42,29 @@ void Server::_initializeServerSocket(int ip, int port, int maxConnections)
     int serverSocketDescriptor = this->_socket.socket();
     if (serverSocketDescriptor < 0)
         throw SocketCreateError();
-    this->_errorLogger.errorLog(INFO, "Server socket created.");
+    this->_logger.log(INFO, "Server socket created.");
 
     // Bind server socket to port
     if (this->_socket.bind(serverSocketDescriptor, ip, port) < 0)
         throw SocketBindError();
-    this->_errorLogger.errorLog(INFO, "Server socket bound to port " + std::to_string(port));
+    this->_logger.log(INFO, "Server socket bound to port " + std::to_string(port));
 
     // Listen for incoming connections
     if (this->_socket.listen(serverSocketDescriptor, maxConnections) < 0)
         throw SocketListenError();
-    this->_errorLogger.errorLog(INFO, "Server socket set to listening.");
+    this->_logger.log(INFO, "Server socket set to listening.");
 
     // Set server socket to non-blocking mode
     if (this->_socket.setNonBlocking(serverSocketDescriptor) < 0)
         throw SocketSetError();
-    this->_errorLogger.errorLog(INFO, "Server socket set to non-blocking.");
+    this->_logger.log(INFO, "Server socket set to non-blocking.");
 
     // Add server socket to polling list
     short pollMask = POLLIN | POLLERR | POLLHUP | POLLNVAL;
     this->_pollfdManager.addServerSocketPollfd({serverSocketDescriptor, pollMask, 0});
 
     // Log server socket initialization
-    this->_errorLogger.errorLog(DEBUG, "Server socket initialized. Listening on " + (ip ? std::to_string(ip) : "ALL") + ":" + std::to_string(port));
+    this->_logger.log(DEBUG, "Server socket initialized. Listening on " + (ip ? std::to_string(ip) : "ALL") + ":" + std::to_string(port));
 }
 
 /* Terminate server*/
@@ -88,12 +90,12 @@ void Server::acceptConnection(int serverSocketDescriptor)
     if (clientSocketDescriptor < 0)
         throw ConnectionEstablishingError();
     short pollMask = POLLIN | POLLERR | POLLHUP | POLLNVAL;
-    this->_pollfdManager.addPollfd({clientSocketDescriptor, pollMask, 0});
+    this->_pollfdManager.addClientSocketPollfd({clientSocketDescriptor, pollMask, 0});
 
     // Set socket to non-blocking mode
     if (this->_socket.setNonBlocking(clientSocketDescriptor) < 0)
         throw SocketSetError();
 
     // Log accepted connection
-    this->_errorLogger.errorLog(VERBOSE, "Accepted new connection from " + clientIP + ":" + clientPort + ".");
+    this->_logger.log(VERBOSE, "Accepted new connection from " + clientIP + ":" + clientPort + ".");
 }

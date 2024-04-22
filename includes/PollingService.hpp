@@ -3,6 +3,7 @@
 
 #include "IPollingService.hpp"
 #include "IPollfdManager.hpp"
+#include "ILogger.hpp"
 #include "WebservExceptions.hpp"
 #include <stddef.h>
 #include <poll.h>
@@ -11,9 +12,10 @@ class PollingService : public IPollingService
 {
 private:
     IPollfdManager &_pollfdManager;
+    ILogger &_logger;
     int _timeout;
 public:
-    PollingService(IPollfdManager &pollfdManager, int timeout=100);
+    PollingService(IPollfdManager &pollfdManager, ILogger &logger, int timeout=100);
     ~PollingService();
 
     virtual void pollEvents();

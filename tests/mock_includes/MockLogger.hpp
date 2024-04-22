@@ -29,8 +29,9 @@ public:
     // These methods are overridden to provide custom behavior for testing.
 
     // Logging methods
-    virtual void errorLog(const LogLevel, const std::string &); // Method to log error messages
-    virtual void accessLog(const IRequest &, const Response &); // Method to log access events
+    virtual void log(const std::string &);                 // Default log method
+    virtual void log(const LogLevel, const std::string &); // Method to log error messages
+    virtual void log(const IRequest &, const Response &);  // Method to log access events
 
     // Configuration method
     virtual void configure(ILoggerConfiguration &); // Method to configure the Logger instance

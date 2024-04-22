@@ -34,7 +34,7 @@ public:
     virtual std::string getUri() const = 0;
     virtual HttpVersion getHttpVersion() const = 0;
     virtual std::string getHeaderValue(HttpHeader header) const = 0;
-    virtual std::map<std::string, std::string> getHeadersString() const = 0;
+    virtual std::map<std::string, std::string> getHeadersStringMap() const = 0;
     virtual std::map<std::string, std::string> getQueryParameters() const = 0;
     virtual std::map<std::string, std::string> getCookies() const = 0;
     virtual const std::vector<char> getBody() const = 0;
