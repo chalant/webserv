@@ -15,6 +15,8 @@ int CgiResponseGenerator::generateResponse(const IRequest &request, IResponse &r
     pid_t pid = fork();
     if (pid == -1)
     {
+        close (pipefd[0]);
+        close (pipefd[1]);
         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
         return -1;
     }

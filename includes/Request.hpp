@@ -67,7 +67,7 @@ private:
 
 public:
     // Constructor and Destructor
-    Request(const HttpHelper &httpHelper, const IConfiguration &configuration);
+    Request(const IConfiguration &configuration, const HttpHelper &httpHelper);
     Request(const Request &src);
     ~Request();
     

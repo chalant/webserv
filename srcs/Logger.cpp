@@ -72,16 +72,21 @@ void Logger::log(LogLevel logLevel, const std::string &message)
 }
 
 // Method to log access events
-void Logger::log(const IRequest &request, const Response &response)
+void Logger::log(const ISession &session)
 {
     // If the Logger is configured and confirmed disabled, return without logging
     if (this->_configuration != nullptr && this->_configuration->getAccessLogEnabled() == false)
         return;
 
+    // Get a reference to the Request and Response objects
+    const IRequest &request = session.getRequest();
+    const IResponse &response = session.getResponse();
+
     // Create a temporary stringstream object to construct the log message
     std::ostringstream logBufferStream;
     logBufferStream << "timestamp=\"" << this->_getCurrentTimestamp() << "\" "
-                    << "clientIP=\"" << request.getClientIp() << "\" "
+                    << "clientIP=\"" << session.getIp() << "\" "
+                    << "clientPort=\"" << session.getPort() << "\" "
                     << "method=\"" << request.getMethodString() << "\" "
                     << "requestUri=\"" << request.getUri() << "\" "
                     << "httpVersion=\"" << request.getHttpVersion() << "\" "

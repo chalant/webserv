@@ -37,6 +37,7 @@
 #include "IResponseGenerator.hpp"
 #include "PollfdManager.hpp"
 #include "IBufferManager.hpp"
+#include "ISessionManager.hpp"
 #include "IConfiguration.hpp"
 #include "Configuration.hpp"
 
@@ -44,16 +45,15 @@ class RequestHandler : public IRequestHandler
 {
 private:
     // Private member variables
-    IBufferManager &_bufferManager;     // Pointer to the buffer manager
+    IBufferManager &_bufferManager;     // Reference to the buffer manager
+    ISessionManager &_sessionManager;   // Reference to the session manager
     IClientHandler *_clientHandler;     // Handles communication with clients
     const RequestParser _requestParser; // Parses incoming requests
     IRouter &_router;                   // Routes requests to appropriate handlers
     // AResponseGenerator *_requestHandler;                 // Pointer to the recruited request handler
-    HttpHelper _httpHelper;               // Helper class for request-related operations
-    Request _request;                           // Represents an HTTP request
-    Response _response;                         // Represents an HTTP response
-    ILogger &_logger;                           // Pointer to the logger
-    const IExceptionHandler &_exceptionHandler; // Pointer to the exception handler
+    HttpHelper _httpHelper;                     // Helper class for request-related operations
+    ILogger &_logger;                           // Reference to the logger
+    const IExceptionHandler &_exceptionHandler; // Reference to the exception handler
     std::map<int, int> _pipeRoutes;             // Map of pipe descriptors to socket descriptors
 
     // private method
@@ -61,7 +61,7 @@ private:
 
 public:
     // Constructor
-    RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &IExceptionHandler);
+    RequestHandler(const ISocket &socket, IBufferManager &bufferManager, ISessionManager &sessionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &IExceptionHandler);
 
     // Destructor
     ~RequestHandler();

@@ -10,9 +10,10 @@
  */
 
 /* Constructor - Initializes the Server object and sets up the server socket and polling file descriptors.*/
-Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, const IConfiguration &configuration, ILogger &logger)
+Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, ISessionManager &sessionManager, const IConfiguration &configuration, ILogger &logger)
     : _socket(socket),
       _pollfdManager(pollfdManager),
+      _sessionManager(sessionManager),
       _logger(logger)
 {
     std::vector<IBlock *> servers = configuration.getBlocks("server");
@@ -86,12 +87,15 @@ void Server::acceptConnection(int serverSocketDescriptor)
     std::string clientIP = clientInfo.second.first;
     std::string clientPort = clientInfo.second.second;
 
+    // Create a session for the client
+    this->_sessionManager.addSession(clientInfo);
+
     // Add client socket to polling list
     if (clientSocketDescriptor < 0)
         throw ConnectionEstablishingError();
     short pollMask = POLLIN | POLLERR | POLLHUP | POLLNVAL;
     this->_pollfdManager.addClientSocketPollfd({clientSocketDescriptor, pollMask, 0});
-
+    
     // Set socket to non-blocking mode
     if (this->_socket.setNonBlocking(clientSocketDescriptor) < 0)
         throw SocketSetError();

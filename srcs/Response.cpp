@@ -9,7 +9,7 @@
  */
 
 // Default constructor
-Response::Response(HttpHelper &httpHelper)
+Response::Response(const HttpHelper &httpHelper)
     : _httpHelper(httpHelper) {}
 
 // Destructor

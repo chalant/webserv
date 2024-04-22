@@ -4,8 +4,9 @@
 #include "includes/ClientHandler.hpp"
 #include "includes/LoggerConfiguration.hpp"
 #include "includes/BufferManager.hpp"
-#include "includes/BufferManager.hpp"
+#include "includes/SessionManager.hpp"
 #include "includes/EventManager.hpp"
+#include "includes/Factory.hpp"
 #include "includes/Logger.hpp"
 #include "includes/ExceptionHandler.hpp"
 #include "includes/Socket.hpp"
@@ -24,9 +25,9 @@
  * When an event is detected or the timeout is reached, the EventManager class handles the event.
  * Requests are managed by the RequestHandler class, which utilizes the ClientHandler to communicate with the client,
  * the RequestParser to parse the request, the Router to select the appropriate route and to generate a Response.
- * The generated Response is then pushed to the BufferManager, who will send it to the client in the next cycle 
+ * The generated Response is then pushed to the BufferManager, who will send it to the client in the next cycle
  * if polling indicates the socket is ready.
- * All the while, the Logger class registers errors and access log entries with the BufferManager, 
+ * All the while, the Logger class registers errors and access log entries with the BufferManager,
  * who writes them non-blockingly to the log file.
  * This process continues in a loop.
  */
@@ -47,12 +48,10 @@ int main(int argc, char **argv)
 
     try
     {
-
         // Instantiate the Configuration instance
         Configuration configuration(logger);
 
         // parse the configuration file
-    
 
         // Instantiate the PollfdManager.
         PollfdManager pollfdManager(configuration);
@@ -61,14 +60,20 @@ int main(int argc, char **argv)
         LoggerConfiguration loggerConfiguration(bufferManager, configuration, pollfdManager);
         logger.configure(loggerConfiguration);
 
+        // Instantiate the Factory.
+        Factory factory(configuration, logger);
+
+        // Instantiate the SessionManager.
+        SessionManager sessionManager(logger, factory);
+
         // Instantiate the Server.
-        Server server(socket, pollfdManager, configuration, logger);
+        Server server(socket, pollfdManager, sessionManager, configuration, logger);
 
         // Instantiate the Router.
         Router router(configuration, logger);
 
         // Instantiate the RequestHandler.
-        RequestHandler requestHandler(socket, bufferManager, configuration, router, logger, exceptionHandler);
+        RequestHandler requestHandler(socket, bufferManager, sessionManager, router, logger, exceptionHandler);
 
         // Instantiate the PollingService.
         PollingService pollingService(pollfdManager, logger);
@@ -100,3 +105,5 @@ int main(int argc, char **argv)
         exceptionHandler.handleException(e, "webserv setup: ");
     }
 }
+
+// Path: main.cpp

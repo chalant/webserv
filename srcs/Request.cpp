@@ -31,7 +31,7 @@
  */
 
 // Constructor initializes the Request object with a HttpHelper and a IConfiguration object
-Request::Request(const HttpHelper &httpHelper, const IConfiguration &configuration)
+Request::Request(const IConfiguration &configuration, const HttpHelper &httpHelper)
     : _configuration(configuration),
       _httpHelper(httpHelper) {}
 

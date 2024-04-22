@@ -51,6 +51,7 @@
 #include "WebservExceptions.hpp"
 #include "PollfdManager.hpp"
 #include "constants/LogLevelHelper.hpp"
+#include "ISession.hpp"
 
 class Logger : public ILogger
 {
@@ -75,7 +76,7 @@ public:
     // Logging methods
     virtual void log(const std::string &message);                  // Default method to log error messages
     void log(const LogLevel logLevel, const std::string &message); // Method to log error messages
-    void log(const IRequest &request, const Response &response);   // Method to log access events
+    void log(const ISession &session);   // Method to log access events
 
     // Configuration method
     virtual void configure(ILoggerConfiguration &configuration); // Method to configure the Logger instance

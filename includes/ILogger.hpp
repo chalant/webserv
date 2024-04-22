@@ -15,8 +15,7 @@
 #include <string>
 #include "constants/LogLevelHelper.hpp"
 
-class IRequest;
-class Response;
+class ISession;
 class ILoggerConfiguration;
 
 class ILogger
@@ -27,7 +26,7 @@ public:
     // Logging methods
     virtual void log(const std::string &) = 0; // Method to log error messages
     virtual void log(const LogLevel, const std::string &) = 0; // Method to log error messages
-    virtual void log(const IRequest &, const Response &) = 0;  // Method to log access events
+    virtual void log(const ISession &) = 0;  // Method to log access events
 
     // Configuration method
     virtual void configure(ILoggerConfiguration &) = 0; // Method to configure the Logger instance

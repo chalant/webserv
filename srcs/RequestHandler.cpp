@@ -15,16 +15,15 @@
  */
 
 // Constructor
-RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &exceptionHandler)
+RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, ISessionManager &sessionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &exceptionHandler)
     : _bufferManager(bufferManager),
+      _sessionManager(sessionManager),
       _router(router),
       _logger(logger),
       _exceptionHandler(exceptionHandler),
       _clientHandler(&ClientHandler(socket, logger)),
       _requestParser(configuration, logger),
-      _httpHelper(configuration),
-      _request(_httpHelper, configuration),
-      _response(_httpHelper)
+      _httpHelper(configuration)
 {
     // Log the creation of the RequestHandler instance.
     this->_logger.log(DEBUG, "RequestHandler instance created.");
@@ -45,19 +44,22 @@ int RequestHandler::handleRequest(int socketDescriptor)
     // Give the 'ClientHandler' the current socket descriptor
     this->_clientHandler->setSocketDescriptor(socketDescriptor);
 
+    // Get a reference to the Session
+    ISession &session = this->_sessionManager.getSession(socketDescriptor);
+
+    // Get a reference to the Request
+    IRequest &request = session.getRequest();
+
+    // Get a reference to the Response
+    IResponse &response = session.getResponse();
+
     try
     {
         // Read the raw request from the client
         std::vector<char> rawRequest = this->_clientHandler->readRequest();
 
-        // Clear the request instance
-        this->_request.clear();
-
-        // Clear the response instance
-        this->_response.clear();
-
         // Parse the raw request into a Request object
-        this->_requestParser.parseRequest(rawRequest, this->_request);
+        this->_requestParser.parseRequest(rawRequest, request);
     }
 
     catch (const WebservException &e)
@@ -77,7 +79,7 @@ int RequestHandler::handleRequest(int socketDescriptor)
     }
 
     // 'Router' selects the right 'ResponseGenerator' for the job
-    int pipeDescriptor = this->_router.execRoute(&this->_request, &this->_response);
+    int pipeDescriptor = this->_router.execRoute(request, response);
 
     // If a pipe was created, return it
     if (pipeDescriptor != 0)
@@ -117,17 +119,17 @@ int RequestHandler::handlePipeRead(int pipeDescriptor)
     // Remove the pipe descriptor from the map
     this->_pipeRoutes.erase(pipeDescriptor);
 
-    // Clear the response instance
-    this->_response.clear();
-
     // Give the ClientHandler the current socket descriptor
     this->_clientHandler->setSocketDescriptor(clientSocket);
 
     // Read the response from the pipe
-    std::vector<char> response = this->_clientHandler->readRequest();
+    std::vector<char> rawResponse = this->_clientHandler->readRequest();
+
+    // Get a reference to the Response
+    IResponse &response = this->_sessionManager.getResponse(clientSocket);
 
     // Set the response
-    this->_response.setResponse(response);
+    response.setResponse(rawResponse);
 
     // Push the response to the buffer
     this->_sendResponse(clientSocket);
@@ -139,15 +141,21 @@ int RequestHandler::handlePipeRead(int pipeDescriptor)
 // Sends the response to the buffer
 int RequestHandler::_sendResponse(int socketDescriptor)
 {
+    // Get a reference to the Response
+    IResponse &response = this->_sessionManager.getResponse(socketDescriptor);
+
     // Serialise the response
-    std::vector<char> serialisedResponse = this->_response.serialise();
+    std::vector<char> serialisedResponse = response.serialise();
 
     // Push the response to the buffer
     this->_bufferManager.pushSocketBuffer(socketDescriptor, serialisedResponse);
 
     // create an access log entry
-    this->_logger.log(this->_request, this->_response);
+    this->_logger.log(this->_sessionManager.getSession(socketDescriptor));
 
+    // Remove the session
+    this->_sessionManager.removeSession(socketDescriptor);
+    
     // return 0
     return (0);
 }
@@ -155,11 +163,11 @@ int RequestHandler::_sendResponse(int socketDescriptor)
 // Handles error responses
 int RequestHandler::handleErrorResponse(int socketDescriptor, int statusCode)
 {
-    // Clear the response instance
-    this->_response.clear();
+    // Get a reference to the Response
+    IResponse &response = this->_sessionManager.getResponse(socketDescriptor);
 
     // Set the response to the error status code
-    this->_response.setErrorResponse(statusCode);
+    response.setErrorResponse(statusCode);
 
     // Push the response to the buffer
     return this->_sendResponse(socketDescriptor); // and return 0
@@ -168,11 +176,11 @@ int RequestHandler::handleErrorResponse(int socketDescriptor, int statusCode)
 // Handle error responses - HttpStatusCode input
 int RequestHandler::handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode)
 {
-    // Clear the response instance
-    this->_response.clear();
+    // Get a reference to the Response
+    IResponse &response = this->_sessionManager.getResponse(socketDescriptor);
 
     // Set the response to the error status code
-    this->_response.setErrorResponse(statusCode);
+    response.setErrorResponse(statusCode);
 
     // Push the response to the buffer
     return this->_sendResponse(socketDescriptor); // and return 0

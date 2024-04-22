@@ -18,10 +18,10 @@ private:
     std::string _statusLine;
     std::map<HttpHeader, std::string> _headers;
     std::string _body;
-    HttpHelper &_httpHelper; // Assuming HttpHelper class instance
+    const HttpHelper &_httpHelper;
 
 public:
-    Response(HttpHelper &httpHelper);
+    Response(const HttpHelper &httpHelper);
     ~Response();
 
     // Clear the response object
