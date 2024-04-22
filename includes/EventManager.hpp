@@ -24,9 +24,10 @@ private:
     void _handleRegularFileEvents(ssize_t &pollfdIndex, short events);
     void _handleServerSocketEvents(ssize_t pollfdIndex, short events);
     void _handleClientSocketEvents(ssize_t &pollfdIndex, short events);
-    void _handlePipeEvents(ssize_t pollfdIndex);
+    void _handlePipeEvents(ssize_t &pollfdIndex, short events);
 
     // helper functions
+    void _handleRequest(ssize_t &pollfdIndex);
     void _handleClientException(ssize_t &pollfdIndex, short events);
     void _flushClientBuffer(ssize_t pollfdIndex);
     void _cleanUp(ssize_t &pollfdIndex, int descriptor);

@@ -6,22 +6,17 @@ Possibly re-evaluate polling system (which one, and timeout)
 
 Set up the client communication | ClientHandler class (DONE)
 
-Do the request parsing | RequestParser class (Maarten is working on this)
+Do the request parsing | RequestParser class (PRETTY MUCH DONE)
 
 Define the fields we want out of the parser | Request class (DONE)
 
 Do the Router initialisation | Router class (Lorenzo is working on this)
 
-Implement the response creator classes: | AResponseGenerator class
-    -StaticFileResponseGenerator class
-    -UploadResponseGenerator class
-    -GetMethodResponseGenerator class
-    -PostMethodResponseGenerator class
-    -DeleteMethodResponseGenerator class
-    -CGResponseGenerator class
-    -ErrorPageResponseGenerator class
+Implement CGI (Maarten is working on this)
 
-Define the fields we need for the 'Response' | Response class
+Add another CGI
+
+Define the fields we need for the 'Response' | Response class (DONE)
 
 Do exception handling | IExceptionHandler class (DONE)
 
@@ -31,6 +26,14 @@ Write Unit tests.
     -etc.
 
 Implement Logging | ILogger class (DONE)
+
+Implement Cookie support
+
+Run siege tests, optimise code
+
+Maybe not necessary:
+    -Periodically check the state of cgi processes
+    -Periodically Check and bounce idle clients
 
 Continue adding clear comments and explanations throughout the codebase
 

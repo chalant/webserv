@@ -1,24 +1,20 @@
 #include "../includes/RequestHandler.hpp"
 
 /*
- * The RequestHandler class serves as the orchestrator for handling client requests within webserv.
+ * RequestHandler class
  *
- * It coordinates the processing of client requests, managing the client handler, request parser, router, and request handler objects.
+ * Responsible for handling client requests:
+ * - Reads the raw request from the client
+ * - Parses it into a Request object
+ * - Passes the Request object to the Router
  *
- * When a request is registered, RequestHandler initializes a ClientHandler with the relevant
- * socket descriptor, reads and processes the request, and sends a response back to the client.
- *
- * In case the entire response cannot be sent at once, RequestHandler handles partial sends by buffering remaining
- * bytes associated with the client's socket descriptor and updating the socket's event status to include POLLOUT
- * for subsequent transmission.
- *
- * In scenarios where exceptions occur, RequestHandler handles various types of exceptions,
- * logs relevant information, and sends appropriate HTTP responses to the client.
- *
- * Throughout its operation, RequestHandler ensures smooth communication between clients and the server while managing
- * exceptions effectively.
+ * The response is either served statically or dynamically, depending on the route:
+ * - Served statically: Response sent immediately to buffer
+ * - Served dynamically: Response obtained from a separate process
+ *   (read end of the pipe is returned)
  */
 
+// Constructor
 RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &exceptionHandler)
     : _bufferManager(bufferManager),
       _router(router),
@@ -26,18 +22,15 @@ RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferMana
       _exceptionHandler(exceptionHandler),
       _clientHandler(&ClientHandler(socket, logger)),
       _requestParser(configuration, logger),
-      _requestHelper(configuration),
-      _request(Request(_requestHelper, configuration))
+      _httpHelper(configuration),
+      _request(_httpHelper, configuration),
+      _response(_httpHelper)
 {
     // Log the creation of the RequestHandler instance.
     this->_logger.log(DEBUG, "RequestHandler instance created.");
 }
 
-/*
- * RequestHandler Destructor:
- * Default destructor for the RequestHandler class.
- * Logs the destruction of a RequestHandler instance.
- */
+// Destructor
 RequestHandler::~RequestHandler()
 {
     delete this->_clientHandler;
@@ -46,9 +39,7 @@ RequestHandler::~RequestHandler()
 }
 
 // Handles a client request
-// returns -1 if an error occurred
-// returns 0 if static content was served directly
-// otherwise returns the pipe descriptor from which to read the response without blocking
+// Return the pipe descriptor for dynamic content or 0 for static content and invalid requests
 int RequestHandler::handleRequest(int socketDescriptor)
 {
     // Give the 'ClientHandler' the current socket descriptor
@@ -58,41 +49,133 @@ int RequestHandler::handleRequest(int socketDescriptor)
     {
         // Read the raw request from the client
         std::vector<char> rawRequest = this->_clientHandler->readRequest();
+
         // Clear the request instance
         this->_request.clear();
-        // 'RequestParser' produces a 'IRequest' from the raw request string
+
+        // Clear the response instance
+        this->_response.clear();
+
+        // Parse the raw request into a Request object
         this->_requestParser.parseRequest(rawRequest, this->_request);
     }
-    catch (const HttpStatusCodeException &e)
-    {
-        // Log the HTTP status code exception and continue processing the request
-        this->_exceptionHandler.handleException(e, "RequestHandler::processRequest socket=\"" + std::to_string(socketDescriptor) + "\"");
-    }
+
     catch (const WebservException &e)
     {
-        // Log the exception and abort processing the request
+        // Get the status code
+        int statusCode;
+        if (dynamic_cast<const HttpStatusCodeException *>(&e))
+            statusCode = e.getErrorCode(); // An HttpStatusCodeException was thrown
+        else
+            statusCode = 500; // Internal Server Error; Default status code for other exceptions
+
+        // Log the exception
         this->_exceptionHandler.handleException(e, "RequestHandler::processRequest socket=\"" + std::to_string(socketDescriptor) + "\"");
-        // return -1 to indicate the aborting of the request
-        return -1;
+
+        // Handle error response
+        return this->handleErrorResponse(socketDescriptor, statusCode); // and return 0
     }
 
     // 'Router' selects the right 'ResponseGenerator' for the job
     int pipeDescriptor = this->_router.execRoute(&this->_request, &this->_response);
 
+    // If a pipe was created, return it
     if (pipeDescriptor != 0)
     {
-        return pipeDescriptor;
+        this->_pipeRoutes[pipeDescriptor] = socketDescriptor;
+        return pipeDescriptor; // cgi content
     }
+    else // static content
+    {
+        // Push the response to the buffer
+        return this->_sendResponse(socketDescriptor); // and return 0
+    }
+}
 
-    // Create the raw response string
-    // std::vector<char> rawResponse = this->_response.serialise(this->_response);
+// Handles exceptions related to pipe events - returns the client socket descriptor destination for the response
+int RequestHandler::handlePipeException(int pipeDescriptor)
+{
+    // Get the client socket descriptor linked to the pipe
+    int clientSocket = this->_pipeRoutes[pipeDescriptor];
 
-    // temporary empty response
-    std::vector<char> rawResponse;
-    // Push the raw response to the buffer manager
-    this->_bufferManager.pushSocketBuffer(socketDescriptor, rawResponse);
+    // Remove the pipe descriptor from the map
+    this->_pipeRoutes.erase(pipeDescriptor);
+
+    // Handle error response
+    this->handleErrorResponse(clientSocket, INTERNAL_SERVER_ERROR);
+
+    // Return the client socket descriptor
+    return clientSocket;
+}
+
+// Handles read input from pipe
+int RequestHandler::handlePipeRead(int pipeDescriptor)
+{
+    // Get the client socket descriptor linked to the pipe
+    int clientSocket = this->_pipeRoutes[pipeDescriptor];
+
+    // Remove the pipe descriptor from the map
+    this->_pipeRoutes.erase(pipeDescriptor);
+
+    // Clear the response instance
+    this->_response.clear();
+
+    // Give the ClientHandler the current socket descriptor
+    this->_clientHandler->setSocketDescriptor(clientSocket);
+
+    // Read the response from the pipe
+    std::vector<char> response = this->_clientHandler->readRequest();
+
+    // Set the response
+    this->_response.setResponse(response);
+
+    // Push the response to the buffer
+    this->_sendResponse(clientSocket);
+
+    // Return the client socket descriptor
+    return clientSocket;
+}
+
+// Sends the response to the buffer
+int RequestHandler::_sendResponse(int socketDescriptor)
+{
+    // Serialise the response
+    std::vector<char> serialisedResponse = this->_response.serialise();
+
+    // Push the response to the buffer
+    this->_bufferManager.pushSocketBuffer(socketDescriptor, serialisedResponse);
 
     // create an access log entry
     this->_logger.log(this->_request, this->_response);
+
+    // return 0
     return (0);
 }
+
+// Handles error responses
+int RequestHandler::handleErrorResponse(int socketDescriptor, int statusCode)
+{
+    // Clear the response instance
+    this->_response.clear();
+
+    // Set the response to the error status code
+    this->_response.setErrorResponse(statusCode);
+
+    // Push the response to the buffer
+    return this->_sendResponse(socketDescriptor); // and return 0
+}
+
+// Handle error responses - HttpStatusCode input
+int RequestHandler::handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode)
+{
+    // Clear the response instance
+    this->_response.clear();
+
+    // Set the response to the error status code
+    this->_response.setErrorResponse(statusCode);
+
+    // Push the response to the buffer
+    return this->_sendResponse(socketDescriptor); // and return 0
+}
+
+// path: srcs/RequestHandler.cpp

@@ -6,17 +6,17 @@
  *
  * The HttpStatusCodeHelper class provides functionality for working with HTTP status codes.
  * It defines an enum HttpStatusCode to represent standard HTTP status codes and provides methods
- * to retrieve string representations of status codes and vice versa. It may also be used 
+ * to retrieve string representations of status codes and vice versa. It may also be used
  * to generate an HTML page with a specified HTTP status code.
- * 
+ *
  * Example:
- * 
+ *
  * HttpStatusCodeHelper helper;
  * HttpStatusCode code = 502;
- * 
+ *
  * std::string meaning = helper.httpStatusCodeStringMap(statusCode);
  * std::string htmlPage = helper.getErrorResponse(statusCode);
- * 
+ *
  */
 
 #include <string>
@@ -118,8 +118,9 @@ public:
     HttpStatusCodeHelper();
 
     // Member functions to access data
-    const std::string &httpStatusCodeStringMap(HttpStatusCode version) const; // Get string representation of HttpStatusCode
-    HttpStatusCode stringHttpStatusCodeMap(const std::string &version) const; // Get HttpStatusCode enum value from string representation
+    const std::string &httpStatusCodeStringMap(HttpStatusCode statusCode) const; // Get string representation of HttpStatusCode
+    HttpStatusCode stringHttpStatusCodeMap(const std::string &statusCode) const; // Get HttpStatusCode enum value from string representation
+    HttpStatusCode intHttpStatusCodeMap(const int &statusCode) const;            // Get HttpStatusCode enum value from integer representation
 
     // Member function to generate a status line
     std::string getStatusLine(HttpStatusCode statusCode) const; // Generate a status line with the specified HTTP status code

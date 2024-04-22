@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "constants/RequestHelper.hpp"
+#include "constants/HttpHelper.hpp"
 #include "WebservExceptions.hpp"
 #include "IConfiguration.hpp"
 #include "IRequest.hpp"
@@ -63,11 +63,11 @@ private:
     const IConfiguration &_configuration;
     
     // Helper
-    const RequestHelper &_requestHelper;
+    const HttpHelper &_httpHelper;
 
 public:
     // Constructor and Destructor
-    Request(const RequestHelper &requestHelper, const IConfiguration &configuration);
+    Request(const HttpHelper &httpHelper, const IConfiguration &configuration);
     Request(const Request &src);
     ~Request();
     
@@ -85,7 +85,7 @@ public:
     std::string getHttpVersionString() const;
     const std::map<HttpHeader, std::string> getHeaders() const;
     std::string getHeaderValue(HttpHeader header) const;
-    std::map<std::string, std::string> getHeadersString() const;
+    std::map<std::string, std::string> getHeadersStringMap() const;
     std::map<std::string, std::string> getQueryParameters() const;
     const std::vector<char> getBody() const;
     std::string getBodyString() const;

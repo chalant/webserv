@@ -50,7 +50,7 @@ public:
     virtual std::string getUri() const;
     virtual HttpVersion getHttpVersion() const;
     virtual std::string getHeaderValue(HttpHeader header) const;
-    virtual std::map<std::string, std::string> getHeadersString() const;
+    virtual std::map<std::string, std::string> getHeadersStringMap() const;
     virtual std::map<std::string, std::string> getQueryParameters() const;
     virtual std::string getClientIp() const;
     virtual std::map<std::string, std::string> getCookies() const;

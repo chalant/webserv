@@ -41,6 +41,19 @@ HttpStatusCode HttpStatusCodeHelper::stringHttpStatusCodeMap(const std::string &
     }
 }
 
+// Get HttpStatusCode enum value from string representation
+HttpStatusCode HttpStatusCodeHelper::intHttpStatusCodeMap(const int &statusCode) const
+{
+    if (statusCode >= 100 && statusCode <= 511)
+    {
+        return static_cast<HttpStatusCode>(statusCode);
+    }
+    else
+    {
+        throw UnknownHttpStatusCodeError(std::to_string(statusCode));
+    }
+}
+
 // Generate a status line string for an HTTP response
 std::string HttpStatusCodeHelper::getStatusLine(HttpStatusCode statusCode) const
 {

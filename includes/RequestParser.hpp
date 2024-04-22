@@ -17,7 +17,7 @@
 #include "ILogger.hpp"
 #include "IExceptionHandler.hpp"
 #include "WebservExceptions.hpp"
-#include "./constants/RequestHelper.hpp"
+#include "./constants/HttpHelper.hpp"
 
 class RequestParser
 {

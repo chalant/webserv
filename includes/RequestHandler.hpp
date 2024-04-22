@@ -27,14 +27,14 @@
 #include <vector>
 #include "ClientHandler.hpp"
 #include "RequestParser.hpp"
-#include "constants/RequestHelper.hpp"
+#include "constants/HttpHelper.hpp"
 #include "IRouter.hpp"
 #include "IRequest.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
 #include "ILogger.hpp"
 #include "IExceptionHandler.hpp"
-#include "AResponseGenerator.hpp"
+#include "IResponseGenerator.hpp"
 #include "PollfdManager.hpp"
 #include "IBufferManager.hpp"
 #include "IConfiguration.hpp"
@@ -49,11 +49,15 @@ private:
     const RequestParser _requestParser; // Parses incoming requests
     IRouter &_router;                   // Routes requests to appropriate handlers
     // AResponseGenerator *_requestHandler;                 // Pointer to the recruited request handler
-    RequestHelper _requestHelper;               // Helper class for request-related operations
+    HttpHelper _httpHelper;               // Helper class for request-related operations
     Request _request;                           // Represents an HTTP request
     Response _response;                         // Represents an HTTP response
     ILogger &_logger;                           // Pointer to the logger
     const IExceptionHandler &_exceptionHandler; // Pointer to the exception handler
+    std::map<int, int> _pipeRoutes;             // Map of pipe descriptors to socket descriptors
+
+    // private method
+    int _sendResponse(int socketDescriptor);
 
 public:
     // Constructor
@@ -64,6 +68,16 @@ public:
 
     // Handles client requests
     int handleRequest(int socketDescriptor);
+
+    // Handles exceptions related to pipe events
+    int handlePipeException(int pipeDescriptor);
+
+    // Handles read input from pipe
+    int handlePipeRead(int pipeDescriptor);
+
+    // Handles error responses
+    int handleErrorResponse(int socketDescriptor, int statusCode);
+    int handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode);
 };
 
 #endif // SESSIONS_HPP

@@ -91,7 +91,7 @@ short PollfdManager::getEvents(int position)
 {
     short type = this->_descriptorTypeMap[this->_pollfds[position].fd];
 
-    // clear the first 2 bits, then add the type
+    // clear unused bits to be sure, then add the type
     return (this->_pollfds[position].events & 0x3F) | type;
 }
 

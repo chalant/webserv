@@ -91,10 +91,10 @@ void Logger::log(const IRequest &request, const Response &response)
                     << "referrer=\"" << request.getHeaderValue(REFERER) << "\" ";
 
     // Add request headers to the log message
-    this->_appendMapToLog(logBufferStream, "requestHeaders", request.getHeadersString());
+    this->_appendMapToLog(logBufferStream, "requestHeaders", request.getHeadersStringMap());
 
     // Add response headers to the log message
-    this->_appendMapToLog(logBufferStream, "responseHeaders", response.getHeadersString());
+    this->_appendMapToLog(logBufferStream, "responseHeaders", response.getHeadersStringMap());
 
     // Add cookies to the log message
     this->_appendMapToLog(logBufferStream, "Cookies", request.getCookies());
