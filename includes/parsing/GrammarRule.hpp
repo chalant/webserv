@@ -5,10 +5,13 @@
 #include "SemanticAction.hpp"
 #include "GrammarSymbol.hpp"
 
+class GrammarSymbol;
+
 struct GrammarRuleID {
 	const std::string	name;
 	int					id;
 	GrammarRuleID(const std::string name, int id);
+	bool				operator==(const GrammarRuleID& other);
 };
 
 class	GrammarRule {
@@ -20,13 +23,15 @@ class	GrammarRule {
 	public:
 		GrammarRule(ASemanticAction &action, GrammarRuleID& rule_id);
 		~GrammarRule();
-		const	ASemanticAction&	getSemanticAction() const;
-		int							getRuleIndex() const;
-		const std::string&			getName() const;
+		const	ASemanticAction&	getSemanticAction(void) const;
+		int							getRuleIndex(void) const;
+		int							ruleID(void) const;
+		const std::string&			getName(void) const;
 		void						setRuleIndex(int rule_idx);
 		void						addSymbol(GrammarSymbol *symbol);
 		GrammarSymbol*				getSymbol(int index) const;
-		size_t						size() const;
+		bool						operator==(const GrammarRule& other);
+		size_t						size(void) const;
 };
 
 #endif

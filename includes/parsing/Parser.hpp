@@ -3,12 +3,10 @@
 
 #include <vector>
 #include "Grammar.hpp"
+#include "ParseTree.hpp"
+#include "Recognizer.hpp"
 
-struct EarleyEdge {
-	int	start;
-	int	end;
-	int	rule_idx;
-};
+class Recognizer;
 
 class EarleyItem {
 	private:
@@ -26,36 +24,36 @@ class EarleyItem {
 		void	completed(bool value);
 };
 
-struct ParseTree {
-	int		start;
-	int		end;
-	bool	is_leaf;
-	std::vector<ParseTree>	subtrees;
+class	EarleyEdge {
+	private:
+		const EarleyItem&	m_item;
+		int					m_end;
+	public:
+		EarleyEdge(const EarleyItem& item, int end);
+		int	start() const;
+		int	end() const;
+		int	ruleIndex() const;
 };
 
-class Recognizer {
-	private:
-		int						m_state_idx;
-		GrammarSymbol			*m_symbol;
-		void			scan(std::vector<std::vector<EarleyItem> >& sets, Token const & token, EarleyItem const & item);
-		void			complete(Grammar const & grammar, std::vector<std::vector<EarleyItem> >& sets, std::vector<EarleyItem>& current_set, int item_index);
-		void			predict(Grammar const & grammar, std::vector<EarleyItem>& current_set);
-	public:
-		Recognizer();
-		~Recognizer();
-		void			recognize(std::vector<Token> const & tokens, Grammar const & grammar, std::vector<std::vector<EarleyItem> >& sets);
-		void			print(Grammar const & grammar, std::vector<std::vector<EarleyItem> >& sets);
+struct SearchState {
+	const int	rule_index;
+	const int	depth;
+	const int	node;
+	SearchState(int rule_idx, int depth, int node);
 };
 
 class Parser {
 	private:
+		Grammar const & 						m_grammar;
 		std::vector<std::vector<EarleyItem> >	m_earley_sets;
 		std::vector<std::vector<EarleyEdge> >	m_chart;
 		Recognizer								m_recognizer;
-		ParseTree								m_parse_tree;
+		void									m_buildTree(ParseTree& parse_tree, const std::vector<Token>& tokens);
+		bool									m_searchPath(ParseTree& parse_tree, SearchState state, const std::vector<Token>& tokens);
+		bool									m_processTerminal(ParseTree& parse_tree, SearchState state, const GrammarSymbol& symbol, const std::vector<Token>& tokens);
 	public:
-		Parser();
-		void			parse(const Grammar& grammar);
+		Parser(Grammar const & grammar);
+		void									parse(std::vector<Token> const & tokens);
 };
 
 #endif

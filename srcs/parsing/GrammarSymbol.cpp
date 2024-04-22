@@ -1,20 +1,12 @@
 #include "Grammar.hpp"
 #include "GrammarSymbol.hpp"
 
-GrammarSymbol::GrammarSymbol(const std::string value, GrammarSymbolType type, ASymbolMatching& matching):m_value(value), m_type(type), m_matching(matching) {
-	m_rule_idx = 0;
-}
+// GrammarSymbol::GrammarSymbol(std::string const value, GrammarSymbolType type, ASymbolMatching& matching):m_value(value), m_type(type), m_matching(matching) {
+// 	m_rule_idx = 0;
+// }
 
 GrammarSymbol::~GrammarSymbol() {
 
-}
-
-const std::string&	GrammarSymbol::getValue() const {
-	return m_value;
-}
-
-GrammarSymbolType	GrammarSymbol::getType() const {
-	return m_type;
 }
 
 int	GrammarSymbol::getRuleIndex() const {
@@ -25,6 +17,16 @@ void	GrammarSymbol::setRuleIndex(int index) {
 	m_rule_idx = index;
 }
 
-bool	GrammarSymbol::match(const Token& token) {
-	return m_matching.match(token, m_value);
+bool	GrammarSymbol::match(const Token& token) const {
+	(void)token;
+	return false;
+}
+
+bool	GrammarSymbol::terminal(void) const {
+	return false;
+}
+
+bool	GrammarSymbol::matchRule(const GrammarRule& rule) {
+	(void)rule;
+	return false;
 }

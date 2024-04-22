@@ -13,7 +13,11 @@ SOURCES         = main.cpp \
 				  ../../srcs/parsing/SymbolMatching.cpp \
 				  ../../srcs/parsing/Recognizer.cpp \
 				  ../../srcs/parsing/EarleyItem.cpp \
-				  ../../srcs/parsing/Tokenizer.cpp
+				  ../../srcs/parsing/Tokenizer.cpp \
+				  ../../srcs/parsing/TerminalSymbol.cpp \
+				  ../../srcs/parsing/NonTerminalSymbol.cpp \
+				  ../../srcs/parsing/Parser.cpp \
+				  ../../srcs/parsing/ParseTree.cpp
 
 OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 

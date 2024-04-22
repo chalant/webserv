@@ -7,6 +7,8 @@
 #include "SemanticAction.hpp"
 #include "GrammarRule.hpp"
 
+class GrammarRule;
+
 class Grammar {
 	private:
 		std::vector<GrammarRule*>	m_rules;

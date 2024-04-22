@@ -1,6 +1,8 @@
 #include "Grammar.hpp"
 #include "Parser.hpp"
 #include "TestSemanticActions.hpp"
+#include "TerminalSymbol.hpp"
+#include "NonTerminalSymbol.hpp"
 
 int	main(void) {
 	Grammar		arithmetic;
@@ -13,6 +15,11 @@ int	main(void) {
 	GrammarRuleID	product_id("product", 1);
 	GrammarRuleID	factor_id("factor", 2);
 	GrammarRuleID	number_id("number", 3);
+	GrammarRuleID	plus_minus("+-", 4);
+	GrammarRuleID	mul_div("*/", 5);
+	GrammarRuleID	open_p("(", 6);
+	GrammarRuleID	close_p(")", 7);
+	GrammarRuleID	num_set("0123456789", 8);
 
 	GrammarRule		sum1(sum_action, sum_id);
 	GrammarRule		sum2(relay, sum_id);
@@ -24,18 +31,17 @@ int	main(void) {
 	GrammarRule		number2(number_action, number_id);
 
 	SubsetSymbolMatching	subset_matching;
-	FalseSymbolMatching		false_matching;
 	EqualSymbolMatching		equal_matching;
 
-	GrammarSymbol	sum(sum_id.name, NON_TERMINAL, false_matching);
-	GrammarSymbol	product(product_id.name, NON_TERMINAL, false_matching);
-	GrammarSymbol	factor(factor_id.name, NON_TERMINAL, false_matching);
-	GrammarSymbol	pm("+-", TERMINAL, subset_matching);
-	GrammarSymbol	md("*/", TERMINAL, subset_matching);
-	GrammarSymbol	open_par("(", TERMINAL, subset_matching);
-	GrammarSymbol	close_par(")", TERMINAL, subset_matching);
-	GrammarSymbol	num("number", NON_TERMINAL, false_matching);;
-	GrammarSymbol	numbers("0123456789", TERMINAL, subset_matching);
+	NonTerminalSymbol	sum(sum_id);
+	NonTerminalSymbol	product(product_id);
+	NonTerminalSymbol	factor(factor_id);
+	TerminalSymbol		pm(plus_minus, subset_matching);
+	TerminalSymbol		md(mul_div, subset_matching);
+	TerminalSymbol		open_par(open_p, subset_matching);
+	TerminalSymbol		close_par(close_p, subset_matching);
+	NonTerminalSymbol	num(number_id);
+	TerminalSymbol		numbers(num_set, subset_matching);
 
 	sum1.addSymbol(&sum);
 	sum1.addSymbol(&pm);

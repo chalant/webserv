@@ -2,3 +2,4 @@
 .parsing_tester.cpp
 parser_test
 *.dSYM
+*.o
