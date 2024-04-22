@@ -84,24 +84,22 @@ void Router::addRoute(const Request &request, void (*newHandler)(Request *, Resp
 
 void Router::execRoute(Request *req, Response *res)
 {
-	std::vector<Route>::iterator i = _routes.begin();
+    std::vector<Route>::iterator i = _routes.begin();
 
-	while (i != _routes.end())
-	{
-		// match request path with a route
-		std::string uri = i->getUri();
-
-		if (req->getUri() == i->getUri() && req->getMethod() == i->getMethod())
-		{
-			i->handler(req, res); // handle static file
-			break;
-		}
-		i++;
-	}
-	if (isACgiRequest(req))
-	{ // ends in .py, .php, .pl etc.
-	  // handle cgi request
-	}
+	if (isACgiRequest(req)) // ends in .py, .php, .pl etc.
+    { 
+             // handle cgi request
+    }
+    while (i != _routes.end())
+    {
+        // match request path with a route
+        if (req->getUri().find(i->getUri()) && req->getMethod() == i->getMethod())
+        {  
+            i->handler(req, res); // handle static file
+            break;
+        }
+        i++;
+    }
 }
 
 std::string Route::getUri() const
