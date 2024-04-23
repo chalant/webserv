@@ -13,17 +13,18 @@ MockLogger::MockLogger() : ILogger(){};
 MockLogger::~MockLogger(){};
 
 // Default log method
-void MockLogger::log(const std::string &message)
+int MockLogger::log(const std::string &message)
 {
     // Construct the log message string
     std::string logMessageString = this->_getCurrentTimestamp() + " " + message + "\n";
     std::vector<char> logMessage(logMessageString.begin(), logMessageString.end());
 
     std::cout << logMessageString;
+    return 0;
 };
 
 // Method to log error events
-void MockLogger::log(const LogLevel logLevel, const std::string &message)
+int MockLogger::log(const LogLevel logLevel, const std::string &message)
 {
     static_cast<void>(logLevel);
     // Construct the log message string
@@ -32,13 +33,14 @@ void MockLogger::log(const LogLevel logLevel, const std::string &message)
     std::vector<char> logMessage(logMessageString.begin(), logMessageString.end());
 
     std::cout << logMessageString;
+    return 0;
 };
 
 // Method to log access events
-void MockLogger::log(const IRequest &request, const Response &response)
+int MockLogger::log(const ISession &session)
 {
-    static_cast<void>(request);
-    static_cast<void>(response);
+    static_cast<void>(session);
+    return 0;
 };
 
 // Method to configure the Logger instance

@@ -7,10 +7,10 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "../../includes/ILogger.hpp" // Include the base interface header
-#include <iostream>                   // Include for std::cout
-#include <sstream>                    // Include for std::stringstream
-#include <iomanip>                    // Include for std::put_time
+#include "logger/ILogger.hpp" // Include the base interface header
+#include <iostream>           // Include for std::cout
+#include <sstream>            // Include for std::stringstream
+#include <iomanip>            // Include for std::put_time
 
 class MockLogger : public ILogger
 {
@@ -29,9 +29,9 @@ public:
     // These methods are overridden to provide custom behavior for testing.
 
     // Logging methods
-    virtual void log(const std::string &);                 // Default log method
-    virtual void log(const LogLevel, const std::string &); // Method to log error messages
-    virtual void log(const IRequest &, const Response &);  // Method to log access events
+    virtual int log(const std::string &);                 // Default log method
+    virtual int log(const LogLevel, const std::string &); // Method to log error messages
+    virtual int log(const ISession &);                    // Method to log access events
 
     // Configuration method
     virtual void configure(ILoggerConfiguration &); // Method to configure the Logger instance

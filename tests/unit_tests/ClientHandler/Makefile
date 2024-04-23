@@ -1,7 +1,7 @@
 NAME            = ClientHandler_test
 
 SOURCES         = ClientHandler_test_main.cpp \
-                  ../../../srcs/ClientHandler.cpp
+                  ../../../srcs/session/ClientHandler.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockLogger.cpp \
 				  ../../mock_srcs/MockExceptionHandler.cpp \

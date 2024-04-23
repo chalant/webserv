@@ -27,8 +27,8 @@
 #include <vector>
 #include <map>
 #include <set>
-#include "../IConfiguration.hpp"
-#include "../WebservExceptions.hpp"
+#include "configuration/IConfiguration.hpp"
+#include "exception/WebservExceptions.hpp"
 
 enum HttpMethod
 {

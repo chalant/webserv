@@ -5,12 +5,12 @@
 #include <unistd.h>
 
 // include the header file for the class under test
-#include "../../includes/ClientHandler.hpp"
+#include "session/ClientHandler.hpp"
 
 // include the header files for the mock classes
-#include "../../mock_includes/MockLogger.hpp"
-#include "../../mock_includes/MockExceptionHandler.hpp"
-#include "../../mock_includes/MockSocket.hpp"
+#include "MockLogger.hpp"
+#include "MockExceptionHandler.hpp"
+#include "MockSocket.hpp"
 
 int main()
 {

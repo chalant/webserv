@@ -7,7 +7,7 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "../../includes/ISocket.hpp" // Include the base interface header
+#include "network/ISocket.hpp" // Include the base interface header
 #include <map>                        // Include for std::map
 
 class MockSocket : public ISocket
@@ -45,6 +45,9 @@ public:
 
     // Sends data over the socket
     virtual int send(int recipientSocketFd, const std::vector<char> &data) const;
+
+    // Sends data over the socket blocking until all data is sent
+    virtual int sendAll(int recipientSocketFd, const std::vector<char> &data) const;
 
     // Receives data from the socket
     virtual ssize_t recv(int socketDescriptor, char *buffer, size_t len) const;

@@ -1,4 +1,4 @@
-#include "../mock_includes/MockClientHandler.hpp"
+#include "MockClientHandler.hpp"
 
 /*
  * MockClientHandler class is a mock implementation of the IClientHandler interface

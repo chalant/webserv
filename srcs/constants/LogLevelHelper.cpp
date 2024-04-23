@@ -1,5 +1,5 @@
-#include "../includes/WebservExceptions.hpp"
-#include "../includes/constants/LogLevelHelper.hpp"
+#include "constants/LogLevelHelper.hpp"
+#include "exception/WebservExceptions.hpp"
 
 /*
  * LogLevelHelper.hpp

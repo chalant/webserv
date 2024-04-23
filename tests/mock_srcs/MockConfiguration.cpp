@@ -1,4 +1,4 @@
-#include "../mock_includes/MockConfiguration.hpp"
+#include "MockConfiguration.hpp"
 
 /*
  * MockConfiguration class is a mock implementation of the IConfiguration interface

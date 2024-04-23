@@ -1,4 +1,4 @@
-#include "../includes/constants/HttpStatusCodeHelper.hpp"
+#include "constants/HttpStatusCodeHelper.hpp"
 
 /*
  * HttpStatusCodeHelper.hpp

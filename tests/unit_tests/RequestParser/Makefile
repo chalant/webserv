@@ -1,7 +1,7 @@
 NAME            = RequestParser_test
 
 SOURCES         = RequestParser_test_main.cpp \
-                  ../../../srcs/RequestParser.cpp
+                  ../../../srcs/request/RequestParser.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockLogger.cpp \
                   ../../mock_srcs/MockRequest.cpp \

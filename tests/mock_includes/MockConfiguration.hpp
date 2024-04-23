@@ -7,16 +7,16 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "../../includes/IConfiguration.hpp" // Include the base interface header
-#include "../../includes/IBlock.hpp"         // Include the IBlock header
-#include <stdexcept>                         // Include the standard exception header
+#include "configuration/IConfiguration.hpp" // Include the base interface header
+#include "configuration/IBlock.hpp"         // Include the IBlock header
+#include <stdexcept>                        // Include the standard exception header
 
 class MockConfiguration : public IConfiguration
 {
 private:
-    std::map<std::string, std::vector<IBlock *> > _blocks;
+    std::map<std::string, std::vector<IBlock *>> _blocks;
     std::map<std::string, std::string> _strings;
-    std::map<std::string, std::vector<std::string> > _stringVectors;
+    std::map<std::string, std::vector<std::string>> _stringVectors;
     std::map<std::string, int> _ints;
     std::map<std::string, size_t> _size_ts;
     std::map<std::string, bool> _bools;

@@ -1,4 +1,4 @@
-#include "../mock_includes/MockSocket.hpp"
+#include "MockSocket.hpp"
 
 /*
  * MockSocket class is a mock implementation of the ISocket interface
@@ -76,6 +76,15 @@ std::pair<int, std::pair<std::string, std::string>> MockSocket::accept(int fd) c
 int MockSocket::send(int socketDescriptor, const std::vector<char> &data) const
 {
     // Mock implementation for sending data over the socket
+    // Returns the number of bytes sent
+    this->_socketData[socketDescriptor] = data;
+    return data.size();
+}
+
+// Sends data over the socket blocking until all data is sent
+int MockSocket::sendAll(int socketDescriptor, const std::vector<char> &data) const
+{
+    // Mock implementation for sending data over the socket blocking until all data is sent
     // Returns the number of bytes sent
     this->_socketData[socketDescriptor] = data;
     return data.size();

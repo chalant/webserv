@@ -1,18 +1,19 @@
-#include "includes/Configuration.hpp"
-// #include "includes/ConfigurationLoader.hpp"
-#include "includes/Server.hpp"
-#include "includes/ClientHandler.hpp"
-#include "includes/LoggerConfiguration.hpp"
-#include "includes/BufferManager.hpp"
-#include "includes/SessionManager.hpp"
-#include "includes/EventManager.hpp"
-#include "includes/Factory.hpp"
-#include "includes/Logger.hpp"
-#include "includes/ExceptionHandler.hpp"
-#include "includes/Socket.hpp"
-#include "includes/RequestHandler.hpp"
-#include "includes/PollingService.hpp"
-#include "includes/Router.hpp"
+#include "configuration/Configuration.hpp"
+// #include "configuration/ConfigurationLoader.hpp"
+#include "network/Server.hpp"
+#include "network/Socket.hpp"
+#include "core/PollingService.hpp"
+#include "core/EventManager.hpp"
+#include "session/SessionManager.hpp"
+#include "session/RequestHandler.hpp"
+#include "session/ClientHandler.hpp"
+#include "logger/Logger.hpp"
+#include "logger/LoggerConfiguration.hpp"
+#include "buffer/BufferManager.hpp"
+#include "factory/Factory.hpp"
+#include "exception/ExceptionHandler.hpp"
+#include "response/Router.hpp"
+#include "pollfd/PollfdManager.hpp"
 
 /*
  * webserv Workflow:
@@ -34,14 +35,17 @@
 
 int main(int argc, char **argv)
 {
-    // Instantiate the bufferManager.
-    BufferManager bufferManager;
-
     // Instantiate the Socket instance.
     Socket socket;
 
+    // Instantiate the bufferManager.
+    BufferManager bufferManager(socket);
+
     // Instantiate the logger.
     Logger logger(bufferManager);
+
+    // Instantiate the Client Handler.
+    ClientHandler clientHandler(socket, logger);
 
     // Instantiate the exceptionHandler.
     ExceptionHandler exceptionHandler(logger);
@@ -73,7 +77,7 @@ int main(int argc, char **argv)
         Router router(configuration, logger);
 
         // Instantiate the RequestHandler.
-        RequestHandler requestHandler(socket, bufferManager, sessionManager, router, logger, exceptionHandler);
+        RequestHandler requestHandler(socket, bufferManager, sessionManager, configuration, router, logger, exceptionHandler, clientHandler);
 
         // Instantiate the PollingService.
         PollingService pollingService(pollfdManager, logger);

@@ -1,4 +1,4 @@
-#include "../mock_includes/MockExceptionHandler.hpp"
+#include "MockExceptionHandler.hpp"
 
 /*
  * MockExceptionHandler class is a mock implementation of the IExceptionHandler interface

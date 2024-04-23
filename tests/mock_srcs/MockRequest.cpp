@@ -1,4 +1,4 @@
-#include "../mock_includes/MockRequest.hpp"
+#include "MockRequest.hpp"
 
 /*
  * MockRequest class is a mock implementation of the IRequest interface

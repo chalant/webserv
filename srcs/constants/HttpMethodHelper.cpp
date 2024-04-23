@@ -1,4 +1,4 @@
-#include "../includes/constants/HttpMethodHelper.hpp"
+#include "constants/HttpMethodHelper.hpp"
 
 /*
  * HttpMethodHelper.hpp

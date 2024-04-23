@@ -2,13 +2,13 @@
 #include <iostream>
 
 // include the header file for the class under test
-#include "../../includes/RequestParser.hpp"
+#include "request/RequestParser.hpp"
 
 // include the header files for the mock classes
-#include "../../mock_includes/MockConfiguration.hpp"
-#include "../../mock_includes/MockLogger.hpp"
-#include "../../mock_includes/MockRequest.hpp"
-#include "../../mock_includes/MockExceptionHandler.hpp"
+#include "MockConfiguration.hpp"
+#include "MockLogger.hpp"
+#include "MockRequest.hpp"
+#include "MockExceptionHandler.hpp"
 
 int main()
 {
