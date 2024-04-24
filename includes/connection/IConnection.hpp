@@ -18,21 +18,26 @@ typedef int SocketDescriptor_t;
 #include <string>
 #include "request/IRequest.hpp"
 #include "response/IResponse.hpp"
+#include "connection/ISession.hpp"
 
 class IConnection
 {
 public:
-    virtual ~IConnection() = default;
+    virtual ~IConnection() {};
 
+    // Setters
     virtual void setReadPipeDescriptor(int pipe) = 0;
+    virtual void setSession(ISession *session) = 0;
 
-    virtual int getSocket() const = 0;
+    // Getters
+    virtual int getSocketDescriptor() const = 0;
     virtual const std::string &getIp() const = 0;
     virtual int getPort() const = 0;
     virtual const std::string &getRemoteAddress() const = 0;
     virtual int getReadPipeDescriptor() const = 0;
     virtual IRequest &getRequest() const = 0;
     virtual IResponse &getResponse() const = 0;
+    virtual ISession &getSession() const = 0;
 };
 
 #endif // ICONNECTION_HPP

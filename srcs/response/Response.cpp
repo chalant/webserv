@@ -99,6 +99,27 @@ void Response::addHeader(std::string header, std::string value)
     this->_headers[headerEnum] = value;
 }
 
+// Add a cookie to the map
+void Response::addCookie(std::string key, std::string value)
+{
+    this->_cookies[key] = value;
+}
+
+// Add Cookie Headers to the response
+void Response::addCookieHeaders()
+{
+    for (std::map<std::string, std::string>::const_iterator it = this->_cookies.begin();
+         it != this->_cookies.end();
+         ++it)
+    {
+        // Construct the Set-Cookie header for the current cookie
+        std::string cookieHeader = it->first + "=" + it->second + "; HttpOnly; Secure; SameSite=Strict;";
+
+        // Add the Set-Cookie header to the response
+        this->addHeader(SET_COOKIE, cookieHeader);
+    }
+}
+
 // Setter for body
 void Response::setBody(std::string body)
 {
@@ -168,7 +189,7 @@ std::map<std::string, std::string> Response::getHeadersStringMap() const
 }
 
 // Serialise the response into a vector of chars
-std::vector<char> Response::serialise() const
+std::vector<char> Response::serialise()
 {
     std::vector<char> response;
 
@@ -176,6 +197,7 @@ std::vector<char> Response::serialise() const
     response.insert(response.end(), this->_statusLine.begin(), this->_statusLine.end());
 
     // Add headers
+    this->addCookieHeaders(); // Add cookies to the headers first
     response.insert(response.end(), this->getHeaders().begin(), this->getHeaders().end());
 
     // Add a blank line

@@ -32,6 +32,7 @@ public:
     virtual std::map<std::string, std::string> getHeadersStringMap() const = 0;
     virtual std::map<std::string, std::string> getQueryParameters() const = 0;
     virtual std::map<std::string, std::string> getCookies() const = 0;
+    virtual const std::string &getCookie(const std::string &) const = 0;
     virtual const std::vector<char> getBody() const = 0;
     virtual std::string getBodyString() const = 0;
     virtual std::string getClientIp() const = 0;

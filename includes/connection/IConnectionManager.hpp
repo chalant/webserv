@@ -26,11 +26,17 @@ public:
     virtual IResponse &getResponse(SocketDescriptor_t) = 0;
 
     // Methods related to sessions
-    virtual void addSession() = 0;
+    virtual SessionId_t addSession() = 0;
     virtual void removeSession(SessionId_t) = 0;
     virtual ISession &getSession(SessionId_t) = 0;
     virtual void setSessionData(SessionId_t, const std::string &, const std::string &) = 0;
     virtual std::string getSessionData(SessionId_t, const std::string &) = 0;
+
+    // Method to assign a session to a connection
+    virtual void assignSessionToConnection(IConnection &, const IRequest &, IResponse &) = 0;
+
+    // Method to retire idle sessions
+    virtual void collectGarbage() = 0;
 };
 
 #endif // ICONNECTIONMANAGER_HPP

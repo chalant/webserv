@@ -88,6 +88,7 @@ public:
     std::map<std::string, std::string> getHeadersStringMap() const;
     std::map<std::string, std::string> getQueryParameters() const;
     std::map<std::string, std::string> getCookies() const;
+    const std::string &getCookie(const std::string &key) const;
     const std::vector<char> getBody() const;
     std::string getBodyString() const;
     std::string getClientIp() const;

@@ -31,7 +31,12 @@ void Connection::setReadPipeDescriptor(int pipe)
     this->_readPipeDescriptor = pipe;
 }
 
-int Connection::getSocket() const
+void Connection::setSession(ISession *session)
+{
+    this->_session = session;
+}
+
+int Connection::getSocketDescriptor() const
 {
     return this->_socketDescriptor;
 }

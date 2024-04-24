@@ -26,7 +26,12 @@ public:
     // Setters for status line, headers, and body
     virtual void setStatusLine(std::string statusLine) = 0;
     virtual void setStatusLine(HttpStatusCode statusCode) = 0;
+    virtual void setHeaders(std::vector<std::string> headers) = 0;
     virtual void setHeaders(std::string headers) = 0;
+    virtual void addHeader(HttpHeader header, std::string value) = 0;
+    virtual void addHeader(std::string header, std::string value) = 0;
+    virtual void addCookie(std::string key, std::string value) = 0;
+    virtual void addCookieHeaders() = 0;
     virtual void setBody(std::string body) = 0;
 
     // Set error response with appropriate status code
@@ -43,7 +48,7 @@ public:
 
     // Convert headers to map or string
     virtual std::map<std::string, std::string> getHeadersStringMap() const = 0;
-    virtual std::vector<char> serialise() const = 0;
+    virtual std::vector<char> serialise() = 0;
 };
 
 #endif // IRESPONSE_HPP

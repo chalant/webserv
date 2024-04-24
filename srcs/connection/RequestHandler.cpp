@@ -59,6 +59,9 @@ int RequestHandler::handleRequest(int socketDescriptor)
 
         // Parse the raw request into a Request object
         this->_requestParser.parseRequest(rawRequest, request);
+
+        // Assign session to connection
+        this->_connectionManager.assignSessionToConnection(connection, request, response);
     }
 
     catch (const WebservException &e)
@@ -154,7 +157,7 @@ int RequestHandler::_sendResponse(int socketDescriptor)
 
     // Remove the connection
     this->_connectionManager.removeConnection(socketDescriptor);
-    
+
     // return 0
     return (0);
 }

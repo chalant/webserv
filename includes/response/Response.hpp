@@ -15,9 +15,19 @@
 class Response : public IResponse
 {
 private:
+    // Response Status line
     std::string _statusLine;
+
+    // Response headers
     std::map<HttpHeader, std::string> _headers;
+
+    // Response body
     std::string _body;
+
+    // Response Cookies
+    std::map<std::string, std::string> _cookies;
+
+    // Helper
     const HttpHelper &_httpHelper;
 
 public:
@@ -36,6 +46,8 @@ public:
     virtual void setHeaders(std::string headers);
     virtual void addHeader(HttpHeader header, std::string value);
     virtual void addHeader(std::string header, std::string value);
+    virtual void addCookie(std::string key, std::string value);
+    virtual void addCookieHeaders();
     virtual void setBody(std::string body);
 
     // Set error response with appropriate status code
@@ -52,7 +64,7 @@ public:
 
     // Convert headers to map or string
     virtual std::map<std::string, std::string> getHeadersStringMap() const;
-    virtual std::vector<char> serialise() const;
+    virtual std::vector<char> serialise();
 };
 
 #endif // RESPONSE_HPP

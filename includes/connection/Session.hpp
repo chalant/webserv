@@ -12,7 +12,7 @@
  *
  */
 
-#define DEFAULT_TIMEOUT 120 // 2 minutes
+#define DEFAULT_TIMEOUT 300 // 5 minutes
 
 #include "ISession.hpp"
 #include <map>

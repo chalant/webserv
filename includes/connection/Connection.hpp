@@ -27,20 +27,25 @@ private:
     ILogger &_logger;                     // Reference to the logger
     IRequest *_request;                   // Pointer to the request object
     IResponse *_response;                 // Pointer to the response object
+    ISession *_session;                   // Pointer to the session object
 
 public:
     Connection(std::pair<int, std::pair<std::string, std::string>> clientInfo, ILogger &logger, IRequest *request, IResponse *response);
     virtual ~Connection() = default;
 
+    // Setters
     virtual void setReadPipeDescriptor(int pipe);
+    virtual void setSession(ISession *session);
 
-    virtual int getSocket() const;
+    // Getters
+    virtual int getSocketDescriptor() const;
     virtual const std::string &getIp() const;
     virtual int getPort() const;
     virtual const std::string &getRemoteAddress() const;
     virtual int getReadPipeDescriptor() const;
     virtual IRequest &getRequest() const;
     virtual IResponse &getResponse() const;
+    virtual ISession &getSession() const;
 };
 
 #endif // CONNECTION_HPP

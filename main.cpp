@@ -95,6 +95,9 @@ int main(int argc, char **argv)
 
                 // Handle events.
                 eventManager.handleEvents();
+
+                // Collect garbage.
+                connectionManager.collectGarbage();
             }
             catch (WebservException &e)
             {

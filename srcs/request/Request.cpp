@@ -109,10 +109,26 @@ std::map<std::string, std::string> Request::getHeadersStringMap() const
     return headersStrings;
 }
 
-// Getter function for retrieving the query parameters of the request
+// Getter function for retrieving the query parameters
 std::map<std::string, std::string> Request::getQueryParameters() const
 {
     return this->_queryParameters;
+}
+
+// Getter function for retrieving all the cookies
+std::map<std::string, std::string> Request::getCookies() const
+{
+    return this->_cookies;
+}
+
+// Getter function for retrieving a specific cookie
+const std::string &Request::getCookie(const std::string &key) const
+{
+    // Check if the cookie exists
+    if (this->_cookies.find(key) != this->_cookies.end())
+        return this->_cookies.at(key); // Return the value of the cookie
+    else
+        return ""; // Return an empty string if the cookie does not exist
 }
 
 // Getter function for retrieving the value of a specific header
