@@ -39,8 +39,8 @@ int main()
     assert(mockRequest.getTestMethod() == "GET");
     assert(mockRequest.getUri() == "/index.html");
     assert(mockRequest.getTestHttpVersion() == "HTTP/1.1");
-    std::map<std::string, std::string> expectedHeaders = {{"Host", "42.fr"}};
-    assert(mockRequest.getHeaders() == expectedHeaders);
+    std::map<std::string, std::string> expectedHeaders = {{"host", "42.fr"}};
+    assert(mockRequest.getHeadersStringMap() == expectedHeaders);
     // Clear the contents of the Request object for the next test
     mockRequest.clear();
 

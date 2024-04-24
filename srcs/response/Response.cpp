@@ -1,4 +1,4 @@
-#include "response/Response.hpp"
+#include "../../includes/response/Response.hpp"
 
 /*
  * Response class
@@ -173,6 +173,23 @@ std::string Response::getResponseSizeString() const
 size_t Response::getResponseSize() const
 {
     return this->_statusLine.length() + this->getHeaders().length() + this->_body.length();
+}
+
+// Get the map of cookies
+std::map<std::string, std::string> Response::getCookiesMap() const
+{
+    return this->_cookies;
+}
+
+// Get a specific cookie from the map
+std::string Response::getCookie(const std::string &key) const
+{
+    std::map<std::string, std::string>::const_iterator it = this->_cookies.find(key);
+    if (it != this->_cookies.end())
+    {
+        return it->second;
+    }
+    return "";
 }
 
 // Convert headers to a map of strings

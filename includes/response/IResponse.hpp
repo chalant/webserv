@@ -11,7 +11,7 @@
 
 #include <string>
 #include <map>
-#include "constants/HttpHelper.hpp"
+#include "../../includes/constants/HttpHelper.hpp"
 
 class IResponse
 {
@@ -45,6 +45,8 @@ public:
     virtual std::string getStatusCodeString() const = 0;
     virtual std::string getResponseSizeString() const = 0;
     virtual size_t getResponseSize() const = 0;
+    virtual std::map<std::string, std::string> getCookiesMap() const = 0;
+    virtual std::string getCookie(const std::string &key) const = 0;
 
     // Convert headers to map or string
     virtual std::map<std::string, std::string> getHeadersStringMap() const = 0;

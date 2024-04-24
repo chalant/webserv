@@ -28,6 +28,11 @@ public:
     // Destructor
     virtual ~MockConfiguration();
 
+    // TEST methods
+    void setString(const std::string &parameter, const std::string &value);
+    void setSize_t(const std::string &parameter, size_t value);
+    void setStringVector(const std::string &parameter, const std::vector<std::string> &value);
+
     // Methods implementing the IConfiguration interface
     // These methods are overridden to provide custom behavior for testing.
 

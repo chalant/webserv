@@ -321,11 +321,17 @@ void RequestParser::_parseCookie(std::string &cookieHeaderValue,
     // Parse cookies
     std::string cookieName;
     std::string cookieValue;
+
+    // Create a stream from the cookie header value
     std::istringstream cookieStream(cookieHeaderValue);
 
     // Parse cookie name and value
     while (std::getline(cookieStream, cookieName, '=') && std::getline(cookieStream, cookieValue, ';'))
     {
+        // Trim surrounding whitespace
+        cookieName = this->_trimWhitespace(cookieName);
+        cookieValue = this->_trimWhitespace(cookieValue);
+
         // Add cookie to parsed request
         parsedRequest.addCookie(cookieName, cookieValue);
     }
@@ -347,6 +353,29 @@ bool RequestParser::_isCRLF(std::vector<char>::const_iterator it) const
 bool RequestParser::_isCharInSet(std::vector<char>::const_iterator it, const std::string &set) const
 {
     return set.find(*it) != std::string::npos;
+}
+
+// Function to trim whitespace
+std::string RequestParser::_trimWhitespace(const std::string &string) const
+{
+    std::string result = string;
+
+    // Trim leading whitespace
+    size_t start = result.find_first_not_of(" \t");
+    if (start != std::string::npos)
+    {
+        result = result.substr(start);
+    }
+
+    // Trim trailing whitespace
+    size_t end = result.find_last_not_of(" \t");
+    if (end != std::string::npos)
+    {
+        result = result.substr(0, end + 1);
+    }
+
+    // Return trimmed string
+    return result;
 }
 
 // path: srcs/RequestHandler.cpp

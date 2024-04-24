@@ -122,7 +122,7 @@ std::map<std::string, std::string> Request::getCookies() const
 }
 
 // Getter function for retrieving a specific cookie
-const std::string &Request::getCookie(const std::string &key) const
+std::string Request::getCookie(const std::string &key) const
 {
     // Check if the cookie exists
     if (this->_cookies.find(key) != this->_cookies.end())
@@ -205,7 +205,7 @@ void Request::setMethod(const std::string &method)
 void Request::setUri(const std::string &uri)
 {
     // Check if the URI size exceeds the maximum allowed URI size
-    if (uri.size() > this->_configuration.getInt("ClientMaxUriSize"))
+    if (uri.size() > this->_configuration.getSize_t("ClientMaxUriSize"))
         throw HttpStatusCodeException(URI_TOO_LONG); // Throw '414' status error
 
     // Check if the URI contains any whitespace characters
@@ -229,11 +229,9 @@ void Request::setHttpVersion(const std::string &httpVersion)
 // Function for adding a header to the request
 void Request::addHeader(const std::string &key, const std::string &value)
 {
-    // Check if the value contains any whitespace characters
-    if (value.find_first_of(" \t") != std::string::npos)
-    {
-        throw HttpStatusCodeException(BAD_REQUEST, // Throw '400' status error
-                                      "whitespace in header value");
+    // Check if the key contains trailing whitespace
+    if (!key.empty() && (key.back() == ' ' || key.back() == '\t')) {
+        throw HttpStatusCodeException(BAD_REQUEST, "trailing whitespace in header key");
     }
 
     // Convert the key to lowercase
@@ -266,7 +264,7 @@ void Request::setBody(const std::vector<char> &body)
         return; // If empty, do nothing (no body to set)
 
     // Check if the body size exceeds the maximum allowed body size
-    if (body.size() > this->_configuration.getInt("ClientMaxBodySize"))
+    if (body.size() > this->_configuration.getSize_t("ClientMaxBodySize"))
         throw HttpStatusCodeException(PAYLOAD_TOO_LARGE); // Throw '413' status error
 
     // Set the body of the request

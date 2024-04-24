@@ -15,7 +15,7 @@
 #include "IBlock.hpp"
 #include <set>
 #include <string>
-#include "constants/LogLevelHelper.hpp"
+#include "../../includes/constants/LogLevelHelper.hpp"
 
 class IConfiguration
 {

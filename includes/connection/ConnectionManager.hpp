@@ -54,6 +54,7 @@ public:
     virtual ISession &getSession(SessionId_t id);
     virtual void setSessionData(SessionId_t id, const std::string &key, const std::string &value);
     virtual std::string getSessionData(SessionId_t id, const std::string &key);
+    virtual size_t getNumberOfSessions() const;
 
     // Method to assign a session to a connection
     virtual void assignSessionToConnection(IConnection &connection, const IRequest &request, IResponse &response);

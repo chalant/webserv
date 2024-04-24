@@ -81,6 +81,9 @@ private:
     // Function to check if an iterator points to a character that is in a given set
     bool _isCharInSet(std::vector<char>::const_iterator it, const std::string &set) const;
 
+    // Function to trim leading and trailing whitespace from a string
+    std::string _trimWhitespace(const std::string &string) const;
+
 public:
     // Constructor to initialize the RequestParser with required references
     RequestParser(const IConfiguration &configuration, ILogger &logger);

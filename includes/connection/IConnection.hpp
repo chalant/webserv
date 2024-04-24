@@ -31,9 +31,9 @@ public:
 
     // Getters
     virtual int getSocketDescriptor() const = 0;
-    virtual const std::string &getIp() const = 0;
+    virtual const std::string getIp() const = 0;
     virtual int getPort() const = 0;
-    virtual const std::string &getRemoteAddress() const = 0;
+    virtual const std::string getRemoteAddress() const = 0;
     virtual int getReadPipeDescriptor() const = 0;
     virtual IRequest &getRequest() const = 0;
     virtual IResponse &getResponse() const = 0;

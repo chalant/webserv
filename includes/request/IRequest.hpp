@@ -28,11 +28,13 @@ public:
     virtual std::string getMethodString() const = 0;
     virtual std::string getUri() const = 0;
     virtual HttpVersion getHttpVersion() const = 0;
+    virtual std::string getHttpVersionString() const = 0;
+    virtual const std::map<HttpHeader, std::string> getHeaders() const = 0;
     virtual std::string getHeaderValue(HttpHeader header) const = 0;
     virtual std::map<std::string, std::string> getHeadersStringMap() const = 0;
     virtual std::map<std::string, std::string> getQueryParameters() const = 0;
     virtual std::map<std::string, std::string> getCookies() const = 0;
-    virtual const std::string &getCookie(const std::string &) const = 0;
+    virtual std::string getCookie(const std::string &) const = 0;
     virtual const std::vector<char> getBody() const = 0;
     virtual std::string getBodyString() const = 0;
     virtual std::string getClientIp() const = 0;

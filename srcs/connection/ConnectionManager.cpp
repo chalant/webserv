@@ -119,6 +119,12 @@ std::string ConnectionManager::getSessionData(SessionId_t sessionId, const std::
     return this->_sessions[sessionId]->getData(key);
 }
 
+// Get the number of active sessions
+size_t ConnectionManager::getNumberOfSessions() const
+{
+    return this->_sessions.size();
+}
+
 // Assign a session to a connection
 void ConnectionManager::assignSessionToConnection(IConnection &connection, const IRequest &request, IResponse &response)
 {

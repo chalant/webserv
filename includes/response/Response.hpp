@@ -10,7 +10,7 @@
  */
 
 #include "IResponse.hpp"
-#include "constants/HttpHelper.hpp"
+#include "../../includes/constants/HttpHelper.hpp"
 
 class Response : public IResponse
 {
@@ -33,7 +33,7 @@ private:
 public:
     Response(const HttpHelper &httpHelper);
     ~Response();
-    
+
     // Getters for status line, headers, and body
     virtual std::string getStatusLine() const;
     virtual std::string getHeaders() const;
@@ -61,6 +61,8 @@ public:
     virtual std::string getStatusCodeString() const;
     virtual std::string getResponseSizeString() const;
     virtual size_t getResponseSize() const;
+    virtual std::map<std::string, std::string> getCookiesMap() const;
+    virtual std::string getCookie(const std::string &key) const;
 
     // Convert headers to map or string
     virtual std::map<std::string, std::string> getHeadersStringMap() const;

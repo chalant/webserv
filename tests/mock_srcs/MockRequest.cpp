@@ -35,7 +35,9 @@ HttpVersion MockRequest::getHttpVersion() const { return HttpVersion::HTTP_1_1; 
 
 std::string MockRequest::getTestHttpVersion() const { return _testHttpVersion; };
 
-std::map<std::string, std::string> MockRequest::getHeaders() const { return _testHeaders; };
+std::string MockRequest::getHttpVersionString() const { return _testHttpVersion; };
+
+const std::map<HttpHeader, std::string> MockRequest::getHeaders() const { return std::map<HttpHeader, std::string>(); };
 
 std::string MockRequest::getHeaderValue(HttpHeader header) const
 {
@@ -45,15 +47,30 @@ std::string MockRequest::getHeaderValue(HttpHeader header) const
 
 std::map<std::string, std::string> MockRequest::getHeadersStringMap() const { return _testHeaders; };
 
-std::map<std::string, std::string> MockRequest::getQueryParameters() const { return std::map<std::string, std::string>(); };
+std::map<std::string, std::string> MockRequest::getTestHeadersStringMap() const { return _testHeaders; };
 
-std::string MockRequest::getClientIp() const { return ""; };
+std::map<std::string, std::string> MockRequest::getQueryParameters() const { return std::map<std::string, std::string>(); };
 
 std::map<std::string, std::string> MockRequest::getCookies() const { return std::map<std::string, std::string>(); };
 
-std::time_t MockRequest::getRequestTimestamp() const { return 0; };
+const std::string &MockRequest::getCookie(const std::string &key) const
+{
+    static_cast<void>(key);
+    static const std::string emptyString;
+    return emptyString;
+};
 
 const std::vector<char> MockRequest::getBody() const { return _testBody; };
+
+std::string MockRequest::getBodyString() const { return std::string(_testBody.begin(), _testBody.end()); };
+
+std::string MockRequest::getClientIp() const { return ""; };
+
+std::string MockRequest::getHostName() const { return ""; };
+
+std::string MockRequest::getHostPort() const { return ""; };
+
+std::string MockRequest::getAuthority() const { return ""; };
 
 // Setters
 void MockRequest::setMethod(const std::string &method) { _testMethod = method; };
@@ -62,9 +79,15 @@ void MockRequest::setUri(const std::string &uri) { _testUri = uri; };
 
 void MockRequest::setHttpVersion(const std::string &httpVersion) { _testHttpVersion = httpVersion; };
 
-void MockRequest::addHeader(const std::string &key, const std::string &value) { _testHeaders.insert({key, value}); };
+#include <iostream>
+void MockRequest::addHeader(const std::string &key, const std::string &value) { 
+    _testHeaders[key]=value; };
 
 void MockRequest::setBody(const std::vector<char> &body) { _testBody = body; };
+
+void MockRequest::addCookie(const std::string &key, const std::string &value) { _testHeaders.insert({key, value}); };
+
+void MockRequest::setAuthority() {};
 
 // Clear the contents of the MockRequest object
 void MockRequest::clear()
