@@ -4,9 +4,9 @@
 #include "network/Socket.hpp"
 #include "core/PollingService.hpp"
 #include "core/EventManager.hpp"
-#include "session/SessionManager.hpp"
-#include "session/RequestHandler.hpp"
-#include "session/ClientHandler.hpp"
+#include "connection/ConnectionManager.hpp"
+#include "connection/RequestHandler.hpp"
+#include "connection/ClientHandler.hpp"
 #include "logger/Logger.hpp"
 #include "logger/LoggerConfiguration.hpp"
 #include "buffer/BufferManager.hpp"
@@ -67,17 +67,17 @@ int main(int argc, char **argv)
         // Instantiate the Factory.
         Factory factory(configuration, logger);
 
-        // Instantiate the SessionManager.
-        SessionManager sessionManager(logger, factory);
+        // Instantiate the ConnectionManager.
+        ConnectionManager connectionManager(logger, factory);
 
         // Instantiate the Server.
-        Server server(socket, pollfdManager, sessionManager, configuration, logger);
+        Server server(socket, pollfdManager, connectionManager, configuration, logger);
 
         // Instantiate the Router.
         Router router(configuration, logger);
 
         // Instantiate the RequestHandler.
-        RequestHandler requestHandler(socket, bufferManager, sessionManager, configuration, router, logger, exceptionHandler, clientHandler);
+        RequestHandler requestHandler(socket, bufferManager, connectionManager, configuration, router, logger, exceptionHandler, clientHandler);
 
         // Instantiate the PollingService.
         PollingService pollingService(pollfdManager, logger);

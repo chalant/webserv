@@ -33,7 +33,11 @@ public:
     virtual std::map<std::string, std::string> getQueryParameters() const = 0;
     virtual std::map<std::string, std::string> getCookies() const = 0;
     virtual const std::vector<char> getBody() const = 0;
+    virtual std::string getBodyString() const = 0;
     virtual std::string getClientIp() const = 0;
+    virtual std::string getHostName() const = 0;
+    virtual std::string getHostPort() const = 0;
+    virtual std::string getAuthority() const = 0;
 
     // Setters
     virtual void setMethod(const std::string &method) = 0;
@@ -41,6 +45,8 @@ public:
     virtual void setHttpVersion(const std::string &httpVersion) = 0;
     virtual void addHeader(const std::string &key, const std::string &value) = 0;
     virtual void setBody(const std::vector<char> &body) = 0;
+    virtual void addCookie(const std::string &key, const std::string &value) = 0;
+    virtual void setAuthority() = 0;
 };
 
 #endif // IREQUEST_HPP

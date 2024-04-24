@@ -31,4 +31,4 @@ public:
 };
 
 #endif // IConfiguration_HPP
-// Path: includes/IConnection.hpp
+// Path: includes/configuration/IConfiguration.hpp

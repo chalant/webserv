@@ -42,7 +42,7 @@
 #include <iomanip>
 #include "ILoggerConfiguration.hpp"
 #include "buffer/IBufferManager.hpp"
-#include "session/ISession.hpp"
+#include "connection/IConnection.hpp"
 #include "request/IRequest.hpp"
 #include "response/IResponse.hpp"
 #include "constants/LogLevelHelper.hpp"
@@ -70,7 +70,7 @@ public:
     // Logging methods
     virtual int log(const std::string &message);                          // Default method to log error messages
     virtual int log(const LogLevel logLevel, const std::string &message); // Method to log error messages
-    virtual int log(const ISession &session);                             // Method to log access events
+    virtual int log(const IConnection &connection);                             // Method to log access events
 
     // Configuration method
     virtual void configure(ILoggerConfiguration &configuration); // Method to configure the Logger instance

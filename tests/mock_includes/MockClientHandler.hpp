@@ -7,7 +7,7 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "session/IClientHandler.hpp" // Include the base interface header
+#include "connection/IClientHandler.hpp" // Include the base interface header
 
 class MockClientHandler : public IClientHandler
 {

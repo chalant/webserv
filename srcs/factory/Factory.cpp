@@ -1,16 +1,17 @@
 #include "factory/Factory.hpp"
 #include "request/Request.hpp"
 #include "response/Response.hpp"
-#include "session/Session.hpp"
+#include "connection/Connection.hpp"
+#include "connection/Session.hpp"
 
 Factory::Factory(const IConfiguration &configuration, ILogger &logger)
     : _configuration(configuration),
       _logger(logger),
       _httpHelper(configuration) {}
 
-ISession *Factory::createSession(std::pair<int, std::pair<std::string, std::string>> clientInfo)
+IConnection *Factory::createConnection(std::pair<int, std::pair<std::string, std::string>> clientInfo)
 {
-    return new Session(clientInfo, this->_logger, this->createRequest(), this->createResponse());
+    return new Connection(clientInfo, this->_logger, this->createRequest(), this->createResponse());
 }
 
 IRequest *Factory::createRequest()
@@ -21,6 +22,11 @@ IRequest *Factory::createRequest()
 IResponse *Factory::createResponse()
 {
     return new Response(this->_httpHelper);
+}
+
+ISession *Factory::createSession(SessionId_t id)
+{
+    return new Session(id);
 }
 
 // Path: srcs/Factory.cpp

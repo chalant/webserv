@@ -38,20 +38,24 @@
 #include "configuration/IConfiguration.hpp"
 #include "exception/WebservExceptions.hpp"
 
-class Request : public IRequest{
+class Request : public IRequest
+{
 private:
     // Request line components
     HttpMethod _method;
     std::string _uri;
     HttpVersion _httpVersion;
-    
+
     // Request headers
     std::map<HttpHeader, std::string> _headers;
-    
+
     // Request body
     std::vector<char> _body;
-    
+
     // Included Request parameters
+    std::string _hostName;
+    std::string _hostPort;
+    std::string _authority;
     std::map<std::string, std::string> _queryParameters;
     std::pair<std::string, std::string> _remoteAddress;
     time_t _requestTimestamp;
@@ -60,7 +64,7 @@ private:
     std::string _requestId;
     std::string _rawRequest;
     const IConfiguration &_configuration;
-    
+
     // Helper
     const HttpHelper &_httpHelper;
 
@@ -69,10 +73,10 @@ public:
     Request(const IConfiguration &configuration, const HttpHelper &httpHelper);
     Request(const Request &src);
     ~Request();
-    
+
     // Assignment operator
     Request &operator=(const Request &src);
-    
+
     // Getters
     HttpMethod getMethod() const;
     std::string getMethodString() const;
@@ -83,19 +87,23 @@ public:
     std::string getHeaderValue(HttpHeader header) const;
     std::map<std::string, std::string> getHeadersStringMap() const;
     std::map<std::string, std::string> getQueryParameters() const;
+    std::map<std::string, std::string> getCookies() const;
     const std::vector<char> getBody() const;
     std::string getBodyString() const;
     std::string getClientIp() const;
-    std::map<std::string, std::string> getCookies() const { return _cookies; }
-    
+    std::string getHostName() const;
+    std::string getHostPort() const;
+    std::string getAuthority() const;
+
     // Setters
     void setMethod(const std::string &method);
     void setUri(const std::string &uri);
     void setHttpVersion(const std::string &httpVersion);
     void addHeader(const std::string &key, const std::string &value);
     void setBody(const std::vector<char> &body);
+    void addCookie(const std::string &key, const std::string &value);
+    void setAuthority();
 };
-
 
 #endif // REQUEST_HPP
        // Path: includes/Response.hpp

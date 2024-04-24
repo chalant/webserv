@@ -64,4 +64,4 @@ public:
 
 #endif // BUFFERMANAGER_HPP
 
-// Path: includes/IBufferManager.hpp
+// Path: includes/buffer/BufferManager.hpp

@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 // include the header file for the class under test
-#include "session/ClientHandler.hpp"
+#include "connection/ClientHandler.hpp"
 
 // include the header files for the mock classes
 #include "MockLogger.hpp"

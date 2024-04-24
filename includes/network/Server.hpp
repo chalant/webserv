@@ -15,7 +15,7 @@
 #include "configuration/IConfiguration.hpp"
 #include "logger/ILogger.hpp"
 #include "pollfd/IPollfdManager.hpp"
-#include "session/ISessionManager.hpp"
+#include "connection/IConnectionManager.hpp"
 #include "exception/WebservExceptions.hpp"
 
 class Server : public IServer
@@ -23,13 +23,13 @@ class Server : public IServer
 private:
     const ISocket &_socket;         // Reference to the Socket instance
     IPollfdManager &_pollfdManager; // Reference to the PollfdManager
-    ISessionManager &_sessionManager; // Reference to the SessionManager
+    IConnectionManager &_connectionManager; // Reference to the ConnectionManager
     ILogger &_logger;          // Reference to the error logger
 
     void _initializeServerSocket(int ip, int port, int maxConnections); // Method to initialize the server socket
 
 public:
-    Server(const ISocket &_socket, IPollfdManager &pollfdManager, ISessionManager &sessionManager, const IConfiguration &configuration, ILogger &logger); // Constructor for Server class
+    Server(const ISocket &_socket, IPollfdManager &pollfdManager, IConnectionManager &connectionManager, const IConfiguration &configuration, ILogger &logger); // Constructor for Server class
     ~Server();                                                                                                               // Destructor for Server class
 
     virtual void acceptConnection(int serverSocketDescriptor); // Method to accept a new client connection

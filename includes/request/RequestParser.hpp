@@ -53,6 +53,25 @@ private:
                     const std::vector<char> &rawRequest,
                     IRequest &parsedRequest) const;
 
+    // Function to parse a Cookie header
+    void _parseCookie(std::string &cookieHeaderValue,
+                      IRequest &parsedRequest) const;
+
+    // Function to parse Query Parameters
+    void _parseQueryParameters(std::vector<char>::const_iterator &it,
+                               const std::vector<char> &rawRequest,
+                               IRequest &parsedRequest) const;
+
+    // Function to parse url encoded body parameters
+    void _parseBodyParameters(std::vector<char>::const_iterator &it,
+                             const std::vector<char> &rawRequest,
+                             IRequest &parsedRequest) const;
+
+    // Function to parse the url
+    void _parseUrl(std::vector<char>::const_iterator &it,
+                   const std::vector<char> &rawRequest,
+                   IRequest &parsedRequest) const;
+
     // Function to check if a character is whitespace
     bool _isWhitespace(char c) const;
 

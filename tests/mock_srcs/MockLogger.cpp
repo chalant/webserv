@@ -37,9 +37,9 @@ int MockLogger::log(const LogLevel logLevel, const std::string &message)
 };
 
 // Method to log access events
-int MockLogger::log(const ISession &session)
+int MockLogger::log(const IConnection &connection)
 {
-    static_cast<void>(session);
+    static_cast<void>(connection);
     return 0;
 };
 

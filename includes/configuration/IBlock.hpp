@@ -7,7 +7,7 @@
 class IBlock
 {
 public:
-    virtual ~IBlock() {};
+    virtual ~IBlock(){};
 
     virtual const std::vector<IBlock *> getBlocks(const std::string &) = 0;
     virtual const std::vector<std::string> getStringVector(const std::string &) const = 0;
@@ -18,4 +18,4 @@ public:
 };
 
 #endif // IBLOCK_HPP
-// Path: includes/IBlock.hpp
+// Path: includes/configuration/IBlock.hpp

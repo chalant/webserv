@@ -10,4 +10,4 @@ public:
 };
 
 #endif // IEVENTMANAGER_HPP
-// Path: includes/IEventManager.hpp
+// Path: includes/core/IEventManager.hpp

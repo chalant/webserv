@@ -38,4 +38,5 @@ public:
 
 #endif // SOCKETBUFFER_HPP
 
-// Path: includes/configuration/Configuration.hpp
+// Path: includes/buffer/SocketBuffer.hpp
+

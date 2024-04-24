@@ -20,4 +20,4 @@ public:
 };
 
 #endif // IBUFFERMANAGER_HPP
-// Path: includes/IBuffer.hpp
+// Path: includes/buffer/IBufferManager.hpp

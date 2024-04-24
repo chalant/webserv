@@ -6,7 +6,7 @@
 #include "buffer/IBufferManager.hpp"
 #include "network/ISocket.hpp"
 #include "network/IServer.hpp"
-#include "session/IRequestHandler.hpp"
+#include "connection/IRequestHandler.hpp"
 #include "logger/ILogger.hpp"
 #include "exception/WebservExceptions.hpp"
 
@@ -40,4 +40,4 @@ public:
 };
 
 #endif // EVENTMANAGER_HPP
-// Path: includes/EventManager.hpp
+// Path: includes/core/EventManager.hpp

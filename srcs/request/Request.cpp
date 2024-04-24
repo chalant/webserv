@@ -153,6 +153,24 @@ std::string Request::getClientIp() const
     }
 }
 
+// Getter function for retrieving the host name
+std::string Request::getHostName() const
+{
+    return this->_hostName;
+}
+
+// Getter function for retrieving the host port
+std::string Request::getHostPort() const
+{
+    return this->_hostPort;
+}
+
+// Getter function for retrieving the authority of the request
+std::string Request::getAuthority() const
+{
+    return this->_authority;
+}
+
 // Setter function for setting the method of the request
 void Request::setMethod(const std::string &method)
 {
@@ -238,3 +256,35 @@ void Request::setBody(const std::vector<char> &body)
     // Set the body of the request
     this->_body = body;
 }
+
+// Function for adding a cookie to the request
+void Request::addCookie(const std::string &key, const std::string &value)
+{
+    // Add the cookie to the internal cookies map
+    this->_cookies[key] = value;
+}
+
+// Setter function for setting the authority of the request
+void Request::setAuthority()
+{
+    // Check if the 'Host' header exists in the map
+    if (this->_headers[HOST] == "")
+        throw HttpStatusCodeException(BAD_REQUEST, // Throw '400' status error
+                                      "missing Host header");
+    std::istringstream hostStream(this->_headers[HOST]);
+    if (std::getline(hostStream, this->_hostName, ':'))
+    {
+        // If the host header contains a port number, set the host port
+        std::getline(hostStream, this->_hostPort);
+    }
+    else
+    {
+        // If the host header does not contain a port number, set the host port to the default port
+        this->_hostPort = this->_configuration.getString("DefaultPort");
+    }
+
+    // Set the authority of the request
+    this->_authority = this->_hostName + ":" + this->_hostPort;
+}
+
+//path: srcs/request/Request.cpp

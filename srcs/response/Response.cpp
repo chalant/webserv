@@ -128,9 +128,6 @@ void Response::setErrorResponse(int statusCode)
 // Set all response fields from a complete response vector
 void Response::setResponse(std::vector<char> response)
 {
-    // Clear the response object
-    this->clear();
-
     // Parse the response vector
     std::string responseString(response.begin(), response.end());
     this->_statusLine = responseString.substr(0, responseString.find("\r\n"));

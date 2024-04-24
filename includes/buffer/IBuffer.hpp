@@ -27,4 +27,4 @@ public:
 };
 
 #endif // IBUFFER_HPP
-// Path: includes/IBuffer.hpp
+// Path: includes/buffer/IBuffer.hpp

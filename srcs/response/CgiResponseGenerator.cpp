@@ -48,7 +48,7 @@ int CgiResponseGenerator::generateResponse(const IRequest &request, IResponse &r
             free(args[i]);
         }
         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
-        return -1;
+        exit(EXIT_FAILURE);
     }
     else // parent process
     {

@@ -44,4 +44,4 @@ public:
 
 #endif // FILEBUFFER_HPP
 
-// Path: includes/IBuffer.hpp
+// Path: includes/buffer/FileBuffer.hpp

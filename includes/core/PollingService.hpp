@@ -14,8 +14,9 @@ private:
     IPollfdManager &_pollfdManager;
     ILogger &_logger;
     int _timeout;
+
 public:
-    PollingService(IPollfdManager &pollfdManager, ILogger &logger, int timeout=100);
+    PollingService(IPollfdManager &pollfdManager, ILogger &logger, int timeout = 100);
     ~PollingService();
 
     virtual void pollEvents();
@@ -23,4 +24,4 @@ public:
 };
 
 #endif // POLLINGSERVICE_HPP
-// Path: includes/PollingService.hpp
+// Path: includes/core/PollingService.hpp

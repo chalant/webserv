@@ -84,7 +84,7 @@ std::string RequestParser::_parseMethod(std::vector<char>::const_iterator &reque
 
     // Log 'method'
     this->_logger.log(VERBOSE, "[REQUESTPARSER] Method: \"" + method + "\"");
-    
+
     // Return 'method' string
     return method;
 }
@@ -186,6 +186,9 @@ void RequestParser::_parseHeaders(std::vector<char>::const_iterator &requestIter
         throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
     }
 
+    // Set authority in parsed request
+    parsedRequest.setAuthority();
+
     // Move marker passed CRLF
     requestIterator += 2;
 }
@@ -205,7 +208,7 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
     // Find colon to separate header name and value
     while (requestIterator != rawRequest.end() && *requestIterator != ':')
     {
-        headerName += *requestIterator;
+        headerName += std::tolower(*requestIterator); // Convert to lowercase
         clientHeaderBufferSize--;
         ++requestIterator;
     }
@@ -228,7 +231,7 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
     // Find end of header value
     while (requestIterator != rawRequest.end() && !this->_isCRLF(requestIterator))
     {
-        headerValue += *requestIterator;
+        headerValue += std::tolower(*requestIterator); // Convert to lowercase
         clientHeaderBufferSize--;
         ++requestIterator;
     }
@@ -252,6 +255,12 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
 
     // Add header to parsed request
     parsedRequest.addHeader(headerName, headerValue);
+
+    // Parse cookies
+    if (headerName == "cookie")
+    {
+        this->_parseCookie(headerValue, parsedRequest);
+    }
 }
 // Function to parse the body of an HTTP request
 void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterator,
@@ -300,9 +309,26 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
 
     // Log body
     this->_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" + std::string(body.begin(), body.end()) + "\"");
-    
+
     // Set body in parsed request
     parsedRequest.setBody(body);
+}
+
+// Function to parse cookies from the request
+void RequestParser::_parseCookie(std::string &cookieHeaderValue,
+                                 IRequest &parsedRequest) const
+{
+    // Parse cookies
+    std::string cookieName;
+    std::string cookieValue;
+    std::istringstream cookieStream(cookieHeaderValue);
+
+    // Parse cookie name and value
+    while (std::getline(cookieStream, cookieName, '=') && std::getline(cookieStream, cookieValue, ';'))
+    {
+        // Add cookie to parsed request
+        parsedRequest.addCookie(cookieName, cookieValue);
+    }
 }
 
 // Function to check if a character is whitespace

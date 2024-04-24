@@ -25,7 +25,7 @@
 #include <map>
 #include <cstring>
 #include <vector>
-#include "ISessionManager.hpp"
+#include "IConnectionManager.hpp"
 #include "IClientHandler.hpp"
 #include "response/IRouter.hpp"
 #include "request/IRequest.hpp"
@@ -46,7 +46,7 @@ class RequestHandler : public IRequestHandler
 private:
     // Private member variables
     IBufferManager &_bufferManager;     // Reference to the buffer manager
-    ISessionManager &_sessionManager;   // Reference to the session manager
+    IConnectionManager &_connectionManager;   // Reference to the connection manager
     IClientHandler &_clientHandler;     // Handles communication with clients
     const RequestParser _requestParser; // Parses incoming requests
     IRouter &_router;                   // Routes requests to appropriate handlers
@@ -61,7 +61,7 @@ private:
 
 public:
     // Constructor
-    RequestHandler(const ISocket &socket, IBufferManager &bufferManager, ISessionManager &sessionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &IExceptionHandler, IClientHandler &clientHandler);
+    RequestHandler(const ISocket &socket, IBufferManager &bufferManager, IConnectionManager &connectionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &IExceptionHandler, IClientHandler &clientHandler);
 
     // Destructor
     ~RequestHandler();
@@ -80,5 +80,5 @@ public:
     int handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode);
 };
 
-#endif // SESSIONS_HPP
-// Path: srcs/RequestHandler.cpp
+#endif // CONNECTIONS_HPP
+// Path: includes/connection/RequestHandler.hpp

@@ -10,10 +10,10 @@
  */
 
 /* Constructor - Initializes the Server object and sets up the server socket and polling file descriptors.*/
-Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, ISessionManager &sessionManager, const IConfiguration &configuration, ILogger &logger)
+Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnectionManager &connectionManager, const IConfiguration &configuration, ILogger &logger)
     : _socket(socket),
       _pollfdManager(pollfdManager),
-      _sessionManager(sessionManager),
+      _connectionManager(connectionManager),
       _logger(logger)
 {
     std::vector<IBlock *> servers = configuration.getBlocks("server");
@@ -87,8 +87,8 @@ void Server::acceptConnection(int serverSocketDescriptor)
     std::string clientIP = clientInfo.second.first;
     std::string clientPort = clientInfo.second.second;
 
-    // Create a session for the client
-    this->_sessionManager.addSession(clientInfo);
+    // Create a connection for the client
+    this->_connectionManager.addConnection(clientInfo);
 
     // Add client socket to polling list
     if (clientSocketDescriptor < 0)

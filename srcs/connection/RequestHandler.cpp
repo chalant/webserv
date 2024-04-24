@@ -1,4 +1,4 @@
-#include "session/RequestHandler.hpp"
+#include "connection/RequestHandler.hpp"
 
 /*
  * RequestHandler class
@@ -15,9 +15,9 @@
  */
 
 // Constructor
-RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, ISessionManager &sessionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &exceptionHandler, IClientHandler &clientHandler)
+RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, IConnectionManager &connectionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &exceptionHandler, IClientHandler &clientHandler)
     : _bufferManager(bufferManager),
-      _sessionManager(sessionManager),
+      _connectionManager(connectionManager),
       _router(router),
       _logger(logger),
       _exceptionHandler(exceptionHandler),
@@ -43,14 +43,14 @@ int RequestHandler::handleRequest(int socketDescriptor)
     // Give the 'ClientHandler' the current socket descriptor
     this->_clientHandler.setSocketDescriptor(socketDescriptor);
 
-    // Get a reference to the Session
-    ISession &session = this->_sessionManager.getSession(socketDescriptor);
+    // Get a reference to the Connection
+    IConnection &connection = this->_connectionManager.getConnection(socketDescriptor);
 
     // Get a reference to the Request
-    IRequest &request = session.getRequest();
+    IRequest &request = connection.getRequest();
 
     // Get a reference to the Response
-    IResponse &response = session.getResponse();
+    IResponse &response = connection.getResponse();
 
     try
     {
@@ -125,7 +125,7 @@ int RequestHandler::handlePipeRead(int pipeDescriptor)
     std::vector<char> rawResponse = this->_clientHandler.readRequest();
 
     // Get a reference to the Response
-    IResponse &response = this->_sessionManager.getResponse(clientSocket);
+    IResponse &response = this->_connectionManager.getResponse(clientSocket);
 
     // Set the response
     response.setResponse(rawResponse);
@@ -141,7 +141,7 @@ int RequestHandler::handlePipeRead(int pipeDescriptor)
 int RequestHandler::_sendResponse(int socketDescriptor)
 {
     // Get a reference to the Response
-    IResponse &response = this->_sessionManager.getResponse(socketDescriptor);
+    IResponse &response = this->_connectionManager.getResponse(socketDescriptor);
 
     // Serialise the response
     std::vector<char> serialisedResponse = response.serialise();
@@ -150,10 +150,10 @@ int RequestHandler::_sendResponse(int socketDescriptor)
     this->_bufferManager.pushSocketBuffer(socketDescriptor, serialisedResponse);
 
     // create an access log entry
-    this->_logger.log(this->_sessionManager.getSession(socketDescriptor));
+    this->_logger.log(this->_connectionManager.getConnection(socketDescriptor));
 
-    // Remove the session
-    this->_sessionManager.removeSession(socketDescriptor);
+    // Remove the connection
+    this->_connectionManager.removeConnection(socketDescriptor);
     
     // return 0
     return (0);
@@ -163,7 +163,7 @@ int RequestHandler::_sendResponse(int socketDescriptor)
 int RequestHandler::handleErrorResponse(int socketDescriptor, int statusCode)
 {
     // Get a reference to the Response
-    IResponse &response = this->_sessionManager.getResponse(socketDescriptor);
+    IResponse &response = this->_connectionManager.getResponse(socketDescriptor);
 
     // Set the response to the error status code
     response.setErrorResponse(statusCode);
@@ -176,7 +176,7 @@ int RequestHandler::handleErrorResponse(int socketDescriptor, int statusCode)
 int RequestHandler::handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode)
 {
     // Get a reference to the Response
-    IResponse &response = this->_sessionManager.getResponse(socketDescriptor);
+    IResponse &response = this->_connectionManager.getResponse(socketDescriptor);
 
     // Set the response to the error status code
     response.setErrorResponse(statusCode);
