@@ -1,21 +1,41 @@
-#ifndef	TESTSEMANTICACTIONS_HPP
-# define TESTSEMANTICACTIONS_HPP
+// #ifndef	TESTSEMANTICACTIONS_HPP
+// # define TESTSEMANTICACTIONS_HPP
 
-#include "SemanticAction.hpp"
+// #include "SemanticAction.hpp"
+// #include <stack>
 
-class Sum: public ASemanticAction {
-	public:
-		void	execute(std::vector<std::string>& input, std::vector<std::string>& output);
-};
+// template<>
+// class Extension<std::stack<std::string> >: public ASemanticAction<std::stack<std::string> > {
+// 	public:
+// 		void	execute(std::stack<std::string>& result);
+// 		void	execute(std::stack<std::string>& result, Token const & token);
+// };
 
-class Product: public ASemanticAction {
-	public:
-		void	execute(std::vector<std::string>& input, std::vector<std::string>& output);
-};
+// class Sum:Extension<std::stack<std::string> > {
+// 	public:
+// 		void	execute(std::stack<std::string>& result);
+// 		void	execute(std::stack<std::string>& result, Token const & token);	
+// }
 
-class Number: public ASemanticAction {
-	public:
-		void	execute(std::vector<std::string>& input, std::vector<std::string>& output);
-};
+// // template<>
+// // class Product<std::stack<std::string> >: public ASemanticAction<std::stack<std::string> > {
+// // 	public:
+// // 		void	execute(std::stack<std::string>& result);
+// // 		void	execute(std::stack<std::string>& result, Token const & token);
+// // };
 
-#endif
+// // class Number: public ASemanticAction<std::stack<std::string> > {
+// // 	public:
+// // 		void	execute(std::stack<std::string>& result);
+// // 		void	execute(std::stack<std::string>& result, Token const & token);
+// // 		~Number();
+// // };
+
+// // class Factor: public ASemanticAction<std::stack<std::string> > {
+// // 	public:
+// // 		void	execute(std::stack<std::string>& result);
+// // 		void	execute(std::stack<std::string>& result, Token const & token);
+// // 		~Factor();
+// // };
+
+// #endif

@@ -6,7 +6,6 @@ HPARSER_DIR		= ../../includes/parsing/
 SSRC_DIR		= ../../srcs/parsing/
 
 SOURCES         = main.cpp \
-				  TestSemanticActions.cpp \
 				  ../../srcs/parsing/Grammar.cpp \
 				  ../../srcs/parsing/GrammarRule.cpp \
 				  ../../srcs/parsing/GrammarSymbol.cpp \
@@ -16,8 +15,9 @@ SOURCES         = main.cpp \
 				  ../../srcs/parsing/Tokenizer.cpp \
 				  ../../srcs/parsing/TerminalSymbol.cpp \
 				  ../../srcs/parsing/NonTerminalSymbol.cpp \
+				  ../../srcs/parsing/ParseTree.cpp \
 				  ../../srcs/parsing/Parser.cpp \
-				  ../../srcs/parsing/ParseTree.cpp
+				  ../../srcs/parsing/ParsingUtils.cpp
 
 OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 

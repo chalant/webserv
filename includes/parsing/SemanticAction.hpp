@@ -1,26 +1,31 @@
-#ifndef SEMANTICACTION_HPP
-# define SEMANTICACTION_HPP
+// #ifndef SEMANTICACTION_HPP
+// # define SEMANTICACTION_HPP
 
-#include <vector>
-#include "Tokenizer.hpp"
+// #include <vector>
+// #include "Tokenizer.hpp"
+// #include <stack>
+// #include <string>
 
-class ASemanticAction {
-	public:
-		ASemanticAction() {};
-		//virtual ~ASemanticAction() = 0;
-		virtual	void	execute(std::vector<std::string>& input, std::vector<std::string>& output) = 0;
-};
+// class ASemanticAction {
+// 	public:
+// 		virtual	void	execute();
+// 		virtual	void	execute();
+// };
 
-//relays input to output.
-class RelayAction: public ASemanticAction {
-	public:
-		RelayAction() {};
-		~RelayAction() {};
-		void	execute(std::vector<std::string>& input, std::vector<std::string>& output) {
-			for (size_t i = 0; i < input.size(); i++) {
-				output.push_back(input[i]);
-			}
-		};
-};
+// //does nothing but relaying whatever is given to it.
+// class RelayAction: public ASemanticAction {
+// 	public:
+// 		void	execute() {
+// 		};
+// };
 
-#endif
+// // template<>
+// // class ASemanticAction<std::stack<std::string>> {
+// // 	public:
+// // 		ASemanticAction() {};
+// // 		virtual ~ASemanticAction();
+// // 		virtual	void	execute(std::stack<std::string>& container, Token const & token);
+// // 		virtual	void	execute(std::stack<std::string>& container);
+// // };
+
+// #endif

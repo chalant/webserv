@@ -7,14 +7,10 @@ bool	GrammarRuleID::operator==(const GrammarRuleID& other) {
 	return other.id == id;
 }
 
-GrammarRule::GrammarRule(ASemanticAction& action, GrammarRuleID& rule_id): m_action(action), m_rule_id(rule_id) {
+GrammarRule::GrammarRule(GrammarRuleID& rule_id): m_rule_id(rule_id) {
 }
 
 GrammarRule::~GrammarRule() {
-}
-
-const ASemanticAction&	GrammarRule::getSemanticAction() const {
-	return m_action;
 }
 
 int	GrammarRule::getRuleIndex() const {
@@ -38,6 +34,8 @@ bool	GrammarRule::operator==(const GrammarRule& other) {
 }
 
 GrammarSymbol*	GrammarRule::getSymbol(int index) const {
+	if (static_cast<size_t>(index) >= m_symbols.size())
+		return NULL;
 	return	m_symbols[index];
 }
 

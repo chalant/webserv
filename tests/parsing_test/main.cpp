@@ -6,10 +6,12 @@
 
 int	main(void) {
 	Grammar		arithmetic;
-	Sum			sum_action;
-	Product		product_action;
-	Number		number_action;
-	RelayAction	relay;
+	// Sum			sum_action;
+	// Product		product_action;
+	// Factor		factor_action;
+	// Number									number_action;
+	// RelayAction<std::stack<std::string> >	relay;
+	// std::vector<ASemanticAction<std::stack<std::string> > > sem_actions;
 
 	GrammarRuleID	sum_id("sum", 0);
 	GrammarRuleID	product_id("product", 1);
@@ -21,14 +23,14 @@ int	main(void) {
 	GrammarRuleID	close_p(")", 7);
 	GrammarRuleID	num_set("0123456789", 8);
 
-	GrammarRule		sum1(sum_action, sum_id);
-	GrammarRule		sum2(relay, sum_id);
-	GrammarRule		product1(product_action, product_id);
-	GrammarRule		product2(relay, product_id);
-	GrammarRule		factor1(relay, factor_id);
-	GrammarRule		factor2(relay, factor_id);
-	GrammarRule		number1(relay, number_id);
-	GrammarRule		number2(number_action, number_id);
+	GrammarRule		sum1(sum_id);
+	GrammarRule		sum2(sum_id);
+	GrammarRule		product1(product_id);
+	GrammarRule		product2(product_id);
+	GrammarRule		factor1(factor_id);
+	GrammarRule		factor2(factor_id);
+	GrammarRule		number1(number_id);
+	GrammarRule		number2(number_id);
 
 	SubsetSymbolMatching	subset_matching;
 	EqualSymbolMatching		equal_matching;
@@ -42,6 +44,15 @@ int	main(void) {
 	TerminalSymbol		close_par(close_p, subset_matching);
 	NonTerminalSymbol	num(number_id);
 	TerminalSymbol		numbers(num_set, subset_matching);
+
+	// sem_actions.push_back(sum_action);
+	// sem_actions.push_back(relay);
+	// sem_actions.push_back(product_action);
+	// sem_actions.push_back(relay);
+	// sem_actions.push_back(factor_action);
+	// sem_actions.push_back(relay);
+	// sem_actions.push_back(relay);
+	// sem_actions.push_back(number_action);
 
 	sum1.addSymbol(&sum);
 	sum1.addSymbol(&pm);
@@ -80,12 +91,27 @@ int	main(void) {
 	tokens.push_back(Token("+", 0));
 	tokens.push_back(Token("4", 0));
 	tokens.push_back(Token(")", 0));
+	// tokens.push_back(Token("1", 0));
+	// tokens.push_back(Token("+", 0));
+	// tokens.push_back(Token("1", 0));
+	// tokens.push_back(Token("+", 0));
+	// tokens.push_back(Token("1", 0));
+	// tokens.push_back(Token("+", 0));
+	// tokens.push_back(Token("1", 0));
+	// tokens.push_back(Token("+", 0));
+	// tokens.push_back(Token("1", 0));
+	// tokens.push_back(Token("+", 0));
+	// tokens.push_back(Token("1", 0));
 
 	std::vector<std::vector<EarleyItem> >	sets =  std::vector<std::vector<EarleyItem> >();
 
 	Recognizer	recognizer;
 	recognizer.recognize(tokens, arithmetic, sets);
 	recognizer.print(arithmetic, sets);
+
+	Parser	parser(arithmetic);
+	parser.parse(tokens);
+	parser.print(tokens);
 
 	return 0;
 }

@@ -45,8 +45,10 @@ struct SearchState {
 class Parser {
 	private:
 		Grammar const & 						m_grammar;
+		// std::vector<ASemanticAction<T>>& 		m_semantic_actions;
 		std::vector<std::vector<EarleyItem> >	m_earley_sets;
 		std::vector<std::vector<EarleyEdge> >	m_chart;
+		ParseTree								*m_parse_tree;
 		Recognizer								m_recognizer;
 		void									m_buildTree(ParseTree& parse_tree, const std::vector<Token>& tokens);
 		bool									m_searchPath(ParseTree& parse_tree, SearchState state, const std::vector<Token>& tokens);
@@ -54,6 +56,7 @@ class Parser {
 	public:
 		Parser(Grammar const & grammar);
 		void									parse(std::vector<Token> const & tokens);
+		void									print(std::vector<Token> const & tokens);
 };
 
 #endif

@@ -90,7 +90,7 @@ void	Recognizer::recognize(std::vector<Token> const & tokens, Grammar const & gr
 			if (m_symbol == NULL) {
 				complete(grammar, sets, sets[i], j);
 			}
-			else if (m_symbol->terminal()) {
+			else if (m_symbol->terminal() && static_cast<size_t>(i) < tokens.size()) {
 				scan(sets, tokens[i], *current_item);
 			}
 			else {

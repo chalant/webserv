@@ -17,13 +17,11 @@ struct GrammarRuleID {
 class	GrammarRule {
 	private:
 		int								m_rule_idx;
-		ASemanticAction					&m_action;
 		GrammarRuleID&					m_rule_id;
 		std::vector<GrammarSymbol*>		m_symbols;
 	public:
-		GrammarRule(ASemanticAction &action, GrammarRuleID& rule_id);
+		GrammarRule(GrammarRuleID& rule_id);
 		~GrammarRule();
-		const	ASemanticAction&	getSemanticAction(void) const;
 		int							getRuleIndex(void) const;
 		int							ruleID(void) const;
 		const std::string&			getName(void) const;
