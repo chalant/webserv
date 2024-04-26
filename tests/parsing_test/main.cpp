@@ -5,45 +5,53 @@
 #include "NonTerminalSymbol.hpp"
 
 int	main(void) {
-	Grammar		arithmetic;
+	Grammar	arithmetic;
 	// Sum			sum_action;
 	// Product		product_action;
 	// Factor		factor_action;
 	// Number									number_action;
 	// RelayAction<std::stack<std::string> >	relay;
 	// std::vector<ASemanticAction<std::stack<std::string> > > sem_actions;
+	//GrammarRuleBuilder	builder;
 
-	GrammarRuleID	sum_id("sum", 0);
-	GrammarRuleID	product_id("product", 1);
-	GrammarRuleID	factor_id("factor", 2);
-	GrammarRuleID	number_id("number", 3);
-	GrammarRuleID	plus_minus("+-", 4);
-	GrammarRuleID	mul_div("*/", 5);
-	GrammarRuleID	open_p("(", 6);
-	GrammarRuleID	close_p(")", 7);
-	GrammarRuleID	num_set("0123456789", 8);
+	//rule_id = builder.createRuleID("sum");
+	//rule_id.addRule();
+	//rule_id.addRule();
+	//rule_id.addTerminalSymbol()
+	//builder.addRule("sum");
+	//builder.addRule()
 
-	GrammarRule		sum1(sum_id);
-	GrammarRule		sum2(sum_id);
-	GrammarRule		product1(product_id);
-	GrammarRule		product2(product_id);
-	GrammarRule		factor1(factor_id);
-	GrammarRule		factor2(factor_id);
-	GrammarRule		number1(number_id);
-	GrammarRule		number2(number_id);
+	// GrammarRuleID	sum_id("sum", 0);
+	// GrammarRuleID	product_id("product", 1);
+	// GrammarRuleID	factor_id("factor", 2);
+	// GrammarRuleID	number_id("number", 3);
+	// GrammarRuleID	plus_minus("+-", 4);
+	// GrammarRuleID	mul_div("*/", 5);
+	// GrammarRuleID	open_p("(", 6);
+	// GrammarRuleID	close_p(")", 7);
+	// GrammarRuleID	num_set("0123456789", 8);
 
 	SubsetSymbolMatching	subset_matching;
 	EqualSymbolMatching		equal_matching;
 
-	NonTerminalSymbol	sum(sum_id);
-	NonTerminalSymbol	product(product_id);
-	NonTerminalSymbol	factor(factor_id);
-	TerminalSymbol		pm(plus_minus, subset_matching);
-	TerminalSymbol		md(mul_div, subset_matching);
-	TerminalSymbol		open_par(open_p, subset_matching);
-	TerminalSymbol		close_par(close_p, subset_matching);
-	NonTerminalSymbol	num(number_id);
-	TerminalSymbol		numbers(num_set, subset_matching);
+	NonTerminalSymbol	sum("sum",0);
+	NonTerminalSymbol	product("product",1);
+	NonTerminalSymbol	factor("factor",2);
+	TerminalSymbol		pm("+-",3,subset_matching);
+	TerminalSymbol		md("*/",4,subset_matching);
+	TerminalSymbol		open_par("(",5,subset_matching);
+	TerminalSymbol		close_par(")",6,subset_matching);
+	NonTerminalSymbol	num("number",7);
+	TerminalSymbol		numbers("0123456789",8,subset_matching);
+
+	GrammarRule		sum1(sum);
+	GrammarRule		sum2(sum);
+	GrammarRule		product1(product);
+	GrammarRule		product2(product);
+	GrammarRule		factor1(factor);
+	GrammarRule		factor2(factor);
+	GrammarRule		number1(num);
+	GrammarRule		number2(num);
 
 	// sem_actions.push_back(sum_action);
 	// sem_actions.push_back(relay);
@@ -58,6 +66,7 @@ int	main(void) {
 	sum1.addSymbol(&pm);
 	sum1.addSymbol(&product);
 	sum2.addSymbol(&product);
+
 	product1.addSymbol(&product);
 	product1.addSymbol(&md);
 	product1.addSymbol(&factor);
@@ -91,19 +100,8 @@ int	main(void) {
 	tokens.push_back(Token("+", 0));
 	tokens.push_back(Token("4", 0));
 	tokens.push_back(Token(")", 0));
-	// tokens.push_back(Token("1", 0));
-	// tokens.push_back(Token("+", 0));
-	// tokens.push_back(Token("1", 0));
-	// tokens.push_back(Token("+", 0));
-	// tokens.push_back(Token("1", 0));
-	// tokens.push_back(Token("+", 0));
-	// tokens.push_back(Token("1", 0));
-	// tokens.push_back(Token("+", 0));
-	// tokens.push_back(Token("1", 0));
-	// tokens.push_back(Token("+", 0));
-	// tokens.push_back(Token("1", 0));
 
-	std::vector<std::vector<EarleyItem> >	sets =  std::vector<std::vector<EarleyItem> >();
+	std::vector<std::vector<EarleyItem>>	sets = std::vector<std::vector<EarleyItem> >();
 
 	Recognizer	recognizer;
 	recognizer.recognize(tokens, arithmetic, sets);
