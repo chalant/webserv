@@ -14,22 +14,12 @@ int	main(void) {
 	// std::vector<ASemanticAction<std::stack<std::string> > > sem_actions;
 	//GrammarRuleBuilder	builder;
 
-	//rule_id = builder.createRuleID("sum");
+	//rule_id = builder.createNonTerminalSymbol("sum");
 	//rule_id.addRule();
 	//rule_id.addRule();
 	//rule_id.addTerminalSymbol()
 	//builder.addRule("sum");
 	//builder.addRule()
-
-	// GrammarRuleID	sum_id("sum", 0);
-	// GrammarRuleID	product_id("product", 1);
-	// GrammarRuleID	factor_id("factor", 2);
-	// GrammarRuleID	number_id("number", 3);
-	// GrammarRuleID	plus_minus("+-", 4);
-	// GrammarRuleID	mul_div("*/", 5);
-	// GrammarRuleID	open_p("(", 6);
-	// GrammarRuleID	close_p(")", 7);
-	// GrammarRuleID	num_set("0123456789", 8);
 
 	SubsetSymbolMatching	subset_matching;
 	EqualSymbolMatching		equal_matching;
@@ -37,21 +27,12 @@ int	main(void) {
 	NonTerminalSymbol	sum("sum",0);
 	NonTerminalSymbol	product("product",1);
 	NonTerminalSymbol	factor("factor",2);
+	NonTerminalSymbol	num("number",7);
 	TerminalSymbol		pm("+-",3,subset_matching);
 	TerminalSymbol		md("*/",4,subset_matching);
 	TerminalSymbol		open_par("(",5,subset_matching);
 	TerminalSymbol		close_par(")",6,subset_matching);
-	NonTerminalSymbol	num("number",7);
 	TerminalSymbol		numbers("0123456789",8,subset_matching);
-
-	GrammarRule		sum1(sum);
-	GrammarRule		sum2(sum);
-	GrammarRule		product1(product);
-	GrammarRule		product2(product);
-	GrammarRule		factor1(factor);
-	GrammarRule		factor2(factor);
-	GrammarRule		number1(num);
-	GrammarRule		number2(num);
 
 	// sem_actions.push_back(sum_action);
 	// sem_actions.push_back(relay);
@@ -62,33 +43,44 @@ int	main(void) {
 	// sem_actions.push_back(relay);
 	// sem_actions.push_back(number_action);
 
-	sum1.addSymbol(&sum);
-	sum1.addSymbol(&pm);
-	sum1.addSymbol(&product);
-	sum2.addSymbol(&product);
-
-	product1.addSymbol(&product);
-	product1.addSymbol(&md);
-	product1.addSymbol(&factor);
-	product2.addSymbol(&factor);
-
-	factor1.addSymbol(&open_par);
-	factor1.addSymbol(&sum);
-	factor1.addSymbol(&close_par);
-	factor2.addSymbol(&num);
-	number1.addSymbol(&numbers);
-	number1.addSymbol(&num);
-	number2.addSymbol(&numbers);
-
-
-	arithmetic.addRule(&sum1);
-	arithmetic.addRule(&sum2);
-	arithmetic.addRule(&product1);
-	arithmetic.addRule(&product2);
-	arithmetic.addRule(&factor1);
-	arithmetic.addRule(&factor2);
-	arithmetic.addRule(&number1);
-	arithmetic.addRule(&number2);
+	GrammarRule	*rule = arithmetic.addRule(sum);
+	rule->addSymbol(&sum);
+	rule->addSymbol(&pm);
+	rule->addSymbol(&product);
+	
+	rule = arithmetic.addRule(sum);
+	rule->addSymbol(&product);
+	
+	rule = arithmetic.addRule(product);
+	rule->addSymbol(&product);
+	rule->addSymbol(&md);
+	rule->addSymbol(&factor);
+	
+	rule = arithmetic.addRule(product);
+	rule->addSymbol(&factor);
+	
+	rule = arithmetic.addRule(factor);
+	rule->addSymbol(&open_par);
+	rule->addSymbol(&sum);
+	rule->addSymbol(&close_par);
+	
+	rule = arithmetic.addRule(factor);
+	rule->addSymbol(&num);
+	
+	rule = arithmetic.addRule(num);
+	rule->addSymbol(&numbers);
+	rule->addSymbol(&num);
+	
+	rule = arithmetic.addRule(num);
+	rule->addSymbol(&numbers);
+	
+	// arithmetic.addRule(&sum2);
+	// arithmetic.addRule(&rule);
+	// arithmetic.addRule(&product2);
+	// arithmetic.addRule(&factor1);
+	// arithmetic.addRule(&factor2);
+	// arithmetic.addRule(&number1);
+	// arithmetic.addRule(&number2);
 
 	std::vector<Token> tokens = std::vector<Token>();
 	tokens.push_back(Token("1", 0));
