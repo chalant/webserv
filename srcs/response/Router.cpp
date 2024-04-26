@@ -14,72 +14,44 @@ Router::Router(const IConfiguration &configuration, ILogger &logger)
 	std::vector<IBlock *>::iterator serverIt;
 	for (serverIt = servers.begin(); serverIt != servers.end(); serverIt++)
 	{
-		routeMapEntry newEntry = this->_createServerRoutes(*serverIt);
-		this->_routes.insert(newEntry);
+		this->_createServerRoutes(*serverIt);
 	}
 }
 
-routeMapEntry Router::_createServerRoutes(const IBlock *serverBlock)
+void Router::_createServerRoutes(IBlock *serverBlock)
 {
-	// Make Authority vector
-	authorities authorities = this->_createAuthorities(serverBlock);
-
-	// Make Route vector
-	routes routes = this->_createRoutes(serverBlock);
-
-	// Return the pair of authorities and routes
-	return std::make_pair(authorities, routes);
+	this->_createRoutes(serverBlock);
 }
 
-authorities Router::_createAuthorities(const IBlock *serverBlock)
+void Router::_createRoutes(IBlock *serverBlock)
 {
-	// Permutations of hostnames and ports
-	std::vector<std::string> authorities;
-
+	std::vector<IBlock *> locations = serverBlock->getBlocks("location");
+	std::vector<IBlock *>::iterator locationIt;
 	std::vector<std::string> hostnames = serverBlock->getStringVector("serverName");
 	std::vector<std::string> ports = serverBlock->getStringVector("port");
-
 	std::vector<std::string>::iterator hostnameIt;
 	std::vector<std::string>::iterator portIt;
+	size_t	i = 0;
 
 	for (hostnameIt = hostnames.begin(); hostnameIt != hostnames.end(); hostnameIt++)
 	{
-		for (portIt = ports.begin(); portIt != ports.end(); portIt++)
-		{
-			authorities.push_back(*hostnameIt + ":" + *portIt);
-		}
+		_routes[i].append(*hostnameIt);
+		_routes[i++].append(":");
 	}
-	return authorities;
-}
-
-routes Router::_createRoutes(IBlock *serverBlock)
-{
-	routes routes;
-
-	std::vector<IBlock *> locations = serverBlock->getBlocks("location");
-
-	std::vector<IBlock *>::iterator locationIt;
-
+	i = 0;
+	for (portIt = ports.begin(); portIt != ports.end(); portIt++)
+	{
+		_routes[i++].append(*portIt);
+	}
+	i = 0;
 	for (locationIt = locations.begin(); locationIt != locations.end(); locationIt++)
 	{
-		std::vector<HttpMethod> methods = (*locationIt)->getStringVector("limitExcept");
+		std::vector<std::string> methods = (*locationIt)->getStringVector("limitExcept");
 		std::string prefix = (*locationIt)->getString("prefix");
-		Route route;
-		route.setMethods(methods);
-		route.setPrefix(prefix);
-		routes.push_back(route);
-	}
-	return routes;
-}
+		_routes[i].setMethods(methods);
+		_routes[i++].append(prefix);
 
-void Router::addRoute(const Request &request, void (*newHandler)(Request *, Response *))
-{
-	// Simply adds a route to the vector of the Router
-	Route route;
-	route.setUri(request.getUri());
-	route.setMethod(request.getMethod());
-	route.handler = newHandler;
-	_routes.push_back(route);
+	}
 }
 
 void Router::execRoute(Request *req, Response *res)
@@ -112,12 +84,12 @@ void Route::setUri(std::string newUri)
 	this->_uri = newUri;
 }
 
-HttpMethod Route::getMethod() const
+std::string Route::getMethod() const
 {
 	return (this->_method);
 }
 
-void Route::setMethod(HttpMethod newMethod)
+void Route::setMethod(std::string newMethod)
 {
 	this->_method = newMethod;
 }

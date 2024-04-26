@@ -18,24 +18,27 @@ locationblock)*/
 
 class Response;
 
-typedef std::vector<std::string> authorities_t;
+/*typedef std::vector<std::string> authorities_t;
 typedef std::vector<Route> routes_t;
 typedef std::pair<const authorities_t, routes_t> routeMapEntry_t;
-typedef std::map<authorities_t, routes_t> routeMap_t;
+typedef std::map<authorities_t, routes_t> routeMap_t;*/
 
+
+
+typedef std::vector<Route> routes_t;
 // Route structure with function pointer for handler
 struct Route
 {
 public:
     std::string getUri() const;
     void setUri(std::string newUri);
-    HttpMethod getMethod() const;
-    void setMethod(HttpMethod newMethod);
+    std::string getMethod() const;
+    void setMethod(std::string newMethod);
     void (*handler)(Request *, Response *);
 
 private:
     std::string _uri;
-    HttpMethod _method;
+    std::string _method;
 };
 
 // Router class using std::map for route storage
@@ -47,10 +50,15 @@ public:
     void execRoute(Request *req, Response *res);
 
 private:
-    routeMap_t _routes;
+    /*routeMap_t _routes;
     routeMapEntry_t _createServerRoutes(const IBlock *serverBlock);
     authorities_t _createAuthorities(const IBlock *serverBlock);
-    routes_t _createRoutes(IBlock *serverBlock);
+    routes_t _createRoutes(IBlock *serverBlock);*/
+
+    routes_t    _routes;
+    void _createServerRoutes(IBlock *serverBlock);
+    void _createRoutes(IBlock *serverBlock);
+
 };
 
 #endif
