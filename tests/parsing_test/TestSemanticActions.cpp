@@ -1,35 +1,35 @@
 #include "TestSemanticActions.hpp"
 
-void	Sum::execute(std::stack<std::string>& result) {
-	std::string&	str = result.top();
-	int	left;
-	int	right;
+// void	Sum::execute(std::stack<std::string>& result) {
+// 	std::string&	str = result.top();
+// 	int	left;
+// 	int	right;
 
-	result.pop();
-	if (str == "+") { 
-		left = std::stoi(result.top());
-		result.pop();
-		right = std::stoi(result.top());
-		result.pop();
-		result.push(std::to_string(left + right));
-	}
-	else if (str == "-") { 
-		left = std::stoi(result.top());
-		result.pop();
-		right = std::stoi(result.top());
-		result.pop();
-		result.push(std::to_string(left - right));
-	}
-}
+// 	result.pop();
+// 	if (str == "+") { 
+// 		left = std::stoi(result.top());
+// 		result.pop();
+// 		right = std::stoi(result.top());
+// 		result.pop();
+// 		result.push(std::to_string(left + right));
+// 	}
+// 	else if (str == "-") { 
+// 		left = std::stoi(result.top());
+// 		result.pop();
+// 		right = std::stoi(result.top());
+// 		result.pop();
+// 		result.push(std::to_string(left - right));
+// 	}
+// }
 
-void	Sum::execute(std::stack<std::string>& result, Token const & token) {
-	(void)result;
-	(void)token;
-}
+// void	Sum::execute(std::stack<std::string>& result, Token const & token) {
+// 	(void)result;
+// 	(void)token;
+// }
 
-Sum::~Sum() {
+// Sum::~Sum() {
 
-}
+// }
 
 // void	Product::execute(std::stack<std::string>& result) {
 // 	std::string&	str = result.top();
