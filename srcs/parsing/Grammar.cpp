@@ -7,15 +7,15 @@ Grammar::Grammar() {
 Grammar::~Grammar() {
 }
 
-void	Grammar::addRule(GrammarRule* rule) {
+GrammarRule*	Grammar::addRule(NonTerminalSymbol const & symbol) {
 	m_size++;
-	m_rules.push_back(rule);
+	m_rules.push_back(GrammarRule(symbol));
+	return &m_rules[m_rules.size() - 1];
 }
 
 const GrammarRule	*Grammar::getRule(int index) const {
-	return m_rules[index];
+	return &m_rules[index];
 }
-
 size_t	Grammar::size() const {
 	return m_size;
 }

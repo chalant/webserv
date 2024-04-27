@@ -1,33 +1,27 @@
 #if !defined(GRAMMARRULE_HPP)
 #define GRAMMARRULE_HPP
 
-#include "GrammarRule.hpp"
 #include "SemanticAction.hpp"
 #include "GrammarSymbol.hpp"
+#include "NonTerminalSymbol.hpp"
 
-class GrammarSymbol;
-
-struct GrammarRuleID {
-	const std::string	name;
-	int					id;
-	GrammarRuleID(const std::string name, int id);
-	bool				operator==(const GrammarRuleID& other);
-};
+class AGrammarSymbol;
+class NonTerminalSymbol;
 
 class	GrammarRule {
 	private:
-		int								m_rule_idx;
-		GrammarRuleID&					m_rule_id;
-		std::vector<GrammarSymbol*>		m_symbols;
+		int							m_rule_idx;
+		NonTerminalSymbol const &	m_symbol;
+		std::vector<AGrammarSymbol*>	m_symbols;
 	public:
-		GrammarRule(GrammarRuleID& rule_id);
+		GrammarRule(NonTerminalSymbol const & symbol);
 		~GrammarRule();
 		int							getRuleIndex(void) const;
 		int							ruleID(void) const;
 		const std::string&			getName(void) const;
 		void						setRuleIndex(int rule_idx);
-		void						addSymbol(GrammarSymbol *symbol);
-		GrammarSymbol*				getSymbol(int index) const;
+		void						addSymbol(AGrammarSymbol *symbol);
+		AGrammarSymbol*				getSymbol(int index) const;
 		bool						operator==(const GrammarRule& other);
 		size_t						size(void) const;
 };

@@ -5,7 +5,7 @@ INCLUDES_DIR	= ../../includes
 HPARSER_DIR		= ../../includes/parsing/
 SSRC_DIR		= ../../srcs/parsing/
 
-SOURCES         = main.cpp \
+SOURCES         = parsing_test_main.cpp \
 				  ../../srcs/parsing/Grammar.cpp \
 				  ../../srcs/parsing/GrammarRule.cpp \
 				  ../../srcs/parsing/GrammarSymbol.cpp \

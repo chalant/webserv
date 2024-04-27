@@ -52,7 +52,7 @@ class Parser {
 		Recognizer								m_recognizer;
 		void									m_buildTree(ParseTree& parse_tree, const std::vector<Token>& tokens);
 		bool									m_searchPath(ParseTree& parse_tree, SearchState state, const std::vector<Token>& tokens);
-		bool									m_processTerminal(ParseTree& parse_tree, SearchState state, const GrammarSymbol& symbol, const std::vector<Token>& tokens);
+		bool									m_processTerminal(ParseTree& parse_tree, SearchState state, const AGrammarSymbol& symbol, const std::vector<Token>& tokens);
 	public:
 		Parser(Grammar const & grammar);
 		void									parse(std::vector<Token> const & tokens);

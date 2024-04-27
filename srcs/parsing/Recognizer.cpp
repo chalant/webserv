@@ -9,7 +9,7 @@ bool	contains_item(std::vector<EarleyItem>& set, EarleyItem& item) {
 	return false;
 }
 
-GrammarSymbol	*next_symbol(const Grammar& grammar, EarleyItem& item) {
+AGrammarSymbol	*next_symbol(const Grammar& grammar, EarleyItem& item) {
 	const GrammarRule*	rule;
 
 	rule = grammar.getRule(item.ruleIndex());
@@ -38,7 +38,7 @@ void	Recognizer::scan(std::vector<std::vector<EarleyItem> >& sets, Token const &
 void	Recognizer::complete(Grammar const & grammar, std::vector<std::vector<EarleyItem> >& sets, std::vector<EarleyItem>& current_set, int item_index) {
 	EarleyItem		*old_item;
 	EarleyItem		*current_item;
-	GrammarSymbol	*next;
+	AGrammarSymbol	*next;
 
 	current_item = &current_set[item_index];
 	for (size_t i = 0; i < sets[current_item->start()].size(); i++) {

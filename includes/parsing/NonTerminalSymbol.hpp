@@ -6,11 +6,12 @@
 
 class GrammarRule;
 
-class NonTerminalSymbol: public GrammarSymbol {
+class NonTerminalSymbol: public AGrammarSymbol {
 	private:
-		const GrammarRuleID&	m_rule_id;
+		std::string const 		m_name;
+		const int				m_id;
 	public:
-		NonTerminalSymbol(const GrammarRuleID& rule);
+		NonTerminalSymbol(std::string const name, int id);
 		bool					matchRule(const GrammarRule& rule);
 		int						ruleID() const;
 		const std::string&		getValue(void) const;

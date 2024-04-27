@@ -76,7 +76,7 @@ Parser::Parser(Grammar const & grammar): m_grammar(grammar) {
 }
 
 //match the current symbol with the token
-bool	Parser::m_processTerminal(ParseTree& parse_tree, SearchState state, const GrammarSymbol& symbol, const std::vector<Token>& tokens) {
+bool	Parser::m_processTerminal(ParseTree& parse_tree, SearchState state, const AGrammarSymbol& symbol, const std::vector<Token>& tokens) {
 	if (state.node >= parse_tree.end())
 		return false;
 	if (!symbol.match(tokens[state.node]))
@@ -89,7 +89,7 @@ bool	Parser::m_processTerminal(ParseTree& parse_tree, SearchState state, const G
 }
 
 bool	Parser::m_searchPath(ParseTree& parse_tree, SearchState state, const std::vector<Token>& tokens) {
-	GrammarSymbol	*symbol;
+	AGrammarSymbol	*symbol;
 
 	symbol = m_grammar.getRule(state.rule_index)->getSymbol(state.depth);
 	//reached the end of the rules

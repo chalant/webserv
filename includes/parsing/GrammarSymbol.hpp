@@ -2,7 +2,7 @@
 #define GRAMMARSYMBOL_HPP
 
 #include "Tokenizer.hpp"
-#include "Grammar.hpp"
+//#include "Grammar.hpp"
 
 struct GrammarRuleID;
 
@@ -13,36 +13,11 @@ enum GrammarSymbolType {
 	NON_TERMINAL
 };
 
-class ASymbolMatching {
-	public:
-		virtual	bool	match(const Token& token, const std::string& value) = 0;
-};
-
-class EqualSymbolMatching: public ASymbolMatching {
-	public:
-		bool	match(const Token& token, const std::string& value);
-};
-
-class SubsetSymbolMatching: public ASymbolMatching {
-	public:
-		bool	match(const Token& token, const std::string& value);
-};
-
-class FalseSymbolMatching: public ASymbolMatching {
-	public:
-		bool	match(const Token& token, const std::string& value);
-};
-
-class WordSymbolMatching: public ASymbolMatching {
-	public:
-		bool	match(const Token& token, const std::string& value);
-};
-
-class GrammarSymbol {
+class AGrammarSymbol {
 	private:
-		int	m_rule_idx;
+		int							m_rule_idx;
 	public:
-		virtual						~GrammarSymbol() = 0;
+		virtual						~AGrammarSymbol() = 0;
 		int							getRuleIndex(void) const;
 		void						setRuleIndex(int index);
 		virtual bool 				match(const Token& token) const;
