@@ -31,10 +31,11 @@ struct Route
 {
 public:
     std::string getUri() const;
-    void setUri(std::string newUri);
+    void 		setUri(std::string newUri);
     std::string getMethod() const;
-    void setMethod(std::string newMethod);
-    void (*handler)(Request *, Response *);
+    void		setMethod(std::string newMethod);
+    void		(*handler)(Request *, Response *);
+    bool		operator< (const Route &other) const;
 
 private:
     std::string _uri;
