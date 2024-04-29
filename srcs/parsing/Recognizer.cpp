@@ -45,7 +45,7 @@ void	Recognizer::complete(Grammar const & grammar, std::vector<std::vector<Earle
 		current_item->completed(true);
 		old_item = &sets[current_item->start()][i];
 		next = next_symbol(grammar, *old_item);
-		if (next->matchRule(*grammar.getRule(current_item->ruleIndex()))) {
+		if (next && next->matchRule(*grammar.getRule(current_item->ruleIndex()))) {
 			EarleyItem	new_item(old_item->ruleIndex(), old_item->start(), old_item->next() + 1);
 			if (!contains_item(current_set, new_item)) {
 				current_set.push_back(new_item);

@@ -3,7 +3,9 @@
 TerminalSymbol::TerminalSymbol():m_value(""), m_id(0) {
 }
 
-TerminalSymbol::TerminalSymbol(std::string const value, int const id):m_value(value), m_id(id) {
+TerminalSymbol::TerminalSymbol(std::string const value, int const id):
+	m_value(value),
+	m_id(id){
 }
 
 TerminalSymbol::~TerminalSymbol() {
@@ -25,7 +27,11 @@ const std::string&	TerminalSymbol::getValue(void) const {
 	return m_value;
 }
 
-TerminalSymbolSet::TerminalSymbolSet(std::string const name, int id, std::vector<std::string> const values, ASymbolMatching& matching):m_value(name), m_id(id), m_values(values), m_matching(matching) {
+TerminalSymbolSet::TerminalSymbolSet(std::string const name, int id, std::vector<std::string> const values, ASymbolMatching& matching):
+	m_value(name), 
+	m_id(id), 
+	m_values(values), 
+	m_matching(matching) {
 }
 
 bool TerminalSymbolSet::match(Token const & token) const {
@@ -34,7 +40,3 @@ bool TerminalSymbolSet::match(Token const & token) const {
 
 TerminalSymbolSet::~TerminalSymbolSet() {
 }
-
-// void	TerminalSymbol::addValue(std::string const value) {
-// 	m_values.push_back(value);
-// }

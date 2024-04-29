@@ -4,6 +4,8 @@
 #include "TerminalSymbol.hpp"
 #include "NonTerminalSymbol.hpp"
 
+#include <fstream>
+
 int	main(void) {
 	// Sum			sum_action;
 	// Product		product_action;
@@ -73,114 +75,112 @@ int	main(void) {
 	rule = arithmetic.addRule(num);
 	rule->addSymbol(&numbers);
 
-	std::vector<Token> tokens = std::vector<Token>();
-	tokens.push_back(Token("1", 0));
-	tokens.push_back(Token("+", 0));
-	tokens.push_back(Token("(", 0));
-	tokens.push_back(Token("2", 0));
-	tokens.push_back(Token("*", 0));
-	tokens.push_back(Token("3", 0));
-	tokens.push_back(Token("+", 0));
-	tokens.push_back(Token("40", 0));
-	tokens.push_back(Token(")", 0));
-
 	std::vector<std::vector<EarleyItem>>	sets = std::vector<std::vector<EarleyItem> >();
 
+	Tokenizer	tokenizer({" ", ";", "/"}, {"+", "-", "*", "/", "(", ")"});
 	Recognizer	recognizer;
-	recognizer.recognize(tokens, arithmetic, sets);
+
+	std::ifstream	fi("test_file.txt");
+	const std::vector<Token>&	toks = tokenizer.tokenize("1 1 + 12");
+	
+	for (size_t i = 0; i < toks.size(); i++) {
+		std::cout << "Tokens " << toks[i].value << std::endl;
+	}
+
+	recognizer.recognize(toks, arithmetic, sets);
 	recognizer.print(arithmetic, sets);
 
 	Parser	parser(arithmetic);
-	parser.parse(tokens);
-	parser.print(tokens);
+	parser.parse(toks);
+	parser.print(toks);
 
-	Grammar				nginx_configuration_grammar;
+	// Grammar				nginx_configuration_grammar;
 
-	NonTerminalSymbol	configuration("configuration", 0);
-	NonTerminalSymbol	configuration_element("configuration_element", 1);
-	NonTerminalSymbol	block("block", 2);
-	NonTerminalSymbol	directive("directive", 3);
-	NonTerminalSymbol	parameters("parameters", 4);
-	NonTerminalSymbol	parameter("parameter", 5);
-	NonTerminalSymbol	comment("comment", 6);
-	NonTerminalSymbol	value("value", 7);
-	NonTerminalSymbol	directive_name("directive_name", 8);
-	NonTerminalSymbol	identifier("identifier", 9);
-	NonTerminalSymbol	text("text", 10);
+	// NonTerminalSymbol	configuration("configuration", 0);
+	// NonTerminalSymbol	configuration_element("configuration_element", 1);
+	// NonTerminalSymbol	block("block", 2);
+	// NonTerminalSymbol	directive("directive", 3);
+	// NonTerminalSymbol	parameters("parameters", 4);
+	// NonTerminalSymbol	parameter("parameter", 5);
+	// NonTerminalSymbol	comment("comment", 6);
+	// NonTerminalSymbol	value("value", 7);
+	// NonTerminalSymbol	directive_name("directive_name", 8);
+	// NonTerminalSymbol	identifier("identifier", 9);
+	// NonTerminalSymbol	text("text", 10);
 
-	TerminalSymbol		curl_open("{", 11);
-	TerminalSymbol		curl_close("}", 12);
-	TerminalSymbol		semicolon(";", 13);
-	TerminalSymbol		hashtag("#", 14);
-	TerminalSymbolSet	boolean("boolean", 15, {"on", "off"}, substring_matching);
-	TerminalSymbol		underscore("_", 16);
-	TerminalSymbolSet	letters("letters", 17, {}, alpha_matching);
-	TerminalSymbolSet	digits("digits", 18, {}, digit_matching);
-	TerminalSymbolSet	string_("string", 19, {}, printable_ascii_matching);
+	// TerminalSymbol		curl_open("{", 11);
+	// TerminalSymbol		curl_close("}", 12);
+	// TerminalSymbol		semicolon(";", 13);
+	// TerminalSymbol		hashtag("#", 14);
+	// TerminalSymbolSet	boolean("boolean", 15, {"on", "off"}, substring_matching);
+	// TerminalSymbol		underscore("_", 16);
+	// TerminalSymbolSet	letters("letters", 17, {}, alpha_matching);
+	// TerminalSymbolSet	digits("digits", 18, {}, digit_matching);
+	// TerminalSymbolSet	string_("string", 19, {}, printable_ascii_matching);
 
-	//configuration
-	rule = nginx_configuration_grammar.addRule(configuration);
-	rule->addSymbol(&configuration_element);
-	rule->addSymbol(&configuration);
+	// //configuration
+	// rule = nginx_configuration_grammar.addRule(configuration);
+	// rule->addSymbol(&configuration_element);
+	// rule->addSymbol(&configuration);
 	
-	//configuration element
-	rule = nginx_configuration_grammar.addRule(configuration_element);
-	rule->addSymbol(&directive);
-	rule = nginx_configuration_grammar.addRule(configuration_element);
-	rule->addSymbol(&block);
-	rule = nginx_configuration_grammar.addRule(configuration_element);
-	rule->addSymbol(&comment);
-	rule = nginx_configuration_grammar.addRule(configuration_element);
+	// //configuration element
+	// rule = nginx_configuration_grammar.addRule(configuration_element);
+	// rule->addSymbol(&directive);
+	// rule = nginx_configuration_grammar.addRule(configuration_element);
+	// rule->addSymbol(&block);
+	// rule = nginx_configuration_grammar.addRule(configuration_element);
+	// rule->addSymbol(&comment);
+	// rule = nginx_configuration_grammar.addRule(configuration_element);
 
-	//directive
-	rule = nginx_configuration_grammar.addRule(directive);
-	rule->addSymbol(&directive_name);
-	rule->addSymbol(&parameters);
-	rule->addSymbol(&semicolon);
+	// //directive
+	// rule = nginx_configuration_grammar.addRule(directive);
+	// rule->addSymbol(&directive_name);
+	// rule->addSymbol(&parameters);
+	// rule->addSymbol(&semicolon);
 
-	//block
-	rule = nginx_configuration_grammar.addRule(block);
-	rule->addSymbol(&curl_open);
-	rule->addSymbol(&configuration);
-	rule->addSymbol(&curl_close);
+	// //block
+	// rule = nginx_configuration_grammar.addRule(block);
+	// rule->addSymbol(&curl_open);
+	// rule->addSymbol(&configuration);
+	// rule->addSymbol(&curl_close);
 
-	//comment
-	rule = nginx_configuration_grammar.addRule(comment);
-	rule->addSymbol(&hashtag);
-	rule->addSymbol(&text);
+	// //comment
+	// rule = nginx_configuration_grammar.addRule(comment);
+	// rule->addSymbol(&hashtag);
+	// rule->addSymbol(&text);
 
-	//parameters
-	rule = nginx_configuration_grammar.addRule(parameters);
-	rule->addSymbol(&value);
-	rule->addSymbol(&parameters);
-	rule = nginx_configuration_grammar.addRule(parameters);
-	rule->addSymbol(&value);
+	// //parameters
+	// rule = nginx_configuration_grammar.addRule(parameters);
+	// rule->addSymbol(&value);
+	// rule->addSymbol(&parameters);
+	// rule = nginx_configuration_grammar.addRule(parameters);
+	// rule->addSymbol(&value);
 
-	//value
-	rule = nginx_configuration_grammar.addRule(value);
-	rule->addSymbol(&string_);
-	rule = nginx_configuration_grammar.addRule(value);
-	rule->addSymbol(&boolean);
-	rule = nginx_configuration_grammar.addRule(value);
+	// //value
+	// rule = nginx_configuration_grammar.addRule(value);
+	// rule->addSymbol(&string_);
+	// rule = nginx_configuration_grammar.addRule(value);
+	// rule->addSymbol(&boolean);
+	// rule = nginx_configuration_grammar.addRule(value);
 
-	//directive_name
-	rule = nginx_configuration_grammar.addRule(directive_name);
+	// //directive_name
+	// rule = nginx_configuration_grammar.addRule(directive_name);
 
-	//identifier
-	rule = nginx_configuration_grammar.addRule(identifier);
-	rule->addSymbol(&letters);
-	rule = nginx_configuration_grammar.addRule(identifier);
-	rule->addSymbol(&underscore);
-	rule = nginx_configuration_grammar.addRule(identifier);
-	rule->addSymbol(&letters);
-	rule->addSymbol(&identifier);
+	// //identifier
+	// rule = nginx_configuration_grammar.addRule(identifier);
+	// rule->addSymbol(&letters);
+	// rule = nginx_configuration_grammar.addRule(identifier);
+	// rule->addSymbol(&underscore);
+	// rule = nginx_configuration_grammar.addRule(identifier);
+	// rule->addSymbol(&letters);
+	// rule->addSymbol(&identifier);
 
-	//text
-	rule = nginx_configuration_grammar.addRule(text);
-	rule->addSymbol(&string_);
-	rule = nginx_configuration_grammar.addRule(text);
-	rule->addSymbol(&string_);
-	rule->addSymbol(&text);
+	// //text
+	// rule = nginx_configuration_grammar.addRule(text);
+	// rule->addSymbol(&string_);
+	// rule = nginx_configuration_grammar.addRule(text);
+	// rule->addSymbol(&string_);
+	// rule->addSymbol(&text);
 
 	return 0;
 }
