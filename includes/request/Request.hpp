@@ -35,8 +35,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "configuration/IConfiguration.hpp"
-#include "exception/WebservExceptions.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../exception/WebservExceptions.hpp"
 
 class Request : public IRequest
 {

@@ -10,10 +10,10 @@ locationblock)*/
 
 #include <string>
 #include <vector>
-#include "Request.hpp"
-#include "HttpMethodHelper.hpp"
-#include "IConfiguration.hpp"
-#include "ILogger.hpp"
+#include "../request/Request.hpp"
+#include "../constants/HttpMethodHelper.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../logger/ILogger.hpp"
 #include "IRouter.hpp"
 
 class Response;

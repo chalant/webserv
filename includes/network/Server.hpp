@@ -12,11 +12,11 @@
 
 #include "IServer.hpp"
 #include "ISocket.hpp"
-#include "configuration/IConfiguration.hpp"
-#include "logger/ILogger.hpp"
-#include "pollfd/IPollfdManager.hpp"
-#include "connection/IConnectionManager.hpp"
-#include "exception/WebservExceptions.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../logger/ILogger.hpp"
+#include "../pollfd/IPollfdManager.hpp"
+#include "../connection/IConnectionManager.hpp"
+#include "../exception/WebservExceptions.hpp"
 
 class Server : public IServer
 {

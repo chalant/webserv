@@ -10,10 +10,10 @@
 
 #include "IClientHandler.hpp"
 #include <string>
-#include "logger/ILogger.hpp"
-#include "exception/IExceptionHandler.hpp"
-#include "response/IResponse.hpp"
-#include "network/ISocket.hpp"
+#include "../logger/ILogger.hpp"
+#include "../exception/IExceptionHandler.hpp"
+#include "../response/IResponse.hpp"
+#include "../network/ISocket.hpp"
 
 class ClientHandler : public IClientHandler
 {

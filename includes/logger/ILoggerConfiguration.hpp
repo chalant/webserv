@@ -1,8 +1,8 @@
 #ifndef ILOGGERCONFIGURATION_HPP
 #define ILOGGERCONFIGURATION_HPP
 
-#include "constants/LogLevelHelper.hpp"
-#include "buffer/IBufferManager.hpp"
+#include "../constants/LogLevelHelper.hpp"
+#include "../buffer/IBufferManager.hpp"
 
 #include <string>
 

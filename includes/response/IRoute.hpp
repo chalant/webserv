@@ -3,8 +3,8 @@
 
 #include <string>
 #include "Response.hpp"
-#include "request/IRequest.hpp"
-#include "constants/HttpMethodHelper.hpp"
+#include "../request/IRequest.hpp"
+#include "../constants/HttpMethodHelper.hpp"
 
 class IRoute
 {

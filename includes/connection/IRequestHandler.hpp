@@ -1,7 +1,7 @@
 #ifndef IREQUESTHANDLER_HPP
 #define IREQUESTHANDLER_HPP
 
-#include "constants/HttpStatusCodeHelper.hpp"
+#include "../constants/HttpStatusCodeHelper.hpp"
 
 class IRequestHandler
 {

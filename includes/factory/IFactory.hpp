@@ -1,10 +1,10 @@
 #ifndef IFACTORY_HPP
 #define IFACTORY_HPP
 
-#include "connection/IConnection.hpp"
-#include "request/IRequest.hpp"
-#include "response/IResponse.hpp"
-#include "connection/ISession.hpp"
+#include "../connection/IConnection.hpp"
+#include "../request/IRequest.hpp"
+#include "../response/IResponse.hpp"
+#include "../connection/ISession.hpp"
 
 class IFactory
 {

@@ -9,7 +9,7 @@ file data. This data is used to initiate the 'Server' and the 'Router'*/
 #include <map>
 #include <vector>
 #include <stdexcept>
-#include "logger/ILogger.hpp"
+#include "../logger/ILogger.hpp"
 
 class Configuration : public IConfiguration
 {

@@ -16,10 +16,10 @@
 #include <map>
 #include "IConnection.hpp"
 #include "ISession.hpp"
-#include "configuration/IConfiguration.hpp"
-#include "logger/ILogger.hpp"
-#include "factory/IFactory.hpp"
-#include "constants/HttpHelper.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../logger/ILogger.hpp"
+#include "../factory/IFactory.hpp"
+#include "../constants/HttpHelper.hpp"
 
 class ConnectionManager : public IConnectionManager
 {

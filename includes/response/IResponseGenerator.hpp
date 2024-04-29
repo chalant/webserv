@@ -3,8 +3,8 @@
 
 #include "IResponse.hpp"
 #include "IRoute.hpp"
-#include "request/IRequest.hpp"
-#include "configuration/IConfiguration.hpp"
+#include "../request/IRequest.hpp"
+#include "../configuration/IConfiguration.hpp"
 
 class IResponseGenerator
 {

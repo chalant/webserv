@@ -16,9 +16,9 @@
 typedef int SocketDescriptor_t;
 
 #include <string>
-#include "request/IRequest.hpp"
-#include "response/IResponse.hpp"
-#include "connection/ISession.hpp"
+#include "../request/IRequest.hpp"
+#include "../response/IResponse.hpp"
+#include "../connection/ISession.hpp"
 
 class IConnection
 {

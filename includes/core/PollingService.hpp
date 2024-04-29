@@ -4,9 +4,9 @@
 #include "IPollingService.hpp"
 #include <stddef.h>
 #include <poll.h>
-#include "pollfd/IPollfdManager.hpp"
-#include "logger/ILogger.hpp"
-#include "exception/WebservExceptions.hpp"
+#include "../pollfd/IPollfdManager.hpp"
+#include "../logger/ILogger.hpp"
+#include "../exception/WebservExceptions.hpp"
 
 class PollingService : public IPollingService
 {
