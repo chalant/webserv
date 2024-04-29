@@ -53,7 +53,7 @@ std::map<std::string, std::string> MockRequest::getQueryParameters() const { ret
 
 std::map<std::string, std::string> MockRequest::getCookies() const { return std::map<std::string, std::string>(); };
 
-const std::string &MockRequest::getCookie(const std::string &key) const
+std::string MockRequest::getCookie(const std::string &key) const
 {
     static_cast<void>(key);
     static const std::string emptyString;
@@ -63,6 +63,48 @@ const std::string &MockRequest::getCookie(const std::string &key) const
 const std::vector<char> MockRequest::getBody() const { return _testBody; };
 
 std::string MockRequest::getBodyString() const { return std::string(_testBody.begin(), _testBody.end()); };
+
+std::string MockRequest::getQueryString() const
+{
+    // Check if the URI contains a query string
+    size_t queryStart = _testUri.find("?");
+    if (queryStart == std::string::npos)
+        return "";
+    return _testUri.substr(queryStart + 1);
+};
+
+std::string MockRequest::getContentLength() const { 
+    // Check if the Content-Length header is present
+    if (_testHeaders.find("Content-Length") == _testHeaders.end())
+        return "";
+    return _testHeaders.at("Content-Length");
+ };
+
+std::string MockRequest::getContentType() const { 
+    // Check if the Content-Type header is present
+    if (_testHeaders.find("Content-Type") == _testHeaders.end())
+        return "";
+    return _testHeaders.at("Content-Type");
+ };
+
+std::string MockRequest::getPathInfo(const std::string &scriptName) const
+{
+    // Check if the URI contains the script name
+    size_t scriptNameStart = _testUri.find(scriptName);
+    if (scriptNameStart == std::string::npos)
+        return "";
+
+    // Calculate the start of the path info
+    size_t pathInfoStart = scriptNameStart + scriptName.length();
+
+    // Get the start of the query string
+    size_t queryStart = _testUri.find("?");
+
+    // Return the path info
+    if (queryStart == std::string::npos)
+        return _testUri.substr(pathInfoStart);
+    return _testUri.substr(pathInfoStart, queryStart - pathInfoStart);
+}
 
 std::string MockRequest::getClientIp() const { return ""; };
 
@@ -79,15 +121,16 @@ void MockRequest::setUri(const std::string &uri) { _testUri = uri; };
 
 void MockRequest::setHttpVersion(const std::string &httpVersion) { _testHttpVersion = httpVersion; };
 
-#include <iostream>
-void MockRequest::addHeader(const std::string &key, const std::string &value) { 
-    _testHeaders[key]=value; };
+void MockRequest::addHeader(const std::string &key, const std::string &value)
+{
+    _testHeaders[key] = value;
+};
 
 void MockRequest::setBody(const std::vector<char> &body) { _testBody = body; };
 
 void MockRequest::addCookie(const std::string &key, const std::string &value) { _testHeaders.insert({key, value}); };
 
-void MockRequest::setAuthority() {};
+void MockRequest::setAuthority(){};
 
 // Clear the contents of the MockRequest object
 void MockRequest::clear()

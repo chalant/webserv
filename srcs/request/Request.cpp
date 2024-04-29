@@ -153,6 +153,79 @@ std::string Request::getBodyString() const
     return std::string(this->_body.begin(), this->_body.end());
 }
 
+// Getter function for retrieving the query string
+std::string Request::getQueryString() const
+{
+    // Check if the URI contains a query string
+    size_t queryPos = this->_uri.find('?');
+    if (queryPos != std::string::npos)
+    {
+        // Return the query string
+        return this->_uri.substr(queryPos + 1);
+    }
+    else
+    {
+        return ""; // Return an empty string if the URI does not contain a query string
+    }
+}
+
+// Getter function for retrieving the content length
+std::string Request::getContentLength() const
+{
+    // Check if the 'Content-Length' header exists in the map
+    if (this->_headers.find(CONTENT_LENGTH) != this->_headers.end())
+    {
+        // Return the value of the 'Content-Length' header
+        return this->_headers.at(CONTENT_LENGTH);
+    }
+    else
+    {
+        return ""; // Return an empty string if the 'Content-Length' header does not exist
+    }
+}
+
+// Getter function for retrieving the content type
+std::string Request::getContentType() const
+{
+    // Check if the 'Content-Type' header exists in the map
+    if (this->_headers.find(CONTENT_TYPE) != this->_headers.end())
+    {
+        // Return the value of the 'Content-Type' header
+        return this->_headers.at(CONTENT_TYPE);
+    }
+    else
+    {
+        return ""; // Return an empty string if the 'Content-Type' header does not exist
+    }
+}
+
+// Getter function for retrieving the path info
+std::string Request::getPathInfo(const std::string &scriptName) const
+{
+    // Check if the URI contains the script name
+    size_t scriptNamePos = this->_uri.find(scriptName);
+    if (scriptNamePos == std::string::npos)
+        return ""; // Return an empty string if the URI does not contain the script name
+
+    // Calculate the start of the path info
+    size_t pathInfoStart = scriptNamePos + scriptName.size();
+
+    // Get the start of the query string, if present
+    size_t queryPos = this->_uri.find('?', pathInfoStart);
+
+    // Return the path info
+    if (queryPos != std::string::npos)
+    {
+        // Return the path info excluding the query string
+        return this->_uri.substr(pathInfoStart, queryPos - pathInfoStart);
+    }
+    else
+    {
+        // Return the remaining part of the URI as path info
+        return this->_uri.substr(pathInfoStart);
+    }
+}
+
 // Getter function for retrieving the client IP address
 std::string Request::getClientIp() const
 {
@@ -230,7 +303,8 @@ void Request::setHttpVersion(const std::string &httpVersion)
 void Request::addHeader(const std::string &key, const std::string &value)
 {
     // Check if the key contains trailing whitespace
-    if (!key.empty() && (key.back() == ' ' || key.back() == '\t')) {
+    if (!key.empty() && (key.back() == ' ' || key.back() == '\t'))
+    {
         throw HttpStatusCodeException(BAD_REQUEST, "trailing whitespace in header key");
     }
 
@@ -301,4 +375,4 @@ void Request::setAuthority()
     this->_authority = this->_hostName + ":" + this->_hostPort;
 }
 
-//path: srcs/request/Request.cpp
+// path: srcs/request/Request.cpp

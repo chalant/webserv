@@ -91,6 +91,10 @@ public:
     std::string getCookie(const std::string &key) const;
     const std::vector<char> getBody() const;
     std::string getBodyString() const;
+    std::string getQueryString() const;
+    std::string getContentLength() const;
+    std::string getContentType() const;
+    std::string getPathInfo(const std::string &scriptName) const;
     std::string getClientIp() const;
     std::string getHostName() const;
     std::string getHostPort() const;

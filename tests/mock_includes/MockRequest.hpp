@@ -55,9 +55,13 @@ public:
     virtual std::map<std::string, std::string> getHeadersStringMap() const;
     virtual std::map<std::string, std::string> getQueryParameters() const;
     virtual std::map<std::string, std::string> getCookies() const;
-    virtual const std::string &getCookie(const std::string &key) const;
+    virtual std::string getCookie(const std::string &key) const;
     virtual const std::vector<char> getBody() const;
     virtual std::string getBodyString() const;
+    virtual std::string getQueryString() const;
+    virtual std::string getContentLength() const;
+    virtual std::string getContentType() const;
+    virtual std::string getPathInfo(const std::string &scriptName) const;
     virtual std::string getClientIp() const;
     virtual std::string getHostName() const;
     virtual std::string getHostPort() const;
