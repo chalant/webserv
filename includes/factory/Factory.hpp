@@ -2,9 +2,9 @@
 #define FACTORY_HPP
 
 #include "IFactory.hpp"
-#include "configuration/IConfiguration.hpp"
-#include "logger/ILogger.hpp"
-#include "constants/HttpHelper.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../logger/ILogger.hpp"
+#include "../constants/HttpHelper.hpp"
 
 class Factory : public IFactory
 {

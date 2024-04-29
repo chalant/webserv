@@ -10,10 +10,10 @@ locationblock)*/
 
 #include <string>
 #include <vector>
-#include "Request.hpp"
-#include "HttpMethodHelper.hpp"
-#include "IConfiguration.hpp"
-#include "ILogger.hpp"
+#include "../request/Request.hpp"
+#include "../constants/HttpMethodHelper.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../logger/ILogger.hpp"
 #include "IRouter.hpp"
 
 class Response;
@@ -23,18 +23,17 @@ typedef std::vector<Route> routes_t;
 typedef std::pair<const authorities_t, routes_t> routeMapEntry_t;
 typedef std::map<authorities_t, routes_t> routeMap_t;*/
 
-
-
-typedef std::vector<Route> routes_t;
 // Route structure with function pointer for handler
 struct Route
 {
 public:
     std::string getUri() const;
-    void setUri(std::string newUri);
+    void 		setUri(std::string newUri);
+    void        appendUri(const std::string &newString);
     std::string getMethod() const;
-    void setMethod(std::string newMethod);
-    void (*handler)(Request *, Response *);
+    void		setMethod(std::string newMethod);
+    void		(*handler)(Request *, Response *);
+    bool		operator< (const Route &other) const;
 
 private:
     std::string _uri;
@@ -55,7 +54,7 @@ private:
     authorities_t _createAuthorities(const IBlock *serverBlock);
     routes_t _createRoutes(IBlock *serverBlock);*/
 
-    routes_t    _routes;
+    std::vector<Route>    _routes;
     void _createServerRoutes(IBlock *serverBlock);
     void _createRoutes(IBlock *serverBlock);
 

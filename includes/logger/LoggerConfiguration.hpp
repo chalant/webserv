@@ -3,9 +3,9 @@
 
 #include "ILoggerConfiguration.hpp"
 #include <fcntl.h>
-#include "configuration/IConfiguration.hpp"
-#include "pollfd/IPollfdManager.hpp"
-#include "exception/WebservExceptions.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../pollfd/IPollfdManager.hpp"
+#include "../exception/WebservExceptions.hpp"
 
 class LoggerConfiguration : public ILoggerConfiguration
 {

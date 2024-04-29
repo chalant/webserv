@@ -13,7 +13,7 @@
  */
 
 #include <string>
-#include "constants/LogLevelHelper.hpp"
+#include "../constants/LogLevelHelper.hpp"
 
 // Forward declarations
 class IConnection;

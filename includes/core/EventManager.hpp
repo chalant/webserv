@@ -2,13 +2,13 @@
 #define EVENTMANAGER_HPP
 
 #include "IEventManager.hpp"
-#include "pollfd/IPollfdManager.hpp"
-#include "buffer/IBufferManager.hpp"
-#include "network/ISocket.hpp"
-#include "network/IServer.hpp"
-#include "connection/IRequestHandler.hpp"
-#include "logger/ILogger.hpp"
-#include "exception/WebservExceptions.hpp"
+#include "../pollfd/IPollfdManager.hpp"
+#include "../buffer/IBufferManager.hpp"
+#include "../network/ISocket.hpp"
+#include "../network/IServer.hpp"
+#include "../connection/IRequestHandler.hpp"
+#include "../logger/ILogger.hpp"
+#include "../exception/WebservExceptions.hpp"
 
 class EventManager : public IEventManager
 {

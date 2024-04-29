@@ -6,6 +6,7 @@ locationblock)*/
 #include "Router.hpp"
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 Router::Router(const IConfiguration &configuration, ILogger &logger)
 {
@@ -29,29 +30,29 @@ void Router::_createRoutes(IBlock *serverBlock)
 	std::vector<IBlock *>::iterator locationIt;
 	std::vector<std::string> hostnames = serverBlock->getStringVector("serverName");
 	std::vector<std::string> ports = serverBlock->getStringVector("port");
+	std::vector<std::string> methods = (*locationIt)->getStringVector("limitExcept");
 	std::vector<std::string>::iterator hostnameIt;
 	std::vector<std::string>::iterator portIt;
 	size_t	i = 0;
 
 	for (hostnameIt = hostnames.begin(); hostnameIt != hostnames.end(); hostnameIt++)
 	{
-		_routes[i].append(*hostnameIt);
-		_routes[i++].append(":");
+		_routes[i].appendUri(*hostnameIt);
+		_routes[i++].appendUri(":");
 	}
 	i = 0;
 	for (portIt = ports.begin(); portIt != ports.end(); portIt++)
 	{
-		_routes[i++].append(*portIt);
+		_routes[i++].appendUri(*portIt);
 	}
-	i = 0;
+	i = 0; 
 	for (locationIt = locations.begin(); locationIt != locations.end(); locationIt++)
 	{
-		std::vector<std::string> methods = (*locationIt)->getStringVector("limitExcept");
 		std::string prefix = (*locationIt)->getString("prefix");
-		_routes[i].setMethods(methods);
-		_routes[i++].append(prefix);
-
+		_routes[i].setMethod(methods[i]);
+		_routes[i++].appendUri(prefix);
 	}
+	std::sort(_routes.begin(), _routes.end());
 }
 
 void Router::execRoute(Request *req, Response *res)
@@ -92,4 +93,14 @@ std::string Route::getMethod() const
 void Route::setMethod(std::string newMethod)
 {
 	this->_method = newMethod;
+}
+
+bool Route::operator< (const Route &other) const 
+{
+        return (this->_uri < other._uri);
+}
+
+void Route::appendUri(const std::string& newString)
+{
+	this->_uri.append(newString);
 }

@@ -20,23 +20,23 @@
  * exceptions effectively.
  */
 
-#include <IRequestHandler.hpp>
 #include <string>
 #include <map>
 #include <cstring>
 #include <vector>
+#include "IRequestHandler.hpp"
 #include "IConnectionManager.hpp"
 #include "IClientHandler.hpp"
-#include "response/IRouter.hpp"
-#include "request/IRequest.hpp"
-#include "response/IResponse.hpp"
-#include "logger/ILogger.hpp"
-#include "exception/IExceptionHandler.hpp"
-#include "response/IResponseGenerator.hpp"
-#include "buffer/IBufferManager.hpp"
-#include "configuration/IConfiguration.hpp"
-#include "request/RequestParser.hpp"
-#include "constants/HttpHelper.hpp"
+#include "../response/IRouter.hpp"
+#include "../request/IRequest.hpp"
+#include "../response/IResponse.hpp"
+#include "../logger/ILogger.hpp"
+#include "../exception/IExceptionHandler.hpp"
+#include "../response/IResponseGenerator.hpp"
+#include "../buffer/IBufferManager.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../request/RequestParser.hpp"
+#include "../constants/HttpHelper.hpp"
 
 // Forward declaration
 class ISocket;

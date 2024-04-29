@@ -5,7 +5,7 @@
  *
  * This class provides methods for socket-related operations such as
  * creating a socket, binding to an address, listening for connections,
- * accepting connections, sending and receiving data, polling for events,
+ * accepting connections, sending and receiving data,
  * controlling socket file descriptor flags, and closing the socket.
  */
 

@@ -16,7 +16,7 @@
 #include <map>
 #include <vector>
 #include <ctime>
-#include "constants/HttpHelper.hpp"
+#include "../constants/HttpHelper.hpp"
 
 class IRequest
 {
@@ -37,6 +37,10 @@ public:
     virtual std::string getCookie(const std::string &) const = 0;
     virtual const std::vector<char> getBody() const = 0;
     virtual std::string getBodyString() const = 0;
+    virtual std::string getQueryString() const = 0;
+    virtual std::string getContentLength() const = 0;
+    virtual std::string getContentType() const = 0;
+    virtual std::string getPathInfo(const std::string &scriptName) const = 0;
     virtual std::string getClientIp() const = 0;
     virtual std::string getHostName() const = 0;
     virtual std::string getHostPort() const = 0;
