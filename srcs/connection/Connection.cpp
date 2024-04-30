@@ -12,23 +12,19 @@
  *
  */
 
-Connection::Connection(std::pair<int, std::pair<std::string, std::string> > clientInfo, ILogger &logger, IRequest *request, IResponse *response)
+Connection::Connection(std::pair<int, std::pair<std::string, std::string>> clientInfo, ILogger &logger, IRequest *request, IResponse *response)
     : _socketDescriptor(clientInfo.first),
-     _ip(clientInfo.second.first),
-     _port(std::stoi(clientInfo.second.second)),
-     _remoteAddress(_ip + ":" + clientInfo.second.second),
-     _logger(logger),
-     _request(request),
-     _response(response) {}
+      _ip(clientInfo.second.first),
+      _port(std::stoi(clientInfo.second.second)),
+      _remoteAddress(_ip + ":" + clientInfo.second.second),
+      _logger(logger),
+      _request(request),
+      _response(response) {}
 
-Connection::~Connection() {
+Connection::~Connection()
+{
     delete this->_request;
     delete this->_response;
-}
-
-void Connection::setReadPipeDescriptor(int pipe)
-{
-    this->_readPipeDescriptor = pipe;
 }
 
 void Connection::setSession(ISession *session)
@@ -41,7 +37,7 @@ int Connection::getSocketDescriptor() const
     return this->_socketDescriptor;
 }
 
-const std::string &Connection::getIp() const
+std::string Connection::getIp() const
 {
     return this->_ip;
 }
@@ -51,14 +47,14 @@ int Connection::getPort() const
     return this->_port;
 }
 
-const std::string &Connection::getRemoteAddress() const
+std::string Connection::getRemoteAddress() const
 {
     return this->_remoteAddress;
 }
 
-int Connection::getReadPipeDescriptor() const
+int Connection::getResponseReadPipefd() const
 {
-    return this->_readPipeDescriptor;
+    return this->_responseReadPipefd;
 }
 
 IRequest &Connection::getRequest() const
@@ -69,6 +65,18 @@ IRequest &Connection::getRequest() const
 IResponse &Connection::getResponse() const
 {
     return *this->_response;
+}
+
+ISession &Connection::getSession() const
+{
+    return *this->_session;
+}
+
+void Connection::setCgiInfo(int cgiPid, int responseReadPipefd, int requestWritePipefd)
+{
+    this->_cgiPid = cgiPid;
+    this->_responseReadPipefd = responseReadPipefd;
+    this->_requestWritePipefd = requestWritePipefd;
 }
 
 // Path: srcs/Connection.cpp

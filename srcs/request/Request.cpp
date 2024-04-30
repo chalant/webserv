@@ -345,6 +345,16 @@ void Request::setBody(const std::vector<char> &body)
     this->_body = body;
 }
 
+// Setter function for setting the body of the request as a string
+void Request::setBody(const std::string &body)
+{
+    // Convert the body string to a vector of characters
+    std::vector<char> bodyVector(body.begin(), body.end());
+
+    // Set the body of the request
+    this->setBody(bodyVector);
+}
+
 // Function for adding a cookie to the request
 void Request::addCookie(const std::string &key, const std::string &value)
 {

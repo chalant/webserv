@@ -14,6 +14,7 @@
 
 #include "IConnectionManager.hpp"
 #include <map>
+#include <sys/wait.h>
 #include "IConnection.hpp"
 #include "ISession.hpp"
 #include "../configuration/IConfiguration.hpp"

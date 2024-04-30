@@ -106,6 +106,7 @@ public:
     void setHttpVersion(const std::string &httpVersion);
     void addHeader(const std::string &key, const std::string &value);
     void setBody(const std::vector<char> &body);
+    void setBody(const std::string &body);
     void addCookie(const std::string &key, const std::string &value);
     void setAuthority();
 };

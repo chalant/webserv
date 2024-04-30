@@ -73,6 +73,7 @@ public:
     virtual void setHttpVersion(const std::string &httpVersion);
     virtual void addHeader(const std::string &key, const std::string &value);
     virtual void setBody(const std::vector<char> &body);
+    virtual void setBody(const std::string &body);
     virtual void addCookie(const std::string &key, const std::string &value);
     virtual void setAuthority();
 

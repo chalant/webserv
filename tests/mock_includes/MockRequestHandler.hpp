@@ -13,13 +13,13 @@ class MockRequestHandler : public IRequestHandler
 {
 public:
     MockRequestHandler();
-
     virtual ~MockRequestHandler();
-    virtual int handleRequest(int);
+
+    virtual Triplet_t handleRequest(int);
     virtual int handlePipeException(int);
     virtual int handlePipeRead(int);
-    virtual int handleErrorResponse(int, int);
-    virtual int handleErrorResponse(int, HttpStatusCode);
+    virtual void handleErrorResponse(int, int);
+    virtual void handleErrorResponse(int, HttpStatusCode);
 };
 
 #endif // MOCKREQUESTHANDLER_HPP

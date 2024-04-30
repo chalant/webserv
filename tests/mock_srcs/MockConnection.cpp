@@ -13,25 +13,29 @@ MockConnection::MockConnection() {}
 MockConnection::~MockConnection() {}
 
 // Setters
-void MockConnection::setReadPipeDescriptor(int pipe) { static_cast<void>(pipe); }
-
 void MockConnection::setSession(ISession *session) { static_cast<void>(session); }
 
 // Getters
 int MockConnection::getSocketDescriptor() const { return 0; }
 
-const std::string MockConnection::getIp() const { return std::string(); }
+std::string MockConnection::getIp() const { return std::string(); }
 
 int MockConnection::getPort() const { return 0; }
 
-const std::string MockConnection::getRemoteAddress() const { return std::string(); }
+std::string MockConnection::getRemoteAddress() const { return std::string(); }
 
-int MockConnection::getReadPipeDescriptor() const { return 0; }
+int MockConnection::getResponseReadPipefd() const { return 0; }
 
 IRequest &MockConnection::getRequest() const { return *this->_m_request; }
 
 IResponse &MockConnection::getResponse() const { return *this->_m_response; }
 
 ISession &MockConnection::getSession() const { return *this->_m_session; }
+
+void MockConnection::setCgiInfo(int cgiPid, int responseReadPipefd, int requestWritePipefd) {
+    static_cast<void>(cgiPid);
+    static_cast<void>(responseReadPipefd);
+    static_cast<void>(requestWritePipefd);
+}
 
 // Path: tests/mock_srcs/MockConnection.cpp

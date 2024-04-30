@@ -23,18 +23,18 @@ public:
     ~MockConnection();
 
     // Setters
-    void setReadPipeDescriptor(int pipe);
     void setSession(ISession *session);
 
     // Getters
     int getSocketDescriptor() const;
-    const std::string getIp() const;
+    std::string getIp() const;
     int getPort() const;
-    const std::string getRemoteAddress() const;
-    int getReadPipeDescriptor() const;
+    std::string getRemoteAddress() const;
+    int getResponseReadPipefd() const;
     IRequest &getRequest() const;
     IResponse &getResponse() const;
     ISession &getSession() const;
+    void setCgiInfo(int cgiPid, int responseReadPipefd, int requestWritePipefd);
 };
 
 #endif // MOCKCONNECTION_HPP

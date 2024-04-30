@@ -37,8 +37,8 @@ RequestHandler::~RequestHandler()
 }
 
 // Handles a client request
-// Return the pipe descriptor for dynamic content or 0 for static content and invalid requests
-int RequestHandler::handleRequest(int socketDescriptor)
+// Returns Cgi Info for dynamic content or -1 for static content and invalid requests
+Triplet_t RequestHandler::handleRequest(int socketDescriptor)
 {
     // Give the 'ClientHandler' the current socket descriptor
     this->_clientHandler.setSocketDescriptor(socketDescriptor);
@@ -77,22 +77,39 @@ int RequestHandler::handleRequest(int socketDescriptor)
         this->_exceptionHandler.handleException(e, "RequestHandler::processRequest socket=\"" + std::to_string(socketDescriptor) + "\"");
 
         // Handle error response
-        return this->handleErrorResponse(socketDescriptor, statusCode); // and return 0
+        this->handleErrorResponse(socketDescriptor, statusCode);
+
+        // return -1
+        return Triplet_t(-1, std::pair<int, int>(-1, -1));
     }
 
     // 'Router' selects the right 'ResponseGenerator' for the job
-    int pipeDescriptor = this->_router.execRoute(request, response);
+    Triplet_t cgiInfo = this->_router.execRoute(request, response);
 
-    // If a pipe was created, return it
-    if (pipeDescriptor != 0)
+    // If dynamic content is being created, return the info
+    if (cgiInfo.first != -1)
     {
-        this->_pipeRoutes[pipeDescriptor] = socketDescriptor;
-        return pipeDescriptor; // cgi content
+        // Get CGI Info
+        int cgiPid = cgiInfo.first;
+        int responseReadPipe = cgiInfo.second.first;
+        int requestWritePipe = cgiInfo.second.second;
+
+        // Record the cgi info
+        connection.setCgiInfo(cgiPid, responseReadPipe, requestWritePipe);
+
+        // Record the pipes to connection socket mappings
+        this->_pipeRoutes[responseReadPipe] = socketDescriptor;
+        this->_pipeRoutes[requestWritePipe] = socketDescriptor;
+        
+        return cgiInfo; // cgi content
     }
     else // static content
     {
         // Push the response to the buffer
-        return this->_sendResponse(socketDescriptor); // and return 0
+        this->_sendResponse(socketDescriptor);
+
+        // return -1
+        return Triplet_t(-1, std::pair<int, int>(-1, -1));
     }
 }
 
@@ -112,7 +129,7 @@ int RequestHandler::handlePipeException(int pipeDescriptor)
     return clientSocket;
 }
 
-// Handles read input from pipe
+// Handles read input from pipe - responses larger than the buffer size are currently not supported
 int RequestHandler::handlePipeRead(int pipeDescriptor)
 {
     // Get the client socket descriptor linked to the pipe
@@ -131,7 +148,10 @@ int RequestHandler::handlePipeRead(int pipeDescriptor)
     IResponse &response = this->_connectionManager.getResponse(clientSocket);
 
     // Set the response
-    response.setResponse(rawResponse);
+    if (rawResponse.empty())                              // Check if the response is empty
+        response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
+    else
+        response.setResponse(rawResponse); // Good response
 
     // Push the response to the buffer
     this->_sendResponse(clientSocket);
@@ -163,7 +183,7 @@ int RequestHandler::_sendResponse(int socketDescriptor)
 }
 
 // Handles error responses
-int RequestHandler::handleErrorResponse(int socketDescriptor, int statusCode)
+void RequestHandler::handleErrorResponse(int socketDescriptor, int statusCode)
 {
     // Get a reference to the Response
     IResponse &response = this->_connectionManager.getResponse(socketDescriptor);
@@ -172,11 +192,11 @@ int RequestHandler::handleErrorResponse(int socketDescriptor, int statusCode)
     response.setErrorResponse(statusCode);
 
     // Push the response to the buffer
-    return this->_sendResponse(socketDescriptor); // and return 0
+    this->_sendResponse(socketDescriptor);
 }
 
 // Handle error responses - HttpStatusCode input
-int RequestHandler::handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode)
+void RequestHandler::handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode)
 {
     // Get a reference to the Response
     IResponse &response = this->_connectionManager.getResponse(socketDescriptor);
@@ -185,7 +205,7 @@ int RequestHandler::handleErrorResponse(int socketDescriptor, HttpStatusCode sta
     response.setErrorResponse(statusCode);
 
     // Push the response to the buffer
-    return this->_sendResponse(socketDescriptor); // and return 0
+    this->_sendResponse(socketDescriptor);
 }
 
 // path: srcs/RequestHandler.cpp

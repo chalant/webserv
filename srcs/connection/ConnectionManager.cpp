@@ -161,7 +161,7 @@ void ConnectionManager::assignSessionToConnection(IConnection &connection, const
     this->_logger.log(INFO, "Session ID: " + std::to_string(sessionId) + " Assigned to connection on Socket: " + std::to_string(connection.getSocketDescriptor()) + " with client: " + connection.getRemoteAddress());
 }
 
-// Retire idle sessions
+// Retire idle sessions and reap zombie processes
 void ConnectionManager::collectGarbage()
 {
     // Check if it is time to collect garbage
@@ -176,6 +176,10 @@ void ConnectionManager::collectGarbage()
 
     // Log the garbage collection
     this->_logger.log(VERBOSE, "Garbage collection started.");
+
+    // Reap zombie processes
+    while (waitpid(-1, NULL, WNOHANG) > 0)
+        ; // Reap all zombie processes
 
     // Make note of the number of sessions before garbage collection
     size_t sessionCount = this->_sessions.size();

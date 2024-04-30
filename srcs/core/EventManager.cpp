@@ -120,9 +120,9 @@ void EventManager::_handleRequest(ssize_t &pollfdIndex)
 {
     int clientSocketDescriptor = this->_pollfdManager.getDescriptor(pollfdIndex);
 
-    int pipeDescriptor = this->_requestHandler.handleRequest(clientSocketDescriptor);
+    Triplet_t info = this->_requestHandler.handleRequest(clientSocketDescriptor);
 
-    if (pipeDescriptor == 0) // no pipe; served static files or bad request
+    if (info.first == -1) // served static files or bad request
     {
         // Log the static serving
         this->_logger.log(VERBOSE, "[EVENTMANAGER] Statically served client socket: " + std::to_string(clientSocketDescriptor));
@@ -132,10 +132,19 @@ void EventManager::_handleRequest(ssize_t &pollfdIndex)
     }
     else // read pipe returned
     {
+        // Get the info
+        int cgiPid = info.first;
+        int responseReadPipe = info.second.first;
+        int requestWritePipe = info.second.second;
+        
         // Log the dynamic serving
-        this->_logger.log(VERBOSE, "[EVENTMANAGER] Dynamically serving client socket: " + std::to_string(clientSocketDescriptor) + " waiting to read pipe: " + std::to_string(pipeDescriptor));
-        // Add the pipe to the poll set
-        this->_pollfdManager.addPipePollfd({pipeDescriptor, POLLIN, 0});
+        this->_logger.log(VERBOSE, "[EVENTMANAGER] Dynamically serving client socket: " + std::to_string(clientSocketDescriptor) + " waiting for process " + std::to_string(cgiPid) + " (response read pipe: " + std::to_string(responseReadPipe) + ", request write pipe: " + std::to_string(requestWritePipe) + ")");
+        
+        // Add the response read pipe to the poll set
+        this->_pollfdManager.addPipePollfd({responseReadPipe, POLLIN, 0});
+
+        // Add the request write pipe to the poll set
+        this->_pollfdManager.addPipePollfd({requestWritePipe, POLLOUT, 0});
     }
 }
 

@@ -4,6 +4,7 @@
 #include "IResponseGenerator.hpp"
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 #include "IRoute.hpp"
 #include "logger/ILogger.hpp"
 #include "configuration/IConfiguration.hpp"
@@ -21,13 +22,13 @@ private:
     char *_getCgiInterpreterPath(const std::string &scriptName, const IConfiguration &configuration) const;
     char *_getScriptPath(const std::string &scriptName, const IRoute &route) const;
     std::string _getPathTranslated(std::string &scriptName, const IRoute &route) const;
-    void _cleanUp(char *cgiArgs[], char *cgiEnv[] = NULL, int pipefd[2] = NULL, short option = 0x0) const;
+    void _cleanUp(char *cgiArgs[], char *cgiEnv[] = NULL, int responsePipefd[2] = NULL, int bodyPipefd[2] = NULL, short option = 0x0) const;
 
 public:
     CgiResponseGenerator(ILogger &logger);
     ~CgiResponseGenerator();
 
-    virtual int generateResponse(const IRoute &route, const IRequest &request, const IConfiguration &configuration, const std::string &scriptName = "");
+    virtual Triplet_t generateResponse(const IRoute &route, const IRequest &request, const IConfiguration &configuration, const std::string &scriptName = "");
 };
 
 #endif // CGIRESPONSEGENERATOR_HPP

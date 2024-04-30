@@ -67,7 +67,7 @@ public:
     ~RequestHandler();
 
     // Handles client requests
-    int handleRequest(int socketDescriptor);
+    Triplet_t handleRequest(int socketDescriptor);
 
     // Handles exceptions related to pipe events
     int handlePipeException(int pipeDescriptor);
@@ -76,8 +76,8 @@ public:
     int handlePipeRead(int pipeDescriptor);
 
     // Handles error responses
-    int handleErrorResponse(int socketDescriptor, int statusCode);
-    int handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode);
+    void handleErrorResponse(int socketDescriptor, int statusCode);
+    void handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode);
 };
 
 #endif // CONNECTIONS_HPP

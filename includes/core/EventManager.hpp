@@ -10,6 +10,8 @@
 #include "../logger/ILogger.hpp"
 #include "../exception/WebservExceptions.hpp"
 
+typedef std::pair<int, std::pair<int, int>> Triplet_t;
+
 class EventManager : public IEventManager
 {
 private:

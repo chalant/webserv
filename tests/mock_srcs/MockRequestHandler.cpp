@@ -10,14 +10,14 @@ MockRequestHandler::MockRequestHandler() {}
 
 MockRequestHandler::~MockRequestHandler() {}
 
-int MockRequestHandler::handleRequest(int) { return 0; }
+Triplet_t MockRequestHandler::handleRequest(int) { return Triplet_t(); }
 
 int MockRequestHandler::handlePipeException(int) { return 0; }
 
 int MockRequestHandler::handlePipeRead(int) { return 0; }
 
-int MockRequestHandler::handleErrorResponse(int, int) { return 0; }
+void MockRequestHandler::handleErrorResponse(int, int) { return; }
 
-int MockRequestHandler::handleErrorResponse(int, HttpStatusCode) { return 0; }
+void MockRequestHandler::handleErrorResponse(int, HttpStatusCode) { return; }
 
 // Path: tests/mock_srcs/MockRequestHandler.cpp

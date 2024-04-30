@@ -23,7 +23,9 @@ private:
     std::string _ip;                      // Client's IP address
     int _port;                            // Port number
     std::string _remoteAddress;           // Remote address
-    int _readPipeDescriptor;              // Read pipe descriptor
+    int _responseReadPipefd;              // Read pipe descriptor for the response
+    int _requestWritePipefd;              // Write pipe descriptor for the request
+    int _cgiPid;                          // PID of the CGI process
     ILogger &_logger;                     // Reference to the logger
     IRequest *_request;                   // Pointer to the request object
     IResponse *_response;                 // Pointer to the response object
@@ -34,18 +36,18 @@ public:
     virtual ~Connection() = default;
 
     // Setters
-    virtual void setReadPipeDescriptor(int pipe);
     virtual void setSession(ISession *session);
 
     // Getters
     virtual int getSocketDescriptor() const;
-    virtual const std::string &getIp() const;
+    virtual std::string getIp() const;
     virtual int getPort() const;
-    virtual const std::string &getRemoteAddress() const;
-    virtual int getReadPipeDescriptor() const;
+    virtual std::string getRemoteAddress() const;
+    virtual int getResponseReadPipefd() const;
     virtual IRequest &getRequest() const;
     virtual IResponse &getResponse() const;
     virtual ISession &getSession() const;
+    virtual void setCgiInfo(int pid, int responseReadPipefd, int requestWritePipefd);
 };
 
 #endif // CONNECTION_HPP

@@ -16,7 +16,6 @@ MockConfiguration::MockConfiguration()
       _bools() 
 {
 }
-#include <iostream>
 
 // Destructor
 MockConfiguration::~MockConfiguration(){};

@@ -1,6 +1,8 @@
 #include "../../includes/response/CgiResponseGenerator.hpp"
 
-#define NO_THROW 0x1
+#define NO_THROW 0x1                // Do not throw an exception
+#define KEEP_RESPONSE_READ_PIPE 0x2 // Do no close the read end of the response pipe
+#define KEEP_BODY_WRITE_PIPE 0x4    // Do not close the write end of the body pipe
 
 CgiResponseGenerator::CgiResponseGenerator(ILogger &logger)
     : _logger(logger),
@@ -9,9 +11,9 @@ CgiResponseGenerator::CgiResponseGenerator(ILogger &logger)
 CgiResponseGenerator::~CgiResponseGenerator() {}
 
 // calls execve to execute the CGI script
-// returns the read end of the pipe to read the response later without blocking
+// returns the cgi process Info (pid, read end of the response pipe, write end of the body pipe)
 // Throws an exception if an error occurs
-int CgiResponseGenerator::generateResponse(const IRoute &route, const IRequest &request, const IConfiguration &configuration, const std::string &scriptName)
+Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route, const IRequest &request, const IConfiguration &configuration, const std::string &scriptName)
 {
     // Set cgi arguments
     std::vector<char *> cgiArgs;
@@ -21,39 +23,81 @@ int CgiResponseGenerator::generateResponse(const IRoute &route, const IRequest &
     std::vector<char *> cgiEnv;
     this->_setCgiEnvironment(scriptName, route, request, cgiEnv);
 
-    int pipefd[2];
-    if (pipe(pipefd) == -1)
+    // Create a pipe
+    int responsePipeFd[2];
+    if (pipe(responsePipeFd) == -1)
+        // pipe failed
         this->_cleanUp(cgiArgs.data(), cgiEnv.data()); // Free memory and throw exception 500
 
+    int bodyPipeFd[2];
+    if (pipe(bodyPipeFd) == -1)
+        // pipe failed
+        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd); // Free memory and throw exception 500
+
+    // Fork a child process
     pid_t pid = fork();
     if (pid == -1)
-        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), pipefd); // Free memory and throw exception 500
+        // fork failed
+        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd, bodyPipeFd); // Free memory and throw exception 500
 
     else if (pid == 0) // child process
     {
-        // Log the start of the CGI script execution
-        this->_logger.log(DEBUG, "CGI script execution started with PID: " + std::to_string(getpid()));
+        this->_logger.log(DEBUG, "Forked a child process to execute the CGI script PID: " + std::to_string(getpid()) + " Parent PID: " + std::to_string(getppid()));
+        // stdin should read from body pipe
+        close(bodyPipeFd[1]);              // close write end
+        dup2(bodyPipeFd[0], STDIN_FILENO); // redirect stdin to pipe
+        close(bodyPipeFd[0]);              // close read end
 
-        // stdout should write to pipe
-        close(pipefd[0]);               // close read end
-        dup2(pipefd[1], STDOUT_FILENO); // redirect stdout to pipe
-        close(pipefd[1]);               // close write end
+        // stdout should write to response pipe
+        close(responsePipeFd[0]);               // close read end
+        dup2(responsePipeFd[1], STDOUT_FILENO); // redirect stdout to pipe
+        close(responsePipeFd[1]);               // close write end
 
         // Call execve
         execve(cgiArgs[0], cgiArgs.data(), cgiEnv.data());
-
+        this->_logger.log(DEBUG, "Execve failed: " + std::string(strerror(errno)));
         // If execve returns, an error occurred; free memory and exit
-        this->_logger.log(ERROR, "CGI execve failed [" + std::to_string(errno) + ": " + std::string(strerror(errno)) + "] | terminating process with PID: " + std::to_string(getpid()));
-        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), pipefd, NO_THROW);
+        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd, bodyPipeFd, NO_THROW);
         exit(EXIT_FAILURE);
     }
+
     else // parent process
     {
+        this->_logger.log(DEBUG, "New CGI process ID: " + std::to_string(pid));
+
+        // Set the read end of the response pipe to non-blocking
+        fcntl(responsePipeFd[0], F_SETFL, O_NONBLOCK);
+
+        // Set the write end of the body pipe to non-blocking
+        fcntl(bodyPipeFd[1], F_SETFL, O_NONBLOCK);
+
+        // Free memory and keep the write end of the body pipe open and the read end of the response pipe open
+        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd, bodyPipeFd, NO_THROW | KEEP_RESPONSE_READ_PIPE | KEEP_BODY_WRITE_PIPE); 
+
+        if (request.getContentLength() != "0") // If the request has a body
+        {
+            this->_logger.log(DEBUG, "Writing request body to CGI script");
+            //Set the write end of the pipe to non-blocking
+            fcntl(bodyPipeFd[1], F_SETFL, O_NONBLOCK);
+
+            // Write the request body to the pipe
+            ssize_t bytesWritten = write(bodyPipeFd[1], request.getBody().data(), request.getBody().size());
+            if (bytesWritten == -1) // write failed (errno == EAGAIN or EWOULDBLOCK means the pipe is full)
+            {
+                this->_logger.log(DEBUG, "Write failed: " + std::string(strerror(errno)));
+                // since we do not read errno, we assume write failed for another reason than pipe full
+        //        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd); // Free memory and throw exception 500
+            }
+        }
+
+
+
+        this->_logger.log(DEBUG, "Returning read end of the pipe to read the response later without blocking. Pipe read end: " + std::to_string(responsePipeFd[0]) + " Pipe write end: " + std::to_string(responsePipeFd[1]));
         // Return the read end of the pipe to read the response later without blocking
-        close(pipefd[1]); // close write end
-        return pipefd[0]; // return read end
+        return std::make_pair(pid, std::make_pair(responsePipeFd[0], bodyPipeFd[1]));
     }
-    return (-1); // unreachable
+
+    return std::make_pair(-1, std::make_pair(-1, -1)); // unreachable code
 }
 
 void CgiResponseGenerator::_setCgiArguments(const std::string &scriptName, const IRoute &route, const IConfiguration &configuration, std::vector<char *> &cgiArgs)
@@ -151,7 +195,7 @@ std::string CgiResponseGenerator::_getPathTranslated(std::string &pathInfo, cons
     return rootPath + prefix + pathInfo;
 }
 
-void CgiResponseGenerator::_cleanUp(char *cgiArgs[], char *cgiEnv[], int pipefd[2], short option) const
+void CgiResponseGenerator::_cleanUp(char *cgiArgs[], char *cgiEnv[], int responsePipeFd[2], int bodyPipeFd[2], short option) const
 {
     // Free args
     if (cgiArgs != NULL)
@@ -171,15 +215,25 @@ void CgiResponseGenerator::_cleanUp(char *cgiArgs[], char *cgiEnv[], int pipefd[
         }
     }
 
-    // Close pipe
-    if (pipefd != NULL)
+    // Close response pipe
+    if (responsePipeFd != NULL)
     {
-        close(pipefd[0]);
-        close(pipefd[1]);
+        if ((option & KEEP_RESPONSE_READ_PIPE) == 0)
+            close(responsePipeFd[0]);
+        close(responsePipeFd[1]);
+    }
+
+    // Close body pipe
+    if (bodyPipeFd != NULL)
+    {
+        if ((option & KEEP_BODY_WRITE_PIPE) == 0)
+            close(bodyPipeFd[1]);
+        close(bodyPipeFd[0]);
     }
 
     // Throw an exception
-    if (option != NO_THROW)
+    if ((option & NO_THROW) == 0)
         throw HttpStatusCodeException(INTERNAL_SERVER_ERROR); // 500
 }
+
 // Path: srcs/CgiResponseGenerator.cpp

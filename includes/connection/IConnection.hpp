@@ -26,18 +26,18 @@ public:
     virtual ~IConnection() {};
 
     // Setters
-    virtual void setReadPipeDescriptor(int pipe) = 0;
     virtual void setSession(ISession *session) = 0;
 
     // Getters
     virtual int getSocketDescriptor() const = 0;
-    virtual const std::string getIp() const = 0;
+    virtual std::string getIp() const = 0;
     virtual int getPort() const = 0;
-    virtual const std::string getRemoteAddress() const = 0;
-    virtual int getReadPipeDescriptor() const = 0;
+    virtual std::string getRemoteAddress() const = 0;
+    virtual int getResponseReadPipefd() const = 0;
     virtual IRequest &getRequest() const = 0;
     virtual IResponse &getResponse() const = 0;
     virtual ISession &getSession() const = 0;
+    virtual void setCgiInfo(int, int, int) = 0;
 };
 
 #endif // ICONNECTION_HPP

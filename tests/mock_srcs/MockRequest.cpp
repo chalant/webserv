@@ -128,6 +128,12 @@ void MockRequest::addHeader(const std::string &key, const std::string &value)
 
 void MockRequest::setBody(const std::vector<char> &body) { _testBody = body; };
 
+void MockRequest::setBody(const std::string &body)
+{
+    _testBody.clear();
+    _testBody.insert(_testBody.end(), body.begin(), body.end());
+};
+
 void MockRequest::addCookie(const std::string &key, const std::string &value) { _testHeaders.insert({key, value}); };
 
 void MockRequest::setAuthority(){};
