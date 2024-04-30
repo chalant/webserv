@@ -35,6 +35,13 @@ void RequestParser::parseRequest(const std::vector<char> &rawRequest, IRequest &
 
     // Parse the body
     this->_parseBody(it, rawRequest, parsedRequest);
+
+    // Parse the Upload BodyParameters
+    if (parsedRequest.getHeaderValue(CONTENT_TYPE).find("multipart/form-data") != std::string::npos)
+    {
+        this->_parseBodyParameters(parsedRequest);
+    }
+
     this->_logger.log(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
 }
 
@@ -271,6 +278,19 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
     if (parsedRequest.getMethod() != POST && parsedRequest.getMethod() != PUT)
         return; // No need to parse body for other methods
 
+    // Check if 'Transfer-Encoding' is chunked
+    std::string transferEncoding = parsedRequest.getHeaderValue(TRANSFER_ENCODING);
+    if (transferEncoding == "chunked")
+    {
+        // Handle chunked encoding
+        std::vector<char> body = this->_unchunkBody(requestIterator, rawRequest);
+
+        // Set unchunked body in parsed request
+        parsedRequest.setBody(body);
+
+        return;
+    }
+
     // Check if 'Content-Length' header is missing
     // Get body size
     std::string contentLengthString = parsedRequest.getHeaderValue(CONTENT_LENGTH);
@@ -314,6 +334,73 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
     parsedRequest.setBody(body);
 }
 
+// Function to unchunk the body of an HTTP request
+std::vector<char> RequestParser::_unchunkBody(std::vector<char>::const_iterator &requestIterator,
+                                              const std::vector<char> &rawRequest) const
+{
+    // Initialize body vector
+    std::vector<char> body;
+
+    // Set Max Size
+    size_t remainingRequestSize = this->_configuration.getSize_t("ClientBodyBufferSize");
+
+    // Parse chunks
+    while (requestIterator != rawRequest.end())
+    {
+        // Get chunk size
+        std::string chunkSizeString;
+        while (*requestIterator != '\r')
+        {
+            chunkSizeString += *requestIterator;
+            ++requestIterator;
+        }
+
+        // Check for last chunk
+        if (chunkSizeString == "0")
+            break;
+
+        // Move marker passed CRLF
+        requestIterator += 2;
+
+        // Check for unexpected end of request
+        if (requestIterator == rawRequest.end())
+        {
+            // throw '400' status error
+            throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
+        }
+
+        // Get chunk size
+        size_t chunkSize = strtol(chunkSizeString.c_str(), NULL, 16);
+
+        // Check if chunk size is valid
+        if (chunkSize <= 0)
+        {
+            // throw '400' status error
+            throw HttpStatusCodeException(BAD_REQUEST, "chunk size conversion failed (" + chunkSizeString + ")");
+        }
+
+        // Check if body size exceeds maximum client body buffer size
+        remainingRequestSize -= chunkSize;
+        if (remainingRequestSize < 0)
+        {
+            // throw '413' status error
+            throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
+        }
+
+        // Append chunk to body
+        body.insert(body.end(), requestIterator, requestIterator + chunkSize);
+
+        // Move marker passed CRLF
+        requestIterator += 2;
+    }
+
+    // Log body
+    this->_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" + std::string(body.begin(), body.end()) + "\"");
+
+    // Return body
+    return body;
+}
+
 // Function to parse cookies from the request
 void RequestParser::_parseCookie(std::string &cookieHeaderValue,
                                  IRequest &parsedRequest) const
@@ -335,6 +422,88 @@ void RequestParser::_parseCookie(std::string &cookieHeaderValue,
         // Add cookie to parsed request
         parsedRequest.addCookie(cookieName, cookieValue);
     }
+}
+
+void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
+{
+    // Get the boundary string
+    std::string boundary = "--" + parsedRequest.getHeaderValue(CONTENT_TYPE).substr(9);
+
+    // Get body stream
+    std::vector<char> body = parsedRequest.getBody();
+    std::string bodyString(body.begin(), body.end());
+    std::istringstream bodyStream(bodyString);
+
+    // Declare a line string
+    std::string line;
+
+    // Parse BodyParameters
+    while (std::getline(bodyStream, line))
+    {
+        // Skip leading newline
+        if (line.empty())
+            continue;
+
+        // Skip boundary
+        if (line.find(boundary) != std::string::npos)
+            continue;
+
+        BodyParameter bodyParameter;
+
+        // Parse BodyParameter headers
+        while (std::getline(bodyStream, line) && !line.empty())
+        {
+            std::string::size_type pos = line.find(':');
+            if (pos != std::string::npos)
+            {
+                std::string key = line.substr(0, pos);
+                std::string value = line.substr(pos + 1);
+                key = this->_trimWhitespace(key);
+                value = this->_trimWhitespace(value);
+                bodyParameter.headers[key] = value;
+
+                // Parse dispositionType, contentType, and fieldName
+                if (key == "Content-Disposition")
+                {
+                    std::istringstream iss(value);
+                    std::string token;
+                    while (std::getline(iss, token, ';'))
+                    {
+                        size_t pos = token.find('=');
+                        if (pos != std::string::npos)
+                        {
+                            std::string param = token.substr(0, pos);
+                            std::string paramValue = token.substr(pos + 1);
+                            param = this->_trimWhitespace(param);
+                            paramValue = this->_trimWhitespace(paramValue);
+
+                            if (param == "form-data")
+                                bodyParameter.dispositionType = paramValue;
+                            else if (param == "name")
+                                bodyParameter.fieldName = paramValue;
+                        }
+                    }
+                }
+                else if (key == "Content-Type")
+                    bodyParameter.contentType = value;
+            }
+        }
+
+        // Parse BodyParameter data
+        while (std::getline(bodyStream, line) && line != boundary)
+        {
+            bodyParameter.data += line + '\n'; // Append the line to the BodyParameter data
+        }
+
+        // Trim whitespace after loop
+        bodyParameter.data = this->_trimWhitespace(bodyParameter.data);
+
+        // Add BodyParameter to vector
+        parsedRequest.addBodyParameter(bodyParameter);
+    }
+
+    // Mark the request as an upload request
+    parsedRequest.setUploadRequest(true);
 }
 
 // Function to check if a character is whitespace

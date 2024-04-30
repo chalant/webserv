@@ -60,7 +60,8 @@ private:
     std::pair<std::string, std::string> _remoteAddress;
     time_t _requestTimestamp;
     std::map<std::string, std::string> _cookies;
-    std::map<std::string, std::string> _bodyParameters;
+    std::vector<BodyParameter> _bodyParameters;
+    bool _uploadRequest;
     std::string _requestId;
     std::string _rawRequest;
     const IConfiguration &_configuration;
@@ -99,6 +100,8 @@ public:
     std::string getHostName() const;
     std::string getHostPort() const;
     std::string getAuthority() const;
+    const std::vector<BodyParameter> &getBodyParameters() const;
+    bool isUploadRequest() const;
 
     // Setters
     void setMethod(const std::string &method);
@@ -109,6 +112,8 @@ public:
     void setBody(const std::string &body);
     void addCookie(const std::string &key, const std::string &value);
     void setAuthority();
+    void addBodyParameter(const BodyParameter &bodyParameter);
+    void setUploadRequest(bool uploadRequest);
 };
 
 #endif // REQUEST_HPP

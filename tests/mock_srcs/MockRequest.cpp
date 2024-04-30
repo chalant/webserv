@@ -114,6 +114,10 @@ std::string MockRequest::getHostPort() const { return ""; };
 
 std::string MockRequest::getAuthority() const { return ""; };
 
+const std::vector<BodyParameter> &MockRequest::getBodyParameters() const { return _testBodyParameters; };
+
+bool MockRequest::isUploadRequest() const { return _testUploadRequest; };
+
 // Setters
 void MockRequest::setMethod(const std::string &method) { _testMethod = method; };
 
@@ -137,6 +141,10 @@ void MockRequest::setBody(const std::string &body)
 void MockRequest::addCookie(const std::string &key, const std::string &value) { _testHeaders.insert({key, value}); };
 
 void MockRequest::setAuthority(){};
+
+void MockRequest::addBodyParameter(const BodyParameter &bodyParameter) { _testBodyParameters.push_back(bodyParameter); };
+
+void MockRequest::setUploadRequest(bool uploadRequest) { _testUploadRequest = uploadRequest; };
 
 // Clear the contents of the MockRequest object
 void MockRequest::clear()

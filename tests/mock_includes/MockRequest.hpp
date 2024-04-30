@@ -20,6 +20,12 @@ private:
     // Request headers
     std::map<std::string, std::string> _testHeaders;
 
+    // Body parameters
+    std::vector<BodyParameter> _testBodyParameters;
+
+    // Upload request flag
+    bool _testUploadRequest;
+
     // Request body
     std::vector<char> _testBody;
 
@@ -66,6 +72,8 @@ public:
     virtual std::string getHostName() const;
     virtual std::string getHostPort() const;
     virtual std::string getAuthority() const;
+    virtual const std::vector<BodyParameter> &getBodyParameters() const;
+    virtual bool isUploadRequest() const;
 
     // Setters
     virtual void setMethod(const std::string &method);
@@ -76,6 +84,8 @@ public:
     virtual void setBody(const std::string &body);
     virtual void addCookie(const std::string &key, const std::string &value);
     virtual void setAuthority();
+    virtual void addBodyParameter(const BodyParameter &bodyParameter);
+    virtual void setUploadRequest(bool uploadRequest);
 
     // Clear the contents of the MockRequest object
     void clear();

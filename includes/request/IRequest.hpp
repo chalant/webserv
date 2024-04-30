@@ -6,10 +6,10 @@
  * Abstract base class for Request in webserv
  *
  * This file defines the Request interface, which serves as the abstract base
- * class for the Request in webserv. 
+ * class for the Request in webserv.
  * IRequest allows for polymorphic behavior and dependency injection,
  * thereby enabling us to create a MockRequest class for isolated unit testing.
- * 
+ *
  */
 
 #include <string>
@@ -18,10 +18,19 @@
 #include <ctime>
 #include "../constants/HttpHelper.hpp"
 
+struct BodyParameter
+{
+    std::string dispositionType;
+    std::string contentType;
+    std::string fieldName;
+    std::map<std::string, std::string> headers;
+    std::string data;
+};
+
 class IRequest
 {
 public:
-    virtual ~IRequest() {};
+    virtual ~IRequest(){};
 
     // Getters
     virtual HttpMethod getMethod() const = 0;
@@ -45,6 +54,8 @@ public:
     virtual std::string getHostName() const = 0;
     virtual std::string getHostPort() const = 0;
     virtual std::string getAuthority() const = 0;
+    virtual const std::vector<BodyParameter> &getBodyParameters() const = 0;
+    virtual bool isUploadRequest() const = 0;
 
     // Setters
     virtual void setMethod(const std::string &method) = 0;
@@ -55,6 +66,8 @@ public:
     virtual void setBody(const std::string &body) = 0;
     virtual void addCookie(const std::string &key, const std::string &value) = 0;
     virtual void setAuthority() = 0;
+    virtual void addBodyParameter(const BodyParameter &bodyParameter) = 0;
+    virtual void setUploadRequest(bool uploadRequest) = 0;
 };
 
 #endif // IREQUEST_HPP

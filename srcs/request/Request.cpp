@@ -260,6 +260,18 @@ std::string Request::getAuthority() const
     return this->_authority;
 }
 
+// Getter function for retrieving the body parameters
+const std::vector<BodyParameter> &Request::getBodyParameters() const
+{
+    return this->_bodyParameters;
+}
+
+// Getter function for checking if the request is an upload request
+bool Request::isUploadRequest() const
+{
+    return this->_uploadRequest;
+}
+
 // Setter function for setting the method of the request
 void Request::setMethod(const std::string &method)
 {
@@ -383,6 +395,19 @@ void Request::setAuthority()
 
     // Set the authority of the request
     this->_authority = this->_hostName + ":" + this->_hostPort;
+}
+
+// Function for adding a body parameter to the request
+void Request::addBodyParameter(const BodyParameter &bodyParameter)
+{
+    // Add the body parameter to the internal body parameters vector
+    this->_bodyParameters.push_back(bodyParameter);
+}
+
+// Setter function for setting the upload request flag
+void Request::setUploadRequest(bool uploadRequest)
+{
+    this->_uploadRequest = uploadRequest;
 }
 
 // path: srcs/request/Request.cpp

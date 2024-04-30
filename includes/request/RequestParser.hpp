@@ -22,8 +22,8 @@
 class RequestParser
 {
 private:
-    ILogger &_logger;                // Reference to the error logger
-    const IConfiguration &_configuration;       // Reference to the server IConfiguration
+    ILogger &_logger;                     // Reference to the error logger
+    const IConfiguration &_configuration; // Reference to the server IConfiguration
 
     // Function to parse the request line of an HTTP request
     void _parseRequestLine(std::vector<char>::const_iterator &it,
@@ -53,24 +53,16 @@ private:
                     const std::vector<char> &rawRequest,
                     IRequest &parsedRequest) const;
 
+    // Function to unchunk the body of an HTTP request
+    std::vector<char> _unchunkBody(std::vector<char>::const_iterator &it,
+                      const std::vector<char> &rawRequest) const;
+
+    // Function to parse the Upload Chunked Body
+    void _parseBodyParameters(IRequest &parseRequest) const;
+
     // Function to parse a Cookie header
     void _parseCookie(std::string &cookieHeaderValue,
                       IRequest &parsedRequest) const;
-
-    // Function to parse Query Parameters
-    void _parseQueryParameters(std::vector<char>::const_iterator &it,
-                               const std::vector<char> &rawRequest,
-                               IRequest &parsedRequest) const;
-
-    // Function to parse url encoded body parameters
-    void _parseBodyParameters(std::vector<char>::const_iterator &it,
-                             const std::vector<char> &rawRequest,
-                             IRequest &parsedRequest) const;
-
-    // Function to parse the url
-    void _parseUrl(std::vector<char>::const_iterator &it,
-                   const std::vector<char> &rawRequest,
-                   IRequest &parsedRequest) const;
 
     // Function to check if a character is whitespace
     bool _isWhitespace(char c) const;
