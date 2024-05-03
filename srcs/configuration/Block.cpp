@@ -1,11 +1,21 @@
 #include "configuration/Block.hpp"
+#include <iostream>
+#include <iomanip>
 
-Block::Block(ILogger &logger) : 
-    _logger(logger)
+Block::Block(ILogger& logger, const std::string name) : 
+    _logger(logger), _name(name)
 {
 }
 
-const std::vector<IBlock *> Block::getBlocks(const std::string &key) const
+Block::Block(const Block& parent, const std::string name): 
+    _logger(parent._logger), _name(name)
+{
+}
+
+Block::~Block() {
+}
+
+const std::vector<IBlock*> Block::getBlocks(const std::string &key) const
 {
     try{
         return _blocks.at(key);
@@ -64,6 +74,38 @@ bool Block::getBool(const std::string &key) const
         _logger.log(DEBUG, "Block::getBool: " + key + " not found");
     }
     return false;
+}
+
+void	Block::addBlock(const std::string& name, IBlock	*block) {
+	_blocks[name].push_back(block);
+}
+
+//todo: check if it exists first.
+void	Block::addDirective(const std::string& name, std::vector<std::string> *parameters) {
+	_directives[name] = parameters;
+}
+
+void	Block::print(size_t depth) const {
+	for (std::map<std::string, std::vector<std::string> *>::const_iterator it = _directives.begin(); it != _directives.end(); ++it) {
+		std::cout << std::setw(depth) << "" << it->first << " ";
+		for (size_t i = 0; i < it->second->size(); i++) {
+			std::cout << (*it->second)[i] << " ";
+		}
+		std::cout << std::endl;
+	}
+	//std::cout << "BLOCK SIZE " << _blocks.size() << std::endl;
+	for (std::map<std::string, std::vector<IBlock *>>::const_iterator it = _blocks.begin(); it != _blocks.end(); ++it) {
+		for (size_t i = 0; i < it->second.size(); i++) {
+			std::cout << std::setw(depth) << "" << it->first << " " << std::endl;
+			//std::cout << std::setw(depth) << "PRINTING " << it->second[i]->getName() << std::endl;
+			it->second[i]->print(depth + 4);
+		}
+		std::cout << std::endl;
+	}
+}
+
+const std::string&	Block::getName(void) const {
+	return _name;
 }
 
 // Path: srcs/Block.cpp

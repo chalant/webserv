@@ -14,6 +14,8 @@ GrammarRule*	Grammar::addRule(NonTerminalSymbol const & symbol) {
 }
 
 const GrammarRule	*Grammar::getRule(int index) const {
+	if (static_cast<size_t>(index) >= m_rules.size())
+		return NULL;
 	return &m_rules[index];
 }
 size_t	Grammar::size() const {

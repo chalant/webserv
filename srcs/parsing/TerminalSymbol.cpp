@@ -34,8 +34,20 @@ TerminalSymbolSet::TerminalSymbolSet(std::string const name, int id, std::vector
 	m_matching(matching) {
 }
 
+bool	TerminalSymbolSet::terminal(void) const {
+	return true;
+}
+
 bool TerminalSymbolSet::match(Token const & token) const {
 	return m_matching.match(token, m_values);
+}
+
+const std::string&	TerminalSymbolSet::getValue() const {
+	return m_value;
+}
+
+int		TerminalSymbolSet::ruleID() const {
+	return m_id;
 }
 
 TerminalSymbolSet::~TerminalSymbolSet() {

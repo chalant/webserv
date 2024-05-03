@@ -2,9 +2,9 @@
 
 ParseTree::ParseTree(void) {
 	m_subtrees = std::vector<ParseTree*>();
-	m_subtrees.reserve(4);
-	for (size_t i = 0; i < 4; i++) {
-		m_subtrees.push_back(nullptr);
+	//m_subtrees.reserve(4);
+	for (size_t i = 0; i < 8; i++) {
+		m_subtrees.push_back(NULL);
 	}
 	m_start = 0;
 	m_end = 0;
@@ -32,7 +32,10 @@ void	ParseTree::addSubtree(int start, int end, int index, const GrammarRule& rul
 	tree = m_subtrees[index];
 	tree->setSpan(start, end);
 	tree->ruleID(rule.ruleID());
-	tree->ruleIndex(rule.getRuleIndex());
+	if (start == end)
+		tree->ruleIndex(0);
+	else
+		tree->ruleIndex(rule.getRuleIndex());
 	if (index >= m_size)
 		m_size = index + 1;
 }
@@ -52,8 +55,10 @@ int	ParseTree::end(void) const {
 	return m_end;
 }
 
-ParseTree&	ParseTree::operator[](int index) {
-	return *m_subtrees[index];
+ParseTree	*ParseTree::operator[](int index) {
+	if (static_cast<size_t>(index) >= m_subtrees.size())
+		return NULL;
+	return m_subtrees[index];
 }
 
 ParseTree&	ParseTree::operator=(ParseTree const & other) {

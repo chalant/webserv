@@ -21,7 +21,7 @@ class ParseTree {
 		ParseTree(void);
 		ParseTree(ParseTree const & other);
 		~ParseTree(void);
-		ParseTree&	operator[](int index);
+		ParseTree	*operator[](int index);
 		ParseTree&	operator=(ParseTree const & other);
 		void	setSpan(int start, int end);
 		int		start(void) const;

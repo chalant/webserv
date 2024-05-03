@@ -31,7 +31,10 @@ class TerminalSymbolSet: public TerminalSymbol {
 	public:
 		TerminalSymbolSet(std::string const name, int id, std::vector<std::string> const values, ASymbolMatching& matching);
 		~TerminalSymbolSet();
+		bool				terminal(void) const;
 		bool	match(const Token& token) const;
+		const	std::string&	getValue() const;
+		int						ruleID() const;
 };
 
 #endif

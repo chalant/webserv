@@ -34,7 +34,7 @@ static void print_parse_tree(ParseTree& parse_tree, int depth, const Grammar& gr
 	std::cout << grammar.getRule(parse_tree.ruleIndex())->getName() << std::endl;
     // Recursively print children
     for (size_t i = 0; i < parse_tree.size(); ++i) {
-        print_parse_tree(parse_tree[i], depth + 1, grammar, tokens);
+        print_parse_tree(*parse_tree[i], depth + 1, grammar, tokens);
     }
 }
 
@@ -75,14 +75,14 @@ Parser::Parser(Grammar const & grammar): m_grammar(grammar) {
 	m_parse_tree = new ParseTree();
 }
 
-//match the current symbol with the token
+//attempts to match the current symbol with the token
 bool	Parser::m_processTerminal(ParseTree& parse_tree, SearchState state, const AGrammarSymbol& symbol, const std::vector<Token>& tokens) {
 	if (state.node >= parse_tree.end())
 		return false;
 	if (!symbol.match(tokens[state.node]))
 		return false;
 	parse_tree.addSubtree(state.node, state.node, state.depth, *m_grammar.getRule(state.rule_index));
-	parse_tree[state.depth].tokenIndex(state.node);
+	parse_tree[state.depth]->tokenIndex(state.node);
 	//advance one step in the symbols and the tokens then continue the search (the symbol can be either 
 	//at the end of in-between 2 non-terminal symbols).
 	return m_searchPath(parse_tree, SearchState(state.rule_index, state.depth + 1, state.node + 1), tokens);
@@ -108,12 +108,12 @@ bool	Parser::m_searchPath(ParseTree& parse_tree, SearchState state, const std::v
 		if (m_searchPath(parse_tree, new_state, tokens)) {
 			parse_tree.addSubtree(state.node, new_state.node, state.depth, *m_grammar.getRule(edges[i].ruleIndex()));
 		}
-		//sub-parse was completed
-		if (new_state.node >= parse_tree.end()) {
-			return true;
-		}
+		// sub-parse was completed
+		// if (new_state.node >= parse_tree.end()) {
+		// 	return true;
+		// }
 	}
-	return false;
+	return true;
 }
 
 //recursively builds the parse tree using depth-first search.
@@ -136,16 +136,17 @@ void	Parser::m_buildTree(ParseTree& parse_tree, const std::vector<Token>& tokens
 	}
 	//recursively perform searches on subtrees...
 	for (size_t i = 0; i < parse_tree.size(); i++) {
-		m_buildTree(parse_tree[i], tokens);
+		m_buildTree(*parse_tree[i], tokens);
 	}
 }
 
-void	Parser::parse(std::vector<Token> const & tokens) {
+ParseTree&	Parser::parse(std::vector<Token> const & tokens) {
 	//the recognizer should throw an exception if a parse is not possible. (syntax error)
 	m_recognizer.recognize(tokens, m_grammar, m_earley_sets);
 	buildChart(m_chart, m_earley_sets);
 	setRootNode(*m_parse_tree, m_grammar, m_chart);
 	m_buildTree(*m_parse_tree, tokens);
+	return *m_parse_tree;
 }
 
 void	Parser::print(std::vector<Token> const & tokens) {

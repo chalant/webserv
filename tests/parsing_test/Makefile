@@ -1,8 +1,12 @@
 NAME            = parser_test
 
 SRC_DIR			= ../../srcs
+CONF_SRC_DIR	= ../../srcs/configuration
+MOCK_SRC_DIR	= ../mock_srcs
 INCLUDES_DIR	= ../../includes
 HPARSER_DIR		= ../../includes/parsing/
+HCONFIG_DIR		= ../../includes/configuration/
+HMOCK_DIR		= ../mock_includes/
 SSRC_DIR		= ../../srcs/parsing/
 
 SOURCES         = parsing_test_main.cpp \
@@ -18,12 +22,15 @@ SOURCES         = parsing_test_main.cpp \
 				  ../../srcs/parsing/ParseTree.cpp \
 				  ../../srcs/parsing/Parser.cpp \
 				  ../../srcs/parsing/ParsingUtils.cpp \
-				  ../../srcs/parsing/Tokenizer.cpp
+				  ../../srcs/parsing/Tokenizer.cpp \
+				  ../../srcs/configuration/ConfigurationLoader.cpp \
+				  ../mock_srcs/MockLogger.cpp \
+				  ../../srcs/configuration/Block.cpp
 
 OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 
 CC              = c++
-CPPFLAGS        = -Wall -Wextra -Werror -I$(SRC_DIR) -I$(INCLUDES_DIR) -I$(HPARSER_DIR) -I$(SSRC_DIR)
+CPPFLAGS        = -Wall -Wextra -Werror -I$(SRC_DIR) -I$(INCLUDES_DIR) -I$(HPARSER_DIR) -I$(HCONFIG_DIR) -I$(HMOCK_DIR) -I$(SSRC_DIR)
 # Optional flags - uncomment to enable
 # CPPFLAGS += -std=c++98
 CPPFLAGS += -g

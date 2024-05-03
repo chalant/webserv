@@ -1,15 +1,22 @@
-#ifndef IConfigurationLOADER_HPP
-# define IConfigurationLOADER_HPP
+#if !defined(CONFIGURATIONLOADER_HPP)
+#define CONFIGURATIONLOADER_HPP
 
-#include "IConfiguration.hpp"
-#include "exception/IExceptionHandler.hpp"
+#include <string>
+#include "Grammar.hpp"
+#include "Parser.hpp"
+#include "configuration/IBlock.hpp"
+#include "configuration/Block.hpp"
 
-class IConfigurationLoader
+class ConfigurationLoader
 {
+	private:
+		Grammar		*m_grammar;
+		ILogger&	m_logger;
+		Block		*m_config;
 	public:
-		IConfigurationLoader(const IExceptionHandler *exc_handler, IConfiguration *config);
-		~IConfigurationLoader();
-		IConfiguration*	loadIConfiguration(const std::string *path);
+		ConfigurationLoader(ILogger& logger);
+		~ConfigurationLoader();
+		const IBlock&	loadConfiguration(const std::string& path);
 };
 
-#endif // IConfiguration_HPP
+#endif
