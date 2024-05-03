@@ -6,15 +6,15 @@ locationblock)*/
 // Router class using std::map for route storage
 
 #ifndef ROUTER_HPP
-#define ROUTER_HPP
+# define ROUTER_HPP
 
-#include <string>
-#include <vector>
-#include "../request/Request.hpp"
-#include "../constants/HttpMethodHelper.hpp"
-#include "../configuration/IConfiguration.hpp"
-#include "../logger/ILogger.hpp"
-#include "IRouter.hpp"
+# include <string>
+# include <vector>
+# include "../request/Request.hpp"
+# include "../constants/HttpMethodHelper.hpp"
+# include "../configuration/IConfiguration.hpp"
+# include "../logger/ILogger.hpp"
+# include "IRouter.hpp"
 
 class Response;
 
@@ -30,14 +30,14 @@ public:
     std::string getUri() const;
     void 		setUri(std::string newUri);
     void        appendUri(const std::string &newString);
-    std::string getMethod() const;
-    void		setMethod(std::string newMethod);
+    HttpMethod  getMethod() const;
+    void		setMethod(HttpMethod newMethod);
     void		(*handler)(Request *, Response *);
     bool		operator< (const Route &other) const;
 
 private:
     std::string _uri;
-    std::string _method;
+    HttpMethod _method;
 };
 
 // Router class using std::map for route storage

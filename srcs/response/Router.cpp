@@ -40,6 +40,7 @@ void Router::_createRoutes(IBlock *serverBlock)
 		_routes[i].appendUri(*hostnameIt);
 		_routes[i++].appendUri(":");
 	}
+
 	i = 0;
 	for (portIt = ports.begin(); portIt != ports.end(); portIt++)
 	{
@@ -49,7 +50,7 @@ void Router::_createRoutes(IBlock *serverBlock)
 	for (locationIt = locations.begin(); locationIt != locations.end(); locationIt++)
 	{
 		std::string prefix = (*locationIt)->getString("prefix");
-		_routes[i].setMethod(methods[i]);
+		_routes[i].setMethod(stringHttpMethodMap(methods[i]));
 		_routes[i++].appendUri(prefix);
 	}
 	std::sort(_routes.begin(), _routes.end());
@@ -85,22 +86,23 @@ void Route::setUri(std::string newUri)
 	this->_uri = newUri;
 }
 
-std::string Route::getMethod() const
+HttpMethod Route::getMethod() const
 {
 	return (this->_method);
 }
 
-void Route::setMethod(std::string newMethod)
+void Route::setMethod(HttpMethod newMethod)
 {
 	this->_method = newMethod;
 }
 
 bool Route::operator< (const Route &other) const 
 {
-        return (this->_uri < other._uri);
+        return (this->_uri.length() < other._uri.length());
 }
 
 void Route::appendUri(const std::string& newString)
 {
 	this->_uri.append(newString);
 }
+
