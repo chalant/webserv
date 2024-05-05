@@ -1,11 +1,25 @@
 NAME            = RequestParser_test
 
 SOURCES         = RequestParser_test_main.cpp \
-                  ../../../srcs/request/RequestParser.cpp
+                  ../../../srcs/request/RequestParser.cpp \
+				  ../../../srcs/parsing/Grammar.cpp \
+				  ../../../srcs/parsing/GrammarRule.cpp \
+				  ../../../srcs/parsing/GrammarSymbol.cpp \
+				  ../../../srcs/parsing/SymbolMatching.cpp \
+				  ../../../srcs/parsing/Recognizer.cpp \
+				  ../../../srcs/parsing/EarleyItem.cpp \
+				  ../../../srcs/parsing/Tokenizer.cpp \
+				  ../../../srcs/parsing/TerminalSymbol.cpp \
+				  ../../../srcs/parsing/NonTerminalSymbol.cpp \
+				  ../../../srcs/parsing/ParseTree.cpp \
+				  ../../../srcs/parsing/Parser.cpp \
+				  ../../../srcs/parsing/ParsingUtils.cpp \
+				  ../../../srcs/parsing/Tokenizer.cpp \
+				  ../../../srcs/configuration/ConfigurationLoader.cpp \
+				  ../../../srcs/configuration/ConfigurationBlock.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockLogger.cpp \
                   ../../mock_srcs/MockRequest.cpp \
-                  ../../mock_srcs/MockConfiguration.cpp \
                   ../../mock_srcs/MockExceptionHandler.cpp
 
 INCLUDES        = -I../../../includes

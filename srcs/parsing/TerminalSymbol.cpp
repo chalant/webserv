@@ -1,4 +1,4 @@
-#include "TerminalSymbol.hpp"
+#include "parsing/TerminalSymbol.hpp"
 
 TerminalSymbol::TerminalSymbol():m_value(""), m_id(0) {
 }

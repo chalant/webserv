@@ -1,6 +1,5 @@
 #include "Grammar.hpp"
 #include "Parser.hpp"
-#include "TestSemanticActions.hpp"
 #include "TerminalSymbol.hpp"
 #include "NonTerminalSymbol.hpp"
 #include "ConfigurationLoader.hpp"
@@ -9,13 +8,6 @@
 #include <fstream>
 
 int	main(void) {
-	// Sum			sum_action;
-	// Product		product_action;
-	// Factor		factor_action;
-	// Number									number_action;
-	// RelayAction<std::stack<std::string> >	relay;
-	// std::vector<ASemanticAction<std::stack<std::string> > > sem_actions;
-
 	//create symbols
 	SubsetSymbolMatching	subset_matching;
 	EqualSymbolMatching		equal_matching;
@@ -33,15 +25,6 @@ int	main(void) {
 	TerminalSymbol		open_par("(", 5);
 	TerminalSymbol		close_par(")", 6);
 	TerminalSymbolSet	numbers("[0-9]", 8, {}, digit_matching);
-
-	// sem_actions.push_back(sum_action);
-	// sem_actions.push_back(relay);
-	// sem_actions.push_back(product_action);
-	// sem_actions.push_back(relay);
-	// sem_actions.push_back(factor_action);
-	// sem_actions.push_back(relay);
-	// sem_actions.push_back(relay);
-	// sem_actions.push_back(number_action);
 
 	//create grammar;
 	Grammar	arithmetic;
@@ -112,11 +95,6 @@ int	main(void) {
 	// Parser	nginx_parser(nginx_configuration_grammar);
 	// nginx_parser.parse(nginx_toks);
 	// nginx_parser.print(nginx_toks);
-
-	MockLogger	logger;
-	ConfigurationLoader	loader = ConfigurationLoader(logger);
-	const IBlock&	block = loader.loadConfiguration("test_configuration_file.conf");
-	block.print(0);
 
 	return 0;
 }

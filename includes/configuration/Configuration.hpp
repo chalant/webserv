@@ -14,7 +14,7 @@ file data. This data is used to initiate the 'Server' and the 'Router'*/
 class Configuration : public IConfiguration
 {
 private:
-	std::map<std::string, std::vector<IBlock *> > _blocks;
+	std::map<std::string, std::vector<IConfiguration *> > _blocks;
 	std::map<std::string, std::string> _strings;
 	std::map<std::string, std::vector<std::string> > _stringVectors;
 	std::map<std::string, int> _ints;
@@ -25,12 +25,12 @@ private:
 public:
 	Configuration(ILogger &logger);
 
-	virtual const std::vector<IBlock *> getBlocks(const std::string &parameter) const;
+	virtual const std::vector<IConfiguration *> getBlocks(const std::string &parameter) const;
 	virtual const std::vector<std::string> getStringVector(const std::string &parameter) const;
-	virtual const std::string getString(const std::string &parameter) const;
-	virtual int getInt(const std::string &parameter) const;
-	virtual size_t getSize_t(const std::string &parameter) const;
-	virtual bool getBool(const std::string &parameter) const;
+	virtual const std::string getString(const std::string &parameter, size_t index) const;
+	virtual int getInt(const std::string &parameter, size_t index) const;
+	virtual size_t getSize_t(const std::string &parameter, size_t index) const;
+	virtual bool getBool(const std::string &parameter, size_t index) const;
 };
 
 #endif

@@ -2,21 +2,21 @@
 #define CONFIGURATIONLOADER_HPP
 
 #include <string>
-#include "Grammar.hpp"
-#include "Parser.hpp"
-#include "configuration/IBlock.hpp"
-#include "configuration/Block.hpp"
+#include "parsing/Grammar.hpp"
+#include "parsing/Parser.hpp"
+#include "configuration/IConfiguration.hpp"
+#include "configuration/ConfigurationBlock.hpp"
 
 class ConfigurationLoader
 {
 	private:
-		Grammar		*m_grammar;
-		ILogger&	m_logger;
-		Block		*m_config;
+		Grammar				*m_grammar;
+		ILogger&			m_logger;
+		ConfigurationBlock	*m_config;
 	public:
 		ConfigurationLoader(ILogger& logger);
 		~ConfigurationLoader();
-		const IBlock&	loadConfiguration(const std::string& path);
+		const IConfiguration&	loadConfiguration(const std::string& path);
 };
 
 #endif

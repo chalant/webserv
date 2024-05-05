@@ -43,14 +43,14 @@ void MockConfiguration::setInt(const std::string &parameter, int value)
 }
 
 // Getters
-const std::vector<IBlock *> MockConfiguration::getBlocks(const std::string &parameter) const
+const std::vector<IConfiguration *> MockConfiguration::getBlocks(const std::string &parameter) const
 {
     try {
         return (_blocks.at(parameter));
     } catch (const std::out_of_range &e){
         throw std::out_of_range("Block Key not found " + parameter);
     }
-    return  std::vector<IBlock *>();
+    return  std::vector<IConfiguration *>();
 }
 
 const std::vector<std::string> MockConfiguration::getStringVector(const std::string &parameter) const

@@ -12,14 +12,14 @@ Configuration::~Configuration()
 {
 }
 
-const std::vector<IBlock *> Configuration::getBlocks(const std::string &parameter) const
+const std::vector<IConfiguration *> Configuration::getBlocks(const std::string &parameter) const
 {
     try{
         return _blocks.at(parameter);
     } catch (const std::out_of_range &e){
         _logger.log(DEBUG, "Configuration::getBlocks: " + parameter + " not found");
     }
-    return std::vector<IBlock *>();
+    return std::vector<IConfiguration *>();
 }
 
 const std::vector<std::string> Configuration::getStringVector(const std::string &parameter) const

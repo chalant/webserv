@@ -5,7 +5,7 @@
  * Mocks the LoggerConfiguration class
  */
 
-MockLoggerConfiguration::MockLoggerConfiguration(IBufferManager &bufferManager, IConfiguration &configuration, IPollfdManager &pollfdManager)
+MockLoggerConfiguration::MockLoggerConfiguration(IBufferManager &bufferManager, const IConfiguration &configuration, IPollfdManager &pollfdManager)
     : _errorLogFile(""),
       _accessLogFile(""),
       _bufferManager(bufferManager),

@@ -24,11 +24,12 @@
 #include "response/Response.hpp"
 #include "request/Request.hpp"
 #include "constants/HttpHelper.hpp"
+#include "configuration/ConfigurationLoader.hpp"
 
 // Include the mock classes
 #include "MockLogger.hpp"
 #include "MockFactory.hpp"
-#include "MockConfiguration.hpp"
+// #include "MockConfiguration.hpp"
 #include "MockConnection.hpp"
 
 // Test helper function
@@ -43,15 +44,18 @@ int main()
   // Mock objects
   MockLogger logger;
   MockFactory factory;
-  MockConfiguration mockConfiguration;
+//   MockConfiguration mockConfiguration;
   MockConnection mockConnection;
+  ConfigurationLoader	confLoader(logger);
 
   // Mock Set the Configuration
-  mockConfiguration.setString("DefaultPort", "80");
-  mockConfiguration.setInt("ClientHeaderBufferSize", 4096);
-  mockConfiguration.setSize_t("ClientMaxBodySize", 10000);
-  mockConfiguration.setSize_t("ClientMaxUriSize", 1000);
-  mockConfiguration.setStringVector("Methods", {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"});
+//   mockConfiguration.setString("DefaultPort", "80");
+//   mockConfiguration.setInt("ClientHeaderBufferSize", 4096);
+//   mockConfiguration.setSize_t("ClientMaxBodySize", 10000);
+//   mockConfiguration.setSize_t("ClientMaxUriSize", 1000);
+//   mockConfiguration.setStringVector("Methods", {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"});
+
+  const IConfiguration&	mockConfiguration = confLoader.loadConfiguration("test_configuration.conf");
 
   // Instantiate the objects under test
   HttpHelper httpHelper(mockConfiguration);

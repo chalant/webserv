@@ -55,8 +55,8 @@ private:
     routes_t _createRoutes(IBlock *serverBlock);*/
 
     std::vector<Route>    _routes;
-    void _createServerRoutes(IBlock *serverBlock);
-    void _createRoutes(IBlock *serverBlock);
+    void _createServerRoutes(IConfiguration *serverBlock);
+    void _createRoutes(IConfiguration *serverBlock);
 
 };
 

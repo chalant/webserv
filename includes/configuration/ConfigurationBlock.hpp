@@ -1,15 +1,15 @@
-#ifndef BLOCK_HPP
-#define BLOCK_HPP
+#ifndef CONFIGURATIONBLOCK_HPP
+#define CONFIGURATIONBLOCK_HPP
 
-#include "IBlock.hpp"
+#include "IConfiguration.hpp"
 #include <stdexcept>
 #include <map>
 #include "logger/ILogger.hpp"
 
-class Block : public IBlock
+class ConfigurationBlock : public IConfiguration
 {
 	private:
-		std::map<std::string, std::vector<IBlock *> > _blocks;
+		std::map<std::string, std::vector<IConfiguration *> > _blocks;
 		std::map<std::string, std::vector<std::string> > _stringVectors;
 		std::map<std::string, std::string> _strings;
 		std::map<std::string, int> _ints;
@@ -20,17 +20,17 @@ class Block : public IBlock
 		const std::string	_name;
 
 	public:
-		Block(ILogger &logger, const std::string name);
-		Block(const Block &parent, const std::string name);
-		~Block();
+		ConfigurationBlock(ILogger &logger, const std::string name);
+		ConfigurationBlock(const ConfigurationBlock &parent, const std::string name);
+		~ConfigurationBlock();
 
-		virtual const std::vector<IBlock *>&	getBlocks(const std::string &key) const;
+		virtual const std::vector<IConfiguration *>&	getBlocks(const std::string &key) const;
 		virtual const std::vector<std::string>&	getStringVector(const std::string &key) const;
-		virtual const std::string getString(const std::string &parameter) const;
+		virtual const std::string&	getString(const std::string &parameter, size_t index) const;
 		virtual int		getInt(const std::string &parameter, size_t index) const;
 		virtual size_t	getSize_t(const std::string &parameter, size_t index) const;
 		virtual bool	getBool(const std::string &parameter, size_t index) const;
-		virtual	void	addBlock(const std::string& name, IBlock *block);
+		virtual	void	addBlock(const std::string& name, IConfiguration *block);
 		virtual	void	addDirective(const std::string& name, std::vector<std::string> *parameters);
 		void			print(size_t depth) const;
 		virtual const std::string&	getName() const;

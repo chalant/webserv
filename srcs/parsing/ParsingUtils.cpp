@@ -1,4 +1,4 @@
-#include "Parser.hpp"
+#include "parsing/Parser.hpp"
 
 EarleyEdge::EarleyEdge(EarleyItem const & item, int end):m_item(item), m_end(end)  {
 }

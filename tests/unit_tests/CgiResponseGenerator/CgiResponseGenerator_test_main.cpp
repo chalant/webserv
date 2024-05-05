@@ -10,16 +10,17 @@
 // include the header files for the mock classes
 #include "MockRoute.hpp"
 #include "MockRequest.hpp"
-#include "MockConfiguration.hpp"
+// #include "MockConfiguration.hpp"
 #include "MockLogger.hpp"
+#include "configuration/ConfigurationLoader.hpp"
 
 int main()
 {
     // Mock objects
     MockRoute mockRoute;
     MockRequest mockRequest;
-    MockConfiguration mockConfiguration;
     MockLogger mockLogger;
+	ConfigurationLoader	conf_loader(mockLogger);
 
     // Set Mock Route Variables
     std::string root = ".";
@@ -27,9 +28,11 @@ int main()
     mockRoute.setRoot(root);
     mockRoute.setPrefix(prefix);
 
+	const IConfiguration& mockConfiguration = conf_loader.loadConfiguration("test_configuration.conf");
+
     // Set Mock Configuration Variables
-    mockConfiguration.setString("PhpCgiPath", "/usr/bin/php-cgi");
-    mockConfiguration.setString("PythonCgiPath", "/usr/bin/python3");
+    // mockConfiguration.setString("PhpCgiPath", "/usr/bin/php-cgi");
+    // mockConfiguration.setString("PythonCgiPath", "/usr/bin/python3");
 
     // Declare cgi info
     Triplet_t cgiInfo; // <cgiPid, <responseReadPipe, requestWritePipe>>

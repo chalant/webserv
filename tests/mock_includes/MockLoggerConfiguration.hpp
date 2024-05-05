@@ -25,7 +25,7 @@ private:
     bool _errorLogEnabled;
     bool _accessLogEnabled;
 public:
-    MockLoggerConfiguration(IBufferManager &bufferManager, IConfiguration &configuration, IPollfdManager &pollfdManager);
+    MockLoggerConfiguration(IBufferManager &bufferManager, const IConfiguration &configuration, IPollfdManager &pollfdManager);
 
     virtual ~MockLoggerConfiguration();
     virtual void setErrorLogEnabled(bool);

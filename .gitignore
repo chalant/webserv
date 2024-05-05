@@ -3,3 +3,9 @@
 parser_test
 *.dSYM
 *.o
+configuration_test
+RequestParser_test
+ClientHandler_test
+Buffer_test
+Session_Cookies_test
+CgiResponseGenerator_test

@@ -5,11 +5,11 @@
 #include "configuration/ConfigurationLoader.hpp"
 #include <fstream>
 
-void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, Block& block);
-void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, Block& block);
+void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block);
+void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block);
 void	get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, std::vector<std::string>& result);
 
-void	build_config(const std::vector<Token>& tokens, const Grammar& grammar, ParseTree& parse_tree, Block& block) {
+void	build_config(const std::vector<Token>& tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block) {
 	const GrammarRule	*rule = grammar.getRule(parse_tree.ruleIndex());
 	const std::string rule_name = rule->getName();
 	if (rule_name == "block") {
@@ -37,21 +37,21 @@ void	get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, std::ve
 	}
 }
 
-void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, Block& block) {
+void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block) {
 	//the first sub-child is the directive name and the second is the parameters list.
 	std::vector<std::string>	*params = new std::vector<std::string>();
 	get_values(tokens, *parse_tree[1], *params);
 	block.addDirective(tokens[(*parse_tree[0])[0]->tokenIndex()].value, params);
 }
 
-void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, Block& block) {
-	Block	*new_block = new Block(block, tokens[parse_tree[0]->tokenIndex()].value);
+void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block) {
+	ConfigurationBlock	*new_block = new ConfigurationBlock(block, tokens[parse_tree[0]->tokenIndex()].value);
 	const std::string rule_name = grammar.getRule(parse_tree[1]->ruleIndex())->getName();
 
 	block.addBlock(tokens[parse_tree[0]->tokenIndex()].value, new_block);
 	//check if it is a block with at field and retreive the field.
 	if (rule_name == "prefix") {
-		//NOTE: the Block could have a regex mode...
+		//NOTE: the ConfigurationBlock could have a regex mode...
 		std::vector<std::string>	*params = new std::vector<std::string>();
 		for (size_t i = 0; i < parse_tree[1]->size(); i++) {
 			params->push_back(tokens[(*parse_tree[1])[i]->tokenIndex()].value);
@@ -74,7 +74,7 @@ ConfigurationLoader::~ConfigurationLoader() {
 	delete m_config;
 }
 
-const IBlock&	ConfigurationLoader::loadConfiguration(const std::string& path) {
+const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& path) {
 
 	Grammar					grammar;
 	SubsetSymbolMatching	subset_matching;
@@ -207,7 +207,7 @@ const IBlock&	ConfigurationLoader::loadConfiguration(const std::string& path) {
 	ParseTree&	parse_tree = parser.parse(tokens);
 	if (m_config)
 		delete m_config;
-	m_config = new Block(m_logger, "main"); //initial block.
+	m_config = new ConfigurationBlock(m_logger, "main"); //initial block.
 	
 	for (size_t i = 0; i < parse_tree.size(); i++) {
 		build_config(tokens, grammar, *parse_tree[i], *m_config);
