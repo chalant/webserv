@@ -110,10 +110,10 @@ void	Recognizer::print(Grammar const & grammar, std::vector<std::vector<EarleyIt
 			item = &sets[i][j];
 			rule = grammar.getRule(item->ruleIndex());
 			std::cout << rule->getName() << " -> ";
-			for (int k = 0; k < (int)rule->size() + 1; k++) {
+			for (int k = 0; k < static_cast<int>(rule->size()) + 1; k++) {
 				if (k == item->next())
 					std::cout << "• ";
-				if (k != (int)rule->size())
+				if (k != static_cast<int>(rule->size()))
 					std::cout << rule->getSymbol(k)->getValue() << " ";
 			}
 			std::cout << "(" << item->start() << ")" << std::endl;

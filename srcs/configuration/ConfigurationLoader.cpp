@@ -200,14 +200,15 @@ const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& 
 
 	//todo: check if there is no error.
 	std::ifstream				conf_stream(path);
-	Tokenizer					tokenizer({" ", "\n"}, {"#", "{", "}", ";", "~"});
+	Tokenizer					tokenizer({" ", "\n", "\t"}, {"#", "{", "}", ";", "~"});
 	Parser						parser(grammar);
 	const std::vector<Token>&	tokens = tokenizer.tokenize(conf_stream);
 
 	ParseTree&	parse_tree = parser.parse(tokens);
 	if (m_config)
 		delete m_config;
-	m_config = new ConfigurationBlock(m_logger, "main"); //initial block.
+	//initial block.
+	m_config = new ConfigurationBlock(m_logger, "main");
 	
 	for (size_t i = 0; i < parse_tree.size(); i++) {
 		build_config(tokens, grammar, *parse_tree[i], *m_config);

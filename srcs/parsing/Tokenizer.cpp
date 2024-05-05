@@ -77,18 +77,13 @@ const std::vector<Token>&	Tokenizer::tokenize(const std::string& str) {
 //fixme: should load the whole file other-wise tokens might get unproperly split.
 //todo: set buffer size in the header...
 const std::vector<Token>&	Tokenizer::tokenize(std::ifstream& stream) {
-	char	buffer[1024];
-
 	//todo: raise an error here.
+	std::string	line;
 	if (!stream.is_open())
 		return m_tokens;
 	m_tokens.clear();
-	while (!stream.eof()) {
-		stream.read(buffer, 1023);
-		buffer[stream.gcount()]  = '\0';
-		if (stream.gcount() > 0) {
-			makeTokens(std::string(buffer));
-		}
+	while (std::getline(stream, line)) {
+		makeTokens(line);
 	}
 	return m_tokens;
 }

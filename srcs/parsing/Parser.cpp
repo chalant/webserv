@@ -150,5 +150,6 @@ ParseTree&	Parser::parse(std::vector<Token> const & tokens) {
 }
 
 void	Parser::print(std::vector<Token> const & tokens) {
+	m_recognizer.print(m_grammar, m_earley_sets);
 	print_parse_tree(*m_parse_tree, 0, m_grammar, tokens);
 }

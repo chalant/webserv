@@ -1,5 +1,4 @@
-#include "includes/configuration/Configuration.hpp"
-// #include "configuration/ConfigurationLoader.hpp"
+#include "includes/configuration/ConfigurationLoader.hpp"
 #include "includes/network/Server.hpp"
 #include "includes/network/Socket.hpp"
 #include "includes/core/PollingService.hpp"
@@ -50,10 +49,12 @@ int main(int argc, char **argv)
     // Instantiate the exceptionHandler.
     ExceptionHandler exceptionHandler(logger);
 
+	ConfigurationLoader	confLoader(logger);
+
     try
     {
-        // Instantiate the Configuration instance
-        Configuration configuration(logger);
+        // load configuration from file and create the configuration file.
+        const IConfiguration& configuration = confLoader.loadConfiguration("webservConfig.conf");
 
         // parse the configuration file
 
