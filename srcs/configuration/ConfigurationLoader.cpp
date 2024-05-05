@@ -17,12 +17,11 @@ void	build_config(const std::vector<Token>& tokens, const Grammar& grammar, Pars
 		return ;
 	}
 	else if (rule_name == "directive") {
-		//std::cout << grammar.getRule((*parse_tree[1])[0]->ruleIndex())->getName() << std::endl;
 		add_directive(tokens, parse_tree, block);
+		return ;
 	}
 	//go down the parse tree.
 	for (size_t i = 0; i < parse_tree.size(); i++) {
-		//std::cout << "HELLO " << grammar.getRule(parse_tree[i]->ruleIndex())->getName() << std::endl;
 		build_config(tokens, grammar, *parse_tree[i], block);
 	}
 }
@@ -36,9 +35,6 @@ void	get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, std::ve
 		result.push_back(tokens[(*(*next)[0])[0]->tokenIndex()].value);
 		next = (*next)[1];
 	}
-	// for (size_t i = 0; i < result.size(); i++) {
-	// 	std::cout << "RESULT " << result[i] << std::endl;
-	// }
 }
 
 void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, Block& block) {
@@ -53,9 +49,9 @@ void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTr
 	const std::string rule_name = grammar.getRule(parse_tree[1]->ruleIndex())->getName();
 
 	block.addBlock(tokens[parse_tree[0]->tokenIndex()].value, new_block);
-	//check if it is a "parameterized" block and retreive the parameters.
+	//check if it is a block with at field and retreive the field.
 	if (rule_name == "prefix") {
-		//todo: retrieve parameters NOTE: the Block could have a regex mode...
+		//NOTE: the Block could have a regex mode...
 		std::vector<std::string>	*params = new std::vector<std::string>();
 		for (size_t i = 0; i < parse_tree[1]->size(); i++) {
 			params->push_back(tokens[(*parse_tree[1])[i]->tokenIndex()].value);
@@ -64,16 +60,18 @@ void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTr
 		}
 	}
 	else {
-		//recursively add blocks or directives on the current block. (skiping the open brace.)
+		//recursively add blocks or directives on the current block. (skipping the open brace.)
 		build_config(tokens, grammar, *parse_tree[2], *new_block);
 	}
 }
 
 ConfigurationLoader::ConfigurationLoader(ILogger& logger): m_logger(logger) {
+	m_config = NULL;
 }
 
 //todo: delete all the blocks.
-ConfigurationLoader::~ConfigurationLoader() {	
+ConfigurationLoader::~ConfigurationLoader() {
+	delete m_config;
 }
 
 const IBlock&	ConfigurationLoader::loadConfiguration(const std::string& path) {
@@ -200,19 +198,19 @@ const IBlock&	ConfigurationLoader::loadConfiguration(const std::string& path) {
 	rule->addSymbol(&string_);
 	rule->addSymbol(&text);
 
-	std::ifstream				conf_stream(path); //todo: check if there is no error.
+	//todo: check if there is no error.
+	std::ifstream				conf_stream(path);
 	Tokenizer					tokenizer({" ", "\n"}, {"#", "{", "}", ";", "~"});
 	Parser						parser(grammar);
 	const std::vector<Token>&	tokens = tokenizer.tokenize(conf_stream);
 
 	ParseTree&	parse_tree = parser.parse(tokens);
+	if (m_config)
+		delete m_config;
 	m_config = new Block(m_logger, "main"); //initial block.
-
-	//parser.print(tokens);
 	
 	for (size_t i = 0; i < parse_tree.size(); i++) {
 		build_config(tokens, grammar, *parse_tree[i], *m_config);
 	}
-	m_config->print(0);
 	return *m_config;
 }

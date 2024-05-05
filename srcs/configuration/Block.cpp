@@ -13,66 +13,90 @@ Block::Block(const Block& parent, const std::string name):
 }
 
 Block::~Block() {
+	for (std::map<std::string, std::vector<std::string> *>::const_iterator it = _directives.begin(); it != _directives.end(); ++it) {
+		delete it->second;
+	}
 }
 
-const std::vector<IBlock*> Block::getBlocks(const std::string &key) const
+const std::vector<IBlock*>&	Block::getBlocks(const std::string &key) const
 {
-    try{
+    try {
         return _blocks.at(key);
-    } catch (const std::out_of_range &e){
+    }
+	catch (const std::out_of_range &e){
         _logger.log(DEBUG, "Block::getBlocks: " + key + " not found");
     }
-    return std::vector<IBlock *>();
+    //return std::vector<IBlock *>();
+	throw std::out_of_range("");
 }
 
-const std::vector<std::string> Block::getStringVector(const std::string &key) const
+const std::vector<std::string>& Block::getStringVector(const std::string &key) const
 {
-    try{
-        return _stringVectors.at(key);
-    } catch (const std::out_of_range &e){
+    try {
+        return *_directives.at(key);
+    } 
+	catch (const std::out_of_range &e) {
         _logger.log(DEBUG, "Block::getStringVector: " + key + " not found");
-     }
-return std::vector<std::string>();
+	}
+	throw std::out_of_range("");
 }
 
 const std::string Block::getString(const std::string &key) const
 {
-    try{
-        return _strings.at(key);
-    } catch (const std::out_of_range &e){
+    try {
+		return _directives.at(key)->at(0);
+    } 
+	catch (const std::out_of_range &e){
         _logger.log(DEBUG, "Block::getString: " + key + " not found");
     }
     return "";
 }
 
-int Block::getInt(const std::string &key) const
+int Block::getInt(const std::string &key, size_t index) const
 {
     try {
-        return _ints.at(key);
-    } catch (const std::out_of_range &e){
+        return std::stoi(_directives.at(key)->at(index));
+    } catch (const std::out_of_range &e) {
         _logger.log(DEBUG, "Block::getInt: " + key + " not found");
     }
+	catch (const std::invalid_argument& e) {
+		_logger.log(DEBUG, "Block::getInt: " + key + " " + _directives.at(key)->at(index) + " not an integer");
+	}
     return -1;
 }
 
-size_t Block::getSize_t(const std::string &key) const
+size_t Block::getSize_t(const std::string &key, size_t index) const
 {
-    try{
-        return _size_ts.at(key);
-    } catch (const std::out_of_range &e){
+    try {
+		return std::stoul(_directives.at(key)->at(index));
+	} 
+	catch (const std::out_of_range &e) {
         _logger.log(DEBUG, "Block::getSize_t: " + key + " not found");
-    
     }
+	catch (const std::invalid_argument& e) {
+		_logger.log(DEBUG, "Block::getSize_t: " + key + " " + _directives.at(key)->at(index) + " not an unsigned long");
+	}
     return -1;
 }
 
-bool Block::getBool(const std::string &key) const
+bool Block::getBool(const std::string &key, size_t index) const
 {
-    try{
-        return _bools.at(key);
-    } catch (const std::out_of_range &e){
+    try {
+		std::string&	value = _directives.at(key)->at(index);
+		if (value == "on")
+			return true;
+		else if (value == "off")
+			return false;
+		else {
+			throw std::invalid_argument("not a bool");
+		}
+    }
+	catch (const std::out_of_range &e) {
         _logger.log(DEBUG, "Block::getBool: " + key + " not found");
     }
+	catch (const std::invalid_argument& e) {
+		_logger.log(DEBUG, "Block::getBool: " + key + " " + _directives.at(key)->at(index) + " not a bool");
+	}
     return false;
 }
 
@@ -85,7 +109,7 @@ void	Block::addDirective(const std::string& name, std::vector<std::string> *para
 	_directives[name] = parameters;
 }
 
-void	Block::print(size_t depth) const {
+void	Block::print(size_t depth = 0) const {
 	for (std::map<std::string, std::vector<std::string> *>::const_iterator it = _directives.begin(); it != _directives.end(); ++it) {
 		std::cout << std::setw(depth) << "" << it->first << " ";
 		for (size_t i = 0; i < it->second->size(); i++) {
