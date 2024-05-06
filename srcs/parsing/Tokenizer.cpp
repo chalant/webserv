@@ -1,5 +1,4 @@
 #include "parsing/Tokenizer.hpp"
-#include <algorithm>
 #include <fstream>
 
 bool	is_separator(const std::vector<std::string>& separators, char c) {
@@ -39,6 +38,11 @@ size_t	add_reserved(std::vector<Token>& tokens, const std::vector<std::string>& 
 Token::Token(const std::string value, bool reserved):
 	value(value),
 	reserved(reserved) {	
+}
+
+Token& Token::operator=(const Token& other) {
+	reserved = other.reserved;
+	return *this;
 }
 
 Tokenizer::Tokenizer(const std::vector<std::string> separators, const std::vector<std::string> reserved_symbols):

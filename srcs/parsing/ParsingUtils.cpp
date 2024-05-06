@@ -15,5 +15,10 @@ int	EarleyEdge::ruleIndex() const {
 	return m_item.ruleIndex();
 }
 
+EarleyEdge&	EarleyEdge::operator=(const EarleyEdge& other) {
+	m_end = other.m_end;
+	return *this;
+}
+
 SearchState::SearchState(int rule_index, int depth, int node): rule_index(rule_index), depth(depth), node(node) {
 }

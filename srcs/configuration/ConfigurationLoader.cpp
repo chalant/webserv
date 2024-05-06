@@ -103,11 +103,15 @@ const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& 
 	TerminalSymbol			hashtag("#", 14);
 	TerminalSymbol			newline("\n", 15);
 	TerminalSymbol			regex("~", 16);
-	TerminalSymbolSet		boolean("boolean", 17, {"on", "off"}, substring_matching);
+	std::vector<std::string>	bools;
+	bools.push_back("on");
+	bools.push_back("off");
+	std::vector<std::string>	empty;
+	TerminalSymbolSet		boolean("boolean", 17, bools, substring_matching);
 	TerminalSymbol			underscore("_", 18);
-	TerminalSymbolSet		letters("letters", 19, {}, alpha_matching);
-	TerminalSymbolSet		digits("digits", 20, {}, digit_matching);
-	TerminalSymbolSet		string_("string", 21, {}, printable_ascii_matching);
+	TerminalSymbolSet		letters("letters", 19, empty, alpha_matching);
+	TerminalSymbolSet		digits("digits", 20, empty, digit_matching);
+	TerminalSymbolSet		string_("string", 21, empty, printable_ascii_matching);
 
 	//configuration
 	GrammarRule	*rule = grammar.addRule(configuration);
@@ -198,9 +202,22 @@ const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& 
 	rule->addSymbol(&string_);
 	rule->addSymbol(&text);
 
+	std::vector<std::string>	separators;
+	separators.push_back(" ");
+	separators.push_back("\n");
+	separators.push_back("\t");
+
+	std::vector<std::string>	reserved_symbols;
+
+	reserved_symbols.push_back("#");
+	reserved_symbols.push_back("{");
+	reserved_symbols.push_back("}");
+	reserved_symbols.push_back(";");
+	reserved_symbols.push_back("~");
+
 	//todo: check if there is no error.
 	std::ifstream				conf_stream(path);
-	Tokenizer					tokenizer({" ", "\n", "\t"}, {"#", "{", "}", ";", "~"});
+	Tokenizer					tokenizer(separators, reserved_symbols);
 	Parser						parser(grammar);
 	const std::vector<Token>&	tokens = tokenizer.tokenize(conf_stream);
 

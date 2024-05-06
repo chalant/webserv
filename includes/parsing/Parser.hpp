@@ -22,6 +22,7 @@ class EarleyItem {
 		int		next() const;
 		bool	completed() const;
 		void	completed(bool value);
+		EarleyItem&	operator=(const EarleyItem& other);
 };
 
 class	EarleyEdge {
@@ -33,6 +34,7 @@ class	EarleyEdge {
 		int	start() const;
 		int	end() const;
 		int	ruleIndex() const;
+		EarleyEdge&	operator=(const EarleyEdge& other);
 };
 
 struct SearchState {

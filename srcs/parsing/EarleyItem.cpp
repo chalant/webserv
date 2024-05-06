@@ -27,6 +27,14 @@ void	EarleyItem::completed(bool value) {
 	m_completed = value;
 }
 
+EarleyItem&	EarleyItem::operator=(const EarleyItem& other) {
+	m_rule_idx = other.m_rule_idx;
+	m_start = other.m_start;
+	m_next = other.m_next;
+	m_completed = other.m_completed;
+	return *this;
+}
+
 bool	EarleyItem::operator==(const EarleyItem& other) {
 	return m_rule_idx == other.m_rule_idx && other.m_start == m_start && other.m_next == m_next;
 }

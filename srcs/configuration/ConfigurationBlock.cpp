@@ -26,7 +26,7 @@ const std::vector<IConfiguration *>&	ConfigurationBlock::getBlocks(const std::st
 	catch (const std::out_of_range &e){
         _logger.log(DEBUG, "ConfigurationBlock::getBlocks: " + key + " not found");
     }
-    //return std::vector<IConfiguration *>();
+	//todo: throw a webserv error
 	throw std::out_of_range("");
 }
 
@@ -38,6 +38,7 @@ const std::vector<std::string>& ConfigurationBlock::getStringVector(const std::s
 	catch (const std::out_of_range &e) {
         _logger.log(DEBUG, "ConfigurationBlock::getStringVector: " + key + " not found");
 	}
+	//todo: throw a webserv error
 	throw std::out_of_range("");
 }
 
@@ -49,7 +50,8 @@ const std::string&	ConfigurationBlock::getString(const std::string &key, size_t 
 	catch (const std::out_of_range &e){
         _logger.log(DEBUG, "ConfigurationBlock::getString: " + key + " not found");
     }
-   throw std::out_of_range("");
+	//todo: throw a webserv error
+	throw std::out_of_range("");
 }
 
 int ConfigurationBlock::getInt(const std::string &key, size_t index = 0) const
@@ -117,11 +119,9 @@ void	ConfigurationBlock::print(size_t depth = 0) const {
 		}
 		std::cout << std::endl;
 	}
-	//std::cout << "BLOCK SIZE " << _blocks.size() << std::endl;
-	for (std::map<std::string, std::vector<IConfiguration *>>::const_iterator it = _blocks.begin(); it != _blocks.end(); ++it) {
+	for (std::map<std::string, std::vector<IConfiguration *> >::const_iterator it = _blocks.begin(); it != _blocks.end(); ++it) {
 		for (size_t i = 0; i < it->second.size(); i++) {
 			std::cout << std::setw(depth) << "" << it->first << " " << std::endl;
-			//std::cout << std::setw(depth) << "PRINTING " << it->second[i]->getName() << std::endl;
 			it->second[i]->print(depth + 4);
 		}
 		std::cout << std::endl;
@@ -131,5 +131,3 @@ void	ConfigurationBlock::print(size_t depth = 0) const {
 const std::string&	ConfigurationBlock::getName(void) const {
 	return _name;
 }
-
-// Path: srcs/ConfigurationBlock.cpp

@@ -9,6 +9,7 @@ struct Token
 	const std::string	value;
 	bool				reserved;
 	Token(const std::string value, bool	reserved);
+	Token& operator=(const Token& other);
 };
 
 class Tokenizer

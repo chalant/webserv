@@ -10,7 +10,6 @@
 class ConfigurationLoader
 {
 	private:
-		Grammar				*m_grammar;
 		ILogger&			m_logger;
 		ConfigurationBlock	*m_config;
 	public:
