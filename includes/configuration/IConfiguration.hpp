@@ -12,7 +12,6 @@
  *
  */
 
-#include "ConfigurationBlock.hpp"
 #include <set>
 #include <string>
 #include "../../includes/constants/LogLevelHelper.hpp"
