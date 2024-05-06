@@ -16,15 +16,54 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnection
       _connectionManager(connectionManager),
       _logger(logger)
 {
-    std::vector<IBlock *> servers = configuration.getBlocks("server");
-    for (std::vector<IBlock *>::iterator serverIterator = servers.begin();
+    // Get the maximum connections value
+    std::string maxConnectionsString = configuration.getBlocks("http")[0]->getString("worker_connections");
+    int maxConnections = std::stoi(maxConnectionsString);
+
+    // Create a set to store unique IP:port combinations
+    std::set<std::pair<int, int>> processedEndpoints;
+
+    // Get the list of virtual servers
+    std::vector<IConfiguration *> servers = configuration.getBlocks("http")[0]->getBlocks("server");
+
+    // For each virtual server
+    for (std::vector<IConfiguration *>::iterator serverIterator = servers.begin();
          serverIterator != servers.end();
          serverIterator++)
     {
-        int ip = (*serverIterator)->getInt("listenIp"); // 0 for all interfaces
-        int port = (*serverIterator)->getInt("listenPort");
-        int maxConnections = (*serverIterator)->getInt("maxConnections");
-        this->_initializeServerSocket(ip, port, maxConnections);
+        // Get the list of listen directives
+        std::vector<std::string> listenVector = (*serverIterator)->getStringVector("listen");
+
+        // For each listen directive
+        for (std::vector<std::string>::iterator listenIterator = listenVector.begin();
+             listenIterator != listenVector.end();
+             listenIterator++)
+        {
+            int ip = 0; // Default IP to 0 (all network interfaces)
+            int port;
+
+            // Find the position of the colon (if present, ip was specified)
+            size_t colonPos = listenIterator->find(':');
+            if (colonPos != std::string::npos)
+            {
+                ip = std::stoi(listenIterator->substr(0, colonPos));
+                port = std::stoi(listenIterator->substr(colonPos + 1));
+            }
+            else // ip was not specified
+            {
+                port = std::stoi(*listenIterator);
+            }
+
+            // Check if the current IP:port combination has already been processed
+            if (processedEndpoints.find(std::make_pair(ip, port)) == processedEndpoints.end())
+            {
+                // Add the current IP:port combination to the set of processed endpoints
+                processedEndpoints.insert(std::make_pair(ip, port));
+
+                // Initialize a new socket
+                this->_initializeServerSocket(ip, port, maxConnections);
+            }
+        }
     }
     this->_logger.log(INFO, "Finished Server initialization");
 }
@@ -95,7 +134,7 @@ void Server::acceptConnection(int serverSocketDescriptor)
         throw ConnectionEstablishingError();
     short pollMask = POLLIN | POLLERR | POLLHUP | POLLNVAL;
     this->_pollfdManager.addClientSocketPollfd({clientSocketDescriptor, pollMask, 0});
-    
+
     // Set socket to non-blocking mode
     if (this->_socket.setNonBlocking(clientSocketDescriptor) < 0)
         throw SocketSetError();
