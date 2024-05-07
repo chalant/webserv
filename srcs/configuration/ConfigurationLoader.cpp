@@ -5,11 +5,11 @@
 #include "configuration/ConfigurationLoader.hpp"
 #include <fstream>
 
-void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block);
-void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block);
-void	get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, std::vector<std::string>& result);
+static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block);
+static void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block);
+static void get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, std::vector<std::string>& result);
 
-void	build_config(const std::vector<Token>& tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block) {
+static void	build_config(const std::vector<Token>& tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block) {
 	const GrammarRule	*rule = grammar.getRule(parse_tree.ruleIndex());
 	const std::string rule_name = rule->getName();
 	if (rule_name == "block") {
@@ -27,7 +27,7 @@ void	build_config(const std::vector<Token>& tokens, const Grammar& grammar, Pars
 }
 
 //retrieves the list of strings from the parse tree.
-void	get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, std::vector<std::string>& result) {
+static void	get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, std::vector<std::string>& result) {
 	ParseTree	*next = parse_tree[1];
 	result.push_back(tokens[(*parse_tree[0])[0]->tokenIndex()].value);
 	//goes down the tree branch
@@ -37,14 +37,14 @@ void	get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, std::ve
 	}
 }
 
-void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block) {
+static void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block) {
 	//the first sub-child is the directive name and the second is the parameters list.
 	std::vector<std::string>	*params = new std::vector<std::string>();
 	get_values(tokens, *parse_tree[1], *params);
 	block.addDirective(tokens[(*parse_tree[0])[0]->tokenIndex()].value, params);
 }
 
-void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block) {
+static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block) {
 	ConfigurationBlock	*new_block = new ConfigurationBlock(block, tokens[parse_tree[0]->tokenIndex()].value);
 	const std::string rule_name = grammar.getRule(parse_tree[1]->ruleIndex())->getName();
 
@@ -53,6 +53,7 @@ void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTr
 	if (rule_name == "prefix") {
 		//NOTE: the ConfigurationBlock could have a regex mode...
 		std::vector<std::string>	*params = new std::vector<std::string>();
+		//todo: if there is regex add a "matcher" here
 		for (size_t i = 0; i < parse_tree[1]->size(); i++) {
 			params->push_back(tokens[(*parse_tree[1])[i]->tokenIndex()].value);
 			new_block->addDirective(rule_name, params);

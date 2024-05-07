@@ -141,7 +141,7 @@ void	Parser::m_buildTree(ParseTree& parse_tree, const std::vector<Token>& tokens
 }
 
 ParseTree&	Parser::parse(std::vector<Token> const & tokens) {
-	//the recognizer should throw an exception if a parse is not possible. (syntax error)
+	//todo: the recognizer should throw an exception if a parse is not possible. (syntax error)
 	m_recognizer.recognize(tokens, m_grammar, m_earley_sets);
 	buildChart(m_chart, m_earley_sets);
 	setRootNode(*m_parse_tree, m_grammar, m_chart);

@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
     try
     {
-        // load configuration from file and create the configuration file.
+        // load configuration from file and create the configuration object.
         const IConfiguration& configuration = confLoader.loadConfiguration("webservConfig.conf");
 
         // parse the configuration file
