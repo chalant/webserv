@@ -10,11 +10,6 @@ class ConfigurationBlock : public IConfiguration
 {
 	private:
 		std::map<std::string, std::vector<IConfiguration *> > _blocks;
-		std::map<std::string, std::vector<std::string> > _stringVectors;
-		std::map<std::string, std::string> _strings;
-		std::map<std::string, int> _ints;
-		std::map<std::string, size_t> _size_ts;
-		std::map<std::string, bool> _bools;
 		std::map<std::string, std::vector<std::string>* > _directives;
 		ILogger&	_logger;
 		const std::string	_name;

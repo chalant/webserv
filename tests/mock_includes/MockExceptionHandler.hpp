@@ -25,4 +25,4 @@ public:
 };
 
 #endif // MOCKEXCEPTIONHANDLER_HPP
-// Path: tests/mock_includes/MockConfiguration.hpp
+// Path: tests/mock_includes/MockConfigurationBlock.hpp

@@ -10,7 +10,7 @@
 // include the header files for the mock classes
 #include "MockRoute.hpp"
 #include "MockRequest.hpp"
-// #include "MockConfiguration.hpp"
+// #include "MockConfigurationBlock.hpp"
 #include "MockLogger.hpp"
 #include "configuration/ConfigurationLoader.hpp"
 
@@ -28,11 +28,11 @@ int main()
     mockRoute.setRoot(root);
     mockRoute.setPrefix(prefix);
 
-	const IConfiguration& mockConfiguration = conf_loader.loadConfiguration("test_configuration.conf");
+	const IConfiguration& mockConfigurationBlock = conf_loader.loadConfiguration("test_configuration.conf");
 
     // Set Mock Configuration Variables
-    // mockConfiguration.setString("PhpCgiPath", "/usr/bin/php-cgi");
-    // mockConfiguration.setString("PythonCgiPath", "/usr/bin/python3");
+    // mockConfigurationBlock.setString("PhpCgiPath", "/usr/bin/php-cgi");
+    // mockConfigurationBlock.setString("PythonCgiPath", "/usr/bin/python3");
 
     // Declare cgi info
     Triplet_t cgiInfo; // <cgiPid, <responseReadPipe, requestWritePipe>>
@@ -55,7 +55,7 @@ int main()
     mockRequest.setUri("/mock-cgi-bin/" + scriptName);
 
     // Generate cgi response
-    cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfiguration, scriptName);
+    cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);
     
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
@@ -84,7 +84,7 @@ int main()
     mockRequest.setUri("/mock-cgi-bin/" + scriptName + "?name=John&age=30");
 
     // Generate cgi response
-    cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfiguration, scriptName);
+    cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);
     
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
@@ -114,7 +114,7 @@ int main()
     mockRequest.addHeader("Content-Length", std::to_string(mockRequest.getBody().size()));
 
     // Generate cgi response
-    cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfiguration, scriptName);
+    cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);
     
     // Get the pipe file descriptors
     responseReadPipe = cgiInfo.second.first;

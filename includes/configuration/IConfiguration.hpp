@@ -8,7 +8,7 @@
  * This file defines the Configuration interface, which serves as the abstract base
  * class for the Configuration in webserv.
  * IConfiguration allows for polymorphic behavior and dependency injection,
- * thereby enabling us to create a MockConfiguration class for isolated unit testing.
+ * thereby enabling us to create a MockConfigurationBlock class for isolated unit testing.
  *
  */
 

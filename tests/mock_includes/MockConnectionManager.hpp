@@ -9,12 +9,15 @@
  *
  */
 
+#include "connection/IConnectionManager.hpp"
+#include "MockConnection.hpp"
+#include "MockRequest.hpp"
+#include "MockResponse.hpp"
+#include "MockSession.hpp"
+
 class MockConnectionManager : public IConnectionManager
 {
 public:
-    // Constructor
-    MockConnectionManager(ILogger &logger, IFactory &factory);
-
     // Destructor
     virtual ~MockConnectionManager();
 

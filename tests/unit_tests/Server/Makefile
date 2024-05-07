@@ -5,8 +5,13 @@ SOURCES         = Server_test_main.cpp \
 
 MOCK_SOURCES    = ../../mock_srcs/MockLogger.cpp \
 				  ../../mock_srcs/MockSocket.cpp \
+				  ../../mock_srcs/MockSession.cpp \
 				  ../../mock_srcs/MockPollfdManager.cpp \
-				  ../../mock_srcs/MockConnectionManager.cpp
+				  ../../mock_srcs/MockConnectionManager.cpp \
+				  ../../mock_srcs/MockConfigurationBlock.cpp \
+				  ../../mock_srcs/MockRequest.cpp \
+				  ../../mock_srcs/MockResponse.cpp \
+				  ../../mock_srcs/MockConnection.cpp
 
 INCLUDES        = -I../../../includes
 MOCK_INCLUDES   = -I../../mock_includes

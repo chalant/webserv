@@ -6,7 +6,7 @@
 #include "configuration/ConfigurationLoader.hpp"
 
 // include the header files for the mock classes
-// #include "MockConfiguration.hpp"
+// #include "MockConfigurationBlock.hpp"
 #include "MockLogger.hpp"
 #include "MockRequest.hpp"
 #include "MockExceptionHandler.hpp"
@@ -14,15 +14,15 @@
 int main()
 {
     // Mock objects
-    //MockConfiguration mockConfiguration;
+    //MockConfigurationBlock mockConfigurationBlock;
     MockLogger mockErrorLogger;
 	ConfigurationLoader	confLoader(mockErrorLogger);
 
-    // mockConfiguration.setInt("ClientHeaderBufferSize", 6000);
+    // mockConfigurationBlock.setInt("ClientHeaderBufferSize", 6000);
 
-	const IConfiguration&	mockConfiguration = confLoader.loadConfiguration("test_configuration.conf");
+	const IConfiguration&	mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
     // Request Parser instance
-    RequestParser requestParser(mockConfiguration, mockErrorLogger);
+    RequestParser requestParser(mockConfigurationBlock, mockErrorLogger);
 
     // Recipient of the Request Parser's output
     MockRequest mockRequest;

@@ -12,7 +12,7 @@
 #include "MockSocket.hpp"
 #include "MockPollfdManager.hpp"
 #include "MockConnectionManager.hpp"
-#include "MockConfiguration.hpp"
+#include "MockConfigurationBlock.hpp"
 
 int main()
 {
@@ -21,13 +21,18 @@ int main()
     MockSocket mockSocket;
     MockPollfdManager mockPollfdManager;
     MockConnectionManager mockConnectionManager;
-    MockConfiguration mockConfiguration;
+    MockConfigurationBlock mockConfiguration(mockLogger, "configuration");
+    MockConfigurationBlock mockHttp(mockLogger, "http");
+    MockConfigurationBlock mockServer_1(mockLogger, "server_1");
 
     // Set test Configuration listen directives
-
+    mockServer_1.setString("listen", "80");
+    mockHttp.setBlock("server", &mockServer_1);
+    mockHttp.setSize_t("worker_connections", 1024);
+    mockConfiguration.setBlock("http", &mockHttp);
 
     // Instantiate the Server instance
-    Server server(mockSocket, mockErrorLogger);
+    Server server(mockSocket, mockPollfdManager, mockConnectionManager, mockConfiguration, mockLogger);
 
     // Verify that sockets are up and listening
 }

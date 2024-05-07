@@ -16,9 +16,11 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnection
       _connectionManager(connectionManager),
       _logger(logger)
 {
+    // Log server initialization
+    this->_logger.log(INFO, "Initializing Server...");
+
     // Get the maximum connections value
-    std::string maxConnectionsString = configuration.getBlocks("http")[0]->getString("worker_connections");
-    int maxConnections = std::stoi(maxConnectionsString);
+    int maxConnections = configuration.getBlocks("http")[0]->getInt("worker_connections");
 
     // Create a set to store unique IP:port combinations
     std::set<std::pair<int, int>> processedEndpoints;
@@ -78,6 +80,9 @@ Server::~Server()
 /* Initialize server socket*/
 void Server::_initializeServerSocket(int ip, int port, int maxConnections)
 {
+    // Log server socket initialization
+    this->_logger.log(DEBUG, "Initializing server socket on " + (ip ? std::to_string(ip) : "ALL") + ":" + std::to_string(port));
+
     // Create server socket
     int serverSocketDescriptor = this->_socket.socket();
     if (serverSocketDescriptor < 0)

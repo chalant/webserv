@@ -29,7 +29,7 @@
 // Include the mock classes
 #include "MockLogger.hpp"
 #include "MockFactory.hpp"
-// #include "MockConfiguration.hpp"
+// #include "MockConfigurationBlock.hpp"
 #include "MockConnection.hpp"
 
 // Test helper function
@@ -44,25 +44,25 @@ int main()
   // Mock objects
   MockLogger logger;
   MockFactory factory;
-//   MockConfiguration mockConfiguration;
+//   MockConfigurationBlock mockConfigurationBlock;
   MockConnection mockConnection;
   ConfigurationLoader	confLoader(logger);
 
   // Mock Set the Configuration
-//   mockConfiguration.setString("DefaultPort", "80");
-//   mockConfiguration.setInt("ClientHeaderBufferSize", 4096);
-//   mockConfiguration.setSize_t("ClientMaxBodySize", 10000);
-//   mockConfiguration.setSize_t("ClientMaxUriSize", 1000);
-//   mockConfiguration.setStringVector("Methods", {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"});
+//   mockConfigurationBlock.setString("DefaultPort", "80");
+//   mockConfigurationBlock.setInt("ClientHeaderBufferSize", 4096);
+//   mockConfigurationBlock.setSize_t("ClientMaxBodySize", 10000);
+//   mockConfigurationBlock.setSize_t("ClientMaxUriSize", 1000);
+//   mockConfigurationBlock.setStringVector("Methods", {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"});
 
-  const IConfiguration&	mockConfiguration = confLoader.loadConfiguration("test_configuration.conf");
+  const IConfiguration&	mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
 
   // Instantiate the objects under test
-  HttpHelper httpHelper(mockConfiguration);
-  Request request(mockConfiguration, httpHelper);
+  HttpHelper httpHelper(mockConfigurationBlock);
+  Request request(mockConfigurationBlock, httpHelper);
   Response response(httpHelper);
   ConnectionManager connectionManager(logger, factory);
-  RequestParser requestParser(mockConfiguration, logger);
+  RequestParser requestParser(mockConfigurationBlock, logger);
 
 
   // Test 1: A Request without a session cookie
