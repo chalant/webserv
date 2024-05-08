@@ -1,4 +1,4 @@
-#include "connection/Connection.hpp"
+#include "../../includes/connection/Connection.hpp"
 
 /*
  * Connection class
@@ -6,32 +6,40 @@
  * This class represents a network connection and interaction with a client.
  * It stores the socket descriptor, client IP address, port number, and remote address,
  * as well as pointers to the request and response objects.
- * Its lifetime is tied to the active connection with the client.
+ * Its lifetime is determined either by the 'Connection' header in the request or the timeout value.
  *
  * It is owned by the ConnectionManager.
  *
  */
 
-Connection::Connection(std::pair<int, std::pair<std::string, std::string>> clientInfo, ILogger &logger, IRequest *request, IResponse *response)
+// Constructor
+Connection::Connection(std::pair<int, std::pair<std::string, std::string>> clientInfo, ILogger &logger, IRequest *request, IResponse *response, time_t timeout)
     : _socketDescriptor(clientInfo.first),
       _ip(clientInfo.second.first),
       _port(std::stoi(clientInfo.second.second)),
       _remoteAddress(_ip + ":" + clientInfo.second.second),
       _logger(logger),
       _request(request),
-      _response(response) {}
+      _response(response),
+      _timeout(timeout) 
+{
+    this->touch();
+}
 
+// Destructor
 Connection::~Connection()
 {
     delete this->_request;
     delete this->_response;
 }
 
+// Set session
 void Connection::setSession(ISession *session)
 {
     this->_session = session;
 }
 
+// Getters
 int Connection::getSocketDescriptor() const
 {
     return this->_socketDescriptor;
@@ -77,6 +85,17 @@ void Connection::setCgiInfo(int cgiPid, int responseReadPipefd, int requestWrite
     this->_cgiPid = cgiPid;
     this->_responseReadPipefd = responseReadPipefd;
     this->_requestWritePipefd = requestWritePipefd;
+}
+
+// Connection management
+void Connection::touch()
+{
+    this->_lastAccess = time(NULL);
+}
+
+bool Connection::hasExpired() const
+{
+    return time(NULL) - this->_lastAccess > this->_timeout;
 }
 
 // Path: srcs/Connection.cpp

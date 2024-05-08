@@ -20,16 +20,11 @@
  * exceptions effectively.
  */
 
-#include <string>
 #include <map>
-#include <cstring>
-#include <vector>
 #include "IRequestHandler.hpp"
 #include "IConnectionManager.hpp"
 #include "IClientHandler.hpp"
 #include "../response/IRouter.hpp"
-#include "../request/IRequest.hpp"
-#include "../response/IResponse.hpp"
 #include "../logger/ILogger.hpp"
 #include "../exception/IExceptionHandler.hpp"
 #include "../response/IResponseGenerator.hpp"
@@ -50,6 +45,7 @@ private:
     IClientHandler &_clientHandler;     // Handles communication with clients
     const RequestParser _requestParser; // Parses incoming requests
     IRouter &_router;                   // Routes requests to appropriate handlers
+    
     // AResponseGenerator *_requestHandler;                 // Pointer to the recruited request handler
     HttpHelper _httpHelper;                     // Helper class for request-related operations
     ILogger &_logger;                           // Reference to the logger

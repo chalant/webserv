@@ -1,7 +1,6 @@
 #ifndef IRESPONSEGENERATOR_HPP
 #define IRESPONSEGENERATOR_HPP
 
-#include "IResponse.hpp"
 #include "IRoute.hpp"
 #include "../request/IRequest.hpp"
 #include "../configuration/IConfiguration.hpp"
@@ -18,3 +17,4 @@ public:
 
 #endif // IRESPONSEGENERATOR_HPP
        // Path: includes/IResponseGenerator.hpp
+       

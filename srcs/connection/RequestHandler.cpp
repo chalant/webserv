@@ -1,4 +1,4 @@
-#include "connection/RequestHandler.hpp"
+#include "../../includes/connection/RequestHandler.hpp"
 
 /*
  * RequestHandler class
@@ -45,6 +45,9 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
 
     // Get a reference to the Connection
     IConnection &connection = this->_connectionManager.getConnection(socketDescriptor);
+
+    // Update the connection's last activity time
+    connection.touch();
 
     // Get a reference to the Request
     IRequest &request = connection.getRequest();
@@ -166,6 +169,9 @@ int RequestHandler::_sendResponse(int socketDescriptor)
     // Get a reference to the Response
     IResponse &response = this->_connectionManager.getResponse(socketDescriptor);
 
+    // Get a reference to the Request
+    IRequest &request = this->_connectionManager.getConnection(socketDescriptor).getRequest();
+
     // Serialise the response
     std::vector<char> serialisedResponse = response.serialise();
 
@@ -175,8 +181,9 @@ int RequestHandler::_sendResponse(int socketDescriptor)
     // create an access log entry
     this->_logger.log(this->_connectionManager.getConnection(socketDescriptor));
 
-    // Remove the connection
-    this->_connectionManager.removeConnection(socketDescriptor);
+    // Remove the connection if the 'Connection' header is set to 'close'
+    if (request.getHeaderValue(CONNECTION) == "close")
+        this->_connectionManager.removeConnection(socketDescriptor);
 
     // return 0
     return (0);

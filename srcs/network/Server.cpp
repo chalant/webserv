@@ -1,4 +1,4 @@
-#include "network/Server.hpp"
+#include "../../includes/network/Server.hpp"
 
 /*
  * The Server class is responsible for managing core operations of webserv, including initialization, connection handling, and termination.

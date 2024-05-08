@@ -1,4 +1,4 @@
-#include "connection/ConnectionManager.hpp"
+#include "../../includes/connection/ConnectionManager.hpp"
 
 /*
  * ConnectionManager
@@ -200,6 +200,25 @@ void ConnectionManager::collectGarbage()
         else
         {
             it++; // Move to the next session
+        }
+    }
+
+    // Iterate over all connections
+    for (std::map<SocketDescriptor_t, IConnection *>::iterator it = this->_connections.begin();
+         it != this->_connections.end();)
+    {
+        // Check if the connection has expired
+        if (it->second->hasExpired())
+        {
+            // Log the expired connection
+            this->_logger.log(VERBOSE, "Connection expired. Socket: " + std::to_string(it->first));
+
+            // Remove the connection
+            this->removeConnection(it->first);
+        }
+        else
+        {
+            it++; // Move to the next connection
         }
     }
 
