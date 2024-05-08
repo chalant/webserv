@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "SemanticAction.hpp"
+#include <cstddef>
 
 class NonTerminalSymbol;
 
