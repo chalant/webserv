@@ -1,7 +1,7 @@
 #ifndef CONFIGURATIONBLOCK_HPP
 #define CONFIGURATIONBLOCK_HPP
 
-#include "IConfiguration.hpp"
+#include "configuration/IConfiguration.hpp"
 #include <stdexcept>
 #include <map>
 #include "logger/ILogger.hpp"
@@ -27,9 +27,9 @@ class ConfigurationBlock : public IConfiguration
 		virtual bool	getBool(const std::string &parameter, size_t index) const;
 		virtual	void	addBlock(const std::string& name, IConfiguration *block);
 		virtual	void	addDirective(const std::string& name, std::vector<std::string> *parameters);
+		virtual	bool	matchURI(const std::string& uri);
 		virtual const std::string&	getName() const;
 		void			print(size_t depth) const;
 };
 
 #endif // CONFIGURATIONBLOCK_HPP
-// Path: includes/configuration/Block.hpp

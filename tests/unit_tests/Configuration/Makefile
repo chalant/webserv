@@ -7,9 +7,11 @@ INCLUDES_DIR	= ../../../includes
 HPARSER_DIR		= ../../../includes/parsing/
 HCONFIG_DIR		= ../../../includes/configuration/
 HMOCK_DIR		= ../../mock_includes/
+HRESPONSE_DIR	= ../../../includes/response/
 SSRC_DIR		= ../../../srcs/parsing/
 
 SOURCES         = configuration_test.cpp \
+				  ../../mock_srcs/MockLogger.cpp \
 				  ../../../srcs/parsing/Grammar.cpp \
 				  ../../../srcs/parsing/GrammarRule.cpp \
 				  ../../../srcs/parsing/GrammarSymbol.cpp \
@@ -23,14 +25,17 @@ SOURCES         = configuration_test.cpp \
 				  ../../../srcs/parsing/Parser.cpp \
 				  ../../../srcs/parsing/ParsingUtils.cpp \
 				  ../../../srcs/parsing/Tokenizer.cpp \
+				  ../../../srcs/response/RegexMatcher.cpp \
+				  ../../../srcs/response/DefaultMatcher.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
-				  ../../mock_srcs/MockLogger.cpp \
-				  ../../../srcs/configuration/ConfigurationBlock.cpp
+				  ../../../srcs/configuration/ConfigurationBlock.cpp \
+				  ../../../srcs/configuration/LocationBlock.cpp
+
 
 OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 
 CC              = c++
-CPPFLAGS        = -Wall -Wextra -Werror -I$(SRC_DIR) -I$(INCLUDES_DIR) -I$(HPARSER_DIR) -I$(HCONFIG_DIR) -I$(HMOCK_DIR) -I$(SSRC_DIR)
+CPPFLAGS        = -Wall -Wextra -Werror -I$(SRC_DIR) -I$(INCLUDES_DIR) -I$(HPARSER_DIR) -I$(HRESPONSE_DIR) -I$(HCONFIG_DIR) -I$(HMOCK_DIR) -I$(SSRC_DIR)
 # Optional flags - uncomment to enable
 # CPPFLAGS += -std=c++98
 CPPFLAGS += -g

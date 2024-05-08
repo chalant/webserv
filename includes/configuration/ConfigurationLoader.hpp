@@ -4,7 +4,6 @@
 #include <string>
 #include "parsing/Grammar.hpp"
 #include "parsing/Parser.hpp"
-#include "configuration/IConfiguration.hpp"
 #include "configuration/ConfigurationBlock.hpp"
 
 class ConfigurationLoader

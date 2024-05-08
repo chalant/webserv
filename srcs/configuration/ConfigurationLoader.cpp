@@ -3,6 +3,9 @@
 #include "parsing/TerminalSymbol.hpp"
 #include "parsing/NonTerminalSymbol.hpp"
 #include "configuration/ConfigurationLoader.hpp"
+#include "configuration/LocationBlock.hpp"
+#include "response/DefaultMatcher.hpp"
+#include "response/RegexMatcher.hpp"
 #include <fstream>
 
 static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block);
@@ -45,15 +48,20 @@ static void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tre
 }
 
 static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block) {
-	ConfigurationBlock	*new_block = new ConfigurationBlock(block, tokens[parse_tree[0]->tokenIndex()].value);
+	ConfigurationBlock	*new_block;
 	const std::string rule_name = grammar.getRule(parse_tree[1]->ruleIndex())->getName();
 
-	block.addBlock(tokens[parse_tree[0]->tokenIndex()].value, new_block);
 	//check if it is a block with at prefix and retreive the prefix.
 	if (rule_name == "prefix") {
 		//NOTE: the ConfigurationBlock could have a regex mode...
 		std::vector<std::string>	*params = new std::vector<std::string>();
 		//todo: if there is regex add a "matcher" here
+		if (tokens[(*parse_tree[1])[0]->tokenIndex()].value == "~") {
+			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, new RegexMatcher(tokens[parse_tree[1]->tokenIndex()].value));
+		}
+		else {
+			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, new DefaultMatcher(tokens[parse_tree[0]->tokenIndex()].value));
+		}
 		for (size_t i = 0; i < parse_tree[1]->size(); i++) {
 			params->push_back(tokens[(*parse_tree[1])[i]->tokenIndex()].value);
 			new_block->addDirective(rule_name, params);
@@ -61,9 +69,11 @@ static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, 
 		}
 	}
 	else {
+		new_block = new ConfigurationBlock(block, tokens[parse_tree[0]->tokenIndex()].value);
 		//recursively add blocks or directives on the current block. (skipping the open brace.)
 		build_config(tokens, grammar, *parse_tree[2], *new_block);
 	}
+	block.addBlock(tokens[parse_tree[0]->tokenIndex()].value, new_block);
 }
 
 ConfigurationLoader::ConfigurationLoader(ILogger& logger): m_logger(logger) {
