@@ -1,4 +1,4 @@
-#include "MockServer.hpp"
+#include "../mock_includes/MockServer.hpp"
 
 /*
  * MockServer class is a mock implementation of the IServer interface

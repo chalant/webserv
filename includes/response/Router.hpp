@@ -10,7 +10,8 @@ locationblock)*/
 
 # include <string>
 # include <vector>
-# include "../request/Request.hpp"
+# include "../request/IRequest.hpp"
+# include "../response/IResponse.hpp"
 # include "../constants/HttpMethodHelper.hpp"
 # include "../configuration/IConfiguration.hpp"
 # include "../logger/ILogger.hpp"
@@ -32,7 +33,7 @@ public:
     void        appendUri(const std::string &newString);
     HttpMethod  getMethod() const;
     void		setMethod(HttpMethod newMethod);
-    void		(*handler)(Request *, Response *);
+    void		(*handler)(IRequest *, IResponse *);
     bool		operator< (const Route &other) const;
 
 private:
@@ -45,8 +46,8 @@ class Router : public IRouter
 {
 public:
     Router(const IConfiguration &Configuration, ILogger &logger);
-    void addRoute(const Request &request, void (*newHandler)(Request *, Response *));
-    void execRoute(Request *req, Response *res);
+    void addRoute(const IRequest &request, void (*newHandler)(IRequest *, IResponse *));
+    void execRoute(IRequest *req, IResponse *res);
 
 private:
     /*routeMap_t _routes;
@@ -54,6 +55,8 @@ private:
     authorities_t _createAuthorities(const IBlock *serverBlock);
     routes_t _createRoutes(IBlock *serverBlock);*/
 
+    const IConfiguration &_configuration;
+    ILogger &_logger;
     std::vector<Route>    _routes;
     void _createServerRoutes(IConfiguration *serverBlock);
     void _createRoutes(IConfiguration *serverBlock);

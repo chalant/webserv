@@ -1,4 +1,7 @@
 #include "../mock_includes/MockLogger.hpp"
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 /*
  * MockLogger class is a mock implementation of the ILogger interface
@@ -49,7 +52,7 @@ void MockLogger::configure(ILoggerConfiguration &configuration){
 // Helper method to get the current timestamp
 std::string MockLogger::_getCurrentTimestamp() const
 {
-    std::stringstream stream;
+    std::ostringstream stream;
 
     std::time_t currentTime = std::time(NULL);
     stream << std::put_time(std::localtime(&currentTime), "%Y-%m-%d %H:%M:%S");

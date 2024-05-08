@@ -9,7 +9,7 @@
  *
  */
 
-#include "response/IResponse.hpp"
+#include "../../includes/response/IResponse.hpp"
 
 class MockResponse : public IResponse
 {

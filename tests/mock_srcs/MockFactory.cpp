@@ -1,4 +1,4 @@
-#include "MockFactory.hpp"
+#include "../mock_includes/MockFactory.hpp"
 
 /*
  * MockFactory.cpp
@@ -12,7 +12,7 @@ MockFactory::MockFactory() {}
 
 MockFactory::~MockFactory() {}
 
-IConnection *MockFactory::createConnection(std::pair<int, std::pair<std::string, std::string>>)
+IConnection *MockFactory::createConnection(std::pair<int, std::pair<std::string, std::string> >)
 {
     return nullptr;
 }

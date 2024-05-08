@@ -15,8 +15,9 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <ctime>
-#include "../constants/HttpHelper.hpp"
+#include "../constants/HttpMethodHelper.hpp"
+#include "../constants/HttpVersionHelper.hpp"
+#include "../constants/HttpHeaderHelper.hpp"
 
 struct BodyParameter
 {

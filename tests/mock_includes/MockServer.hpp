@@ -7,7 +7,7 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "network/IServer.hpp" // Include the base interface header
+#include "../../includes/network/IServer.hpp" // Include the base interface header
 
 class MockServer : public IServer
 {

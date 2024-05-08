@@ -1,4 +1,4 @@
-#include "parsing/ParseTree.hpp"
+#include "../../includes/parsing/ParseTree.hpp"
 
 ParseTree::ParseTree(void) {
 	m_subtrees = std::vector<ParseTree*>();

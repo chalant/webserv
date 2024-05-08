@@ -2,7 +2,8 @@
 #define RECOGNIZER_HPP
 
 #include "GrammarSymbol.hpp"
-#include "Parser.hpp"
+
+class Grammar;
 
 class EarleyItem;
 

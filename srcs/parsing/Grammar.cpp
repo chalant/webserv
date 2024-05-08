@@ -1,4 +1,5 @@
-#include "parsing/Grammar.hpp"
+#include "../../includes/parsing/Grammar.hpp"
+#include "../../includes/parsing/GrammarRule.hpp"
 
 Grammar::Grammar() {
 	m_size = 0;

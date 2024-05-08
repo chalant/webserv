@@ -9,11 +9,7 @@
  *
  */
 
-#include "connection/IConnectionManager.hpp"
-#include "MockConnection.hpp"
-#include "MockRequest.hpp"
-#include "MockResponse.hpp"
-#include "MockSession.hpp"
+#include "../../includes/connection/IConnectionManager.hpp"
 
 class MockConnectionManager : public IConnectionManager
 {
@@ -22,7 +18,7 @@ public:
     virtual ~MockConnectionManager();
 
     // Methods related to connections
-    virtual void addConnection(std::pair<int, std::pair<std::string, std::string>> clientInfo);
+    virtual void addConnection(std::pair<int, std::pair<std::string, std::string> > clientInfo);
     virtual void removeConnection(SocketDescriptor_t socketDescriptor);
     virtual IConnection &getConnection(SocketDescriptor_t socketDescriptor);
     virtual IRequest &getRequest(SocketDescriptor_t socketDescriptor);

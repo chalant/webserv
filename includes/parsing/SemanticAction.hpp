@@ -20,7 +20,7 @@
 // };
 
 // // template<>
-// // class ASemanticAction<std::stack<std::string>> {
+// // class ASemanticAction<std::stack<std::string> > {
 // // 	public:
 // // 		ASemanticAction() {};
 // // 		virtual ~ASemanticAction();

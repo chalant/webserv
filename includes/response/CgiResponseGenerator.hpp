@@ -6,10 +6,10 @@
 #include <string.h>
 #include <fcntl.h>
 #include "IRoute.hpp"
-#include "logger/ILogger.hpp"
-#include "configuration/IConfiguration.hpp"
-#include "request/IRequest.hpp"
-#include "constants/HttpStatusCodeHelper.hpp"
+#include "../logger/ILogger.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../request/IRequest.hpp"
+#include "../constants/HttpStatusCodeHelper.hpp"
 
 class CgiResponseGenerator : public IResponseGenerator
 {

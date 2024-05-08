@@ -1,4 +1,5 @@
-#include "constants/HttpVersionHelper.hpp"
+#include "../../includes/constants/HttpVersionHelper.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
 
 /*
  * HttpVersionHelper.hpp
@@ -68,11 +69,11 @@ std::map<std::string, HttpVersion> HttpVersionHelper::_setStringHttpVersionMap()
     std::map<std::string, HttpVersion> stringHttpVersionMap;
 
     // Add mappings from string representations to HttpVersion enum values
-    stringHttpVersionMap["HTTP/0.9"] = HttpVersion::HTTP_0_9;
-    stringHttpVersionMap["HTTP/1.0"] = HttpVersion::HTTP_1_0;
-    stringHttpVersionMap["HTTP/1.1"] = HttpVersion::HTTP_1_1;
-    stringHttpVersionMap["HTTP/2.0"] = HttpVersion::HTTP_2_0;
-    stringHttpVersionMap["HTTP/3.0"] = HttpVersion::HTTP_3_0;
+    stringHttpVersionMap["HTTP/0.9"] = HTTP_0_9;
+    stringHttpVersionMap["HTTP/1.0"] = HTTP_1_0;
+    stringHttpVersionMap["HTTP/1.1"] = HTTP_1_1;
+    stringHttpVersionMap["HTTP/2.0"] = HTTP_2_0;
+    stringHttpVersionMap["HTTP/3.0"] = HTTP_3_0;
 
     return stringHttpVersionMap;
 }
@@ -83,11 +84,11 @@ std::map<HttpVersion, std::string> HttpVersionHelper::_setHttpVersionStringMap()
     std::map<HttpVersion, std::string> httpVersionStringMap;
 
     // Add mappings from HttpVersion enum values to string representations
-    httpVersionStringMap[HttpVersion::HTTP_0_9] = "HTTP/0.9";
-    httpVersionStringMap[HttpVersion::HTTP_1_0] = "HTTP/1.0";
-    httpVersionStringMap[HttpVersion::HTTP_1_1] = "HTTP/1.1";
-    httpVersionStringMap[HttpVersion::HTTP_2_0] = "HTTP/2.0";
-    httpVersionStringMap[HttpVersion::HTTP_3_0] = "HTTP/3.0";
+    httpVersionStringMap[HTTP_0_9] = "HTTP/0.9";
+    httpVersionStringMap[HTTP_1_0] = "HTTP/1.0";
+    httpVersionStringMap[HTTP_1_1] = "HTTP/1.1";
+    httpVersionStringMap[HTTP_2_0] = "HTTP/2.0";
+    httpVersionStringMap[HTTP_3_0] = "HTTP/3.0";
 
     return httpVersionStringMap;
 }

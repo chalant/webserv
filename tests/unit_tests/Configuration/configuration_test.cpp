@@ -1,11 +1,5 @@
-#include "Grammar.hpp"
-#include "Parser.hpp"
-#include "TerminalSymbol.hpp"
-#include "NonTerminalSymbol.hpp"
-#include "ConfigurationLoader.hpp"
-#include "MockLogger.hpp"
-
-#include <fstream>
+#include "../../../includes/configuration/ConfigurationLoader.hpp"
+#include "../../mock_includes/MockLogger.hpp"
 
 int	main() {
 	MockLogger	logger;

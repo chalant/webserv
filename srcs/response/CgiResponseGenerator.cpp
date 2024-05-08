@@ -1,4 +1,5 @@
 #include "../../includes/response/CgiResponseGenerator.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
 
 #define NO_THROW 0x1                // Do not throw an exception
 #define KEEP_RESPONSE_READ_PIPE 0x2 // Do no close the read end of the response pipe
@@ -23,12 +24,13 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route, const IReq
     std::vector<char *> cgiEnv;
     this->_setCgiEnvironment(scriptName, route, request, cgiEnv);
 
-    // Create a pipe
+    // Create a pipe to send the response from the CGI script to the server
     int responsePipeFd[2];
     if (pipe(responsePipeFd) == -1)
         // pipe failed
         this->_cleanUp(cgiArgs.data(), cgiEnv.data()); // Free memory and throw exception 500
 
+    // Create a pipe to send the request body from the server to the CGI script
     int bodyPipeFd[2];
     if (pipe(bodyPipeFd) == -1)
         // pipe failed
@@ -63,6 +65,7 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route, const IReq
 
     else // parent process
     {
+        // Log the new CGI process ID
         this->_logger.log(DEBUG, "New CGI process ID: " + std::to_string(pid));
 
         // Set the read end of the response pipe to non-blocking
@@ -74,25 +77,9 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route, const IReq
         // Free memory and keep the write end of the body pipe open and the read end of the response pipe open
         this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd, bodyPipeFd, NO_THROW | KEEP_RESPONSE_READ_PIPE | KEEP_BODY_WRITE_PIPE); 
 
-        if (request.getContentLength() != "0") // If the request has a body
-        {
-            this->_logger.log(DEBUG, "Writing request body to CGI script");
-            //Set the write end of the pipe to non-blocking
-            fcntl(bodyPipeFd[1], F_SETFL, O_NONBLOCK);
-
-            // Write the request body to the pipe
-            ssize_t bytesWritten = write(bodyPipeFd[1], request.getBody().data(), request.getBody().size());
-            if (bytesWritten == -1) // write failed (errno == EAGAIN or EWOULDBLOCK means the pipe is full)
-            {
-                this->_logger.log(DEBUG, "Write failed: " + std::string(strerror(errno)));
-                // since we do not read errno, we assume write failed for another reason than pipe full
-        //        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd); // Free memory and throw exception 500
-            }
-        }
-
-
-
-        this->_logger.log(DEBUG, "Returning read end of the pipe to read the response later without blocking. Pipe read end: " + std::to_string(responsePipeFd[0]) + " Pipe write end: " + std::to_string(responsePipeFd[1]));
+        // Log the Cgi info
+        this->_logger.log(VERBOSE, "Returning CGI info tuple; PID: " +  std::to_string(pid) + "Response Pipe read end: " + std::to_string(responsePipeFd[0]) + "Request Pipe write end: " + std::to_string(responsePipeFd[1]));
+        
         // Return the read end of the pipe to read the response later without blocking
         return std::make_pair(pid, std::make_pair(responsePipeFd[0], bodyPipeFd[1]));
     }

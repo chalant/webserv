@@ -1,4 +1,5 @@
-#include "request/Request.hpp"
+#include "../../includes/request/Request.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
 
 /*
  * Request: Represents an HTTP request.

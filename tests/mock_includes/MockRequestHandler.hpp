@@ -7,7 +7,7 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "connection/IRequestHandler.hpp" // Include the base interface header
+#include "../../includes/connection/IRequestHandler.hpp" // Include the base interface header
 
 class MockRequestHandler : public IRequestHandler
 {

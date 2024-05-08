@@ -1,12 +1,14 @@
-#include "core/EventManager.hpp"
+#include "../../includes/core/EventManager.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
+#include <unistd.h>
+
 
 #define NO_EVENTS 0xC0
 #define KEEP_DESCRIPTOR 0x01
 
-EventManager::EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager, ISocket &socket, IServer &server, IRequestHandler &requestHandler, ILogger &logger)
+EventManager::EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager, IServer &server, IRequestHandler &requestHandler, ILogger &logger)
     : _pollfdManager(pollfdManager),
       _bufferManager(bufferManager),
-      _socket(socket),
       _server(server),
       _requestHandler(requestHandler),
       _logger(logger) {}
@@ -141,10 +143,17 @@ void EventManager::_handleRequest(ssize_t &pollfdIndex)
         this->_logger.log(VERBOSE, "[EVENTMANAGER] Dynamically serving client socket: " + std::to_string(clientSocketDescriptor) + " waiting for process " + std::to_string(cgiPid) + " (response read pipe: " + std::to_string(responseReadPipe) + ", request write pipe: " + std::to_string(requestWritePipe) + ")");
         
         // Add the response read pipe to the poll set
-        this->_pollfdManager.addPipePollfd({responseReadPipe, POLLIN, 0});
+        pollfd pollfd;
+        pollfd.fd = responseReadPipe;
+        pollfd.events = POLLIN;
+        pollfd.revents = 0;
+        this->_pollfdManager.addPipePollfd(pollfd);
 
         // Add the request write pipe to the poll set
-        this->_pollfdManager.addPipePollfd({requestWritePipe, POLLOUT, 0});
+        pollfd.fd = requestWritePipe;
+        pollfd.events = POLLOUT;
+        pollfd.revents = 0;
+        this->_pollfdManager.addPipePollfd(pollfd);
     }
 }
 
@@ -262,7 +271,7 @@ void EventManager::_handlePipeEvents(ssize_t &pollfdIndex, short events)
         clientSocket = this->_requestHandler.handlePipeException(pipeDescriptor);
     }
 
-    // Read and process a new request if ready
+    // Read the response from the Response pipe if ready
     else if (events & POLLIN)
     {
         // Log the pipe read
@@ -270,13 +279,23 @@ void EventManager::_handlePipeEvents(ssize_t &pollfdIndex, short events)
 
         // Let the request handler handle the pipe read, returns the client socket descriptor linked to the pipe
         clientSocket = this->_requestHandler.handlePipeRead(pipeDescriptor);
+
+        // Add the POLLOUT event for the client socket since the response is ready
+        this->_pollfdManager.addPollOut(clientSocket);
+
+        // Clear buffer, remove from polling and close pipe
+        this->_cleanUp(pollfdIndex, pipeDescriptor);
     }
 
-    // Add the POLLOUT event for the client socket
-    this->_pollfdManager.addPollOut(clientSocket);
+    // Write the request body to the Request pipe to the cgi process if ready
+    else if (events & POLLOUT)
+    {
+        // Log the pipe write
+        this->_logger.log(VERBOSE, "Pipe write event on pipe: " + std::to_string(pipeDescriptor));
 
-    // Clear buffer, remove from polling and close pipe
-    this->_cleanUp(pollfdIndex, pipeDescriptor);
+        // Flush the buffer
+        this->_flushBuffer(pollfdIndex);
+    }
 }
 
 // Path: srcs/EventManager.cpp

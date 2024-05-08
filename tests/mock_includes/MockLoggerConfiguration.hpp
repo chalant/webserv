@@ -6,10 +6,11 @@
  * Mocks the LoggerConfiguration class
  */
 
-#include "logger/ILoggerConfiguration.hpp"
-#include "buffer/IBufferManager.hpp"
-#include "pollfd/IPollfdManager.hpp"
-#include "configuration/IConfiguration.hpp"
+#include "../../includes/logger/ILoggerConfiguration.hpp"
+#include "../../includes/buffer/IBufferManager.hpp"
+#include "../../includes/pollfd/IPollfdManager.hpp"
+#include "../../includes/configuration/IConfiguration.hpp"
+#include <unistd.h>
 
 class MockLoggerConfiguration : public ILoggerConfiguration
 {
@@ -17,9 +18,7 @@ private:
     std::string _errorLogFile;
     std::string _accessLogFile;
     IBufferManager &_bufferManager;
-    IPollfdManager &_pollfdManager;
     size_t _bufferSize;
-    LogLevel _logLevel;
     int _errorLogFileDescriptor;
     int _accessLogFileDescriptor;
     bool _errorLogEnabled;

@@ -36,7 +36,7 @@
 #include <vector>
 #include <map>
 #include "../configuration/IConfiguration.hpp"
-#include "../exception/WebservExceptions.hpp"
+#include "../constants/HttpHelper.hpp"
 
 class Request : public IRequest
 {
@@ -58,7 +58,6 @@ private:
     std::string _authority;
     std::map<std::string, std::string> _queryParameters;
     std::pair<std::string, std::string> _remoteAddress;
-    time_t _requestTimestamp;
     std::map<std::string, std::string> _cookies;
     std::vector<BodyParameter> _bodyParameters;
     bool _uploadRequest;

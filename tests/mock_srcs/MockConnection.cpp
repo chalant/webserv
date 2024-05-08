@@ -1,4 +1,4 @@
-#include "MockConnection.hpp"
+#include "../mock_includes/MockConnection.hpp"
 
 /*
  * MockConnection class
@@ -37,5 +37,10 @@ void MockConnection::setCgiInfo(int cgiPid, int responseReadPipefd, int requestW
     static_cast<void>(responseReadPipefd);
     static_cast<void>(requestWritePipefd);
 }
+
+// Connection management
+void MockConnection::touch() {}
+
+bool MockConnection::hasExpired() const { return false; }
 
 // Path: tests/mock_srcs/MockConnection.cpp

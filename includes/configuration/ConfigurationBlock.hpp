@@ -4,7 +4,7 @@
 #include "configuration/IConfiguration.hpp"
 #include <stdexcept>
 #include <map>
-#include "logger/ILogger.hpp"
+#include "../logger/ILogger.hpp"
 
 class ConfigurationBlock : public IConfiguration
 {

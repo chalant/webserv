@@ -1,4 +1,5 @@
-#include "parsing/Parser.hpp"
+#include "../../includes/parsing/Parser.hpp"
+#include <iostream>
 
 bool	contains_item(std::vector<EarleyItem>& set, EarleyItem& item) {
 	for (size_t i = 0; i < set.size(); i++) {

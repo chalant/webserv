@@ -13,8 +13,10 @@
  *
  */
 
+ #define DEFAULT_TIMEOUT 300 // 5 minutes
+
 #include "IConnection.hpp"
-#include "ILogger.hpp"
+#include "../logger/ILogger.hpp"
 
 class Connection : public IConnection
 {
@@ -30,10 +32,12 @@ private:
     IRequest *_request;                   // Pointer to the request object
     IResponse *_response;                 // Pointer to the response object
     ISession *_session;                   // Pointer to the session object
+    const time_t _timeout;                // Timeout for the connection
+    time_t _lastAccess;                   // Last access time
 
 public:
-    Connection(std::pair<int, std::pair<std::string, std::string>> clientInfo, ILogger &logger, IRequest *request, IResponse *response);
-    virtual ~Connection() = default;
+    Connection(std::pair<int, std::pair<std::string, std::string> > clientInfo, ILogger &logger, IRequest *request, IResponse *response, time_t timeout = DEFAULT_TIMEOUT);
+    virtual ~Connection();
 
     // Setters
     virtual void setSession(ISession *session);
@@ -48,6 +52,10 @@ public:
     virtual IResponse &getResponse() const;
     virtual ISession &getSession() const;
     virtual void setCgiInfo(int pid, int responseReadPipefd, int requestWritePipefd);
+
+    // Connection management
+    virtual void touch(); // Update the last access time
+    virtual bool hasExpired() const; // Check if the connection has expired
 };
 
 #endif // CONNECTION_HPP

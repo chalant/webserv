@@ -27,7 +27,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "../../includes/exception/WebservExceptions.hpp"
 
 enum HttpHeader
 {

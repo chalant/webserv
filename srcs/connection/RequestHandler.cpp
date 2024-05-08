@@ -1,4 +1,6 @@
-#include "connection/RequestHandler.hpp"
+#include "../../includes/connection/RequestHandler.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
+#include <utility>
 
 /*
  * RequestHandler class
@@ -46,6 +48,9 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
     // Get a reference to the Connection
     IConnection &connection = this->_connectionManager.getConnection(socketDescriptor);
 
+    // Update the connection's last activity time
+    connection.touch();
+
     // Get a reference to the Request
     IRequest &request = connection.getRequest();
 
@@ -83,8 +88,10 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
         return Triplet_t(-1, std::pair<int, int>(-1, -1));
     }
 
-    // 'Router' selects the right 'ResponseGenerator' for the job
-    Triplet_t cgiInfo = this->_router.execRoute(request, response);
+    // todo: Route the request, return the CGI info
+    // Triplet_t cgiInfo = this->_router.execRoute(request, response);
+    // Set cgiInfo to -1 in the meantime
+    Triplet_t cgiInfo(-1, std::pair<int, int>(-1, -1));
 
     // If dynamic content is being created, return the info
     if (cgiInfo.first != -1)
@@ -100,6 +107,9 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
         // Record the pipes to connection socket mappings
         this->_pipeRoutes[responseReadPipe] = socketDescriptor;
         this->_pipeRoutes[requestWritePipe] = socketDescriptor;
+
+        // Push the request body to the request pipe
+        this->_bufferManager.pushSocketBuffer(requestWritePipe, request.getBody());
         
         return cgiInfo; // cgi content
     }
@@ -166,6 +176,9 @@ int RequestHandler::_sendResponse(int socketDescriptor)
     // Get a reference to the Response
     IResponse &response = this->_connectionManager.getResponse(socketDescriptor);
 
+    // Get a reference to the Request
+    IRequest &request = this->_connectionManager.getConnection(socketDescriptor).getRequest();
+
     // Serialise the response
     std::vector<char> serialisedResponse = response.serialise();
 
@@ -175,8 +188,9 @@ int RequestHandler::_sendResponse(int socketDescriptor)
     // create an access log entry
     this->_logger.log(this->_connectionManager.getConnection(socketDescriptor));
 
-    // Remove the connection
-    this->_connectionManager.removeConnection(socketDescriptor);
+    // Remove the connection if the 'Connection' header is set to 'close'
+    if (request.getHeaderValue(CONNECTION) == "close")
+        this->_connectionManager.removeConnection(socketDescriptor);
 
     // return 0
     return (0);

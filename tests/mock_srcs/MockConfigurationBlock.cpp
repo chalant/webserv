@@ -1,4 +1,4 @@
-#include "MockConfigurationBlock.hpp"
+#include "../mock_includes/MockConfigurationBlock.hpp"
 
 /*
  * MockConfigurationBlock class is a mock implementation of the IConfiguration interface
@@ -149,6 +149,18 @@ bool MockConfigurationBlock::getBool(const std::string &parameter, size_t index)
     (void)parameter;
     (void)index;
     return false;
+}
+
+void	addBlock(const std::string& name, IConfiguration *block)
+{
+    (void)name;
+    (void)block;
+}
+
+void addDirective(const std::string& name, std::vector<std::string> *parameters)
+{
+    (void)name;
+    (void)parameters;
 }
 
 void MockConfigurationBlock::print(size_t depth) const

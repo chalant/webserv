@@ -1,4 +1,4 @@
-#include "configuration/ConfigurationBlock.hpp"
+#include "../../includes/configuration/ConfigurationBlock.hpp"
 #include <iostream>
 #include <iomanip>
 

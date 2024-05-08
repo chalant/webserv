@@ -1,4 +1,6 @@
-#include "network/Server.hpp"
+#include "../../includes/network/Server.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
+#include <set>
 
 /*
  * The Server class is responsible for managing core operations of webserv, including initialization, connection handling, and termination.
@@ -23,7 +25,7 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnection
     int maxConnections = configuration.getBlocks("http")[0]->getInt("worker_connections");
 
     // Create a set to store unique IP:port combinations
-    std::set<std::pair<int, int>> processedEndpoints;
+    std::set<std::pair<int, int> > processedEndpoints;
 
     // Get the list of virtual servers
     std::vector<IConfiguration *> servers = configuration.getBlocks("http")[0]->getBlocks("server");
@@ -105,8 +107,11 @@ void Server::_initializeServerSocket(int ip, int port, int maxConnections)
     this->_logger.log(INFO, "Server socket set to non-blocking.");
 
     // Add server socket to polling list
-    short pollMask = POLLIN | POLLERR | POLLHUP | POLLNVAL;
-    this->_pollfdManager.addServerSocketPollfd({serverSocketDescriptor, pollMask, 0});
+    pollfd pollfd;
+    pollfd.fd = serverSocketDescriptor;
+    pollfd.events = POLLIN | POLLERR | POLLHUP | POLLNVAL;
+    pollfd.revents = 0;
+    this->_pollfdManager.addServerSocketPollfd(pollfd);
 
     // Log server socket initialization
     this->_logger.log(DEBUG, "Server socket initialized. Listening on " + (ip ? std::to_string(ip) : "ALL") + ":" + std::to_string(port));
@@ -126,7 +131,7 @@ void Server::acceptConnection(int serverSocketDescriptor)
         throw MaximumConnectionsReachedError();
 
     // Accept incoming connection
-    std::pair<int, std::pair<std::string, std::string>> clientInfo = this->_socket.accept(serverSocketDescriptor);
+    std::pair<int, std::pair<std::string, std::string> > clientInfo = this->_socket.accept(serverSocketDescriptor);
     int clientSocketDescriptor = clientInfo.first;
     std::string clientIP = clientInfo.second.first;
     std::string clientPort = clientInfo.second.second;
@@ -137,8 +142,11 @@ void Server::acceptConnection(int serverSocketDescriptor)
     // Add client socket to polling list
     if (clientSocketDescriptor < 0)
         throw ConnectionEstablishingError();
-    short pollMask = POLLIN | POLLERR | POLLHUP | POLLNVAL;
-    this->_pollfdManager.addClientSocketPollfd({clientSocketDescriptor, pollMask, 0});
+    pollfd pollfd;
+    pollfd.fd = clientSocketDescriptor;
+    pollfd.events = POLLIN | POLLERR | POLLHUP | POLLNVAL;
+    pollfd.revents = 0;
+    this->_pollfdManager.addClientSocketPollfd(pollfd);
 
     // Set socket to non-blocking mode
     if (this->_socket.setNonBlocking(clientSocketDescriptor) < 0)

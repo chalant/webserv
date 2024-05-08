@@ -11,7 +11,7 @@ std::string MockRoute::getUri() const { return ""; }
 
 void MockRoute::setUri(std::string newUri) { static_cast<void>(newUri);}
 
-HttpMethod MockRoute::getMethod() const { return HttpMethod::GET; }
+HttpMethod MockRoute::getMethod() const { return GET; }
 
 void MockRoute::setMethod(HttpMethod newMethod) { static_cast<void>(newMethod); }
 

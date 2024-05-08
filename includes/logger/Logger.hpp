@@ -35,16 +35,12 @@
 
 #include "ILogger.hpp"
 #include <string>
-#include <ctime>
 #include <sstream>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <iomanip>
 #include "ILoggerConfiguration.hpp"
 #include "../buffer/IBufferManager.hpp"
 #include "../connection/IConnection.hpp"
-#include "../request/IRequest.hpp"
-#include "../response/IResponse.hpp"
 #include "../constants/LogLevelHelper.hpp"
 
 class Logger : public ILogger

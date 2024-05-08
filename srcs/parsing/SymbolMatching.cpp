@@ -1,4 +1,4 @@
-#include "parsing/SymbolMatching.hpp"
+#include "../../includes/parsing/SymbolMatching.hpp"
 
 bool	SubsetSymbolMatching::match(const Token& token, std::vector<std::string> const & values) {
 	for (size_t i = 0; i < values.size(); i++) {

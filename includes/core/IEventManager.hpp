@@ -1,6 +1,12 @@
 #ifndef IEVENTMANAGER_HPP
 #define IEVENTMANAGER_HPP
 
+/*
+ * IEventManager.hpp
+ *
+ * Abstract class for handling events.
+ */
+
 class IEventManager
 {
 public:

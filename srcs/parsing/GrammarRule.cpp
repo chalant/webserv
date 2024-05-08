@@ -1,4 +1,4 @@
-#include "parsing/GrammarRule.hpp"
+#include "../../includes/parsing/GrammarRule.hpp"
 
 GrammarRule::GrammarRule(NonTerminalSymbol const & symbol): m_symbol(symbol) {
 }

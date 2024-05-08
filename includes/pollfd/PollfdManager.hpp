@@ -14,11 +14,10 @@
  *          in this order: file descriptors, server sockets, client sockets.
  */
 
+#include <map>                                // Include the map library
 #include "IPollfdManager.hpp"                  // Include the header file for IPollfdManager
 #include "PollfdQueue.hpp"                     // Include the header file for PollfdQueue
 #include "../configuration/IConfiguration.hpp" // Include the header file for IConfiguration
-#include "../logger/ILogger.hpp"               // Include the header file for ILogger
-#include "../exception/WebservExceptions.hpp"  // Include the header file for WebservExceptions
 
 // Forward declaration of Server class
 class IServer;

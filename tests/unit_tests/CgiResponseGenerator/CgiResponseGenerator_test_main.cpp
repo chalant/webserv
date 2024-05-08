@@ -1,18 +1,18 @@
 #include <cassert>
-#include <iostream>
 #include <sys/socket.h>
 #include <cstring>
 #include <unistd.h>
 
 // include the header file for the class under test
-#include "response/CgiResponseGenerator.hpp"
+#include "../../../includes/response/CgiResponseGenerator.hpp"
+
+#include "../../../includes/configuration/ConfigurationLoader.hpp"
+
 
 // include the header files for the mock classes
-#include "MockRoute.hpp"
-#include "MockRequest.hpp"
-// #include "MockConfigurationBlock.hpp"
-#include "MockLogger.hpp"
-#include "configuration/ConfigurationLoader.hpp"
+#include "../../mock_includes/MockRoute.hpp"
+#include "../../mock_includes/MockRequest.hpp"
+#include "../../mock_includes/MockLogger.hpp"
 
 int main()
 {
@@ -35,7 +35,7 @@ int main()
     // mockConfigurationBlock.setString("PythonCgiPath", "/usr/bin/python3");
 
     // Declare cgi info
-    Triplet_t cgiInfo; // <cgiPid, <responseReadPipe, requestWritePipe>>
+    Triplet_t cgiInfo; // <cgiPid, <responseReadPipe, requestWritePipe> >
     int responseReadPipe;
     int requestWritePipe;
 

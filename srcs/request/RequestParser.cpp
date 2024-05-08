@@ -1,4 +1,7 @@
-#include "request/RequestParser.hpp"
+#include "../../includes/request/RequestParser.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
+#include "../../includes/constants/HttpStatusCodeHelper.hpp"
+
 
 /*
  * RequestParser.cpp
@@ -427,7 +430,8 @@ void RequestParser::_parseCookie(std::string &cookieHeaderValue,
 void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
 {
     // Get the boundary string
-    std::string boundary = "--" + parsedRequest.getHeaderValue(CONTENT_TYPE).substr(9);
+    std::string contentType = parsedRequest.getHeaderValue(CONTENT_TYPE);
+    std::string boundary = "--" + contentType.substr(contentType.find("boundary=") + 9);
 
     // Get body stream
     std::vector<char> body = parsedRequest.getBody();
@@ -451,7 +455,7 @@ void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
         BodyParameter bodyParameter;
 
         // Parse BodyParameter headers
-        while (std::getline(bodyStream, line) && !line.empty())
+        do
         {
             std::string::size_type pos = line.find(':');
             if (pos != std::string::npos)
@@ -487,7 +491,7 @@ void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
                 else if (key == "Content-Type")
                     bodyParameter.contentType = value;
             }
-        }
+        } while (std::getline(bodyStream, line) && !line.empty());
 
         // Parse BodyParameter data
         while (std::getline(bodyStream, line) && line != boundary)

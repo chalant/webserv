@@ -7,7 +7,7 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "exception/IExceptionHandler.hpp"
+#include "../../includes/exception/IExceptionHandler.hpp"
 
 class MockExceptionHandler : public IExceptionHandler
 {

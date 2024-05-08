@@ -1,12 +1,8 @@
 #ifndef GRAMMAR_HPP
 # define GRAMMAR_HPP
 
-#include <iostream>
 #include <vector>
-#include "Tokenizer.hpp"
 #include "SemanticAction.hpp"
-#include "GrammarRule.hpp"
-#include "NonTerminalSymbol.hpp"
 
 class NonTerminalSymbol;
 

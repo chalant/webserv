@@ -1,4 +1,4 @@
-#include "parsing/Parser.hpp"
+#include "../../includes/parsing/Parser.hpp"
 
 EarleyItem::EarleyItem(int rule_idx, int start, int next) {
 	m_rule_idx = rule_idx;

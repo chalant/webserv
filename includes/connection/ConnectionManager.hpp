@@ -17,10 +17,8 @@
 #include <sys/wait.h>
 #include "IConnection.hpp"
 #include "ISession.hpp"
-#include "../configuration/IConfiguration.hpp"
 #include "../logger/ILogger.hpp"
 #include "../factory/IFactory.hpp"
-#include "../constants/HttpHelper.hpp"
 
 class ConnectionManager : public IConnectionManager
 {
@@ -43,7 +41,7 @@ public:
     virtual ~ConnectionManager();
 
     // Methods related to connections
-    virtual void addConnection(std::pair<int, std::pair<std::string, std::string>> clientInfo);
+    virtual void addConnection(std::pair<int, std::pair<std::string, std::string> > clientInfo);
     virtual void removeConnection(SocketDescriptor_t socketDescriptor);
     virtual IConnection &getConnection(SocketDescriptor_t socketDescriptor);
     virtual IRequest &getRequest(SocketDescriptor_t socketDescriptor);

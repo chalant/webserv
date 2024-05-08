@@ -1,4 +1,4 @@
-#include "MockLoggerConfiguration.hpp"
+#include "../mock_includes/MockLoggerConfiguration.hpp"
 
 /*
  * MockLoggerConfiguration.cpp
@@ -9,15 +9,14 @@ MockLoggerConfiguration::MockLoggerConfiguration(IBufferManager &bufferManager, 
     : _errorLogFile(""),
       _accessLogFile(""),
       _bufferManager(bufferManager),
-      _pollfdManager(pollfdManager),
       _bufferSize(99999),
-      _logLevel(LogLevel::VERBOSE),
       _errorLogFileDescriptor(STDOUT_FILENO),
       _accessLogFileDescriptor(STDOUT_FILENO),
       _errorLogEnabled(true),
       _accessLogEnabled(true)
 {
     static_cast<void>(configuration);
+    static_cast<void>(pollfdManager);
 }
 MockLoggerConfiguration::~MockLoggerConfiguration() {}
 
@@ -51,7 +50,7 @@ std::string MockLoggerConfiguration::getErrorLogFile() const { return ""; }
 
 std::string MockLoggerConfiguration::getAccessLogFile() const { return ""; }
 
-LogLevel MockLoggerConfiguration::getLogLevel() const { return LogLevel::DEBUG; }
+LogLevel MockLoggerConfiguration::getLogLevel() const { return DEBUG; }
 
 bool MockLoggerConfiguration::getErrorLogEnabled() const
 {

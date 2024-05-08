@@ -1,5 +1,5 @@
-#include "constants/LogLevelHelper.hpp"
-#include "exception/WebservExceptions.hpp"
+#include "../../includes/constants/LogLevelHelper.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
 
 /*
  * LogLevelHelper.hpp
@@ -65,13 +65,13 @@ std::map<std::string, LogLevel> LogLevelHelper::_setStringLogLevelMap()
     std::map<std::string, LogLevel> stringLogLevelMap;
 
     // Add mappings from string representations to LogLevel enum values
-    stringLogLevelMap["VERBOSE"] = LogLevel::VERBOSE;
-    stringLogLevelMap["DEBUG"] = LogLevel::DEBUG;
-    stringLogLevelMap["INFO"] = LogLevel::INFO;
-    stringLogLevelMap["WARN"] = LogLevel::WARN;
-    stringLogLevelMap["ERROR"] = LogLevel::ERROR;
-    stringLogLevelMap["CRITICAL"] = LogLevel::CRITICAL;
-    stringLogLevelMap["UNKNOWN"] = LogLevel::UNKNOWN;
+    stringLogLevelMap["VERBOSE"] = VERBOSE;
+    stringLogLevelMap["DEBUG"] = DEBUG;
+    stringLogLevelMap["INFO"] = INFO;
+    stringLogLevelMap["WARN"] = WARN;
+    stringLogLevelMap["ERROR"] = ERROR;
+    stringLogLevelMap["CRITICAL"] = CRITICAL;
+    stringLogLevelMap["UNKNOWN"] = UNKNOWN;
 
     return stringLogLevelMap;
 }
@@ -82,13 +82,13 @@ std::map<LogLevel, std::string> LogLevelHelper::_setLogLevelStringMap()
     std::map<LogLevel, std::string> logLevelStringMap;
 
     // Add mappings from LogLevel enum values to string representations
-    logLevelStringMap[LogLevel::VERBOSE] = "VERBOSE";
-    logLevelStringMap[LogLevel::DEBUG] = "DEBUG";
-    logLevelStringMap[LogLevel::INFO] = "INFO";
-    logLevelStringMap[LogLevel::WARN] = "WARN";
-    logLevelStringMap[LogLevel::ERROR] = "ERROR";
-    logLevelStringMap[LogLevel::CRITICAL] = "CRITICAL";
-    logLevelStringMap[LogLevel::UNKNOWN] = "UNKNOWN";
+    logLevelStringMap[VERBOSE] = "VERBOSE";
+    logLevelStringMap[DEBUG] = "DEBUG";
+    logLevelStringMap[INFO] = "INFO";
+    logLevelStringMap[WARN] = "WARN";
+    logLevelStringMap[ERROR] = "ERROR";
+    logLevelStringMap[CRITICAL] = "CRITICAL";
+    logLevelStringMap[UNKNOWN] = "UNKNOWN";
 
     return logLevelStringMap;
 }

@@ -1,4 +1,5 @@
-#include "constants/HttpMethodHelper.hpp"
+#include "../../includes/constants/HttpMethodHelper.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
 
 /*
  * HttpMethodHelper.hpp
@@ -92,15 +93,15 @@ std::map<std::string, HttpMethod> HttpMethodHelper::_setStringHttpMethodMap()
     std::map<std::string, HttpMethod> stringHttpMethodMap;
 
     // Add mappings from string representations to HttpMethod enum values
-    stringHttpMethodMap["GET"] = HttpMethod::GET;
-    stringHttpMethodMap["POST"] = HttpMethod::POST;
-    stringHttpMethodMap["PUT"] = HttpMethod::PUT;
-    stringHttpMethodMap["DELETE"] = HttpMethod::DELETE;
-    stringHttpMethodMap["HEAD"] = HttpMethod::HEAD;
-    stringHttpMethodMap["OPTIONS"] = HttpMethod::OPTIONS;
-    stringHttpMethodMap["PATCH"] = HttpMethod::PATCH;
-    stringHttpMethodMap["TRACE"] = HttpMethod::TRACE;
-    stringHttpMethodMap["CONNECT"] = HttpMethod::CONNECT;
+    stringHttpMethodMap["GET"] = GET;
+    stringHttpMethodMap["POST"] = POST;
+    stringHttpMethodMap["PUT"] = PUT;
+    stringHttpMethodMap["DELETE"] = DELETE;
+    stringHttpMethodMap["HEAD"] = HEAD;
+    stringHttpMethodMap["OPTIONS"] = OPTIONS;
+    stringHttpMethodMap["PATCH"] = PATCH;
+    stringHttpMethodMap["TRACE"] = TRACE;
+    stringHttpMethodMap["CONNECT"] = CONNECT;
 
     return stringHttpMethodMap;
 }
@@ -111,15 +112,15 @@ std::map<HttpMethod, std::string> HttpMethodHelper::_setHttpMethodStringMap()
     std::map<HttpMethod, std::string> httpMethodStringMap;
 
     // Add mappings from HttpMethod enum values to string representations
-    httpMethodStringMap[HttpMethod::GET] = "GET";
-    httpMethodStringMap[HttpMethod::POST] = "POST";
-    httpMethodStringMap[HttpMethod::PUT] = "PUT";
-    httpMethodStringMap[HttpMethod::DELETE] = "DELETE";
-    httpMethodStringMap[HttpMethod::HEAD] = "HEAD";
-    httpMethodStringMap[HttpMethod::OPTIONS] = "OPTIONS";
-    httpMethodStringMap[HttpMethod::PATCH] = "PATCH";
-    httpMethodStringMap[HttpMethod::TRACE] = "TRACE";
-    httpMethodStringMap[HttpMethod::CONNECT] = "CONNECT";
+    httpMethodStringMap[GET] = "GET";
+    httpMethodStringMap[POST] = "POST";
+    httpMethodStringMap[PUT] = "PUT";
+    httpMethodStringMap[DELETE] = "DELETE";
+    httpMethodStringMap[HEAD] = "HEAD";
+    httpMethodStringMap[OPTIONS] = "OPTIONS";
+    httpMethodStringMap[PATCH] = "PATCH";
+    httpMethodStringMap[TRACE] = "TRACE";
+    httpMethodStringMap[CONNECT] = "CONNECT";
 
     return httpMethodStringMap;
 }

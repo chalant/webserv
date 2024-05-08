@@ -56,8 +56,11 @@ public:
           _message(message),
           _errorCode(errorCode){};
 
+    // Destructor
+    virtual ~WebservException() throw() {}
+
     // Override what() method
-    const char *what() const throw()
+    virtual const char *what() const throw()
     {
         return this->_message.c_str();
     }
@@ -234,11 +237,13 @@ public:
 
 class HttpStatusCodeException : public WebservException
 {
+private:
+    const std::string _getStatusCodeString(int statusCode) const { std::ostringstream oss; oss << statusCode; return oss.str(); }
 public:
     HttpStatusCodeException(int statusCode)
-        : WebservException(INFO, ("Http Status Code: \"" + (std::ostringstream() << statusCode).str() + "\""), statusCode){};
+        : WebservException(INFO, ("Http Status Code: \"" + this->_getStatusCodeString(statusCode) + "\""), statusCode){};
     HttpStatusCodeException(int statusCode, const std::string &message)
-        : WebservException(INFO, ("Http Status Code " + (std::ostringstream() << statusCode).str() + ": " + message), statusCode) {}
+        : WebservException(INFO, ("Http Status Code " + this->_getStatusCodeString(statusCode) + ": " + message), statusCode) {}
 };
 
 #endif // WEBSERVEXCEPTIONS_HPP

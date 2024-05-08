@@ -1,6 +1,6 @@
-#include "buffer/BufferManager.hpp"
-#include "buffer/FileBuffer.hpp"
-#include "buffer/SocketBuffer.hpp"
+#include "../../includes/buffer/BufferManager.hpp"
+#include "../../includes/buffer/FileBuffer.hpp"
+#include "../../includes/buffer/SocketBuffer.hpp"
 
 /*
  * BufferManager Class

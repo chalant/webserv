@@ -5,7 +5,6 @@
 #include <fcntl.h>
 #include "../configuration/IConfiguration.hpp"
 #include "../pollfd/IPollfdManager.hpp"
-#include "../exception/WebservExceptions.hpp"
 
 class LoggerConfiguration : public ILoggerConfiguration
 {
@@ -22,7 +21,7 @@ private:
     bool _accessLogEnabled;
 
 public:
-    LoggerConfiguration(IBufferManager &BufferManager, IConfiguration &configuration, IPollfdManager &pollfdManager);
+    LoggerConfiguration(IBufferManager &BufferManager, const IConfiguration &configuration, IPollfdManager &pollfdManager);
     ~LoggerConfiguration();
 
     virtual void setErrorLogEnabled(bool enabled);

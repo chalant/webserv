@@ -9,7 +9,7 @@
  *
  */
 
-#include "connection/ISession.hpp"
+#include "../../includes/connection/ISession.hpp"
 
 class MockSession : public ISession
 {

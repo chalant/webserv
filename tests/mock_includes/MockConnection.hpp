@@ -9,7 +9,7 @@
  *
  */
 
-#include "connection/IConnection.hpp"
+#include "../../includes/connection/IConnection.hpp"
 
 class MockConnection : public IConnection
 {
@@ -35,6 +35,10 @@ public:
     IResponse &getResponse() const;
     ISession &getSession() const;
     void setCgiInfo(int cgiPid, int responseReadPipefd, int requestWritePipefd);
+
+    // Connection management
+    void touch();
+    bool hasExpired() const;
 };
 
 #endif // MOCKCONNECTION_HPP

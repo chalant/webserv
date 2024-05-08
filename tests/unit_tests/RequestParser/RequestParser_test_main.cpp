@@ -1,15 +1,19 @@
 #include <cassert>
-#include <iostream>
 
 // include the header file for the class under test
-#include "request/RequestParser.hpp"
-#include "configuration/ConfigurationLoader.hpp"
+#include "../../../includes/request/RequestParser.hpp"
+#include "../../../includes/exception/WebServExceptions.hpp"
+#include "../../../includes/constants/HttpStatusCodeHelper.hpp"
+
+#include "../../../includes/configuration/ConfigurationLoader.hpp"
 
 // include the header files for the mock classes
 // #include "MockConfigurationBlock.hpp"
-#include "MockLogger.hpp"
-#include "MockRequest.hpp"
-#include "MockExceptionHandler.hpp"
+#include "../../mock_includes/MockLogger.hpp"
+#include "../../mock_includes/MockRequest.hpp"
+
+// Method to initialize a std::vector<char> from a string
+std::vector<char> stringToVector(const std::string &str);
 
 int main()
 {
@@ -30,10 +34,8 @@ int main()
     // test case 1: A Valid IRequest
     // GET /index.html HTTP/1.1
     // Host: 42.fr
-    std::vector<char> rawRequest = {
-        'G', 'E', 'T', ' ', '/', 'i', 'n', 'd', 'e', 'x', '.', 'h', 't', 'm', 'l', ' ', 'H', 'T', 'T', 'P', '/', '1', '.', '1', '\r', '\n',
-        'H', 'o', 's', 't', ':', ' ', '4', '2', '.', 'f', 'r', '\r', '\n',
-        '\r', '\n'};
+    std::vector<char> rawRequest = stringToVector("GET /index.html HTTP/1.1\r\nHost: 42.fr\r\n\r\n");
+
     // Parse the raw request
     requestParser.parseRequest(rawRequest, mockRequest);
     // Verify the parsed Request object
@@ -42,14 +44,15 @@ int main()
     assert(mockRequest.getTestMethod() == "GET");
     assert(mockRequest.getUri() == "/index.html");
     assert(mockRequest.getTestHttpVersion() == "HTTP/1.1");
-    std::map<std::string, std::string> expectedHeaders = {{"host", "42.fr"}};
+    std::map<std::string, std::string> expectedHeaders;
+    expectedHeaders.insert(std::make_pair("host", "42.fr"));
     assert(mockRequest.getHeadersStringMap() == expectedHeaders);
     // Clear the contents of the Request object for the next test
     mockRequest.clear();
 
     // test case 2: An incomplete Request
     // GET
-    rawRequest = {'G', 'E', 'T'};
+    rawRequest = stringToVector("GET");
     try
     {
         // Parse the raw request
@@ -65,4 +68,15 @@ int main()
     }
 
     return 0;
+}
+
+// Method to initialize a std::vector<char> from a string
+std::vector<char> stringToVector(const std::string &str)
+{
+    std::vector<char> vec;
+    for (size_t i = 0; i < str.size(); i++)
+    {
+        vec.push_back(str[i]);
+    }
+    return vec;
 }

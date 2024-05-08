@@ -10,12 +10,15 @@
  * controlling socket file descriptor flags, and closing the socket.
  */
 
+ #ifndef MSG_NOSIGNAL // For MacOS
+    #define MSG_NOSIGNAL SO_NOSIGPIPE
+#endif
+
 #include "ISocket.hpp"
 #include <cstring>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include <sstream>
 
 // Class for socket operations
 class Socket : public ISocket
@@ -40,7 +43,7 @@ public:
     virtual int setNonBlocking(int fd) const;
 
     // Accepts an incoming connection
-    virtual std::pair<int, std::pair<std::string, std::string>> accept(int fd) const;
+    virtual std::pair<int, std::pair<std::string, std::string> > accept(int fd) const;
 
     // Sends data over the socket
     virtual int send(int recipientSocketFd, const std::vector<char> &data) const;
