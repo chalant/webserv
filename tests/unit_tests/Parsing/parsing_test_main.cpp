@@ -20,11 +20,24 @@ int	main(void) {
 	NonTerminalSymbol	product("product",1);
 	NonTerminalSymbol	factor("factor",2);
 	NonTerminalSymbol	num("number",7);
-	TerminalSymbolSet	pm("+-", 3, {"+","-"}, subset_matching);
-	TerminalSymbolSet	md("*/", 4, {"*","/"}, subset_matching);
+
+	std::vector<std::string> values; // to be c++98 compliant, initialize the vector with the values
+	values.push_back("+");
+	values.push_back("-");
+
+	TerminalSymbolSet	pm("+-", 3, values, subset_matching);
+
+	values.clear();
+	values.push_back("*");
+	values.push_back("/");
+
+	TerminalSymbolSet	md("*/", 4, values, subset_matching);
 	TerminalSymbol		open_par("(", 5);
 	TerminalSymbol		close_par(")", 6);
-	TerminalSymbolSet	numbers("[0-9]", 8, {}, digit_matching);
+
+	values.clear();
+
+	TerminalSymbolSet	numbers("[0-9]", 8, values, digit_matching);
 
 	//create grammar;
 	Grammar	arithmetic;
@@ -60,9 +73,19 @@ int	main(void) {
 	rule = arithmetic.addRule(num);
 	rule->addSymbol(&numbers);
 
-	std::vector<std::vector<EarleyItem>>	sets = std::vector<std::vector<EarleyItem> >();
+	std::vector<std::vector<EarleyItem> >	sets = std::vector<std::vector<EarleyItem> >();
 
-	Tokenizer	tokenizer({" "}, {"+", "-", "*", "/", "(", ")"});
+	std::vector<std::string> separators; // to be c++98 compliant, initialize the vector with the values
+	std::vector<std::string> reserved_symbols; // to be c++98 compliant, initialize the vector with the values
+	separators.push_back(" ");
+	reserved_symbols.push_back("+");
+	reserved_symbols.push_back("-");
+	reserved_symbols.push_back("*");
+	reserved_symbols.push_back("/");
+	reserved_symbols.push_back("(");
+	reserved_symbols.push_back(")");
+	
+	Tokenizer	tokenizer(separators, reserved_symbols);
 	Recognizer	recognizer;
 
 	std::ifstream	fi("test_file.txt");
@@ -88,7 +111,7 @@ int	main(void) {
 	// // 	std::cout << "Tokens " << nginx_toks[i].value << std::endl;
 	// // }
 
-	// std::vector<std::vector<EarleyItem>>	nginx_sets = std::vector<std::vector<EarleyItem> >();
+	// std::vector<std::vector<EarleyItem> >	nginx_sets = std::vector<std::vector<EarleyItem> >();
 	// Recognizer	nginx_recognizer;
 	// nginx_recognizer.recognize(nginx_toks, nginx_configuration_grammar, nginx_sets);
 	// nginx_recognizer.print(nginx_configuration_grammar, nginx_sets);

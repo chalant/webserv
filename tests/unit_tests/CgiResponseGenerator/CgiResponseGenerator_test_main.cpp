@@ -35,7 +35,7 @@ int main()
     // mockConfigurationBlock.setString("PythonCgiPath", "/usr/bin/python3");
 
     // Declare cgi info
-    Triplet_t cgiInfo; // <cgiPid, <responseReadPipe, requestWritePipe>>
+    Triplet_t cgiInfo; // <cgiPid, <responseReadPipe, requestWritePipe> >
     int responseReadPipe;
     int requestWritePipe;
 

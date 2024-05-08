@@ -103,6 +103,9 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
         // Record the pipes to connection socket mappings
         this->_pipeRoutes[responseReadPipe] = socketDescriptor;
         this->_pipeRoutes[requestWritePipe] = socketDescriptor;
+
+        // Push the request body to the request pipe
+        this->_bufferManager.pushPipeBuffer(requestWritePipe, request.getBody());
         
         return cgiInfo; // cgi content
     }

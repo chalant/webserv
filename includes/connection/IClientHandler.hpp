@@ -20,7 +20,7 @@ class IClientHandler
 {
 public:
     // Virtual destructor
-    virtual ~IClientHandler() {}
+    virtual ~IClientHandler() {};
 
     // Setter
     virtual void setSocketDescriptor(int socketDescriptor) = 0;

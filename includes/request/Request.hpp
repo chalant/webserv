@@ -58,7 +58,6 @@ private:
     std::string _authority;
     std::map<std::string, std::string> _queryParameters;
     std::pair<std::string, std::string> _remoteAddress;
-    time_t _requestTimestamp;
     std::map<std::string, std::string> _cookies;
     std::vector<BodyParameter> _bodyParameters;
     bool _uploadRequest;

@@ -9,7 +9,7 @@ Factory::Factory(const IConfiguration &configuration, ILogger &logger)
       _logger(logger),
       _httpHelper(configuration) {}
 
-IConnection *Factory::createConnection(std::pair<int, std::pair<std::string, std::string>> clientInfo)
+IConnection *Factory::createConnection(std::pair<int, std::pair<std::string, std::string> > clientInfo)
 {
     return new Connection(clientInfo, this->_logger, this->createRequest(), this->createResponse());
 }

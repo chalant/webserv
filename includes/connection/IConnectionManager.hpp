@@ -16,10 +16,10 @@
 class IConnectionManager
 {
 public:
-    virtual ~IConnectionManager() = default;
+    virtual ~IConnectionManager() {};
 
     // Methods related to connections
-    virtual void addConnection(std::pair<int, std::pair<std::string, std::string>>) = 0;
+    virtual void addConnection(std::pair<int, std::pair<std::string, std::string> >) = 0;
     virtual void removeConnection(SocketDescriptor_t) = 0;
     virtual IConnection &getConnection(SocketDescriptor_t) = 0;
     virtual IRequest &getRequest(SocketDescriptor_t) = 0;

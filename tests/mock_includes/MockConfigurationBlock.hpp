@@ -14,7 +14,7 @@
 class MockConfigurationBlock : public IConfiguration
 {
 private:
-    std::map<std::string, std::vector<IConfiguration *>> _blocks;
+    std::map<std::string, std::vector<IConfiguration *> > _blocks;
     std::map<std::string, std::vector<std::string> *> _directives;
     ILogger &_logger;
     const std::string _name;

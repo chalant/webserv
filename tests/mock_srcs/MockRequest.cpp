@@ -23,7 +23,7 @@ MockRequest &MockRequest::operator=(const MockRequest &src)
 };
 
 // Getters
-HttpMethod MockRequest::getMethod() const { return HttpMethod::GET; };
+HttpMethod MockRequest::getMethod() const { return GET; };
 
 std::string MockRequest::getMethodString() const { return _testMethod; };
 
@@ -31,7 +31,7 @@ std::string MockRequest::getTestMethod() const { return _testMethod; };
 
 std::string MockRequest::getUri() const { return _testUri; };
 
-HttpVersion MockRequest::getHttpVersion() const { return HttpVersion::HTTP_1_1; };
+HttpVersion MockRequest::getHttpVersion() const { return HTTP_1_1; };
 
 std::string MockRequest::getTestHttpVersion() const { return _testHttpVersion; };
 
@@ -138,7 +138,7 @@ void MockRequest::setBody(const std::string &body)
     _testBody.insert(_testBody.end(), body.begin(), body.end());
 };
 
-void MockRequest::addCookie(const std::string &key, const std::string &value) { _testHeaders.insert({key, value}); };
+void MockRequest::addCookie(const std::string &key, const std::string &value) { _testHeaders.insert(std::make_pair(key, value)); };
 
 void MockRequest::setAuthority(){};
 

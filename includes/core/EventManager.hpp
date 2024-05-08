@@ -10,14 +10,13 @@
 #include "../logger/ILogger.hpp"
 #include "../exception/WebservExceptions.hpp"
 
-typedef std::pair<int, std::pair<int, int>> Triplet_t;
+typedef std::pair<int, std::pair<int, int> > Triplet_t;
 
 class EventManager : public IEventManager
 {
 private:
     IPollfdManager &_pollfdManager;
     IBufferManager &_bufferManager;
-    ISocket &_socket;
     IServer &_server;
     IRequestHandler &_requestHandler;
     ILogger &_logger;
@@ -35,7 +34,7 @@ private:
     void _cleanUp(ssize_t &pollfdIndex, int descriptor, short options = 0);
 
 public:
-    EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager, ISocket &socket, IServer &server, IRequestHandler &requestHandler, ILogger &logger);
+    EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager, IServer &server, IRequestHandler &requestHandler, ILogger &logger);
     ~EventManager();
 
     virtual void handleEvents();

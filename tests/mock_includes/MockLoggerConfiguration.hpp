@@ -17,9 +17,7 @@ private:
     std::string _errorLogFile;
     std::string _accessLogFile;
     IBufferManager &_bufferManager;
-    IPollfdManager &_pollfdManager;
     size_t _bufferSize;
-    LogLevel _logLevel;
     int _errorLogFileDescriptor;
     int _accessLogFileDescriptor;
     bool _errorLogEnabled;

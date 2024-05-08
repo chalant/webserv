@@ -47,7 +47,7 @@ int main()
   // Instantiate the object under test
   BufferManager bufferManager(mockSocket);
   Logger logger(bufferManager);
-  EventManager eventManager(mockPollfdManager, bufferManager, mockSocket, mockServer, mockRequestHandler, logger);
+  EventManager eventManager(mockPollfdManager, bufferManager, mockServer, mockRequestHandler, logger);
   ConfigurationLoader	confLoader(logger);
 
   const IConfiguration&	mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
@@ -57,7 +57,11 @@ int main()
   mockLoggerConfiguration.setFileDescriptor(fd);
   mockLoggerConfiguration.setBufferSize(50);
   logger.configure(mockLoggerConfiguration);
-  mockPollfdManager.addRegularFilePollfd({fd, POLLOUT, POLLOUT});
+  pollfd pollfd;
+  pollfd.fd = fd;
+  pollfd.events = POLLOUT;
+  pollfd.revents = POLLOUT;
+  mockPollfdManager.addRegularFilePollfd(pollfd);
 
   // Test case 1: FileBuffer: Pushing data to the buffer by the logger
   //******************************************************************
