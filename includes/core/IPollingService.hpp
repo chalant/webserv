@@ -1,6 +1,12 @@
 #ifndef IPOLLINGSERVICE_HPP
 #define IPOLLINGSERVICE_HPP
 
+/*
+ * IPollingService.hpp
+ *
+ * Abstract class for handling polling events.
+ */
+
 class IPollingService
 {
 public:

@@ -16,21 +16,21 @@
  */
 
 #include <cassert>
-#include <iostream>
 
 // Include the classes to be tested
-#include "connection/ConnectionManager.hpp"
-#include "request/RequestParser.hpp"
-#include "response/Response.hpp"
-#include "request/Request.hpp"
-#include "constants/HttpHelper.hpp"
-#include "configuration/ConfigurationLoader.hpp"
+#include "../../../includes/connection/ConnectionManager.hpp"
+#include "../../../includes/request/RequestParser.hpp"
+#include "../../../includes/response/Response.hpp"
+#include "../../../includes/request/Request.hpp"
+#include "../../../includes/constants/HttpHelper.hpp"
+#include "../../../includes/configuration/ConfigurationLoader.hpp"
 
 // Include the mock classes
-#include "MockLogger.hpp"
-#include "MockFactory.hpp"
+#include "../../mock_includes/MockLogger.hpp"
+#include "../../mock_includes/MockFactory.hpp"
+
 // #include "MockConfigurationBlock.hpp"
-#include "MockConnection.hpp"
+#include "../../mock_includes/MockConnection.hpp"
 
 // Test helper function
 std::vector<char> stringToVector(std::string str)

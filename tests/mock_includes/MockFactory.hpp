@@ -9,7 +9,7 @@
  *
  */
 
-#include "factory/IFactory.hpp"
+#include "../../includes/factory/IFactory.hpp"
 
 class MockFactory : public IFactory
 {

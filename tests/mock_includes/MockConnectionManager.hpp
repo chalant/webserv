@@ -9,11 +9,7 @@
  *
  */
 
-#include "connection/IConnectionManager.hpp"
-#include "MockConnection.hpp"
-#include "MockRequest.hpp"
-#include "MockResponse.hpp"
-#include "MockSession.hpp"
+#include "../../includes/connection/IConnectionManager.hpp"
 
 class MockConnectionManager : public IConnectionManager
 {

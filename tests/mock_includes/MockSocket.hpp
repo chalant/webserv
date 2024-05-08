@@ -7,7 +7,7 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "network/ISocket.hpp" // Include the base interface header
+#include "../../includes/network/ISocket.hpp" // Include the base interface header
 #include <map>                        // Include for std::map
 
 class MockSocket : public ISocket

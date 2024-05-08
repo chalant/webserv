@@ -20,20 +20,17 @@
 #include <sys/stat.h>
 
 // include the header files for the classes under test
-#include "buffer/BufferManager.hpp"
-#include "buffer/FileBuffer.hpp"
-#include "buffer/SocketBuffer.hpp"
-#include "logger/Logger.hpp"
-#include "core/EventManager.hpp"
-#include "configuration/ConfigurationLoader.hpp"
+#include "../../../includes/buffer/BufferManager.hpp"
+#include "../../../includes/logger/Logger.hpp"
+#include "../../../includes/core/EventManager.hpp"
+#include "../../../includes/configuration/ConfigurationLoader.hpp"
 
 // include the header files for the mock classes
-#include "MockPollfdManager.hpp"
-#include "MockSocket.hpp"
-#include "MockServer.hpp"
-#include "MockRequestHandler.hpp"
-#include "MockLoggerConfiguration.hpp"
-// #include "MockConfigurationBlock.hpp"
+#include "../../mock_includes/MockPollfdManager.hpp"
+#include "../../mock_includes/MockSocket.hpp"
+#include "../../mock_includes/MockServer.hpp"
+#include "../../mock_includes/MockRequestHandler.hpp"
+#include "../../mock_includes/MockLoggerConfiguration.hpp"
 
 int main()
 {

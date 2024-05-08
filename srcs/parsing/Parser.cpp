@@ -1,4 +1,5 @@
-#include "parsing/Parser.hpp"
+#include "../../includes/parsing/Parser.hpp"
+#include <iostream>
 
 void	print_chart(std::vector<std::vector<EarleyEdge> >& chart, Grammar const & m_grammar) {
 	GrammarRule	const	*rule;

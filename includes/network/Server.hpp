@@ -16,7 +16,6 @@
 #include "../logger/ILogger.hpp"
 #include "../pollfd/IPollfdManager.hpp"
 #include "../connection/IConnectionManager.hpp"
-#include "../exception/WebservExceptions.hpp"
 
 class Server : public IServer
 {

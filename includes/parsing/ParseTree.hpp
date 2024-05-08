@@ -2,7 +2,6 @@
 #define PARSETREE_HPP
 
 #include <vector>
-#include <string>
 #include "GrammarRule.hpp"
 
 class EarleyEdge;

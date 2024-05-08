@@ -1,5 +1,4 @@
-#include "pollfd/PollfdManager.hpp"
-#include "network/Server.hpp"
+#include "../../includes/pollfd/PollfdManager.hpp"
 
 /*
  * PollfdManager.hpp

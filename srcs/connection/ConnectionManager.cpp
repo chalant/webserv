@@ -1,4 +1,7 @@
 #include "../../includes/connection/ConnectionManager.hpp"
+#include <ctime>
+#include <cstdlib>
+#include <sstream>
 
 /*
  * ConnectionManager

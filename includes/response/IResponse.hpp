@@ -11,7 +11,8 @@
 
 #include <string>
 #include <map>
-#include "../../includes/constants/HttpHelper.hpp"
+#include "../constants/HttpStatusCodeHelper.hpp"
+#include "../constants/HttpHeaderHelper.hpp"
 
 class IResponse
 {

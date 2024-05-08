@@ -10,7 +10,7 @@
 #include "IBuffer.hpp"
 #include <cstring>
 #include <vector>
-#include "network/ISocket.hpp"
+#include "../network/ISocket.hpp"
 
 class SocketBuffer : public IBuffer
 {

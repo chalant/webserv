@@ -1,4 +1,4 @@
-#include "MockConnection.hpp"
+#include "../mock_includes/MockConnection.hpp"
 
 /*
  * MockConnection class

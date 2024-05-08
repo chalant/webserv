@@ -1,16 +1,14 @@
 #include <cassert>
-#include <iostream>
 #include <sys/socket.h>
 #include <cstring>
 #include <unistd.h>
 
 // include the header file for the class under test
-#include "connection/ClientHandler.hpp"
+#include "../../../includes/connection/ClientHandler.hpp"
 
 // include the header files for the mock classes
-#include "MockLogger.hpp"
-#include "MockExceptionHandler.hpp"
-#include "MockSocket.hpp"
+#include "../../mock_includes/MockLogger.hpp"
+#include "../../mock_includes/MockSocket.hpp"
 
 int main()
 {

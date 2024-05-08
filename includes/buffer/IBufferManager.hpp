@@ -1,7 +1,6 @@
 #ifndef IBUFFERMANAGER_HPP
 #define IBUFFERMANAGER_HPP
 
-#include "IBuffer.hpp"
 #include <vector>
 
 class IBufferManager

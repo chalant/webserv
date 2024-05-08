@@ -19,6 +19,7 @@
 #define DEFAULT_FLUSH_THRESHOLD 32768 // 32 KB
 
 #include "IBufferManager.hpp"
+#include "IBuffer.hpp"
 #include <map>
 
 // Forward declarations

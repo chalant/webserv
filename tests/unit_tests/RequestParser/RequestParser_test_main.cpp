@@ -1,15 +1,16 @@
 #include <cassert>
-#include <iostream>
 
 // include the header file for the class under test
-#include "request/RequestParser.hpp"
-#include "configuration/ConfigurationLoader.hpp"
+#include "../../../includes/request/RequestParser.hpp"
+#include "../../../includes/exception/WebServExceptions.hpp"
+#include "../../../includes/constants/HttpStatusCodeHelper.hpp"
+
+#include "../../../includes/configuration/ConfigurationLoader.hpp"
 
 // include the header files for the mock classes
 // #include "MockConfigurationBlock.hpp"
-#include "MockLogger.hpp"
-#include "MockRequest.hpp"
-#include "MockExceptionHandler.hpp"
+#include "../../mock_includes/MockLogger.hpp"
+#include "../../mock_includes/MockRequest.hpp"
 
 // Method to initialize a std::vector<char> from a string
 std::vector<char> stringToVector(const std::string &str);

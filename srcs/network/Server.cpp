@@ -1,4 +1,6 @@
 #include "../../includes/network/Server.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
+#include <set>
 
 /*
  * The Server class is responsible for managing core operations of webserv, including initialization, connection handling, and termination.

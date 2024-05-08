@@ -1,4 +1,4 @@
-#include "MockLoggerConfiguration.hpp"
+#include "../mock_includes/MockLoggerConfiguration.hpp"
 
 /*
  * MockLoggerConfiguration.cpp

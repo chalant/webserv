@@ -1,4 +1,7 @@
-#include "core/EventManager.hpp"
+#include "../../includes/core/EventManager.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
+#include <unistd.h>
+
 
 #define NO_EVENTS 0xC0
 #define KEEP_DESCRIPTOR 0x01

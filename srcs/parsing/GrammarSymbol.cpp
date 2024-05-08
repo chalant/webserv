@@ -1,5 +1,5 @@
-#include "parsing/Grammar.hpp"
-#include "parsing/GrammarSymbol.hpp"
+#include "../../includes/parsing/Grammar.hpp"
+#include "../../includes/parsing/GrammarSymbol.hpp"
 
 AGrammarSymbol::~AGrammarSymbol() {
 

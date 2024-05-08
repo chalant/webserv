@@ -1,4 +1,8 @@
 #include "../mock_includes/MockConnectionManager.hpp"
+#include "../mock_includes/MockConnection.hpp"
+#include "../mock_includes/MockRequest.hpp"
+#include "../mock_includes/MockResponse.hpp"
+#include "../mock_includes/MockSession.hpp"
 
 /*
  * MockConnectionManager class

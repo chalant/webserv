@@ -1,8 +1,8 @@
-#include "parsing/Grammar.hpp"
-#include "parsing/Parser.hpp"
-#include "parsing/TerminalSymbol.hpp"
-#include "parsing/NonTerminalSymbol.hpp"
-#include "configuration/ConfigurationLoader.hpp"
+#include "../../includes/parsing/Grammar.hpp"
+#include "../../includes/parsing/Parser.hpp"
+#include "../../includes/parsing/TerminalSymbol.hpp"
+#include "../../includes/parsing/NonTerminalSymbol.hpp"
+#include "../../includes/configuration/ConfigurationLoader.hpp"
 #include <fstream>
 
 static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block);

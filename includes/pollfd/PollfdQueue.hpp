@@ -48,7 +48,6 @@
 #include <vector>
 #include <unistd.h>
 #include <poll.h>
-#include "../exception/WebservExceptions.hpp"
 
 // PollfdQueue class: Provides a lightweight and efficient container for managing pollfd objects.
 class PollfdQueue

@@ -6,10 +6,11 @@
  * Mocks the LoggerConfiguration class
  */
 
-#include "logger/ILoggerConfiguration.hpp"
-#include "buffer/IBufferManager.hpp"
-#include "pollfd/IPollfdManager.hpp"
-#include "configuration/IConfiguration.hpp"
+#include "../../includes/logger/ILoggerConfiguration.hpp"
+#include "../../includes/buffer/IBufferManager.hpp"
+#include "../../includes/pollfd/IPollfdManager.hpp"
+#include "../../includes/configuration/IConfiguration.hpp"
+#include <unistd.h>
 
 class MockLoggerConfiguration : public ILoggerConfiguration
 {

@@ -1,4 +1,4 @@
-#include "parsing/Tokenizer.hpp"
+#include "../../includes/parsing/Tokenizer.hpp"
 #include <fstream>
 
 bool	is_separator(const std::vector<std::string>& separators, char c) {
@@ -77,7 +77,6 @@ const std::vector<Token>&	Tokenizer::tokenize(const std::string& str) {
 	return m_tokens;
 }
 
-#include <iostream>
 //fixme: should load the whole file other-wise tokens might get unproperly split.
 //todo: set buffer size in the header...
 const std::vector<Token>&	Tokenizer::tokenize(std::ifstream& stream) {

@@ -1,6 +1,8 @@
-#include "logger/LoggerConfiguration.hpp"
+#include "../../includes/logger/LoggerConfiguration.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
+#include <unistd.h>
 
-LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager, IConfiguration &configuration, IPollfdManager &pollfdManager)
+LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager, const IConfiguration &configuration, IPollfdManager &pollfdManager)
     : _errorLogFile(configuration.getString("errorLog")),
       _accessLogFile(configuration.getString("accessLog")),
       _bufferManager(BufferManager),

@@ -9,7 +9,7 @@
  *
  */
 
-#include "connection/IConnection.hpp"
+#include "../../includes/connection/IConnection.hpp"
 
 class MockConnection : public IConnection
 {

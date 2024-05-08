@@ -1,4 +1,5 @@
-#include "network/Socket.hpp"
+#include "../../includes/network/Socket.hpp"
+#include <sstream>
 
 /*
  * Socket - Class for socket operations.
@@ -109,7 +110,7 @@ std::pair<int, std::pair<std::string, std::string> > Socket::accept(int serverSo
     uint16_t clientPort_uint16 = ntohs(clientAddr.sin_port);
 
     // Convert the port number to a string
-    std::stringstream ss;
+    std::ostringstream ss;
     ss << clientPort_uint16;
     std::string clientPort = ss.str();
 

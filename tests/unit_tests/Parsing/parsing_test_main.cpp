@@ -1,9 +1,7 @@
-#include "Grammar.hpp"
-#include "Parser.hpp"
-#include "TerminalSymbol.hpp"
-#include "NonTerminalSymbol.hpp"
-#include "ConfigurationLoader.hpp"
-#include "MockLogger.hpp"
+#include "../../../includes/parsing/Grammar.hpp"
+#include "../../../includes/parsing/Parser.hpp"
+#include "../../../includes/parsing/TerminalSymbol.hpp"
+#include "../../../includes/parsing/NonTerminalSymbol.hpp"
 
 #include <fstream>
 

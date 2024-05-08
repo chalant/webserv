@@ -1,4 +1,5 @@
-#include "constants/HttpStatusCodeHelper.hpp"
+#include "../../includes/constants/HttpStatusCodeHelper.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
 
 /*
  * HttpStatusCodeHelper.hpp

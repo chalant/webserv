@@ -1,8 +1,8 @@
-#include "factory/Factory.hpp"
-#include "request/Request.hpp"
-#include "response/Response.hpp"
-#include "connection/Connection.hpp"
-#include "connection/Session.hpp"
+#include "../../includes/factory/Factory.hpp"
+#include "../../includes/request/Request.hpp"
+#include "../../includes/response/Response.hpp"
+#include "../../includes/connection/Connection.hpp"
+#include "../../includes/connection/Session.hpp"
 
 Factory::Factory(const IConfiguration &configuration, ILogger &logger)
     : _configuration(configuration),

@@ -10,12 +10,15 @@
  * controlling socket file descriptor flags, and closing the socket.
  */
 
+ #ifndef MSG_NOSIGNAL // For MacOS
+    #define MSG_NOSIGNAL SO_NOSIGPIPE
+#endif
+
 #include "ISocket.hpp"
 #include <cstring>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include <sstream>
 
 // Class for socket operations
 class Socket : public ISocket

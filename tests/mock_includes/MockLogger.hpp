@@ -7,10 +7,7 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "logger/ILogger.hpp" // Include the base interface header
-#include <iostream>           // Include for std::cout
-#include <sstream>            // Include for std::stringstream
-#include <iomanip>            // Include for std::put_time
+#include "../../includes/logger/ILogger.hpp" // Include the base interface header
 
 class MockLogger : public ILogger
 {

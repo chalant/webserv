@@ -1,4 +1,5 @@
-#include "parsing/NonTerminalSymbol.hpp"
+#include "../../includes/parsing/NonTerminalSymbol.hpp"
+#include "../../includes/parsing/GrammarRule.hpp"
 
 NonTerminalSymbol::NonTerminalSymbol(std::string const name, int id): m_name(name), m_id(id) {
 }

@@ -7,9 +7,8 @@
  * during unit testing without relying on the actual implementation.
  */
 
-#include "configuration/IConfiguration.hpp" // Include the base interface header
-#include "logger/ILogger.hpp"                 // Include the logger interface header
-#include <stdexcept>                        // Include the standard exception header
+#include "../../includes/configuration/IConfiguration.hpp" // Include the base interface header
+#include "../../includes/logger/ILogger.hpp"                 // Include the logger interface header
 
 class MockConfigurationBlock : public IConfiguration
 {
@@ -42,8 +41,11 @@ public:
     virtual int getInt(const std::string &parameter, size_t index = 0) const;
     virtual size_t getSize_t(const std::string &parameter, size_t index = 0) const;
     virtual bool getBool(const std::string &parameter, size_t index = 0) const;
+    virtual	void addBlock(const std::string& name, IConfiguration *block);
+	virtual	void addDirective(const std::string& name, std::vector<std::string> *parameters);
     virtual void print(size_t depth) const;
     virtual const std::string &getName() const;
+
 };
 
 #endif // MOCKCONFIGURATIONBLOCK_HPP

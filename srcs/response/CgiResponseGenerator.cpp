@@ -1,4 +1,5 @@
 #include "../../includes/response/CgiResponseGenerator.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
 
 #define NO_THROW 0x1                // Do not throw an exception
 #define KEEP_RESPONSE_READ_PIPE 0x2 // Do no close the read end of the response pipe

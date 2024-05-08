@@ -1,4 +1,5 @@
-#include "constants/HttpVersionHelper.hpp"
+#include "../../includes/constants/HttpVersionHelper.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
 
 /*
  * HttpVersionHelper.hpp
