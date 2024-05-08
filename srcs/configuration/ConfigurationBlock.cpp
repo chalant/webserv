@@ -20,38 +20,17 @@ ConfigurationBlock::~ConfigurationBlock() {
 
 const std::vector<IConfiguration *>&	ConfigurationBlock::getBlocks(const std::string &key) const
 {
-    try {
-        return _blocks.at(key);
-    }
-	catch (const std::out_of_range &e){
-        _logger.log(DEBUG, "ConfigurationBlock::getBlocks: " + key + " not found");
-    }
-	//todo: throw a webserv error
-	throw std::out_of_range("");
+    return _blocks.at(key);
 }
 
 const std::vector<std::string>& ConfigurationBlock::getStringVector(const std::string &key) const
 {
-    try {
-        return *_directives.at(key);
-    } 
-	catch (const std::out_of_range &e) {
-        _logger.log(DEBUG, "ConfigurationBlock::getStringVector: " + key + " not found");
-	}
-	//todo: throw a webserv error
-	throw std::out_of_range("");
+	return *_directives.at(key);
 }
 
 const std::string&	ConfigurationBlock::getString(const std::string &key, size_t index = 0) const
 {
-    try {
-		return _directives.at(key)->at(index);
-    } 
-	catch (const std::out_of_range &e){
-        _logger.log(DEBUG, "ConfigurationBlock::getString: " + key + " not found");
-    }
-	//todo: throw a webserv error
-	throw std::out_of_range("");
+	return _directives.at(key)->at(index);
 }
 
 int ConfigurationBlock::getInt(const std::string &key, size_t index = 0) const

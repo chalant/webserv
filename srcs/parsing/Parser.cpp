@@ -1,5 +1,7 @@
 #include "parsing/Parser.hpp"
 
+/*The Parser is responsible for building a the ParseTree*/
+
 void	print_chart(std::vector<std::vector<EarleyEdge> >& chart, Grammar const & m_grammar) {
 	GrammarRule	const	*rule;
 	EarleyEdge			*edge;
@@ -84,7 +86,7 @@ bool	Parser::m_processTerminal(ParseTree& parse_tree, SearchState state, const A
 	parse_tree.addSubtree(state.node, state.node, state.depth, *m_grammar.getRule(state.rule_index));
 	parse_tree[state.depth]->tokenIndex(state.node);
 	//advance one step in the symbols and the tokens then continue the search (the symbol can be either 
-	//at the end of in-between 2 non-terminal symbols).
+	//at the end or in-between 2 non-terminal symbols).
 	return m_searchPath(parse_tree, SearchState(state.rule_index, state.depth + 1, state.node + 1), tokens);
 }
 

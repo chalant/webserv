@@ -20,7 +20,7 @@ static void	build_config(const std::vector<Token>& tokens, const Grammar& gramma
 		add_directive(tokens, parse_tree, block);
 		return ;
 	}
-	//go down the parse tree.
+	//go down the parse tree and build subblocks.
 	for (size_t i = 0; i < parse_tree.size(); i++) {
 		build_config(tokens, grammar, *parse_tree[i], block);
 	}
@@ -49,7 +49,7 @@ static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, 
 	const std::string rule_name = grammar.getRule(parse_tree[1]->ruleIndex())->getName();
 
 	block.addBlock(tokens[parse_tree[0]->tokenIndex()].value, new_block);
-	//check if it is a block with at field and retreive the field.
+	//check if it is a block with at prefix and retreive the prefix.
 	if (rule_name == "prefix") {
 		//NOTE: the ConfigurationBlock could have a regex mode...
 		std::vector<std::string>	*params = new std::vector<std::string>();
@@ -88,7 +88,7 @@ const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& 
 	NonTerminalSymbol		configuration("configuration", 0);
 	NonTerminalSymbol		block_element("configuration-element", 1);
 	NonTerminalSymbol		block("block", 2);
-	NonTerminalSymbol		block_param("prefix", 22);
+	NonTerminalSymbol		prefix("prefix", 22);
 	NonTerminalSymbol		directive("directive", 3);
 	NonTerminalSymbol		parameters("parameters", 4);
 	NonTerminalSymbol		comment_list("comment-list", 23);
@@ -144,16 +144,16 @@ const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& 
 
 	rule = grammar.addRule(block);
 	rule->addSymbol(&string_);
-	rule->addSymbol(&block_param);
+	rule->addSymbol(&prefix);
 	rule->addSymbol(&curl_open);
 	rule->addSymbol(&configuration);
 	rule->addSymbol(&curl_close);
 
-	rule = grammar.addRule(block_param);
+	rule = grammar.addRule(prefix);
 	rule->addSymbol(&regex);
 	rule->addSymbol(&string_);
 
-	rule = grammar.addRule(block_param);
+	rule = grammar.addRule(prefix);
 	rule->addSymbol(&string_);
 
 	//comment-list

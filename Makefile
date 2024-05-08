@@ -14,6 +14,7 @@ NAME		= webserv
 #-------------------SOURCES PATH----------------------
 SOURCES     = src/
 HEADER_PWD  = includes/
+INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
 FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
@@ -77,7 +78,7 @@ BOLD_OFF    =   \x1b[21m
 #-------------------RULES-----------------------
 %.o: %.cpp
 			@printf "$(YELLOW)Generating $(NAME) objects... %-33.33s\r$(NO_COLOR)" $@
-			@$(CC) $(FLAGS) -c $< -o $@
+			@$(CC) $(FLAGS) -c $< -o $@ -I$(INCLUDES)
 $(NAME):	$(OBJS)
 			@printf "$(GREEN)Compiling $(NAME)... %33s\r$(NO_COLOR)" " "
 			@$(CC) $(FLAGS) $(OBJS)  -o $(NAME)

@@ -9,7 +9,7 @@
 
 int	main() {
 	MockLogger	logger;
-	ConfigurationLoader	loader = ConfigurationLoader(logger);
+	ConfigurationLoader	loader(logger);
 	const IConfiguration&	block = loader.loadConfiguration("test_configuration_file.conf");
 	block.print(0);
 }
