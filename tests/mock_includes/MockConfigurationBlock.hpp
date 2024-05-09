@@ -41,8 +41,6 @@ public:
     virtual int getInt(const std::string &parameter, size_t index = 0) const;
     virtual size_t getSize_t(const std::string &parameter, size_t index = 0) const;
     virtual bool getBool(const std::string &parameter, size_t index = 0) const;
-    virtual	void addBlock(const std::string& name, IConfiguration *block);
-	virtual	void addDirective(const std::string& name, std::vector<std::string> *parameters);
     virtual void print(size_t depth) const;
     virtual const std::string &getName() const;
 
