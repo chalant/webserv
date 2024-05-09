@@ -30,7 +30,7 @@ public:
     virtual void	addDirective(const std::string& name, std::vector<std::string> *parameters) = 0;
 	virtual void	print(size_t depth) const = 0;
 	virtual const std::string&	getName() const = 0;
-	virtual bool	matchURI(const std::string& uri) = 0;
+	virtual bool	isRegex(void) const = 0;
 };
 
 #endif // IConfiguration_HPP

@@ -27,7 +27,7 @@ class ConfigurationBlock : public IConfiguration
 		virtual bool	getBool(const std::string &parameter, size_t index) const;
 		virtual	void	addBlock(const std::string& name, IConfiguration *block);
 		virtual	void	addDirective(const std::string& name, std::vector<std::string> *parameters);
-		virtual	bool	matchURI(const std::string& uri);
+		virtual bool	isRegex(void) const;
 		virtual const std::string&	getName() const;
 		void			print(size_t depth) const;
 };

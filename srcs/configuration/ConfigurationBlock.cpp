@@ -111,7 +111,6 @@ const std::string&	ConfigurationBlock::getName(void) const {
 	return _name;
 }
 
-bool	ConfigurationBlock::matchURI(const std::string& uri) {
-	(void)uri;
+bool	ConfigurationBlock::isRegex(void) const {
 	return false;
 }

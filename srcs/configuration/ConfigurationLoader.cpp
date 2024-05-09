@@ -53,16 +53,18 @@ static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, 
 
 	//check if it is a block with at prefix and retreive the prefix.
 	if (rule_name == "prefix") {
+		int	start = 0;
 		//NOTE: the ConfigurationBlock could have a regex mode...
 		std::vector<std::string>	*params = new std::vector<std::string>();
 		//todo: if there is regex add a "matcher" here
 		if (tokens[(*parse_tree[1])[0]->tokenIndex()].value == "~") {
-			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, new RegexMatcher(tokens[parse_tree[1]->tokenIndex()].value));
+			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, true);
+			start = 1;
 		}
 		else {
-			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, new DefaultMatcher(tokens[parse_tree[0]->tokenIndex()].value));
+			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, false);
 		}
-		for (size_t i = 0; i < parse_tree[1]->size(); i++) {
+		for (size_t i = start; i < parse_tree[1]->size(); i++) {
 			params->push_back(tokens[(*parse_tree[1])[i]->tokenIndex()].value);
 			new_block->addDirective(rule_name, params);
 			build_config(tokens, grammar, *parse_tree[3], *new_block);

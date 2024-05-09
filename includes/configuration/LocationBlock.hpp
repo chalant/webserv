@@ -12,12 +12,12 @@ the configuration block.
 class LocationBlock : public ConfigurationBlock
 {
 	private:
-		IURIMatcher*	m_uri_matcher;
+		bool			m_is_regex;
 	public:
-		LocationBlock(ILogger &logger, const std::string name, IURIMatcher* uri_matcher);
-		LocationBlock(const ConfigurationBlock &parent, const std::string name, IURIMatcher* uri_matcher);
+		LocationBlock(ILogger &logger, const std::string name, bool is_regex);
+		LocationBlock(const ConfigurationBlock &parent, const std::string name, bool is_regex);
 		~LocationBlock();
-		virtual bool	matchURI(const std::string& uri);
+		virtual bool	isRegex(void) const;
 };
 
 #endif // LOCATIONBLOCK_HPP
