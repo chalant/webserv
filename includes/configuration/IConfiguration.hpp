@@ -26,8 +26,6 @@ public:
     virtual int		getInt(const std::string &parameter, size_t index = 0) const = 0;
     virtual size_t	getSize_t(const std::string &, size_t index = 0) const = 0;
     virtual bool	getBool(const std::string &parameter, size_t index = 0) const = 0;
-    virtual void	addBlock(const std::string& name, IConfiguration *block) = 0;
-    virtual void	addDirective(const std::string& name, std::vector<std::string> *parameters) = 0;
 	virtual void	print(size_t depth) const = 0;
 	virtual const std::string&	getName() const = 0;
 	virtual bool	isRegex(void) const = 0;

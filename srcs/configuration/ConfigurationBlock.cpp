@@ -16,6 +16,11 @@ ConfigurationBlock::~ConfigurationBlock() {
 	for (std::map<std::string, std::vector<std::string> *>::const_iterator it = _directives.begin(); it != _directives.end(); ++it) {
 		delete it->second;
 	}
+	for (std::map<std::string, std::vector<IConfiguration *> >::iterator it = _blocks.begin(); it != _blocks.end(); ++it) {
+		for (size_t i = 0; i < it->second.size(); i++) {
+			delete it->second[i];
+		}
+	}
 }
 
 const std::vector<IConfiguration *>&	ConfigurationBlock::getBlocks(const std::string &key) const
@@ -85,9 +90,10 @@ void	ConfigurationBlock::addBlock(const std::string& name, IConfiguration *block
 	_blocks[name].push_back(block);
 }
 
-//todo: check if it exists first.
-void	ConfigurationBlock::addDirective(const std::string& name, std::vector<std::string> *parameters) {
-	_directives[name] = parameters;
+std::vector<std::string>&	ConfigurationBlock::addDirective(const std::string& name) {
+	if (_directives.find(name) == _directives.end())
+		_directives[name] = new std::vector<std::string>();
+	return *_directives[name];
 }
 
 void	ConfigurationBlock::print(size_t depth = 0) const {

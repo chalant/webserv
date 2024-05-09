@@ -12,7 +12,7 @@ the configuration block.
 class LocationBlock : public ConfigurationBlock
 {
 	private:
-		bool			m_is_regex;
+		bool	m_is_regex;
 	public:
 		LocationBlock(ILogger &logger, const std::string name, bool is_regex);
 		LocationBlock(const ConfigurationBlock &parent, const std::string name, bool is_regex);

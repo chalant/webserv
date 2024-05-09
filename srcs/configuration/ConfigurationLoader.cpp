@@ -42,9 +42,8 @@ static void	get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, 
 
 static void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block) {
 	//the first sub-child is the directive name and the second is the parameters list.
-	std::vector<std::string>	*params = new std::vector<std::string>();
-	get_values(tokens, *parse_tree[1], *params);
-	block.addDirective(tokens[(*parse_tree[0])[0]->tokenIndex()].value, params);
+	std::vector<std::string>&	params = block.addDirective(tokens[(*parse_tree[0])[0]->tokenIndex()].value);
+	get_values(tokens, *parse_tree[1], params);
 }
 
 static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block) {
@@ -55,8 +54,6 @@ static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, 
 	if (rule_name == "prefix") {
 		int	start = 0;
 		//NOTE: the ConfigurationBlock could have a regex mode...
-		std::vector<std::string>	*params = new std::vector<std::string>();
-		//todo: if there is regex add a "matcher" here
 		if (tokens[(*parse_tree[1])[0]->tokenIndex()].value == "~") {
 			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, true);
 			start = 1;
@@ -64,11 +61,11 @@ static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, 
 		else {
 			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, false);
 		}
+		std::vector<std::string>&	params = new_block->addDirective(rule_name);
 		for (size_t i = start; i < parse_tree[1]->size(); i++) {
-			params->push_back(tokens[(*parse_tree[1])[i]->tokenIndex()].value);
-			new_block->addDirective(rule_name, params);
-			build_config(tokens, grammar, *parse_tree[3], *new_block);
+			params.push_back(tokens[(*parse_tree[1])[i]->tokenIndex()].value);
 		}
+		build_config(tokens, grammar, *parse_tree[3], *new_block);
 	}
 	else {
 		new_block = new ConfigurationBlock(block, tokens[parse_tree[0]->tokenIndex()].value);

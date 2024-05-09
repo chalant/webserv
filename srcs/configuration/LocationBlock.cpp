@@ -1,4 +1,5 @@
 #include "../../includes/configuration/LocationBlock.hpp"
+#include "../../includes/configuration/ConfigurationBlock.hpp"
 
 LocationBlock::LocationBlock(ILogger &logger, const std::string name, bool is_regex):
 	ConfigurationBlock(logger, name), m_is_regex(is_regex) {

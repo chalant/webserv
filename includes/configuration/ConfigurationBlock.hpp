@@ -9,11 +9,10 @@
 class ConfigurationBlock : public IConfiguration
 {
 	private:
+		ILogger&	_logger;
+		const std::string	_name;
 		std::map<std::string, std::vector<IConfiguration *> >	_blocks;
 		std::map<std::string, std::vector<std::string>* >		_directives;
-		ILogger&			_logger;
-		const std::string	_name;
-
 	public:
 		ConfigurationBlock(ILogger &logger, const std::string name);
 		ConfigurationBlock(const ConfigurationBlock &parent, const std::string name);
@@ -26,7 +25,7 @@ class ConfigurationBlock : public IConfiguration
 		virtual size_t	getSize_t(const std::string &parameter, size_t index) const;
 		virtual bool	getBool(const std::string &parameter, size_t index) const;
 		virtual	void	addBlock(const std::string& name, IConfiguration *block);
-		virtual	void	addDirective(const std::string& name, std::vector<std::string> *parameters);
+		std::vector<std::string>&	addDirective(const std::string& name);
 		virtual bool	isRegex(void) const;
 		virtual const std::string&	getName() const;
 		void			print(size_t depth) const;

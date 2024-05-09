@@ -57,6 +57,7 @@ class Parser {
 		bool									m_processTerminal(ParseTree& parse_tree, SearchState state, const AGrammarSymbol& symbol, const std::vector<Token>& tokens);
 	public:
 		Parser(Grammar const & grammar);
+		~Parser();
 		ParseTree&								parse(std::vector<Token> const & tokens);
 		void									print(std::vector<Token> const & tokens);
 };

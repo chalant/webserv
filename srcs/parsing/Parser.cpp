@@ -78,6 +78,10 @@ Parser::Parser(Grammar const & grammar): m_grammar(grammar) {
 	m_parse_tree = new ParseTree();
 }
 
+Parser::~Parser() {
+	delete m_parse_tree;
+}
+
 //attempts to match the current symbol with the token
 bool	Parser::m_processTerminal(ParseTree& parse_tree, SearchState state, const AGrammarSymbol& symbol, const std::vector<Token>& tokens) {
 	if (state.node >= parse_tree.end())
