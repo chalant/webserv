@@ -98,7 +98,7 @@ std::vector<std::string>&	ConfigurationBlock::addDirective(const std::string& na
 
 void	ConfigurationBlock::print(size_t depth = 0) const {
 	for (std::map<std::string, std::vector<std::string> *>::const_iterator it = _directives.begin(); it != _directives.end(); ++it) {
-		std::cout << std::setw(depth) << "" << it->first << " ";
+		std::cout << std::setw(depth + 2) << "• " << it->first << " ";
 		for (size_t i = 0; i < it->second->size(); i++) {
 			std::cout << (*it->second)[i] << " ";
 		}
@@ -106,7 +106,7 @@ void	ConfigurationBlock::print(size_t depth = 0) const {
 	}
 	for (std::map<std::string, std::vector<IConfiguration *> >::const_iterator it = _blocks.begin(); it != _blocks.end(); ++it) {
 		for (size_t i = 0; i < it->second.size(); i++) {
-			std::cout << std::setw(depth) << "" << it->first << " " << std::endl;
+			std::cout << std::setw(depth + 2) << "• " << it->first << " " << std::endl;
 			it->second[i]->print(depth + 4);
 		}
 		std::cout << std::endl;

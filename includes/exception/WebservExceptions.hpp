@@ -85,6 +85,13 @@ public:
         : WebservException(CRITICAL, "Invalid IConfiguration file.", 1){};
 };
 
+class ConfigSyntaxError: public WebservException
+{
+	public:
+		ConfigSyntaxError(LogLevel logLevel, const std::string &message, int errorCode)
+			: WebservException(logLevel, message, errorCode) {};
+};
+
 class MaximumConnectionsReachedError : public WebservException
 {
 public:

@@ -1,11 +1,20 @@
 #include "../../includes/parsing/Parser.hpp"
 #include <iostream>
+#include "../../includes/exception/WebservExceptions.hpp"
 
 bool	contains_item(std::vector<EarleyItem>& set, EarleyItem& item) {
 	for (size_t i = 0; i < set.size(); i++) {
 		if (set[i] == item) {
 			return true;
 		}
+	}
+	return false;
+}
+
+static bool	completed(std::vector<EarleyItem>& set) {
+	for (size_t i = 0; i < set.size(); i++) {
+		if (set[i].completed())
+			return true;
 	}
 	return false;
 }
@@ -99,6 +108,11 @@ void	Recognizer::recognize(std::vector<Token> const & tokens, Grammar const & gr
 			}
 		}
 	}
+	current_set = &sets[sets.size() - 1];
+	if (current_set->size() == 0)
+		throw ConfigSyntaxError(CRITICAL, "Syntax error at: \"" + tokens[sets.size() - 2].value + "\"", 2);
+	else if (!completed(*current_set))
+		throw ConfigSyntaxError(CRITICAL, "Syntax error at: \"" + tokens[sets.size() - 2].value + "\"", 2);
 }
 
 void	Recognizer::print(Grammar const & grammar, std::vector<std::vector<EarleyItem> >& sets) {

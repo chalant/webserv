@@ -87,14 +87,14 @@ int	main(void) {
 	Recognizer	recognizer;
 
 	std::ifstream	fi("test_file.txt");
-	const std::vector<Token>&	toks = tokenizer.tokenize("1 1 + 12   ");
+	const std::vector<Token>&	toks = tokenizer.tokenize("1 + 1");
 	
 	// for (size_t i = 0; i < toks.size(); i++) {
 	// 	std::cout << "Tokens " << toks[i].value << std::endl;
 	// }
 
 	recognizer.recognize(toks, arithmetic, sets);
-	//recognizer.print(arithmetic, sets);
+	recognizer.print(arithmetic, sets);
 
 	Parser	parser(arithmetic);
 	parser.parse(toks);
