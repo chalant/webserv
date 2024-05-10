@@ -12,57 +12,66 @@
 
 NAME		= webserv
 #-------------------SOURCES PATH----------------------
-SOURCES     = src/
-HEADER_PWD  = includes/
+SOURCES     = srcs/
 INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
-FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
+FLAGS    	= 	#-Wall -Werror -Wextra -g #-std=c++98
 #FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
-HEADERS     =	ArequestHandler.hpp \
-				CGIResponseGenerator.hpp \
-				IClientHandler.hpp \
-				IConfiguration.hpp \
-				IConfigurationLoader.hpp \
-				DeleteMethodResponseGenerator.hpp \
-				ErrorPageResponseGenerator.hpp \
-				IExceptionHandler.hpp \
-				GetMethodResponseGenerator \
-				ILogger.hpp \
-				PollfdQueue.hpp \
-				PostMethodResponseGenerator.hpp \
-				IRequest.hpp \
-				RequestParser.hpp \
-				Response.hpp \
-				Router.hpp \
-				Server.hpp \
-				RequestHandler.hpp \
-				StaticFileResponseGenerator.hpp \
-				UploadResponseGenerator.hpp \
-				WebservExceptions.hpp \
-
 				
 SRCS        =	main.cpp \
-				ArequestHandler.cpp \
-				CGIResponseGenerator.cpp \
-				IClientHandler.cpp \
-				IConfiguration.cpp \
-				DeleteMethodResponseGenerator.cpp \
-				ErrorPageResponseGenerator.cpp \
-				IExceptionHandler.cpp \
-				GetMethodResponseGenerator.cpp \
-				ILogger.cpp \
-				PollfdQueue.cpp \
-				PostMethodResponseGenerator.cpp \
-				IRequest.cpp \
-				RequestParser.cpp \
-				Response.cpp \
-				Router.cpp \
-				Server.cpp \
-				RequestHandler.cpp \
-				StaticFileResponseGenerator.cpp \
-				UploadResponseGenerator.cpp \
+				srcs/parsing/Grammar.cpp \
+				srcs/parsing/GrammarRule.cpp \
+				srcs/parsing/GrammarSymbol.cpp \
+				srcs/parsing/SymbolMatching.cpp \
+				srcs/parsing/Recognizer.cpp \
+				srcs/parsing/EarleyItem.cpp \
+				srcs/parsing/Tokenizer.cpp \
+				srcs/parsing/TerminalSymbol.cpp \
+				srcs/parsing/NonTerminalSymbol.cpp \
+				srcs/parsing/ParseTree.cpp \
+				srcs/parsing/Parser.cpp \
+				srcs/parsing/ParsingUtils.cpp \
+				srcs/parsing/Tokenizer.cpp \
+				srcs/configuration/ConfigurationBlock.cpp \
+				srcs/configuration/LocationBlock.cpp \
+				srcs/configuration/ConfigurationLoader.cpp \
+				srcs/constants/HttpHeaderHelper.cpp \
+				srcs/constants/HttpHelper.cpp \
+				srcs/constants/HttpMethodHelper.cpp \
+				srcs/constants/HttpStatusCodeHelper.cpp \
+				srcs/constants/HttpVersionHelper.cpp \
+				srcs/constants/LogLevelHelper.cpp \
+				srcs/core/EventManager.cpp \
+				srcs/core/PollingService.cpp \
+				srcs/exception/ExceptionHandler.cpp \
+				srcs/factory/Factory.cpp \
+				srcs/logger/Logger.cpp \
+				srcs/logger/LoggerConfiguration.cpp \
+				srcs/network/Server.cpp \
+				srcs/network/Socket.cpp \
+				srcs/connection/RequestHandler.cpp \
+				srcs/connection/ClientHandler.cpp \
+				srcs/connection/Connection.cpp \
+				srcs/connection/ConnectionManager.cpp \
+				srcs/connection/Session.cpp \
+				srcs/response/CGIResponseGenerator.cpp \
+				srcs/pollfd/PollfdManager.cpp \
+				srcs/pollfd/PollfdQueue.cpp \
+				srcs/request/Request.cpp \
+				srcs/request/RequestParser.cpp \
+				srcs/response/AResponseGenerator.cpp \
+				srcs/response/CgiResponseGenerator.cpp \
+				srcs/response/DeleteMethodResponseGenerator.cpp \
+				srcs/response/ErrorPageResponseGenerator.cpp \
+				srcs/response/GetMethodResponseGenerator.cpp \
+				srcs/response/PostMethodResponseGenerator.cpp \
+				srcs/response/RegexMatcher.cpp \
+				srcs/response/Response.cpp \
+				srcs/response/Router.cpp \
+				srcs/resposne/StaticFileResponse.cpp \
+				srcs/response/UploadResponse.cpp
 				
 #-------------------OBJECTS----------------------
 OBJS        =   $(SRCS:.cpp=.o)
@@ -78,10 +87,10 @@ BOLD_OFF    =   \x1b[21m
 #-------------------RULES-----------------------
 %.o: %.cpp
 			@printf "$(YELLOW)Generating $(NAME) objects... %-33.33s\r$(NO_COLOR)" $@
-			@$(CC) $(FLAGS) -c $< -o $@ -I$(INCLUDES)
+			@$(CC) $(FLAGS) -c $< -o $@ 
 $(NAME):	$(OBJS)
 			@printf "$(GREEN)Compiling $(NAME)... %33s\r$(NO_COLOR)" " "
-			@$(CC) $(FLAGS) $(OBJS)  -o $(NAME)
+			@$(CC) $(FLAGS) $(OBJS)  -o $(NAME) -I$(INCLUDES) -I$(SOURCES)
 			@echo "\n$(GREEN)$(BOLD)$@ done !$(BOLD_OFF)$(NO_COLOR)"
 all:	$(NAME)
 

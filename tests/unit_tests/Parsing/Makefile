@@ -27,7 +27,7 @@ SOURCES         = parsing_test_main.cpp \
 OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 
 CC              = c++
-CPPFLAGS        = -Wall -Wextra -Werror -I$(SRC_DIR) -I$(INCLUDES_DIR) -I$(HPARSER_DIR) -I$(HCONFIG_DIR) -I$(HMOCK_DIR) -I$(SSRC_DIR)
+CPPFLAGS        = -I$(SRC_DIR) -I$(INCLUDES_DIR) -I$(HPARSER_DIR) -I$(HCONFIG_DIR) -I$(HMOCK_DIR) -I$(SSRC_DIR) -Wall -Wextra -Werror
 # Optional flags - uncomment to enable
 # CPPFLAGS += -std=c++98
 CPPFLAGS += -g
@@ -41,7 +41,7 @@ $(NAME): $(OBJECTS)
 	$(CC) $(CPPFLAGS) $(SANITIZE_FLAGS) $^ -o $@
 
 %.o: %.cpp
-	$(CC) $(CPPFLAGS) $(SANITIZE_FLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(SANITIZE_FLAGS) -I$(SRC_DIR) -c $< -o $@
 
 clean:
 	rm -f $(OBJECTS)

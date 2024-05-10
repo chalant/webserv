@@ -3,9 +3,8 @@
 #include "../../includes/parsing/TerminalSymbol.hpp"
 #include "../../includes/parsing/NonTerminalSymbol.hpp"
 #include "../../includes/configuration/ConfigurationLoader.hpp"
-#include "configuration/LocationBlock.hpp"
-#include "response/DefaultMatcher.hpp"
-#include "response/RegexMatcher.hpp"
+#include "../../includes/configuration/LocationBlock.hpp"
+#include "../../includes/response/DefaultMatcher.hpp"
 #include <fstream>
 
 static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block);
@@ -240,5 +239,6 @@ const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& 
 	for (size_t i = 0; i < parse_tree.size(); i++) {
 		build_config(tokens, grammar, *parse_tree[i], *m_config);
 	}
+	conf_stream.close();
 	return *m_config;
 }

@@ -1,8 +1,8 @@
 #if !defined(LOCATIONBLOCK_HPP)
 #define LOCATIONBLOCK_HPP
-#include "logger/ILogger.hpp"
-#include "response/IURIMatcher.hpp"
-#include "configuration/ConfigurationBlock.hpp"
+#include "../../includes/logger/ILogger.hpp"
+#include "../../includes/response/IURIMatcher.hpp"
+#include "../../includes/configuration/ConfigurationBlock.hpp"
 
 /*
 A Special class that takes in a IURIMatcher and provides a method for testing if an URI matches

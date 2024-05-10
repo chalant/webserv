@@ -1,7 +1,7 @@
 #ifndef CONFIGURATIONBLOCK_HPP
 #define CONFIGURATIONBLOCK_HPP
 
-#include "configuration/IConfiguration.hpp"
+#include "../../includes/configuration/IConfiguration.hpp"
 #include <stdexcept>
 #include <map>
 #include "../logger/ILogger.hpp"

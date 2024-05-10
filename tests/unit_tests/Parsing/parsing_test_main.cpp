@@ -86,7 +86,7 @@ int	main(void) {
 	Tokenizer	tokenizer(separators, reserved_symbols);
 	Recognizer	recognizer;
 
-	std::ifstream	fi("test_file.txt");
+	std::ifstream				fi("test_file.txt");
 	const std::vector<Token>&	toks = tokenizer.tokenize("1 + 1");
 	
 	// for (size_t i = 0; i < toks.size(); i++) {
@@ -98,6 +98,7 @@ int	main(void) {
 
 	Parser	parser(arithmetic);
 	parser.parse(toks);
+	fi.close();
 	//parser.print(toks);
 
 	// Tokenizer	nginx_tokenizer({" ", "\n"}, {"#", "{", "}", ";", "~"});
