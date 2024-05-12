@@ -19,6 +19,9 @@ ConnectionManager::ConnectionManager(ILogger &logger, IFactory &factory)
       _logger(logger)
 {
     std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed srand, to create session id's
+
+    // Log the creation of the ConnectionManager
+    this->_logger.log(VERBOSE, "ConnectionManager created.");
 }
 
 // Destructor
@@ -35,6 +38,9 @@ ConnectionManager::~ConnectionManager()
          it != this->_sessions.end();
          it++)
         delete it->second;
+
+    // Log the destruction of the ConnectionManager
+    this->_logger.log(VERBOSE, "ConnectionManager destroyed.");
 }
 
 // Add a new connection

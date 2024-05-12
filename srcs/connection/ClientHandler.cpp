@@ -11,10 +11,18 @@
 // Constructor
 ClientHandler::ClientHandler(const ISocket &socket, ILogger &logger)
     : _socket(socket),
-      _logger(logger) {}
+      _logger(logger) 
+{
+    // Log the creation of the ClientHandler
+    this->_logger.log(VERBOSE, "Clienthandler created.");
+}
 
 // Destructor
-ClientHandler::~ClientHandler() {}
+ClientHandler::~ClientHandler() 
+{
+    // Log the destruction of the ClientHandler
+    this->_logger.log(VERBOSE, "Clienthandler destroyed.");
+}
 
 // Setter method to set the socket descriptor
 void ClientHandler::setSocketDescriptor(int socketDescriptor)

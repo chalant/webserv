@@ -14,6 +14,7 @@ private:
     const HttpHelper _httpHelper;
 public:
     Factory(const IConfiguration &configuration, ILogger &_logger);
+    virtual ~Factory();
 
     virtual IConnection * createConnection(std::pair<int, std::pair<std::string, std::string> >);
     virtual IRequest * createRequest();

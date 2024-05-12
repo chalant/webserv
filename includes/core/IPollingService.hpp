@@ -10,7 +10,7 @@
 class IPollingService
 {
 public:
-    virtual ~IPollingService() = default;
+    virtual ~IPollingService() {};
 
     virtual void pollEvents() = 0;
     virtual void setPollingTimeout(int) = 0;

@@ -1,6 +1,9 @@
 #ifndef LOGGERCONFIGURATION_HPP
 #define LOGGERCONFIGURATION_HPP
 
+#define LOG_BUFFER_SIZE 4096 // 4KB
+#define LOG_LEVEL VERBOSE
+
 #include "ILoggerConfiguration.hpp"
 #include <fcntl.h>
 #include "../configuration/IConfiguration.hpp"

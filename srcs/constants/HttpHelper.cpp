@@ -11,8 +11,8 @@
  */
 
 // Constructor to initialize helper classes
-HttpHelper::HttpHelper(const IConfiguration &configuration)
-    : _methodHelper(configuration),
+HttpHelper::HttpHelper()
+    : _methodHelper(),
       _versionHelper(),
       _headerHelper(),
       _statusCodeHelper() {}

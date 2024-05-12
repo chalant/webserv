@@ -9,3 +9,4 @@ ClientHandler_test
 Buffer_test
 Session_Cookies_test
 CgiResponseGenerator_test
+logs/*

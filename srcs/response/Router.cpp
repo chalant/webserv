@@ -10,6 +10,9 @@ locationblock)*/
 
 Router::Router(const IConfiguration &configuration, ILogger &logger) : _configuration(configuration), _logger(logger)
 {
+	// Log the creation of the Router
+	this->_logger.log(VERBOSE, "Initializing Router...");
+
 	// For every server block in the configuration, insert a routeMapEntry into the _routes map
 	std::vector<IConfiguration *> servers = configuration.getBlocks("http")[0]->getBlocks("server");
 	std::vector<IConfiguration *>::iterator serverIt;
@@ -19,12 +22,18 @@ Router::Router(const IConfiguration &configuration, ILogger &logger) : _configur
 	}
 }
 
-void Router::_createServerRoutes(IConfiguration *serverBlock)
+Router::~Router()
+{
+	// Log the destruction of the Router
+	this->_logger.log(VERBOSE, "Router destroyed.");
+}
+
+void Router::_createServerRoutes(const IConfiguration *serverBlock)
 {
 	this->_createRoutes(serverBlock);
 }
 
-void Router::_createRoutes(IConfiguration *serverBlock)
+void Router::_createRoutes(const IConfiguration *serverBlock)
 {
 	std::vector<IConfiguration *> locations = serverBlock->getBlocks("location");
 	std::vector<IConfiguration *>::iterator locationIt;
@@ -47,7 +56,7 @@ void Router::_createRoutes(IConfiguration *serverBlock)
 		_routes[i++].appendUri(*portIt);
 	}
 	i = 0; 
-	HttpMethodHelper helper(this->_configuration);
+	HttpMethodHelper helper;
 	for (locationIt = locations.begin(); locationIt != locations.end(); locationIt++)
 	{
 		std::string prefix = (*locationIt)->getString("prefix");
@@ -59,6 +68,8 @@ void Router::_createRoutes(IConfiguration *serverBlock)
 
 void Router::execRoute(IRequest *req, IResponse *res)
 {
+	(void)res; // remove this line when implementing the handler
+	(void)this->_configuration; // remove this line when implementing the handler
     std::vector<Route>::iterator i = _routes.begin();
 
 	// todo: implement isACgiRequest or equivalent matcher logic
@@ -71,7 +82,7 @@ void Router::execRoute(IRequest *req, IResponse *res)
         // match request path with a route
         if (req->getUri().find(i->getUri()) && req->getMethod() == i->getMethod())
         {  
-            i->handler(req, res); // handle static file
+            // i->handler(req, res); // handle static file // not implemented yet
             break;
         }
         i++;
@@ -108,3 +119,9 @@ void Route::appendUri(const std::string& newString)
 	this->_uri.append(newString);
 }
 
+// placeholder for adding a route
+void Router::addRoute(const IRequest &request, void (*newHandler)(IRequest *, IResponse *))
+{
+	(void)request;
+	(void)newHandler;
+}

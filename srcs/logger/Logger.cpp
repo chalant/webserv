@@ -1,5 +1,6 @@
 #include "../../includes/logger/Logger.hpp"
 #include <iomanip>
+#include <iostream>
 
 /*
  * Logger Class:
@@ -24,10 +25,18 @@
 Logger::Logger(IBufferManager &bufferManager)
     : _configuration(nullptr),
       _bufferManager(bufferManager),
-      _logLevelHelper() {}
+      _logLevelHelper() 
+{
+    // Log the initialization of the Logger
+    this->log(VERBOSE, "Logger initialized.");
+}
 
 // Destructor: Handles cleanup tasks like flushing buffer and closing log file descriptor
-Logger::~Logger() {}
+Logger::~Logger() 
+{
+    // Log the destruction of the Logger
+    this->log(VERBOSE, "Logger destroyed.");
+}
 
 // Method to get the current timestamp
 std::string Logger::_getCurrentTimestamp() const
@@ -136,7 +145,10 @@ void Logger::configure(ILoggerConfiguration &configuration)
 // Method to push log messages to the buffer
 // returns 1 if a flush is requested, or 0 otherwise
 int Logger::_pushToBuffer(const std::string &logMessage, const int fileDescriptor)
-{
+{ 
+    // Copy output to stderr
+    std::cerr << logMessage;
+
     // Convert the log message string to a vector of chars
     std::vector<char> logMessageVector(logMessage.begin(), logMessage.end());
 

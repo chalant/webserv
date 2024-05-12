@@ -19,10 +19,10 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnection
       _logger(logger)
 {
     // Log server initialization
-    this->_logger.log(INFO, "Initializing Server...");
+    this->_logger.log(VERBOSE, "Initializing Server...");
 
     // Get the maximum connections value
-    int maxConnections = configuration.getBlocks("http")[0]->getInt("worker_connections");
+    int maxConnections = configuration.getBlocks("events")[0]->getInt("worker_connections");
 
     // Create a set to store unique IP:port combinations
     std::set<std::pair<int, int> > processedEndpoints;
@@ -69,7 +69,7 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnection
             }
         }
     }
-    this->_logger.log(INFO, "Finished Server initialization");
+    this->_logger.log(VERBOSE, "... finished Server initialization");
 }
 
 /* Destructor to close file descriptors*/
@@ -82,29 +82,22 @@ Server::~Server()
 /* Initialize server socket*/
 void Server::_initializeServerSocket(int ip, int port, int maxConnections)
 {
-    // Log server socket initialization
-    this->_logger.log(DEBUG, "Initializing server socket on " + (ip ? std::to_string(ip) : "ALL") + ":" + std::to_string(port));
-
     // Create server socket
     int serverSocketDescriptor = this->_socket.socket();
     if (serverSocketDescriptor < 0)
         throw SocketCreateError();
-    this->_logger.log(INFO, "Server socket created.");
 
     // Bind server socket to port
     if (this->_socket.bind(serverSocketDescriptor, ip, port) < 0)
         throw SocketBindError();
-    this->_logger.log(INFO, "Server socket bound to port " + std::to_string(port));
 
     // Listen for incoming connections
     if (this->_socket.listen(serverSocketDescriptor, maxConnections) < 0)
         throw SocketListenError();
-    this->_logger.log(INFO, "Server socket set to listening.");
 
     // Set server socket to non-blocking mode
     if (this->_socket.setNonBlocking(serverSocketDescriptor) < 0)
         throw SocketSetError();
-    this->_logger.log(INFO, "Server socket set to non-blocking.");
 
     // Add server socket to polling list
     pollfd pollfd;
@@ -114,7 +107,7 @@ void Server::_initializeServerSocket(int ip, int port, int maxConnections)
     this->_pollfdManager.addServerSocketPollfd(pollfd);
 
     // Log server socket initialization
-    this->_logger.log(DEBUG, "Server socket initialized. Listening on " + (ip ? std::to_string(ip) : "ALL") + ":" + std::to_string(port));
+    this->_logger.log(INFO, "Server socket initialized. Listening on " + (ip ? std::to_string(ip) : "ALL") + ":" + std::to_string(port));
 }
 
 /* Terminate server*/

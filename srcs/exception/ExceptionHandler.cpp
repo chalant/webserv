@@ -29,7 +29,7 @@ ExceptionHandler::ExceptionHandler(ILogger &logger)
       _server(nullptr)
 {
     // Log debug message indicating the creation of an ExceptionHandler instance.
-    this->_logger.log(DEBUG, "ExceptionHandler instance created.");
+    this->_logger.log(VERBOSE, "ExceptionHandler created.");
 }
 
 // Constructor: Initializes ExceptionHandler with an logger instance and a pointer to the server instance.
@@ -38,14 +38,14 @@ ExceptionHandler::ExceptionHandler(ILogger &logger, Server *server)
       _server(server)
 {
     // Log debug message indicating the creation of an ExceptionHandler instance.
-    this->_logger.log(DEBUG, "ExceptionHandler instance created.");
+    this->_logger.log(VERBOSE, "ExceptionHandler created.");
 }
 
 // Destructor: No dynamic memory management, so a default destructor is sufficient.
 ExceptionHandler::~ExceptionHandler()
 {
     // Log debug message indicating the destruction of an ExceptionHandler instance.
-    this->_logger.log(DEBUG, "ExceptionHandler instance destroyed.");
+    this->_logger.log(VERBOSE, "ExceptionHandler destroyed.");
 }
 
 // _handleWebservException method: Logs exception details and handles critical exceptions.

@@ -13,7 +13,7 @@
 #include "includes/exception/ExceptionHandler.hpp"
 #include "includes/response/Router.hpp"
 #include "includes/pollfd/PollfdManager.hpp"
-
+#include <iostream>
 /*
  * webserv Workflow:
  *
@@ -34,6 +34,13 @@
 
 int main(int argc, char **argv)
 {
+    // Get the configuration file path.
+    std::string configPath;
+    if (argc == 1)
+        configPath = "config/default.conf";
+    else
+        configPath = argv[1];
+
     // Instantiate the Socket instance.
     Socket socket;
 
@@ -53,8 +60,9 @@ int main(int argc, char **argv)
 
     try
     {
+
         // load configuration from file and create the configuration object.
-        const IConfiguration& configuration = confLoader.loadConfiguration("webservConfig.conf");
+        const IConfiguration& configuration = confLoader.loadConfiguration(configPath);
 
         // parse the configuration file
 
@@ -76,9 +84,9 @@ int main(int argc, char **argv)
 
         // Instantiate the Router.
         Router router(configuration, logger);
-
+std::cout << "router created" << std::endl;
         // Instantiate the RequestHandler.
-        RequestHandler requestHandler(socket, bufferManager, connectionManager, configuration, router, logger, exceptionHandler, clientHandler);
+        RequestHandler requestHandler(bufferManager, connectionManager, configuration, router, logger, exceptionHandler, clientHandler);
 
         // Instantiate the PollingService.
         PollingService pollingService(pollfdManager, logger);

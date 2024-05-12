@@ -17,25 +17,25 @@
  */
 
 // Constructor
-RequestHandler::RequestHandler(const ISocket &socket, IBufferManager &bufferManager, IConnectionManager &connectionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &exceptionHandler, IClientHandler &clientHandler)
+RequestHandler::RequestHandler(IBufferManager &bufferManager, IConnectionManager &connectionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &exceptionHandler, IClientHandler &clientHandler)
     : _bufferManager(bufferManager),
       _connectionManager(connectionManager),
-      _router(router),
-      _logger(logger),
-      _exceptionHandler(exceptionHandler),
       _clientHandler(clientHandler),
       _requestParser(configuration, logger),
-      _httpHelper(configuration)
+      _router(router),
+      _httpHelper(),
+      _logger(logger),
+      _exceptionHandler(exceptionHandler)
 {
     // Log the creation of the RequestHandler instance.
-    this->_logger.log(DEBUG, "RequestHandler instance created.");
+    this->_logger.log(VERBOSE, "RequestHandler instance created.");
 }
 
 // Destructor
 RequestHandler::~RequestHandler()
 {
     // Log the destruction of the RequestHandler instance.
-    this->_logger.log(DEBUG, "RequestHandler instance destroyed.");
+    this->_logger.log(VERBOSE, "RequestHandler instance destroyed.");
 }
 
 // Handles a client request
@@ -92,6 +92,7 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
     // Triplet_t cgiInfo = this->_router.execRoute(request, response);
     // Set cgiInfo to -1 in the meantime
     Triplet_t cgiInfo(-1, std::pair<int, int>(-1, -1));
+    this->_router.execRoute(&request, &response);
 
     // If dynamic content is being created, return the info
     if (cgiInfo.first != -1)

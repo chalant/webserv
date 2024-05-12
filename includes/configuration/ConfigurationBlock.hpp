@@ -2,7 +2,6 @@
 #define CONFIGURATIONBLOCK_HPP
 
 #include "../../includes/configuration/IConfiguration.hpp"
-#include <stdexcept>
 #include <map>
 #include "../logger/ILogger.hpp"
 

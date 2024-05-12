@@ -16,11 +16,14 @@ SOURCES     = srcs/
 INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
-FLAGS    	= 	#-Wall -Werror -Wextra -g #-std=c++98
-#FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
+#FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
+FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
 				
 SRCS        =	main.cpp \
+				srcs/buffer/BufferManager.cpp \
+				srcs/buffer/FileBuffer.cpp \
+				srcs/buffer/SocketBuffer.cpp \
 				srcs/parsing/Grammar.cpp \
 				srcs/parsing/GrammarRule.cpp \
 				srcs/parsing/GrammarSymbol.cpp \
@@ -33,7 +36,6 @@ SRCS        =	main.cpp \
 				srcs/parsing/ParseTree.cpp \
 				srcs/parsing/Parser.cpp \
 				srcs/parsing/ParsingUtils.cpp \
-				srcs/parsing/Tokenizer.cpp \
 				srcs/configuration/ConfigurationBlock.cpp \
 				srcs/configuration/LocationBlock.cpp \
 				srcs/configuration/ConfigurationLoader.cpp \
@@ -56,7 +58,6 @@ SRCS        =	main.cpp \
 				srcs/connection/Connection.cpp \
 				srcs/connection/ConnectionManager.cpp \
 				srcs/connection/Session.cpp \
-				srcs/response/CGIResponseGenerator.cpp \
 				srcs/pollfd/PollfdManager.cpp \
 				srcs/pollfd/PollfdQueue.cpp \
 				srcs/request/Request.cpp \
@@ -70,8 +71,8 @@ SRCS        =	main.cpp \
 				srcs/response/RegexMatcher.cpp \
 				srcs/response/Response.cpp \
 				srcs/response/Router.cpp \
-				srcs/resposne/StaticFileResponse.cpp \
-				srcs/response/UploadResponse.cpp
+				srcs/response/StaticFileResponseGenerator.cpp \
+				srcs/response/UploadResponseGenerator.cpp
 				
 #-------------------OBJECTS----------------------
 OBJS        =   $(SRCS:.cpp=.o)

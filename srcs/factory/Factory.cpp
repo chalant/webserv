@@ -7,7 +7,17 @@
 Factory::Factory(const IConfiguration &configuration, ILogger &logger)
     : _configuration(configuration),
       _logger(logger),
-      _httpHelper(configuration) {}
+      _httpHelper()
+{
+    // Log the creation of the Factory
+    this->_logger.log(VERBOSE, "Factory created.");
+}
+
+Factory::~Factory()
+{
+    // Log the destruction of the Factory
+    this->_logger.log(VERBOSE, "Factory destroyed.");
+}
 
 IConnection *Factory::createConnection(std::pair<int, std::pair<std::string, std::string> > clientInfo)
 {

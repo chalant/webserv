@@ -38,6 +38,7 @@ public:
     virtual bool hasExpired() const;                                        // Check if session has expired
     virtual void setData(const std::string &key, const std::string &value); // Set session data
     virtual std::string getData(const std::string &key) const;              // Get session data
+    virtual SessionId_t getId() const;                                      // Get session id
 };
 
 #endif // SESSION_HPP

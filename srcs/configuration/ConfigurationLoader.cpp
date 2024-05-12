@@ -75,15 +75,24 @@ static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, 
 }
 
 ConfigurationLoader::ConfigurationLoader(ILogger& logger): m_logger(logger) {
+	// Log the creation of the configuration loader.
+	this->m_logger.log(VERBOSE, "ConfigurationLoader created.");
+
 	m_config = NULL;
 }
 
 //todo: delete all the blocks.
 ConfigurationLoader::~ConfigurationLoader() {
+	// Log the destruction of the configuration loader.
+	this->m_logger.log(VERBOSE, "ConfigurationLoader destroyed.");
+
 	delete m_config;
 }
 
 const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& path) {
+
+	//Log the loading of the configuration file.
+	this->m_logger.log(INFO, "Loading configuration file: '" + path + "'.");
 
 	Grammar					grammar;
 	SubsetSymbolMatching	subset_matching;
@@ -240,5 +249,9 @@ const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& 
 		build_config(tokens, grammar, *parse_tree[i], *m_config);
 	}
 	conf_stream.close();
+
+	//Log the end of loading of the configuration file.
+	this->m_logger.log(VERBOSE, "Configuration file loaded successfully.");
+
 	return *m_config;
 }

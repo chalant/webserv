@@ -11,11 +11,14 @@
  */
 
 // Constructor initializes member variables using helper functions
-HttpMethodHelper::HttpMethodHelper(const IConfiguration &configuration)
+HttpMethodHelper::HttpMethodHelper()
     : _methodList(_setMethodList()),
-      _supportedMethods(configuration.getStringVector("Methods")),
+      _supportedMethods(this->_setSupportedMethods()),
       _stringHttpMethodMap(_setStringHttpMethodMap()),
       _httpMethodStringMap(_setHttpMethodStringMap()) {}
+
+// Destructor
+HttpMethodHelper::~HttpMethodHelper() {}
 
 // Get string representation of HttpMethod enum value
 const std::string &HttpMethodHelper::httpMethodStringMap(HttpMethod method) const
@@ -85,6 +88,18 @@ std::vector<std::string> HttpMethodHelper::_setMethodList()
     MethodList.push_back("CONNECT");
 
     return MethodList;
+}
+
+// Helper function to initialize supportedMethods with string representations of supported HTTP methods
+const std::vector<std::string> HttpMethodHelper::_setSupportedMethods()
+{
+    std::vector<std::string> supportedMethods;
+
+    supportedMethods.push_back("GET");
+    supportedMethods.push_back("POST");
+    supportedMethods.push_back("DELETE");
+
+    return supportedMethods;
 }
 
 // Helper function to initialize stringHttpMethodMap with mappings from string representations to HttpMethod enum values

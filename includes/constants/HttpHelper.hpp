@@ -28,7 +28,7 @@ private:
 
 public:
     // Constructor to initialize helper classes
-    HttpHelper(const IConfiguration &configuration);
+    HttpHelper();
 
     // Http Method Helper Functions
     const std::string &httpMethodStringMap(HttpMethod method) const; // Get string representation of HttpMethod

@@ -50,4 +50,10 @@ std::string Session::getData(const std::string &key) const
     return it->second;
 }
 
+// Get session id
+SessionId_t Session::getId() const
+{
+    return this->_id;
+}
+
 // Path: srcs/connection/Session.cpp

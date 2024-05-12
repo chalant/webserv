@@ -3,16 +3,16 @@
 #include <unistd.h>
 
 LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager, const IConfiguration &configuration, IPollfdManager &pollfdManager)
-    : _errorLogFile(configuration.getString("errorLog")),
-      _accessLogFile(configuration.getString("accessLog")),
+    : _errorLogFile(configuration.getString("error_log")),
+      _accessLogFile(configuration.getBlocks("http")[0]->getBlocks("server")[0]->getString("access_log")), // Currently only supports one access log file
       _bufferManager(BufferManager),
       _pollfdManager(pollfdManager),
-      _logLevel(static_cast<LogLevel>(configuration.getInt("LogLevel"))),
-      _bufferSize(configuration.getInt("BufferSize")),
-      _errorLogFileDescriptor(open(this->_errorLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
-      _accessLogFileDescriptor(open(this->_accessLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
-      _errorLogEnabled(configuration.getBool("errorLogEnabled")),
-      _accessLogEnabled(configuration.getBool("accessLogEnabled"))
+      _bufferSize(LOG_BUFFER_SIZE),
+      _logLevel(LOG_LEVEL),
+      _errorLogFileDescriptor(this->_errorLogFile == "off" ? -2 : open(this->_errorLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
+      _accessLogFileDescriptor(this->_accessLogFile == "off" ? -2 : open(this->_accessLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
+      _errorLogEnabled(this->_errorLogFileDescriptor < 0 ? false : true),
+      _accessLogEnabled(this->_accessLogFileDescriptor < 0 ? false : true)
 {
     if (this->_errorLogFileDescriptor == -1 || this->_accessLogFileDescriptor == -1)
         throw LogFileOpenError();
@@ -41,7 +41,11 @@ void LoggerConfiguration::setAccessLogEnabled(bool enabled)
 
 void LoggerConfiguration::requestFlush(int descriptor)
 {
-    this->_pollfdManager.addRegularFilePollfd({descriptor, POLLOUT, 0});
+    pollfd pollfd;
+    pollfd.fd = descriptor;
+    pollfd.events = POLLOUT;
+    pollfd.revents = 0;
+    this->_pollfdManager.addRegularFilePollfd(pollfd);
 }
 
 int LoggerConfiguration::getErrorLogFileDescriptor() const

@@ -26,7 +26,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "../../includes/configuration/IConfiguration.hpp"
 
 enum HttpMethod
 {
@@ -52,12 +51,16 @@ private:
 
     // Private member functions for initialization
     static std::vector<std::string> _setMethodList();
+    const std::vector<std::string> _setSupportedMethods();
     static std::map<std::string, HttpMethod> _setStringHttpMethodMap();
     static std::map<HttpMethod, std::string> _setHttpMethodStringMap();
 
 public:
     // Constructor
-    HttpMethodHelper(const IConfiguration &configuration);
+    HttpMethodHelper();
+
+    // Destructor
+    ~HttpMethodHelper();
 
     // Member functions to access data
     const std::string &httpMethodStringMap(HttpMethod method) const; // Get string representation of HttpMethod

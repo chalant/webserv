@@ -13,9 +13,8 @@
 
 // Constructor for PollFdManager class
 PollfdManager::PollfdManager(const IConfiguration &configuration)
-    : _pollfds(configuration.getInt("MaxConnections") + 3) // + 3 for server socket, error log, and access log, or more in case of several server sockets
-{
-}
+    : _pollfds(configuration.getBlocks("events")[0]->getInt("worker_connections") + 3) // + 3 for server socket, error log, and access log, or more in case of several server sockets
+{}
 
 // Destructor for PollFdManager class
 PollfdManager::~PollfdManager() {}

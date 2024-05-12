@@ -57,7 +57,7 @@ private:
 
 public:
     // Constructor
-    RequestHandler(const ISocket &socket, IBufferManager &bufferManager, IConnectionManager &connectionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &IExceptionHandler, IClientHandler &clientHandler);
+    RequestHandler(IBufferManager &bufferManager, IConnectionManager &connectionManager, const IConfiguration &configuration, IRouter &router, ILogger &logger, const IExceptionHandler &IExceptionHandler, IClientHandler &clientHandler);
 
     // Destructor
     ~RequestHandler();
