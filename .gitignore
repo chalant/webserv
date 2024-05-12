@@ -6,6 +6,7 @@ parser_test
 configuration_test
 RequestParser_test
 ClientHandler_test
+webserv
 Buffer_test
 Session_Cookies_test
 CgiResponseGenerator_test

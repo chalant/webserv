@@ -4,7 +4,7 @@
 #include "../../includes/parsing/NonTerminalSymbol.hpp"
 #include "../../includes/configuration/ConfigurationLoader.hpp"
 #include "../../includes/configuration/LocationBlock.hpp"
-#include "../../includes/response/DefaultMatcher.hpp"
+#include "../../includes/exception/WebservExceptions.hpp"
 #include <fstream>
 
 static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block);
@@ -90,6 +90,10 @@ ConfigurationLoader::~ConfigurationLoader() {
 }
 
 const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& path) {
+
+	std::ifstream				conf_stream(path);
+	if (!conf_stream.is_open())
+		throw InvalidConfigFileError();
 
 	//Log the loading of the configuration file.
 	this->m_logger.log(INFO, "Loading configuration file: '" + path + "'.");
@@ -233,8 +237,6 @@ const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& 
 	reserved_symbols.push_back(";");
 	reserved_symbols.push_back("~");
 
-	//todo: check if there is no error.
-	std::ifstream				conf_stream(path);
 	Tokenizer					tokenizer(separators, reserved_symbols);
 	Parser						parser(grammar);
 	const std::vector<Token>&	tokens = tokenizer.tokenize(conf_stream);

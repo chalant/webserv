@@ -3,6 +3,7 @@
 
 #include "../../includes/configuration/IConfiguration.hpp"
 #include <map>
+#include <string>
 #include "../logger/ILogger.hpp"
 
 class ConfigurationBlock : public IConfiguration

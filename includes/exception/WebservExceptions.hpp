@@ -75,14 +75,14 @@ class NoConfigFileError : public WebservException
 {
 public:
     NoConfigFileError()
-        : WebservException(CRITICAL, "No IConfiguration file found.", 1){};
+        : WebservException(CRITICAL, "No Configuration file found.", 1){};
 };
 
 class InvalidConfigFileError : public WebservException
 {
 public:
     InvalidConfigFileError()
-        : WebservException(CRITICAL, "Invalid IConfiguration file.", 1){};
+        : WebservException(CRITICAL, "Invalid Configuration file.", 1){};
 };
 
 class ConfigSyntaxError: public WebservException

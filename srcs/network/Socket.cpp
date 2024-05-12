@@ -1,5 +1,7 @@
 #include "../../includes/network/Socket.hpp"
 #include <sstream>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 /*
  * Socket - Class for socket operations.

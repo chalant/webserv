@@ -2,6 +2,7 @@
 #define IBUFFERMANAGER_HPP
 
 #include <vector>
+#include <sys/types.h>
 
 class IBufferManager
 {

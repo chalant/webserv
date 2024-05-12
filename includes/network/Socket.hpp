@@ -10,12 +10,8 @@
  * controlling socket file descriptor flags, and closing the socket.
  */
 
- #ifndef MSG_NOSIGNAL
-    #ifndef SO_NOSIGPIPE
-        #define MSG_NOSIGNAL 0
-    #else
-        #define MSG_NOSIGNAL SO_NOSIGPIPE
-    #endif
+#ifdef __APPLE__ // Check if compiling on macOS
+	#define MSG_NOSIGNAL SO_NOSIGPIPE
 #endif
 
 #include "ISocket.hpp"
