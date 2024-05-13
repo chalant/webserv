@@ -33,3 +33,11 @@ std::string	Converter::toString(int value) {
 std::string	Converter::toString(unsigned long value) {
 	return toString(value);
 }
+
+std::string	Converter::toString(long value) {
+	return toString(value);
+}
+
+std::string	Converter::toString(float value) {
+	return toString(value);
+}

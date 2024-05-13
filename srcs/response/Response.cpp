@@ -1,4 +1,5 @@
 #include "../../includes/response/Response.hpp"
+#include "../../includes/utils/Converter.hpp"
 
 /*
  * Response class
@@ -133,7 +134,7 @@ void Response::setErrorResponse(HttpStatusCode statusCode)
     std::string body = this->_httpHelper.getHtmlPage(statusCode);
     this->setHeaders("Content-Type: text/html\r\n"
                      "Content-Length: " +
-                     std::to_string(body.length()) + "\r\n"
+                     Converter::toString(body.length()) + "\r\n"
                                                      "Connection: close\r\n"
                                                      "Server: webserv/1.0\r\n"
                                                      "\r\n");
@@ -166,7 +167,7 @@ std::string Response::getStatusCodeString() const
 // Calculate the size of the response
 std::string Response::getResponseSizeString() const
 {
-    return std::to_string(this->_statusLine.length() + this->getHeaders().length() + this->_body.length());
+    return Converter::toString(this->_statusLine.length() + this->getHeaders().length() + this->_body.length());
 }
 
 // Calculate the size of the response in bytes

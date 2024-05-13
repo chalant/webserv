@@ -316,7 +316,7 @@ void Request::setHttpVersion(const std::string &httpVersion)
 void Request::addHeader(const std::string &key, const std::string &value)
 {
     // Check if the key contains trailing whitespace
-    if (!key.empty() && (key.back() == ' ' || key.back() == '\t'))
+    if (!key.empty() && (key[key.length() - 1] == ' ' || key[key.length() - 1] == '\t'))
     {
         throw HttpStatusCodeException(BAD_REQUEST, "trailing whitespace in header key");
     }

@@ -1,5 +1,8 @@
 #include "../../includes/response/CgiResponseGenerator.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
+#include "../../includes/utils/Converter.hpp"
+#include <cstdlib>
+#include <cerrno>
 
 #define NO_THROW 0x1                // Do not throw an exception
 #define KEEP_RESPONSE_READ_PIPE 0x2 // Do no close the read end of the response pipe
@@ -44,7 +47,7 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route, const IReq
 
     else if (pid == 0) // child process
     {
-        this->_logger.log(DEBUG, "Forked a child process to execute the CGI script PID: " + std::to_string(getpid()) + " Parent PID: " + std::to_string(getppid()));
+        this->_logger.log(DEBUG, "Forked a child process to execute the CGI script PID: " + Converter::toString(getpid()) + " Parent PID: " + Converter::toString(getppid()));
         // stdin should read from body pipe
         close(bodyPipeFd[1]);              // close write end
         dup2(bodyPipeFd[0], STDIN_FILENO); // redirect stdin to pipe
@@ -66,7 +69,7 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route, const IReq
     else // parent process
     {
         // Log the new CGI process ID
-        this->_logger.log(DEBUG, "New CGI process ID: " + std::to_string(pid));
+        this->_logger.log(DEBUG, "New CGI process ID: " + Converter::toString(pid));
 
         // Set the read end of the response pipe to non-blocking
         fcntl(responsePipeFd[0], F_SETFL, O_NONBLOCK);
@@ -78,7 +81,7 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route, const IReq
         this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd, bodyPipeFd, NO_THROW | KEEP_RESPONSE_READ_PIPE | KEEP_BODY_WRITE_PIPE); 
 
         // Log the Cgi info
-        this->_logger.log(VERBOSE, "Returning CGI info tuple; PID: " +  std::to_string(pid) + "Response Pipe read end: " + std::to_string(responsePipeFd[0]) + "Request Pipe write end: " + std::to_string(responsePipeFd[1]));
+        this->_logger.log(VERBOSE, "Returning CGI info tuple; PID: " +  Converter::toString(pid) + "Response Pipe read end: " + Converter::toString(responsePipeFd[0]) + "Request Pipe write end: " + Converter::toString(responsePipeFd[1]));
         
         // Return the read end of the pipe to read the response later without blocking
         return std::make_pair(pid, std::make_pair(responsePipeFd[0], bodyPipeFd[1]));
