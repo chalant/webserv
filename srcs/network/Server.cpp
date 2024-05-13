@@ -1,6 +1,8 @@
 #include "../../includes/network/Server.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
+#include "../../includes/utils/Converter.hpp"
 #include <set>
+#include <cstdlib>
 
 /*
  * The Server class is responsible for managing core operations of webserv, including initialization, connection handling, and termination.
@@ -50,12 +52,12 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnection
             size_t colonPos = listenIterator->find(':');
             if (colonPos != std::string::npos)
             {
-                ip = std::stoi(listenIterator->substr(0, colonPos));
-                port = std::stoi(listenIterator->substr(colonPos + 1));
+                ip = Converter::toInt(listenIterator->substr(0, colonPos));
+                port = Converter::toInt(listenIterator->substr(colonPos + 1));
             }
             else // ip was not specified
             {
-                port = std::stoi(*listenIterator);
+                port = Converter::toInt(*listenIterator);
             }
 
             // Check if the current IP:port combination has already been processed
@@ -107,7 +109,7 @@ void Server::_initializeServerSocket(int ip, int port, int maxConnections)
     this->_pollfdManager.addServerSocketPollfd(pollfd);
 
     // Log server socket initialization
-    this->_logger.log(INFO, "Server socket initialized. Listening on " + (ip ? std::to_string(ip) : "ALL") + ":" + std::to_string(port));
+    this->_logger.log(INFO, "Server socket initialized. Listening on " + (ip ? Converter::toString(ip) : "ALL") + ":" + Converter::toString(port));
 }
 
 /* Terminate server*/

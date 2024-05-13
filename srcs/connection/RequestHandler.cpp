@@ -1,5 +1,6 @@
 #include "../../includes/connection/RequestHandler.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
+#include "../../includes/utils/Converter.hpp"
 #include <utility>
 
 /*
@@ -79,7 +80,7 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
             statusCode = 500; // Internal Server Error; Default status code for other exceptions
 
         // Log the exception
-        this->_exceptionHandler.handleException(e, "RequestHandler::processRequest socket=\"" + std::to_string(socketDescriptor) + "\"");
+        this->_exceptionHandler.handleException(e, "RequestHandler::processRequest socket=\"" + Converter::toString(socketDescriptor) + "\"");
 
         // Handle error response
         this->handleErrorResponse(socketDescriptor, statusCode);

@@ -1,5 +1,6 @@
 #include "../../includes/connection/ClientHandler.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
+#include "../../includes/utils/Converter.hpp"
 
 /*
  * Summary:
@@ -59,14 +60,14 @@ const std::vector<char> ClientHandler::readRequest() const
     if (bytesRead == -1)
     {
         buffer.clear();
-        throw WebservException(ERROR, "Error reading request from client on socket: " + std::to_string(this->_socketDescriptor), 1);
+        throw WebservException(ERROR, "Error reading request from client on socket: " + Converter::toString(this->_socketDescriptor), 1);
     }
 
     // Resize the buffer to the actual size of the data read
     buffer.resize(offSet + bytesRead);
 
     // Log the request read from the client
-    this->_logger.log(VERBOSE, "[CLIENTHANDLER] Request on socket: " + std::to_string(this->_socketDescriptor) + ": \"" + std::string(buffer.begin(), buffer.end()) + "\"");
+    this->_logger.log(VERBOSE, "[CLIENTHANDLER] Request on socket: " + Converter::toString(this->_socketDescriptor) + ": \"" + std::string(buffer.begin(), buffer.end()) + "\"");
     
     // Return the buffer containing the request
     return buffer;
@@ -77,10 +78,10 @@ ssize_t ClientHandler::sendResponse(const std::vector<char> &response) const
 {
     ssize_t bytesSent = this->_socket.send(this->_socketDescriptor, response);
     if (bytesSent == -1)
-        this->_logger.log(ERROR, "Error sending response to client on socket: " + std::to_string(this->_socketDescriptor));
+        this->_logger.log(ERROR, "Error sending response to client on socket: " + Converter::toString(this->_socketDescriptor));
 
     // Log the response sent to the client
-    this->_logger.log(VERBOSE, "[CLIENTHANDLER] Responded on socket: " + std::to_string(this->_socketDescriptor) + ": \"" + std::string(response.begin(), response.end()) + "\"");
+    this->_logger.log(VERBOSE, "[CLIENTHANDLER] Responded on socket: " + Converter::toString(this->_socketDescriptor) + ": \"" + std::string(response.begin(), response.end()) + "\"");
     
     // Return the number of bytes sent
     return bytesSent;

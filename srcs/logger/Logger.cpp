@@ -1,6 +1,7 @@
 #include "../../includes/logger/Logger.hpp"
 #include <iomanip>
 #include <iostream>
+#include <ctime>
 
 /*
  * Logger Class:
@@ -42,9 +43,11 @@ Logger::~Logger()
 std::string Logger::_getCurrentTimestamp() const
 {
     std::stringstream stream;
-
     std::time_t currentTime = std::time(NULL);
-    stream << std::put_time(std::localtime(&currentTime), "%Y-%m-%d %H:%M:%S");
+	char	buffer[80];
+
+	strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
+    stream << buffer;
     return stream.str();
 }
 
@@ -126,7 +129,9 @@ void Logger::_appendMapToLog(std::ostringstream &logBufferStream, const std::str
     for (std::map<std::string, std::string>::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         mapStream << it->first << ": " << it->second;
-        if (std::next(it) != map.end())
+		std::map<std::string, std::string>::const_iterator next = it;
+		next++;
+        if (next != map.end())
         {
             mapStream << ", ";
         }

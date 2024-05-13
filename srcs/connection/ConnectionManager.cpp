@@ -1,4 +1,5 @@
 #include "../../includes/connection/ConnectionManager.hpp"
+#include "../../includes/utils/Converter.hpp"
 #include <ctime>
 #include <cstdlib>
 #include <sstream>
@@ -14,11 +15,11 @@
 
 // Constructor
 ConnectionManager::ConnectionManager(ILogger &logger, IFactory &factory)
-    : _lastGarbageCollection(std::time(nullptr)),
+    : _lastGarbageCollection(std::time(NULL)),
       _factory(factory),
       _logger(logger)
 {
-    std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed srand, to create session id's
+    std::srand(static_cast<unsigned int>(std::time(NULL))); // Seed srand, to create session id's
 
     // Log the creation of the ConnectionManager
     this->_logger.log(VERBOSE, "ConnectionManager created.");
@@ -50,7 +51,7 @@ void ConnectionManager::addConnection(std::pair<int, std::pair<std::string, std:
     _connections[clientInfo.first] = connection;
 
     // Log the new connection
-    this->_logger.log(VERBOSE, "New connection created. Remote address: " + clientInfo.second.first + ":" + clientInfo.second.second + " Socket: " + std::to_string(clientInfo.first));
+    this->_logger.log(VERBOSE, "New connection created. Remote address: " + clientInfo.second.first + ":" + clientInfo.second.second + " Socket: " + Converter::toString(clientInfo.first));
 }
 
 // Remove a connection
@@ -60,7 +61,7 @@ void ConnectionManager::removeConnection(SocketDescriptor_t socketDescriptor)
     this->_connections.erase(socketDescriptor);
 
     // Log the removed connection
-    this->_logger.log(VERBOSE, "Connection removed. Socket: " + std::to_string(socketDescriptor));
+    this->_logger.log(VERBOSE, "Connection removed. Socket: " + Converter::toString(socketDescriptor));
 }
 
 // Get a reference to a connection
@@ -94,7 +95,7 @@ SessionId_t ConnectionManager::addSession()
     this->_sessions[sessionId] = session;
 
     // Log the new session
-    this->_logger.log(VERBOSE, "New session created. Session ID: " + std::to_string(sessionId));
+    this->_logger.log(VERBOSE, "New session created. Session ID: " + Converter::toString(sessionId));
 
     // Return the session id
     return sessionId;
@@ -107,7 +108,7 @@ void ConnectionManager::removeSession(SessionId_t sessionId)
     this->_sessions.erase(sessionId);
 
     // Log the removed session
-    this->_logger.log(VERBOSE, "Session removed. Session ID: " + std::to_string(sessionId));
+    this->_logger.log(VERBOSE, "Session removed. Session ID: " + Converter::toString(sessionId));
 }
 
 // Get a reference to a session
@@ -156,7 +157,7 @@ void ConnectionManager::assignSessionToConnection(IConnection &connection, const
         else
         {
             // Log the session assignment
-            this->_logger.log(VERBOSE, "Existing session found. Session ID: " + std::to_string(sessionId));
+            this->_logger.log(VERBOSE, "Existing session found. Session ID: " + Converter::toString(sessionId));
         }
     }
 
@@ -164,17 +165,17 @@ void ConnectionManager::assignSessionToConnection(IConnection &connection, const
     connection.setSession(this->_sessions[sessionId]);
 
     // Add a "session" cookie to the response
-    response.addCookie("session", std::to_string(sessionId));
+    response.addCookie("session", Converter::toString(sessionId));
 
     // Log the session assignment
-    this->_logger.log(INFO, "Session ID: " + std::to_string(sessionId) + " Assigned to connection on Socket: " + std::to_string(connection.getSocketDescriptor()) + " with client: " + connection.getRemoteAddress());
+    this->_logger.log(INFO, "Session ID: " + Converter::toString(sessionId) + " Assigned to connection on Socket: " + Converter::toString(connection.getSocketDescriptor()) + " with client: " + connection.getRemoteAddress());
 }
 
 // Retire idle sessions and reap zombie processes
 void ConnectionManager::collectGarbage()
 {
     // Check if it is time to collect garbage
-    time_t now = std::time(nullptr);
+    time_t now = std::time(NULL);
     if (now - this->_lastGarbageCollection < GARBAGE_COLLECTOR_INTERVAL)
     {
         return; // Not yet time for garbage collection
@@ -201,7 +202,7 @@ void ConnectionManager::collectGarbage()
         if (it->second->hasExpired())
         {
             // Log the expired session
-            this->_logger.log(VERBOSE, "Session expired. Session ID: " + std::to_string(it->first));
+            this->_logger.log(VERBOSE, "Session expired. Session ID: " + Converter::toString(it->first));
 
             // Remove the session
             this->removeSession(it->first);
@@ -220,7 +221,7 @@ void ConnectionManager::collectGarbage()
         if (it->second->hasExpired())
         {
             // Log the expired connection
-            this->_logger.log(VERBOSE, "Connection expired. Socket: " + std::to_string(it->first));
+            this->_logger.log(VERBOSE, "Connection expired. Socket: " + Converter::toString(it->first));
 
             // Remove the connection
             this->removeConnection(it->first);
@@ -235,7 +236,7 @@ void ConnectionManager::collectGarbage()
     size_t retiredSessions = sessionCount - this->_sessions.size();
 
     // Log the garbage collection
-    this->_logger.log(DEBUG, "Garbage collection completed. Retired " + std::to_string(retiredSessions) + " session" + (retiredSessions == 1 ? "." : "s."));
+    this->_logger.log(DEBUG, "Garbage collection completed. Retired " + Converter::toString(retiredSessions) + " session" + (retiredSessions == 1 ? "." : "s."));
 }
 
 // Generate a unique session ID

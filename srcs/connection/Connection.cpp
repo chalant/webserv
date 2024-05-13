@@ -1,4 +1,5 @@
 #include "../../includes/connection/Connection.hpp"
+#include "../../includes/utils/Converter.hpp"
 
 /*
  * Connection class
@@ -16,7 +17,7 @@
 Connection::Connection(std::pair<int, std::pair<std::string, std::string> > clientInfo, ILogger &logger, IRequest *request, IResponse *response, time_t timeout)
     : _socketDescriptor(clientInfo.first),
       _ip(clientInfo.second.first),
-      _port(std::stoi(clientInfo.second.second)),
+      _port(Converter::toInt(clientInfo.second.second)),
       _remoteAddress(_ip + ":" + clientInfo.second.second),
       _logger(logger),
       _request(request),
@@ -96,7 +97,7 @@ void Connection::touch()
 bool Connection::hasExpired() const
 {
     // Log the connection timeout
-    this->_logger.log("Connection timeout: " + std::to_string(this->_timeout) + " seconds");
+    this->_logger.log("Connection timeout: " + Converter::toString(this->_timeout) + " seconds");
     return time(NULL) - this->_lastAccess > this->_timeout;
 }
 
