@@ -1,5 +1,6 @@
 #include "../../includes/core/EventManager.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
+#include "../../includes/utils/Converter.hpp"
 #include <unistd.h>
 
 
@@ -65,7 +66,7 @@ void EventManager::_handleRegularFileEvents(ssize_t &pollfdIndex, short events)
         int fileDescriptor = this->_pollfdManager.getDescriptor(pollfdIndex);
 
         // Log the error
-        this->_logger.log(ERROR, "Error on file: " + std::to_string(fileDescriptor));
+        this->_logger.log(ERROR, "Error on file: " + Converter::toString(fileDescriptor));
 
         // Clear buffer, remove from polling and close file
         this->_cleanUp(pollfdIndex, fileDescriptor);
@@ -127,7 +128,7 @@ void EventManager::_handleRequest(ssize_t &pollfdIndex)
     if (info.first == -1) // served static files or bad request
     {
         // Log the static serving
-        this->_logger.log(VERBOSE, "[EVENTMANAGER] Statically served client socket: " + std::to_string(clientSocketDescriptor));
+        this->_logger.log(VERBOSE, "[EVENTMANAGER] Statically served client socket: " + Converter::toString(clientSocketDescriptor));
 
         // Add the POLLOUT event for the socket
         this->_pollfdManager.addPollOut(pollfdIndex);
@@ -140,7 +141,7 @@ void EventManager::_handleRequest(ssize_t &pollfdIndex)
         int requestWritePipe = info.second.second;
         
         // Log the dynamic serving
-        this->_logger.log(VERBOSE, "[EVENTMANAGER] Dynamically serving client socket: " + std::to_string(clientSocketDescriptor) + " waiting for process " + std::to_string(cgiPid) + " (response read pipe: " + std::to_string(responseReadPipe) + ", request write pipe: " + std::to_string(requestWritePipe) + ")");
+        this->_logger.log(VERBOSE, "[EVENTMANAGER] Dynamically serving client socket: " + Converter::toString(clientSocketDescriptor) + " waiting for process " + Converter::toString(cgiPid) + " (response read pipe: " + Converter::toString(responseReadPipe) + ", request write pipe: " + Converter::toString(requestWritePipe) + ")");
         
         // Add the response read pipe to the poll set
         pollfd pollfd;
@@ -167,7 +168,7 @@ void EventManager::_flushBuffer(ssize_t &pollfdIndex, short options)
     if (returnValue == -1) // check for errors
     {
         // Log the error
-        this->_logger.log(ERROR, "Error flushing buffer for descriptor: " + std::to_string(descriptor));
+        this->_logger.log(ERROR, "Error flushing buffer for descriptor: " + Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket
         this->_cleanUp(pollfdIndex, descriptor);
@@ -175,7 +176,7 @@ void EventManager::_flushBuffer(ssize_t &pollfdIndex, short options)
     else if (returnValue == 0) // check if all bytes were sent
     {
         // Log the flush
-        this->_logger.log(VERBOSE, "Flushed buffer for descriptor: " + std::to_string(descriptor));
+        this->_logger.log(VERBOSE, "Flushed buffer for descriptor: " + Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket
         this->_cleanUp(pollfdIndex, descriptor, options);
@@ -183,7 +184,7 @@ void EventManager::_flushBuffer(ssize_t &pollfdIndex, short options)
     else
     {
         // Log the flush
-        this->_logger.log(VERBOSE, "Partially Flushed buffer for descriptor: " + std::to_string(descriptor) + " with " + std::to_string(returnValue) + " bytes remaining");
+        this->_logger.log(VERBOSE, "Partially Flushed buffer for descriptor: " + Converter::toString(descriptor) + " with " + Converter::toString(returnValue) + " bytes remaining");
     }
 }
 
@@ -195,7 +196,7 @@ void EventManager::_handleClientException(ssize_t &pollfdIndex, short events)
     if (events & POLLHUP)
     {
         // Log the disconnection
-        this->_logger.log(INFO, "Client disconnected socket: " + std::to_string(descriptor));
+        this->_logger.log(INFO, "Client disconnected socket: " + Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket
         this->_cleanUp(pollfdIndex, descriptor);
@@ -205,7 +206,7 @@ void EventManager::_handleClientException(ssize_t &pollfdIndex, short events)
     if (events & POLLNVAL)
     {
         // Log the error
-        this->_logger.log(ERROR, "Invalid request on socket: " + std::to_string(descriptor));
+        this->_logger.log(ERROR, "Invalid request on socket: " + Converter::toString(descriptor));
 
         // Destroy the buffer associated with the descriptor
         this->_bufferManager.destroyBuffer(descriptor);
@@ -221,7 +222,7 @@ void EventManager::_handleClientException(ssize_t &pollfdIndex, short events)
     if (events & POLLERR)
     {
         // Log the error
-        this->_logger.log(ERROR, "Error on socket: " + std::to_string(descriptor));
+        this->_logger.log(ERROR, "Error on socket: " + Converter::toString(descriptor));
 
         // Destroy the buffer associated with the descriptor
         this->_bufferManager.destroyBuffer(descriptor);
@@ -250,7 +251,7 @@ void EventManager::_cleanUp(ssize_t &pollfdIndex, int descriptor, short options)
     pollfdIndex--;
 
     // Log the cleanup
-    this->_logger.log(INFO, "Cleaned up descriptor: " + std::to_string(descriptor));
+    this->_logger.log(INFO, "Cleaned up descriptor: " + Converter::toString(descriptor));
 }
 
 void EventManager::_handlePipeEvents(ssize_t &pollfdIndex, short events)
@@ -265,7 +266,7 @@ void EventManager::_handlePipeEvents(ssize_t &pollfdIndex, short events)
     if (events & (POLLHUP | POLLERR | POLLNVAL))
     {
         // Log the error
-        this->_logger.log(ERROR, "Error on pipe: " + std::to_string(pipeDescriptor));
+        this->_logger.log(ERROR, "Error on pipe: " + Converter::toString(pipeDescriptor));
 
         // Let the request handler handle the exception, returns the client socket descriptor linked to the pipe
         clientSocket = this->_requestHandler.handlePipeException(pipeDescriptor);
@@ -275,7 +276,7 @@ void EventManager::_handlePipeEvents(ssize_t &pollfdIndex, short events)
     else if (events & POLLIN)
     {
         // Log the pipe read
-        this->_logger.log(VERBOSE, "Pipe read event on pipe: " + std::to_string(pipeDescriptor));
+        this->_logger.log(VERBOSE, "Pipe read event on pipe: " + Converter::toString(pipeDescriptor));
 
         // Let the request handler handle the pipe read, returns the client socket descriptor linked to the pipe
         clientSocket = this->_requestHandler.handlePipeRead(pipeDescriptor);
@@ -291,7 +292,7 @@ void EventManager::_handlePipeEvents(ssize_t &pollfdIndex, short events)
     else if (events & POLLOUT)
     {
         // Log the pipe write
-        this->_logger.log(VERBOSE, "Pipe write event on pipe: " + std::to_string(pipeDescriptor));
+        this->_logger.log(VERBOSE, "Pipe write event on pipe: " + Converter::toString(pipeDescriptor));
 
         // Flush the buffer
         this->_flushBuffer(pollfdIndex);

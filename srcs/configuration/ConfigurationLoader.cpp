@@ -22,7 +22,7 @@ static void	build_config(const std::vector<Token>& tokens, const Grammar& gramma
 		add_directive(tokens, parse_tree, block);
 		return ;
 	}
-	//go down the parse tree and build subblocks.
+	//go down the parse tree and build sub-blocks.
 	for (size_t i = 0; i < parse_tree.size(); i++) {
 		build_config(tokens, grammar, *parse_tree[i], block);
 	}
@@ -91,7 +91,7 @@ ConfigurationLoader::~ConfigurationLoader() {
 
 const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& path) {
 
-	std::ifstream				conf_stream(path);
+	std::ifstream	conf_stream(path.c_str());
 	if (!conf_stream.is_open())
 		throw InvalidConfigFileError();
 

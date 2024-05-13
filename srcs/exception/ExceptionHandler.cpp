@@ -26,7 +26,7 @@
 // Constructor: Initializes ExceptionHandler with an logger instance, _server linking is deferred
 ExceptionHandler::ExceptionHandler(ILogger &logger)
     : _logger(logger),
-      _server(nullptr)
+      _server(NULL)
 {
     // Log debug message indicating the creation of an ExceptionHandler instance.
     this->_logger.log(VERBOSE, "ExceptionHandler created.");

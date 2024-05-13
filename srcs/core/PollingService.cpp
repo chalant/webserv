@@ -1,5 +1,6 @@
 #include "../../includes/core/PollingService.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
+#include "../../includes/utils/Converter.hpp"
 
 PollingService::PollingService(IPollfdManager &pollfdManager, ILogger &logger, int timeout)
     : _pollfdManager(pollfdManager),
@@ -25,7 +26,7 @@ void PollingService::pollEvents()
     if (pollResult == 0) // Timeout occurred
         this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
     else // Events occurred
-        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " + std::to_string(pollResult) + " events.");
+        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " + Converter::toString(pollResult) + " events.");
 }
 
 void PollingService::setPollingTimeout(int timeout)

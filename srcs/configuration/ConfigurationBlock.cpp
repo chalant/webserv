@@ -1,4 +1,5 @@
 #include "../../includes/configuration/ConfigurationBlock.hpp"
+#include "../../includes/utils/Converter.hpp"
 #include <iostream>
 #include <iomanip>
 
@@ -41,7 +42,7 @@ const std::string&	ConfigurationBlock::getString(const std::string &key, size_t 
 int ConfigurationBlock::getInt(const std::string &key, size_t index = 0) const
 {
     try {
-        return std::stoi(_directives.at(key)->at(index));
+        return Converter::toInt(_directives.at(key)->at(index));
     } catch (const std::out_of_range &e) {
         _logger.log(DEBUG, "ConfigurationBlock::getInt: " + key + " not found");
     }
@@ -54,7 +55,7 @@ int ConfigurationBlock::getInt(const std::string &key, size_t index = 0) const
 size_t ConfigurationBlock::getSize_t(const std::string &key, size_t index = 0) const
 {
     try {
-		return std::stoul(_directives.at(key)->at(index));
+		return Converter::toUInt(_directives.at(key)->at(index));
 	} 
 	catch (const std::out_of_range &e) {
         _logger.log(DEBUG, "ConfigurationBlock::getSize_t: " + key + " not found");

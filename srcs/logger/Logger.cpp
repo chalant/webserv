@@ -23,7 +23,7 @@
  */
 
 Logger::Logger(IBufferManager &bufferManager)
-    : _configuration(nullptr),
+    : _configuration(NULL),
       _bufferManager(bufferManager),
       _logLevelHelper() 
 {
@@ -52,7 +52,7 @@ std::string Logger::_getCurrentTimestamp() const
 int Logger::log(const std::string &message)
 {
     // If the Logger is disabled, return without logging
-    if (this->_configuration != nullptr && this->_configuration->getErrorLogEnabled() == false)
+    if (this->_configuration != NULL && this->_configuration->getErrorLogEnabled() == false)
         return -1;
 
     // Construct the log message string
@@ -66,7 +66,7 @@ int Logger::log(const std::string &message)
 int Logger::log(LogLevel logLevel, const std::string &message)
 {
     // If the Logger is disabled or the log level below threshold, return without logging
-    if (this->_configuration != nullptr &&
+    if (this->_configuration != NULL &&
         (this->_configuration->getErrorLogEnabled() == false || logLevel < this->_configuration->getLogLevel()))
         return -1;
 
@@ -81,7 +81,7 @@ int Logger::log(LogLevel logLevel, const std::string &message)
 int Logger::log(const IConnection &connection)
 {
     // If the Logger is configured and confirmed disabled, return without logging
-    if (this->_configuration != nullptr && this->_configuration->getAccessLogEnabled() == false)
+    if (this->_configuration != NULL && this->_configuration->getAccessLogEnabled() == false)
         return -1;
 
     // Get a reference to the Request and Response objects

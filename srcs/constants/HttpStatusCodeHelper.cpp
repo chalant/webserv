@@ -1,5 +1,6 @@
 #include "../../includes/constants/HttpStatusCodeHelper.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
+#include "../../includes/utils/Converter.hpp"
 
 /*
  * HttpStatusCodeHelper.hpp
@@ -51,14 +52,14 @@ HttpStatusCode HttpStatusCodeHelper::intHttpStatusCodeMap(const int &statusCode)
     }
     else
     {
-        throw UnknownHttpStatusCodeError(std::to_string(statusCode));
+        throw UnknownHttpStatusCodeError(Converter::toString(statusCode));
     }
 }
 
 // Generate a status line string for an HTTP response
 std::string HttpStatusCodeHelper::getStatusLine(HttpStatusCode statusCode) const
 {
-    return "HTTP/1.1 " + std::to_string(static_cast<size_t>(statusCode)) + " " + this->httpStatusCodeStringMap(statusCode) + "\r\n";
+    return "HTTP/1.1 " + Converter::toString(static_cast<size_t>(statusCode)) + " " + this->httpStatusCodeStringMap(statusCode) + "\r\n";
 }
 
 // Generate a complete error response for an HTTP status code
@@ -66,7 +67,7 @@ std::string HttpStatusCodeHelper::getErrorResponse(HttpStatusCode statusCode) co
 {
     std::string body = this->getHtmlPage(statusCode);
 
-    return this->getStatusLine(statusCode) + "\n" + "Content-Type: text/html\r\n" + "Content-Length: " + std::to_string(body.length()) + "\r\n" + "Connection: close\r\n" + "Server: webserv/1.0\r\n" + "\r\n" + body;
+    return this->getStatusLine(statusCode) + "\n" + "Content-Type: text/html\r\n" + "Content-Length: " + Converter::toString(body.length()) + "\r\n" + "Connection: close\r\n" + "Server: webserv/1.0\r\n" + "\r\n" + body;
 }
 
 // Generate an HTML page with the specified HTTP status code
