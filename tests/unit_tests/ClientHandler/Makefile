@@ -5,7 +5,8 @@ SOURCES         = ClientHandler_test_main.cpp \
 
 MOCK_SOURCES    = ../../mock_srcs/MockLogger.cpp \
 				  ../../mock_srcs/MockExceptionHandler.cpp \
-				  ../../mock_srcs/MockSocket.cpp
+				  ../../mock_srcs/MockSocket.cpp \
+				  ../../../srcs/utils/Converter.cpp
 
 INCLUDES        = -I../../../includes
 MOCK_INCLUDES   = -I../../mock_includes

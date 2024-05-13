@@ -19,6 +19,7 @@ int main()
     MockPollfdManager mockPollfdManager;
     MockConnectionManager mockConnectionManager;
     MockConfigurationBlock mockConfiguration(mockLogger, "configuration");
+    MockConfigurationBlock mockEvents(mockLogger, "events");
     MockConfigurationBlock mockHttp(mockLogger, "http");
     MockConfigurationBlock mockServer_1(mockLogger, "server_1");
 
@@ -27,6 +28,8 @@ int main()
     mockHttp.setBlock("server", &mockServer_1);
     mockHttp.setSize_t("worker_connections", 1024);
     mockConfiguration.setBlock("http", &mockHttp);
+    mockEvents.setString("worker_connections", "1024");
+    mockConfiguration.setBlock("events", &mockEvents);
 
     // Instantiate the Server instance
     Server server(mockSocket, mockPollfdManager, mockConnectionManager, mockConfiguration, mockLogger);

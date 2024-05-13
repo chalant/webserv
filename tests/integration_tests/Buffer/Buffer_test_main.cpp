@@ -51,6 +51,7 @@ int main()
   // Open a test file, set flush threshold at 50 and mock add the fd to pollfd.
   int fd = open("temp.txt", O_CREAT | O_RDWR | O_TRUNC, 0666);
   MockLoggerConfiguration mockLoggerConfiguration(bufferManager, mockConfigurationBlock, mockPollfdManager);
+  
   mockLoggerConfiguration.setFileDescriptor(fd);
   mockLoggerConfiguration.setBufferSize(50);
   logger.configure(mockLoggerConfiguration);
@@ -141,7 +142,6 @@ int main()
 
   // Clean up
   bufferManager.destroyBuffer(fd);
-  bufferManager.destroyBuffer(0);
   close(fd);
   unlink("temp.txt");
 }

@@ -58,7 +58,7 @@ int main()
   const IConfiguration&	mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
 
   // Instantiate the objects under test
-  HttpHelper httpHelper(mockConfigurationBlock);
+  HttpHelper httpHelper;
   Request request(mockConfigurationBlock, httpHelper);
   Response response(httpHelper);
   ConnectionManager connectionManager(logger, factory);

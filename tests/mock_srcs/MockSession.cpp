@@ -31,4 +31,9 @@ std::string MockSession::getData(const std::string &) const
     return "";
 }
 
+SessionId_t MockSession::getId() const
+{
+    return 0;
+}
+
 // Path: tests/mock_srcs/MockConnectionManager.cpp

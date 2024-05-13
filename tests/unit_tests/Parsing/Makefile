@@ -22,7 +22,7 @@ SOURCES         = parsing_test_main.cpp \
 				  ../../../srcs/parsing/ParseTree.cpp \
 				  ../../../srcs/parsing/Parser.cpp \
 				  ../../../srcs/parsing/ParsingUtils.cpp \
-				  ../../../srcs/parsing/Tokenizer.cpp \
+				  ../../../srcs/parsing/Tokenizer.cpp
 
 OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 

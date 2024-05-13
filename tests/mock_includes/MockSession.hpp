@@ -21,6 +21,7 @@ public:
     virtual bool hasExpired() const;
     virtual void setData(const std::string &, const std::string &);
     virtual std::string getData(const std::string &) const;
+    virtual SessionId_t getId() const;
 };
 
 #endif // MOCKSESSION_HPP

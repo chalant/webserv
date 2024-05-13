@@ -17,8 +17,9 @@ SOURCES         = CgiResponseGenerator_test_main.cpp \
 				  ../../../srcs/parsing/ParsingUtils.cpp \
 				  ../../../srcs/parsing/Tokenizer.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
-				  ../../mock_srcs/MockLogger.cpp \
-				  ../../../srcs/configuration/ConfigurationBlock.cpp
+				  ../../../srcs/configuration/ConfigurationBlock.cpp \
+				  ../../../srcs/configuration/LocationBlock.cpp \
+				  ../../../srcs/utils/Converter.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockRoute.cpp \
 				  ../../mock_srcs/MockRequest.cpp \

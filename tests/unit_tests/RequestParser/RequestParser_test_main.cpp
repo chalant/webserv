@@ -2,7 +2,7 @@
 
 // include the header file for the class under test
 #include "../../../includes/request/RequestParser.hpp"
-#include "../../../includes/exception/WebServExceptions.hpp"
+#include "../../../includes/exception/WebservExceptions.hpp"
 #include "../../../includes/constants/HttpStatusCodeHelper.hpp"
 
 #include "../../../includes/configuration/ConfigurationLoader.hpp"

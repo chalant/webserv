@@ -43,6 +43,7 @@ public:
     virtual bool getBool(const std::string &parameter, size_t index = 0) const;
     virtual void print(size_t depth) const;
     virtual const std::string &getName() const;
+    virtual bool isRegex(void) const;
 
 };
 

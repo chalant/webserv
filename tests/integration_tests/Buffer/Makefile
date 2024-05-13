@@ -21,13 +21,15 @@ SOURCES         = Buffer_test_main.cpp \
 				  ../../../srcs/parsing/ParsingUtils.cpp \
 				  ../../../srcs/parsing/Tokenizer.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
-				  ../../../srcs/configuration/ConfigurationBlock.cpp
+				  ../../../srcs/configuration/ConfigurationBlock.cpp \
+				  ../../../srcs/configuration/LocationBlock.cpp \
+				  ../../../srcs/utils/Converter.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockPollfdManager.cpp \
 				  ../../mock_srcs/MockSocket.cpp \
 				  ../../mock_srcs/MockServer.cpp \
 				  ../../mock_srcs/MockRequestHandler.cpp \
-				  ../../mock_srcs/MockLoggerConfiguration.cpp \
+				  ../../mock_srcs/MockLoggerConfiguration.cpp
 
 INCLUDES        = -I../../../includes
 MOCK_INCLUDES   = -I../../mock_includes

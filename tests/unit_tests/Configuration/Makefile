@@ -29,8 +29,8 @@ SOURCES         = configuration_test.cpp \
 				  ../../../srcs/response/DefaultMatcher.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
 				  ../../../srcs/configuration/ConfigurationBlock.cpp \
-				  ../../../srcs/configuration/LocationBlock.cpp
-
+				  ../../../srcs/configuration/LocationBlock.cpp \
+				  ../../../srcs/utils/Converter.cpp
 
 OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 

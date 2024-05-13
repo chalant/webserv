@@ -173,4 +173,9 @@ const std::string &MockConfigurationBlock::getName() const
     return _name;
 }
 
+bool MockConfigurationBlock::isRegex(void) const
+{
+    return false;
+}
+
 // Path: tests/mock_headers/MockLogger.hpp
