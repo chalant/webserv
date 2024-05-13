@@ -5,7 +5,7 @@
 #include <sstream>
 
 template<typename T>
-std::string toString(T value) {
+std::string to_string(T value) {
 	std::ostringstream ostr;
 	ostr << value;
 	return ostr.str();

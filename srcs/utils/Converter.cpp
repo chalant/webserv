@@ -23,21 +23,21 @@ unsigned int	Converter::toUInt(const std::string& str) {
 }
 
 std::string	Converter::toString(double value) {
-	return toString(value);
+	return to_string(value);
 }
 
 std::string	Converter::toString(int value) {
-	return toString(value);
+	return to_string(value);
 }
 
 std::string	Converter::toString(unsigned long value) {
-	return toString(value);
+	return to_string(value);
 }
 
 std::string	Converter::toString(long value) {
-	return toString(value);
+	return to_string(value);
 }
 
 std::string	Converter::toString(float value) {
-	return toString(value);
+	return to_string(value);
 }
