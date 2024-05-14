@@ -5,8 +5,15 @@ locationblock)*/
 
 #include "../../includes/response/Router.hpp"
 #include "../../includes/constants/HttpMethodHelper.hpp"
+#include "../../includes/configuration/ConfigurationLoader.hpp"
+#include "../../includes/configuration/LocationBlock.hpp"
+#include <iostream>
 #include <vector>
 #include <algorithm>
+
+Route::Route(const HttpHelper &httpHelper) : _httpHelper(httpHelper)
+{
+}
 
 Router::Router(const IConfiguration &configuration, ILogger &logger) : _configuration(configuration), _logger(logger)
 {
@@ -14,9 +21,10 @@ Router::Router(const IConfiguration &configuration, ILogger &logger) : _configur
 	this->_logger.log(VERBOSE, "Initializing Router...");
 
 	// For every server block in the configuration, insert a routeMapEntry into the _routes map
-	std::vector<IConfiguration *> servers = configuration.getBlocks("http")[0]->getBlocks("server");
-	std::vector<IConfiguration *>::iterator serverIt;
-	for (serverIt = servers.begin(); serverIt != servers.end(); serverIt++)
+	//const std::vector<IConfiguration *> servers = _configuration.getBlocks("server"); // Declare and initialize the 'servers' vector
+	const std::vector<IConfiguration *> servers = _configuration.getBlocks("http")[0]->getBlocks("server");
+	//std::vector<IConfiguration *>::iterator serverIt;
+	for (std::vector<IConfiguration *>::const_iterator serverIt = servers.begin(); serverIt != servers.end(); serverIt++)
 	{
 		this->_createServerRoutes(*serverIt);
 	}
@@ -35,33 +43,40 @@ void Router::_createServerRoutes(const IConfiguration *serverBlock)
 
 void Router::_createRoutes(const IConfiguration *serverBlock)
 {
+
 	std::vector<IConfiguration *> locations = serverBlock->getBlocks("location");
+
 	std::vector<IConfiguration *>::iterator locationIt;
-	std::vector<std::string> hostnames = serverBlock->getStringVector("serverName");
-	std::vector<std::string> ports = serverBlock->getStringVector("port");
-	std::vector<std::string> methods = (*locationIt)->getStringVector("limitExcept");
+	std::vector<std::string> hostnames = serverBlock->getStringVector("server_name");
+
+	std::vector<std::string> ports = serverBlock->getStringVector("listen");
 	std::vector<std::string>::iterator hostnameIt;
 	std::vector<std::string>::iterator portIt;
-	size_t	i = 0;
-
+	std::string prefix;
+	size_t	i = this->getRouteCount();
+	size_t	serverRoutesNumber = 0;
 	for (hostnameIt = hostnames.begin(); hostnameIt != hostnames.end(); hostnameIt++)
 	{
-		_routes[i].appendUri(*hostnameIt);
+		HttpHelper HttpHelper;
+		Route newRoute(HttpHelper);
+		_routes.push_back(newRoute);
+		_routes[i].setUri(*hostnameIt);
 		_routes[i++].appendUri(":");
+		serverRoutesNumber++;
 	}
-
-	i = 0;
-	for (portIt = ports.begin(); portIt != ports.end(); portIt++)
-	{
+	i = this->getRouteCount() - serverRoutesNumber;
+	portIt = ports.begin();
+	while (i < serverRoutesNumber)
 		_routes[i++].appendUri(*portIt);
-	}
-	i = 0; 
-	HttpMethodHelper helper;
+	i = 0; // replace this later
+	// std::vector<std::string> methods = (*locationIt)->getStringVector("limitExcept");
 	for (locationIt = locations.begin(); locationIt != locations.end(); locationIt++)
 	{
-		std::string prefix = (*locationIt)->getString("prefix");
-		_routes[i].setMethod(helper.stringHttpMethodMap(methods[i]));
+		prefix = (*locationIt)->getString("prefix");
+		//_routes[i].setMethod(methods[i]);
+		//_routes[i].setMethod((*locationIt)->getString("method"));
 		_routes[i++].appendUri(prefix);
+		std::cout << "uri: " << _routes[i].getUri() << std::endl;
 	}
 	std::sort(_routes.begin(), _routes.end());
 }
@@ -104,9 +119,17 @@ HttpMethod Route::getMethod() const
 	return (this->_method);
 }
 
-void Route::setMethod(HttpMethod newMethod)
+void Route::setMethod(const std::string newMethod)
 {
-	this->_method = newMethod;
+	/*if (this->_httpHelper.isMethod(newMethod) == false)
+        throw HttpStatusCodeException(METHOD_NOT_ALLOWED, // Throw '405' status error
+                                      "unknown method: \"" + newMethod + "\"");
+    else if (this->_httpHelper.isSupportedMethod(newMethod) == false)
+        throw HttpStatusCodeException(NOT_IMPLEMENTED, // Throw '501' status error
+                                      "unsupported method: \"" + newMethod + "\"");*/
+
+    // Set the method of the request
+    this->_method = this->_httpHelper.stringHttpMethodMap(newMethod);
 }
 
 bool Route::operator< (const Route &other) const 
@@ -124,4 +147,22 @@ void Router::addRoute(const IRequest &request, void (*newHandler)(IRequest *, IR
 {
 	(void)request;
 	(void)newHandler;
+}
+
+size_t Router::getRouteCount(void) const
+{
+	return (this->_routes.size());
+}
+
+std::vector<Route> Router::getRoutes(void) const {
+	return (this->_routes);
+}
+
+Route& Route::operator= (const Route &other) 
+{
+	if (this != &other) {
+		this->_uri = other._uri;
+		this->_method = other._method;
+	}
+	return *this;
 }
