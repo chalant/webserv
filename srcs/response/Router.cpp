@@ -76,7 +76,7 @@ void Router::_createRoutes(const IConfiguration *serverBlock)
 		//_routes[i].setMethod(methods[i]);
 		//_routes[i].setMethod((*locationIt)->getString("method"));
 		_routes[i++].appendUri(prefix);
-		std::cout << "uri: " << _routes[i].getUri() << std::endl;
+		//std::cout << "uri: " << _routes[i].getUri() << std::endl;
 	}
 	std::sort(_routes.begin(), _routes.end());
 }

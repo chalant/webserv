@@ -2,7 +2,7 @@
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
 #include <utility>
-
+#include <iostream>
 /*
  * RequestHandler class
  *
@@ -117,7 +117,9 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
     }
     else // static content
     {
+		
         // Push the response to the buffer
+		std::cout << "Sending Stuff" << std::endl;
         this->_sendResponse(socketDescriptor);
 
         // return -1

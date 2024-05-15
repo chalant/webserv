@@ -105,6 +105,7 @@ enum HttpHeader
     X_FRAME_OPTIONS,                     // Specifies whether a browser should be allowed to render a page in a frame, iframe, embed, or object
     X_XSS_PROTECTION,                    // Enables a cross-site scripting (XSS) filter in supported web browsers
     X_FORWARDED_FOR,                     // Contains the IP address of the client that initiated the request
+	UPGRADE_INSECURE_REQUESTS,			 // Expresses the client's preference for an encrypted and authenticated response, and that it can successfully handle the upgrade-insecure-requests CSP directive.
 
     // Cookie Headers
     COOKIE,     // Request header for receiving cookies

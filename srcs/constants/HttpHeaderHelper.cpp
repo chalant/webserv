@@ -176,7 +176,7 @@ std::map<std::string, HttpHeader> HttpHeaderHelper::_setStringHttpHeaderMap()
     stringHttpHeaderMap["content-location"] = CONTENT_LOCATION;
     stringHttpHeaderMap["content-md5"] = CONTENT_MD5;
     stringHttpHeaderMap["content-range"] = CONTENT_RANGE;
-    stringHttpHeaderMap["content-type"] = CONTENT_TYPE;
+    stringHttpHeaderMap["Content-Type"] = CONTENT_TYPE;
     stringHttpHeaderMap["expires"] = EXPIRES;
     stringHttpHeaderMap["last-modified"] = LAST_MODIFIED;
     stringHttpHeaderMap["access-control-allow-origin"] = ACCESS_CONTROL_ALLOW_ORIGIN;
@@ -200,6 +200,7 @@ std::map<std::string, HttpHeader> HttpHeaderHelper::_setStringHttpHeaderMap()
     stringHttpHeaderMap["x-forwarded-for"] = X_FORWARDED_FOR;
     stringHttpHeaderMap["cookie"] = COOKIE;
     stringHttpHeaderMap["set-cookie"] = SET_COOKIE;
+	stringHttpHeaderMap["upgrade-insecure-requests"] = UPGRADE_INSECURE_REQUESTS;
 
     return stringHttpHeaderMap;
 }
@@ -278,6 +279,7 @@ std::map<HttpHeader, std::string> HttpHeaderHelper::_setHttpHeaderStringMap()
     httpHeaderStringMap[X_FORWARDED_FOR] = "x-forwarded-for";
     httpHeaderStringMap[COOKIE] = "cookie";
     httpHeaderStringMap[SET_COOKIE] = "set-cookie";
+	httpHeaderStringMap[UPGRADE_INSECURE_REQUESTS] = "upgrade-insecure-requests";
 
     return httpHeaderStringMap;
 }
