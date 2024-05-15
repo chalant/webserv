@@ -8,7 +8,7 @@ LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager, const IC
       _bufferManager(BufferManager),
       _pollfdManager(pollfdManager),
       _bufferSize(LOG_BUFFER_SIZE),
-      _logLevel(LOG_LEVEL),
+      _logLevel(static_cast<LogLevel>(configuration.getInt("log_level"))),
       _errorLogFileDescriptor(this->_errorLogFile == "off" ? -2 : open(this->_errorLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
       _accessLogFileDescriptor(this->_accessLogFile == "off" ? -2 : open(this->_accessLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
       _errorLogEnabled(this->_errorLogFileDescriptor < 0 ? false : true),

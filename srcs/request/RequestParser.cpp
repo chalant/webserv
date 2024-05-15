@@ -2,6 +2,8 @@
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/constants/HttpStatusCodeHelper.hpp"
 #include <cstdlib>
+#include <algorithm>
+#include <cctype>
 
 
 /*
@@ -295,7 +297,7 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
         return;
     }
 
-    // Check if 'Content-Length' header is missing
+    // Check if 'content-length' header is missing
     // Get body size
     std::string contentLengthString = parsedRequest.getHeaderValue(CONTENT_LENGTH);
     if (contentLengthString.empty())
@@ -305,7 +307,7 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
     }
 
     // Check if conversion was successful
-    // Get 'Content-Length' value
+    // Get 'content-length' value
     size_t bodySize = atoi(contentLengthString.c_str());
     if (bodySize <= 0)
     {
@@ -465,10 +467,13 @@ void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
                 std::string value = line.substr(pos + 1);
                 key = this->_trimWhitespace(key);
                 value = this->_trimWhitespace(value);
+                // lower cases the key
+                std::transform(key.begin(), key.end(), key.begin(), static_cast<int (*)(int)>(std::tolower));
+
                 bodyParameter.headers[key] = value;
 
                 // Parse dispositionType, contentType, and fieldName
-                if (key == "Content-Disposition")
+                if (key == "content-disposition")
                 {
                     std::istringstream iss(value);
                     std::string token;
@@ -489,7 +494,7 @@ void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
                         }
                     }
                 }
-                else if (key == "Content-Type")
+                else if (key == "content-type")
                     bodyParameter.contentType = value;
             }
         } while (std::getline(bodyStream, line) && !line.empty());

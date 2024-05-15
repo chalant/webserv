@@ -68,8 +68,8 @@ int main()
     // Close the pipe
     close(responseReadPipe); // Close the read end of the pipe
 
-    // Assert that "Content-Type: text/plain" is present in readBuffer
-    assert(strstr(readBuffer, "Content-Type: text/plain") != NULL);
+    // Assert that "content-type: text/plain" is present in readBuffer
+    assert(strstr(readBuffer, "content-type: text/plain") != NULL);
 
     // Assert that "Hello, world!" is present in readBuffer
     assert(strstr(readBuffer, "Hello, world!") != NULL);
@@ -111,7 +111,7 @@ int main()
     mockRequest.setMethod("POST");
     mockRequest.setUri("/mock-cgi-bin/" + scriptName + "?name=John&age=30");
     mockRequest.setBody("Hello, world! (from the body)");
-    mockRequest.addHeader("Content-Length", std::to_string(mockRequest.getBody().size()));
+    mockRequest.addHeader("content-length", std::to_string(mockRequest.getBody().size()));
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);

@@ -173,30 +173,30 @@ std::string Request::getQueryString() const
 // Getter function for retrieving the content length
 std::string Request::getContentLength() const
 {
-    // Check if the 'Content-Length' header exists in the map
+    // Check if the 'content-length' header exists in the map
     if (this->_headers.find(CONTENT_LENGTH) != this->_headers.end())
     {
-        // Return the value of the 'Content-Length' header
+        // Return the value of the 'content-length' header
         return this->_headers.at(CONTENT_LENGTH);
     }
     else
     {
-        return ""; // Return an empty string if the 'Content-Length' header does not exist
+        return ""; // Return an empty string if the 'content-length' header does not exist
     }
 }
 
 // Getter function for retrieving the content type
 std::string Request::getContentType() const
 {
-    // Check if the 'Content-Type' header exists in the map
+    // Check if the 'content-type' header exists in the map
     if (this->_headers.find(CONTENT_TYPE) != this->_headers.end())
     {
-        // Return the value of the 'Content-Type' header
+        // Return the value of the 'content-type' header
         return this->_headers.at(CONTENT_TYPE);
     }
     else
     {
-        return ""; // Return an empty string if the 'Content-Type' header does not exist
+        return ""; // Return an empty string if the 'content-type' header does not exist
     }
 }
 

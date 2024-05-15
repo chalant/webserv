@@ -74,17 +74,17 @@ std::string MockRequest::getQueryString() const
 };
 
 std::string MockRequest::getContentLength() const { 
-    // Check if the Content-Length header is present
-    if (_testHeaders.find("Content-Length") == _testHeaders.end())
+    // Check if the content-length header is present
+    if (_testHeaders.find("content-length") == _testHeaders.end())
         return "";
-    return _testHeaders.at("Content-Length");
+    return _testHeaders.at("content-length");
  };
 
 std::string MockRequest::getContentType() const { 
-    // Check if the Content-Type header is present
-    if (_testHeaders.find("Content-Type") == _testHeaders.end())
+    // Check if the content-type header is present
+    if (_testHeaders.find("content-type") == _testHeaders.end())
         return "";
-    return _testHeaders.at("Content-Type");
+    return _testHeaders.at("content-type");
  };
 
 std::string MockRequest::getPathInfo(const std::string &scriptName) const

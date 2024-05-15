@@ -67,7 +67,7 @@ std::string HttpStatusCodeHelper::getErrorResponse(HttpStatusCode statusCode) co
 {
     std::string body = this->getHtmlPage(statusCode);
 
-    return this->getStatusLine(statusCode) + "\n" + "Content-Type: text/html\r\n" + "Content-Length: " + Converter::toString(body.length()) + "\r\n" + "Connection: close\r\n" + "Server: webserv/1.0\r\n" + "\r\n" + body;
+    return this->getStatusLine(statusCode) + "\n" + "content-type: text/html\r\n" + "content-length: " + Converter::toString(body.length()) + "\r\n" + "Connection: close\r\n" + "Server: webserv/1.0\r\n" + "\r\n" + body;
 }
 
 // Generate an HTML page with the specified HTTP status code

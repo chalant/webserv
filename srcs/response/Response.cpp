@@ -132,8 +132,8 @@ void Response::setErrorResponse(HttpStatusCode statusCode)
 {
     this->setStatusLine(statusCode);
     std::string body = this->_httpHelper.getHtmlPage(statusCode);
-    this->setHeaders("Content-Type: text/html\r\n"
-                     "Content-Length: " +
+    this->setHeaders("content-type: text/html\r\n"
+                     "content-length: " +
                      Converter::toString(body.length()) + "\r\n"
                                                      "Connection: close\r\n"
                                                      "Server: webserv/1.0\r\n"

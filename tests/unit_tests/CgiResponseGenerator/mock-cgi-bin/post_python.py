@@ -5,8 +5,8 @@ import sys
 import cgi
 import time
 
-# Set the Content-Type header to text/plain
-print("Content-Type: text/plain")
+# Set the content-type header to text/plain
+print("content-type: text/plain")
 print()
 
 # Read and output data from the request body (if present)

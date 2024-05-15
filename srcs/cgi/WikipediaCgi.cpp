@@ -128,8 +128,8 @@ int main(int argc, char **argv)
                                                "</html>";
     }
 
-    response << "Content-Type: text/html\r\n";
-    response << "Content-Length: " << body.length() << "\r\n";
+    response << "content-type: text/html\r\n";
+    response << "content-length: " << body.length() << "\r\n";
     response << "Connection: close\r\n";
     response << "Server: webserv/1.0\r\n";
     response << "\r\n";

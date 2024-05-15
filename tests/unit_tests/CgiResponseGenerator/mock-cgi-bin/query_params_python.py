@@ -5,8 +5,8 @@ import cgi
 # Parse query parameters from the request URL
 query_params = cgi.FieldStorage()
 
-# Set the Content-Type header to text/plain
-print("Content-Type: text/plain")
+# Set the content-type header to text/plain
+print("content-type: text/plain")
 print()
 
 # Output some text

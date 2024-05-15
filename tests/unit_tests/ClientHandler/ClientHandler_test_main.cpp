@@ -40,8 +40,8 @@ int main()
     BODY_SIZE = 0;
     body.assign(BODY_SIZE, 'x');                                                                                                                                                // Creating a string of 4096 'x' characters
     mockMessageString = "GET / HTTP/1.1\r\n";                                                                                                                                   // Request line
-    mockMessageString += "Content-Type: text/plain\r\n";                                                                                                                        // Content-Type header
-    mockMessageString += "Content-Length: " + std::to_string(body.size()) + "\r\n";                                                                                             // Content-Length header
+    mockMessageString += "content-type: text/plain\r\n";                                                                                                                        // content-type header
+    mockMessageString += "content-length: " + std::to_string(body.size()) + "\r\n";                                                                                             // content-length header
     mockMessageString += "Host: 42.fr\r\n";                                                                                                                                     // Mandatory Host header
     mockMessageString += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36\r\n";                  // Mandatory User-Agent header
     mockMessageString += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\r\n"; // Mandatory Accept header
@@ -77,8 +77,8 @@ int main()
     BODY_SIZE = 5000;
     body.assign(BODY_SIZE, 'x');                                                                                                                                                // Creating a string of 4096 'x' characters
     mockMessageString = "GET / HTTP/1.1\r\n";                                                                                                                                   // Request line
-    mockMessageString += "Content-Type: text/plain\r\n";                                                                                                                        // Content-Type header
-    mockMessageString += "Content-Length: " + std::to_string(body.size()) + "\r\n";                                                                                             // Content-Length header
+    mockMessageString += "content-type: text/plain\r\n";                                                                                                                        // content-type header
+    mockMessageString += "content-length: " + std::to_string(body.size()) + "\r\n";                                                                                             // content-length header
     mockMessageString += "Host: 42.fr\r\n";                                                                                                                                     // Mandatory Host header
     mockMessageString += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36\r\n";                  // Mandatory User-Agent header
     mockMessageString += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\r\n"; // Mandatory Accept header
