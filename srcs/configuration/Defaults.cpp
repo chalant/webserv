@@ -8,6 +8,7 @@ Defaults::Defaults()
 	m_pairs["prefix"] = "/"; //temporary, the parser should detect the type of prefix.
 	m_pairs["listen"] = "127.0.0.1:8080";
 	m_pairs["server_name"] = "default";
+	m_pairs["error_log"] = "debug";
 }
 
 Defaults::~Defaults() {	
