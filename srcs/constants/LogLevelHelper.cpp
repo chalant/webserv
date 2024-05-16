@@ -48,13 +48,13 @@ std::vector<std::string> LogLevelHelper::_setLogLevelList()
     std::vector<std::string> logLevelList;
 
     // Add string representations of HTTP logLevels to LogLevelList
-    logLevelList.push_back("VERBOSE");
-    logLevelList.push_back("DEBUG");
-    logLevelList.push_back("INFO");
-    logLevelList.push_back("WARN");
-    logLevelList.push_back("ERROR");
-    logLevelList.push_back("CRITICAL");
-    logLevelList.push_back("UNKNOWN");
+    logLevelList.push_back("verbose");
+    logLevelList.push_back("debug");
+    logLevelList.push_back("info");
+    logLevelList.push_back("warn");
+    logLevelList.push_back("error");
+    logLevelList.push_back("critical");
+    logLevelList.push_back("unknown");
 
     return logLevelList;
 }
@@ -65,13 +65,13 @@ std::map<std::string, LogLevel> LogLevelHelper::_setStringLogLevelMap()
     std::map<std::string, LogLevel> stringLogLevelMap;
 
     // Add mappings from string representations to LogLevel enum values
-    stringLogLevelMap["VERBOSE"] = VERBOSE;
-    stringLogLevelMap["DEBUG"] = DEBUG;
-    stringLogLevelMap["INFO"] = INFO;
-    stringLogLevelMap["WARN"] = WARN;
-    stringLogLevelMap["ERROR"] = ERROR;
-    stringLogLevelMap["CRITICAL"] = CRITICAL;
-    stringLogLevelMap["UNKNOWN"] = UNKNOWN;
+    stringLogLevelMap["verbose"] = VERBOSE;
+    stringLogLevelMap["debug"] = DEBUG;
+    stringLogLevelMap["info"] = INFO;
+    stringLogLevelMap["warn"] = WARN;
+    stringLogLevelMap["error"] = ERROR;
+    stringLogLevelMap["critical"] = CRITICAL;
+    stringLogLevelMap["unknown"] = UNKNOWN;
 
     return stringLogLevelMap;
 }
@@ -82,13 +82,13 @@ std::map<LogLevel, std::string> LogLevelHelper::_setLogLevelStringMap()
     std::map<LogLevel, std::string> logLevelStringMap;
 
     // Add mappings from LogLevel enum values to string representations
-    logLevelStringMap[VERBOSE] = "VERBOSE";
-    logLevelStringMap[DEBUG] = "DEBUG";
-    logLevelStringMap[INFO] = "INFO";
-    logLevelStringMap[WARN] = "WARN";
-    logLevelStringMap[ERROR] = "ERROR";
-    logLevelStringMap[CRITICAL] = "CRITICAL";
-    logLevelStringMap[UNKNOWN] = "UNKNOWN";
+    logLevelStringMap[VERBOSE] = "verbose";
+    logLevelStringMap[DEBUG] = "debug";
+    logLevelStringMap[INFO] = "info";
+    logLevelStringMap[WARN] = "warn";
+    logLevelStringMap[ERROR] = "error";
+    logLevelStringMap[CRITICAL] = "critical";
+    logLevelStringMap[UNKNOWN] = "unknown";
 
     return logLevelStringMap;
 }

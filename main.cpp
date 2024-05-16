@@ -13,7 +13,7 @@
 #include "includes/exception/ExceptionHandler.hpp"
 #include "includes/response/Router.hpp"
 #include "includes/pollfd/PollfdManager.hpp"
-#include <iostream>
+
 /*
  * webserv Workflow:
  *
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
         // Instantiate the Router.
         Router router(configuration, logger);
-std::cout << "router created" << std::endl;
+
         // Instantiate the RequestHandler.
         RequestHandler requestHandler(bufferManager, connectionManager, configuration, router, logger, exceptionHandler, clientHandler);
 

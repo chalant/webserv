@@ -16,6 +16,7 @@
  #define DEFAULT_TIMEOUT 300 // 5 minutes
 
 #include "IConnection.hpp"
+#include <ctime>
 #include "../logger/ILogger.hpp"
 
 class Connection : public IConnection
