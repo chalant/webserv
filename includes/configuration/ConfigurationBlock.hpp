@@ -16,8 +16,8 @@ class ConfigurationBlock : public IConfiguration, public std::vector<IConfigurat
 		std::map<std::string, std::vector<std::string>* >	_directives;
 		Defaults&	m_defaults;
 	public:
-		ConfigurationBlock(ILogger &logger, const std::string name, Defaults defaults);
-		ConfigurationBlock(const ConfigurationBlock &parent, const std::string name, Defaults defaults);
+		ConfigurationBlock(ILogger &logger, const std::string name, Defaults& defaults);
+		ConfigurationBlock(const ConfigurationBlock &parent, const std::string name, Defaults& defaults);
 		~ConfigurationBlock();
 
 		virtual const std::vector<IConfiguration *>&	getBlocks(const std::string &key) const;

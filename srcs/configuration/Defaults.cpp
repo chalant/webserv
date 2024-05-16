@@ -1,6 +1,8 @@
 #include "../../includes/configuration/Defaults.hpp"
+#include <iostream>
 
-Defaults::Defaults() {
+Defaults::Defaults() 
+{
 	m_pairs["client_header_buffer_size"] = "1024";
 	m_pairs["client_max_uri_size"] = "1024";
 	m_pairs["prefix"] = "/"; //temporary, the parser should detect the type of prefix.

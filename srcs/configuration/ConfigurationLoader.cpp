@@ -12,10 +12,12 @@ static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, 
 static void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block);
 static void get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, std::vector<std::string>& result);
 
-static void	build_config(const std::vector<Token>& tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block, Defaults& defaults) {
+static void	build_config(const std::vector<Token>& tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block, Defaults& defaults) 
+{
 	const GrammarRule	*rule = grammar.getRule(parse_tree.ruleIndex());
 	const std::string rule_name = rule->getName();
-	if (rule_name == "block") {
+	if (rule_name == "block") 
+	{
 		add_block(tokens, grammar, parse_tree, block, defaults);
 		return ;
 	}
@@ -24,7 +26,8 @@ static void	build_config(const std::vector<Token>& tokens, const Grammar& gramma
 		return ;
 	}
 	//go down the parse tree and build sub-blocks.
-	for (size_t i = 0; i < parse_tree.size(); i++) {
+	for (size_t i = 0; i < parse_tree.size(); i++) 
+	{
 		build_config(tokens, grammar, *parse_tree[i], block, defaults);
 	}
 }
@@ -34,40 +37,48 @@ static void	get_values(const std::vector<Token>& tokens, ParseTree& parse_tree, 
 	ParseTree	*next = parse_tree[1];
 	result.push_back(tokens[(*parse_tree[0])[0]->tokenIndex()].value);
 	//goes down the tree branch
-	while (next != NULL) {
+	while (next != NULL) 
+	{
 		result.push_back(tokens[(*(*next)[0])[0]->tokenIndex()].value);
 		next = (*next)[1];
 	}
 }
 
-static void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block) {
+static void	add_directive(const std::vector<Token>&	tokens, ParseTree& parse_tree, ConfigurationBlock& block) 
+{
 	//the first sub-child is the directive name and the second is the parameters list.
 	std::vector<std::string>&	params = block.addDirective(tokens[(*parse_tree[0])[0]->tokenIndex()].value);
 	get_values(tokens, *parse_tree[1], params);
 }
 
-static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block, Defaults& defaults) {
+static void	add_block(const std::vector<Token>&	tokens, const Grammar& grammar, ParseTree& parse_tree, ConfigurationBlock& block, Defaults& defaults) 
+{
 	ConfigurationBlock	*new_block;
 	const std::string rule_name = grammar.getRule(parse_tree[1]->ruleIndex())->getName();
 
 	//check if it is a block with at prefix and retreive the prefix.
-	if (rule_name == "prefix") {
+	if (rule_name == "prefix") 
+	{
 		int	start = 0;
 		//NOTE: the ConfigurationBlock could have a regex mode...
-		if (tokens[(*parse_tree[1])[0]->tokenIndex()].value == "~") {
+		if (tokens[(*parse_tree[1])[0]->tokenIndex()].value == "~") 
+		{
 			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, defaults, true);
 			start = 1;
 		}
-		else {
+		else 
+		{
 			new_block = new LocationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, defaults, false);
 		}
 		std::vector<std::string>&	params = new_block->addDirective(rule_name);
-		for (size_t i = start; i < parse_tree[1]->size(); i++) {
+		for (size_t i = start; i < parse_tree[1]->size(); i++) 
+		{
 			params.push_back(tokens[(*parse_tree[1])[i]->tokenIndex()].value);
 		}
 		build_config(tokens, grammar, *parse_tree[3], *new_block, defaults);
 	}
-	else {
+	else 
+	{
 		new_block = new ConfigurationBlock(block, tokens[parse_tree[0]->tokenIndex()].value, defaults);
 		//recursively add blocks or directives on the current block. (skipping the open brace.)
 		build_config(tokens, grammar, *parse_tree[2], *new_block, defaults);
@@ -248,7 +259,8 @@ const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& 
 	//initial block.
 	m_config = new ConfigurationBlock(m_logger, "main", m_defaults);
 	
-	for (size_t i = 0; i < parse_tree.size(); i++) {
+	for (size_t i = 0; i < parse_tree.size(); i++) 
+	{
 		build_config(tokens, grammar, *parse_tree[i], *m_config, m_defaults);
 	}
 	conf_stream.close();

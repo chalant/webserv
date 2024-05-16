@@ -3,12 +3,12 @@
 #include <iostream>
 #include <iomanip>
 
-ConfigurationBlock::ConfigurationBlock(ILogger& logger, const std::string name, Defaults defaults) : 
+ConfigurationBlock::ConfigurationBlock(ILogger& logger, const std::string name, Defaults& defaults) : 
     _logger(logger), _name(name), m_defaults(defaults)
 {
 }
 
-ConfigurationBlock::ConfigurationBlock(const ConfigurationBlock& parent, const std::string name, Defaults defaults): 
+ConfigurationBlock::ConfigurationBlock(const ConfigurationBlock& parent, const std::string name, Defaults& defaults): 
     _logger(parent._logger), _name(name), m_defaults(defaults)
 {
 }
@@ -32,6 +32,7 @@ const std::vector<IConfiguration *>&	ConfigurationBlock::getBlocks(const std::st
 	}
 	catch (std::exception& e)
 	{
+		_logger.log(DEBUG, "ConfigurationBlock::getBlocks: " + key + " not found");
 		return *this;
 	} 
 }
