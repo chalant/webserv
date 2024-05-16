@@ -6,4 +6,6 @@ int	main() {
 	ConfigurationLoader		loader(logger);
 	const IConfiguration&	block = loader.loadConfiguration("test_configuration_file.conf");
 	block.print(0);
+	// std::vector<IConfiguration *> random_block = block.getBlocks("random");
+	// std::cout << &random_block[0] << std::endl;
 }
