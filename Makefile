@@ -39,6 +39,7 @@ SRCS        =	main.cpp \
 				srcs/parsing/ParsingUtils.cpp \
 				srcs/configuration/ConfigurationBlock.cpp \
 				srcs/configuration/LocationBlock.cpp \
+				srcs/configuration/Defaults.cpp \
 				srcs/configuration/ConfigurationLoader.cpp \
 				srcs/constants/HttpHeaderHelper.cpp \
 				srcs/constants/HttpHelper.cpp \
