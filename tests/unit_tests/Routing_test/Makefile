@@ -41,6 +41,7 @@ SRCS        =	main.cpp \
 				../../../srcs/configuration/LocationBlock.cpp \
 				../../../srcs/configuration/Defaults.cpp \
 				../../../srcs/configuration/ConfigurationLoader.cpp \
+				../../../srcs/configuration/BlockList.cpp \
 				../../../srcs/constants/HttpHeaderHelper.cpp \
 				../../../srcs/constants/HttpHelper.cpp \
 				../../../srcs/constants/HttpMethodHelper.cpp \

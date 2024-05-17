@@ -9,11 +9,14 @@
 
 #include "../../includes/configuration/IConfiguration.hpp" // Include the base interface header
 #include "../../includes/logger/ILogger.hpp"                 // Include the logger interface header
+#include "../../includes/configuration/BlockList.hpp"
+
+class BlockList;
 
 class MockConfigurationBlock : public IConfiguration
 {
 private:
-    std::map<std::string, std::vector<IConfiguration *> > _blocks;
+    std::map<std::string, BlockList > _blocks;
     std::map<std::string, std::vector<std::string> *> _directives;
     ILogger &_logger;
     const std::string _name;
@@ -35,7 +38,7 @@ public:
     // Methods implementing the IConfiguration interface
     // These methods are overridden to provide custom behavior for testing.
 
-    virtual const std::vector<IConfiguration *> &getBlocks(const std::string &parameter) const;
+    virtual const BlockList &getBlocks(const std::string &parameter) const;
     virtual const std::vector<std::string> &getStringVector(const std::string &parameter) const;
     virtual const std::string &getString(const std::string &parameter, size_t index = 0) const;
     virtual int getInt(const std::string &parameter, size_t index = 0) const;

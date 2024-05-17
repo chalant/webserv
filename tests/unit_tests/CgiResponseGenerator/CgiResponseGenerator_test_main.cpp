@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <cstring>
 #include <unistd.h>
+#include <sstream>
 
 // include the header file for the class under test
 #include "../../../includes/response/CgiResponseGenerator.hpp"
@@ -105,17 +106,21 @@ int main()
     // Test case 3: Generate a cgi python response with POST method
     //*************************************************************
     // Set the test script name
+    #include <sstream>
+
     scriptName = "post_python.py";
 
     // Set the request variables
     mockRequest.setMethod("POST");
     mockRequest.setUri("/mock-cgi-bin/" + scriptName + "?name=John&age=30");
     mockRequest.setBody("Hello, world! (from the body)");
-    mockRequest.addHeader("content-length", std::to_string(mockRequest.getBody().size()));
+    std::ostringstream bodySizeStream;
+    bodySizeStream << mockRequest.getBody().size();
+    mockRequest.addHeader("content-length", bodySizeStream.str());
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);
-    
+
     // Get the pipe file descriptors
     responseReadPipe = cgiInfo.second.first;
     requestWritePipe = cgiInfo.second.second;

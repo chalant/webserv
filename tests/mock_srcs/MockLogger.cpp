@@ -1,6 +1,7 @@
 #include "../mock_includes/MockLogger.hpp"
 #include <iomanip>
 #include <iostream>
+#include <ctime>
 #include <sstream>
 
 /*
@@ -52,10 +53,12 @@ void MockLogger::configure(ILoggerConfiguration &configuration){
 // Helper method to get the current timestamp
 std::string MockLogger::_getCurrentTimestamp() const
 {
-    std::ostringstream stream;
-
+    std::stringstream stream;
     std::time_t currentTime = std::time(NULL);
-    stream << std::put_time(std::localtime(&currentTime), "%Y-%m-%d %H:%M:%S");
+	char	buffer[80];
+
+	strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
+    stream << buffer;
     return stream.str();
 }
 

@@ -2,7 +2,8 @@ NAME            = Server_test
 
 SOURCES         = Server_test_main.cpp \
                   ../../../srcs/network/Server.cpp \
-				  ../../../srcs/utils/Converter.cpp
+				  ../../../srcs/utils/Converter.cpp \
+				  ../../../srcs/configuration/BlockList.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockLogger.cpp \
 				  ../../mock_srcs/MockSocket.cpp \

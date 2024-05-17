@@ -19,6 +19,7 @@ SOURCES         = CgiResponseGenerator_test_main.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
 				  ../../../srcs/configuration/ConfigurationBlock.cpp \
 				  ../../../srcs/configuration/LocationBlock.cpp \
+				  ../../../srcs/configuration/BlockList.cpp \
 				  ../../../srcs/configuration/Defaults.cpp \
 				  ../../../srcs/utils/Converter.cpp
 
@@ -34,9 +35,9 @@ OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 CC              = c++
 CPPFLAGS        = -Wall -Wextra -Werror
 # Optional flags - uncomment to enable
-#CPPFLAGS += -std=c++98
+CPPFLAGS += -std=c++98
 CPPFLAGS += -g
-#CPPFLAGS += -fsanitize=address
+CPPFLAGS += -fsanitize=address
 #CPPFLAGS += -O3
 
 all: $(NAME)

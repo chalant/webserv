@@ -19,6 +19,7 @@ SOURCES         = RequestParser_test_main.cpp \
 				  ../../../srcs/configuration/ConfigurationBlock.cpp \
 				  ../../../srcs/configuration/LocationBlock.cpp \
 				  ../../../srcs/configuration/Defaults.cpp \
+				  ../../../srcs/configuration/BlockList.cpp \
 				  ../../../srcs/utils/Converter.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockLogger.cpp \
@@ -33,9 +34,9 @@ OBJECTS         = $(SOURCES:.cpp=.o) $(MOCK_SOURCES:.cpp=.o)
 CC              = c++
 CPPFLAGS        = -Wall -Wextra -Werror
 # Optional flags - uncomment to enable
-#CPPFLAGS += -std=c++98
-#CPPFLAGS += -g
-#CPPFLAGS += -fsanitize=address
+CPPFLAGS += -std=c++98
+CPPFLAGS += -g
+CPPFLAGS += -fsanitize=address
 #CPPFLAGS += -O3
 
 all: $(NAME)

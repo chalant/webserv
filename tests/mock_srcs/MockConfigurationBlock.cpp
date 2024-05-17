@@ -30,19 +30,9 @@ void MockConfigurationBlock::setBlock(const std::string &parameter, IConfigurati
 {
     this->_logger.log(DEBUG, "Setting Block '" + parameter + "' to '" + block->getName() + "'");
 
-    // Check if the parameter already exists
-    if (_blocks.find(parameter) != _blocks.end())
-    {
-        // If it exists, add the block to the existing vector
-        _blocks[parameter].push_back(block);
-    }
-    else
-    {
-        // If it doesn't exist, create a new vector with one element
-        std::vector<IConfiguration *> vec;
-        vec.push_back(block);
-        _blocks[parameter] = vec;
-    }
+    // Add the block to the BlockList
+    this->_blocks[parameter].push_back(block);
+
 }
 
 void MockConfigurationBlock::setString(const std::string &parameter, const std::string &value)
@@ -84,7 +74,7 @@ void MockConfigurationBlock::setInt(const std::string &parameter, int value)
 }
 
 // Getters
-const std::vector<IConfiguration *> &MockConfigurationBlock::getBlocks(const std::string &parameter) const
+const BlockList &MockConfigurationBlock::getBlocks(const std::string &parameter) const
 {
     this->_logger.log(DEBUG, "Getting Block '" + parameter + "'");
     try
