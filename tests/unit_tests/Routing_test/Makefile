@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME		= Routing_test
+NAME		= webserv
 #-------------------SOURCES PATH----------------------
 SOURCES     = srcs/
 INCLUDES	= includes/
@@ -24,6 +24,7 @@ SRCS        =	main.cpp \
 				../../../srcs/buffer/BufferManager.cpp \
 				../../../srcs/buffer/FileBuffer.cpp \
 				../../../srcs/buffer/SocketBuffer.cpp \
+				../../../srcs/utils/Converter.cpp \
 				../../../srcs/parsing/Grammar.cpp \
 				../../../srcs/parsing/GrammarRule.cpp \
 				../../../srcs/parsing/GrammarSymbol.cpp \
@@ -38,9 +39,8 @@ SRCS        =	main.cpp \
 				../../../srcs/parsing/ParsingUtils.cpp \
 				../../../srcs/configuration/ConfigurationBlock.cpp \
 				../../../srcs/configuration/LocationBlock.cpp \
-				../../../srcs/configuration/ConfigurationLoader.cpp \
 				../../../srcs/configuration/Defaults.cpp \
-				../../../srcs/utils/Converter.cpp \
+				../../../srcs/configuration/ConfigurationLoader.cpp \
 				../../../srcs/constants/HttpHeaderHelper.cpp \
 				../../../srcs/constants/HttpHelper.cpp \
 				../../../srcs/constants/HttpMethodHelper.cpp \
@@ -75,7 +75,7 @@ SRCS        =	main.cpp \
 				../../../srcs/response/Router.cpp \
 				../../../srcs/response/StaticFileResponseGenerator.cpp \
 				../../../srcs/response/UploadResponseGenerator.cpp \
-                 ../../mock_srcs/MockLogger.cpp
+				../../mock_srcs/MockLogger.cpp
 				
 #-------------------OBJECTS----------------------
 OBJS        =   $(SRCS:.cpp=.o)

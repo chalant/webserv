@@ -5,13 +5,14 @@
 #include "../../../includes/response/Router.hpp"
 #include "../../../includes/configuration/ConfigurationLoader.hpp"
 #include "../../mock_includes/MockLogger.hpp"
+
 #include <iostream>
 
 int main()
 {
     MockLogger				logger;
 	ConfigurationLoader		loader(logger);
-	const IConfiguration&	block = loader.loadConfiguration("test_configuration_file.conf");
+	const IConfiguration&	block = loader.loadConfiguration("test_configuration_router.conf");
 	//block.print(0);
    
     Router router(block, logger);

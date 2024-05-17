@@ -66,19 +66,58 @@ void Router::_createRoutes(const IConfiguration *serverBlock)
 	}
 	i = this->getRouteCount() - serverRoutesNumber;
 	portIt = ports.begin();
-	while (i < serverRoutesNumber)
+	size_t portCount = std::distance(portIt, ports.end());
+	size_t j;
+	size_t loopStop = this->getRouteCount();
+	while (i < loopStop)
+	{
+		j = 1;
+		while (j < portCount)
+		{
+			HttpHelper HttpHelper;
+			Route newRoute(HttpHelper);
+			_routes.push_back(newRoute);
+			_routes[i + j].setUri(_routes[i].getUri());
+			std::vector<std::string>::iterator nextPortIt = portIt;
+			std::advance(nextPortIt, j);
+			_routes[i + j].appendUri(*nextPortIt);
+			serverRoutesNumber++;
+			j++;
+		}
 		_routes[i++].appendUri(*portIt);
+	}
 	i = 0; // replace this later
 	// std::vector<std::string> methods = (*locationIt)->getStringVector("limitExcept");
+	//locationIt = locations.begin();
+	//(*locationIt)->print(0);
 	for (locationIt = locations.begin(); locationIt != locations.end(); locationIt++)
 	{
 		prefix = (*locationIt)->getString("prefix");
 		//_routes[i].setMethod(methods[i]);
 		//_routes[i].setMethod((*locationIt)->getString("method"));
 		_routes[i++].appendUri(prefix);
-		//std::cout << "uri: " << _routes[i].getUri() << std::endl;
 	}
 	std::sort(_routes.begin(), _routes.end());
+}
+
+std::string rfindSubstr(const std::string& str, char occurrence)
+{
+	size_t pos = str.rfind(occurrence);
+	if (pos != std::string::npos)
+	{
+		return str.substr(pos);
+	}
+	else
+	{
+		return "";
+	}
+}
+
+bool	isCgiRequest(IRequest *req)
+{
+	if (rfindSubstr(req->getUri(), '.') == ".py" || rfindSubstr(req->getUri(), '.') == ".php" || rfindSubstr(req->getUri(), '.') == ".pl")
+		return (true);
+	return (false);
 }
 
 void Router::execRoute(IRequest *req, IResponse *res)
@@ -92,6 +131,11 @@ void Router::execRoute(IRequest *req, IResponse *res)
     //{ 
     //         // handle cgi request
     //}
+	if (isCgiRequest(req))
+	{
+		// need implementation ;
+		;
+	}
     while (i != _routes.end())
     {
         // match request path with a route
