@@ -18,6 +18,7 @@
 #include "IPollfdManager.hpp"                  // Include the header file for IPollfdManager
 #include "PollfdQueue.hpp"                     // Include the header file for PollfdQueue
 #include "../configuration/IConfiguration.hpp" // Include the header file for IConfiguration
+#include "../configuration/BlockList.hpp"
 
 // Forward declaration of Server class
 class IServer;

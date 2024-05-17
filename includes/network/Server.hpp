@@ -13,6 +13,7 @@
 #include "IServer.hpp"
 #include "ISocket.hpp"
 #include "../configuration/IConfiguration.hpp"
+#include "../configuration/BlockList.hpp"
 #include "../logger/ILogger.hpp"
 #include "../pollfd/IPollfdManager.hpp"
 #include "../connection/IConnectionManager.hpp"

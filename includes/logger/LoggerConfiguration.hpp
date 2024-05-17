@@ -21,6 +21,7 @@
 #include "ILoggerConfiguration.hpp"
 #include <fcntl.h>
 #include "../configuration/IConfiguration.hpp"
+#include "../configuration/BlockList.hpp"
 #include "../pollfd/IPollfdManager.hpp"
 #include "../constants/LogLevelHelper.hpp"
 

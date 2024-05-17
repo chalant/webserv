@@ -13,7 +13,6 @@ LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager, const IC
 {
     // Set the error log file as the first word in the error_log directive
     this->_errorLogFile =  configuration.getString("error_log", 0);
-
     // Open the error log file if it is not set to "off"
     this->_errorLogFileDescriptor = this->_errorLogFile == "off" ? -2 : open(this->_errorLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
