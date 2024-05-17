@@ -15,7 +15,7 @@ class BlockList: public std::vector<IConfiguration *>
 		ILogger				*m_logger;
 	public:
 		BlockList();
-		~BlockList();
+		virtual ~BlockList();
 		void	setParent(ConfigurationBlock* block);
 		void	setLogger(ILogger *logger);
 		virtual	IConfiguration	*operator[](size_t index) const;

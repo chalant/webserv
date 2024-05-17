@@ -10,5 +10,8 @@ webserv
 Buffer_test
 Session_Cookies_test
 CgiResponseGenerator_test
+ClientHandler_test_main
+RequestParser_test_main
+Server_test_main
 logs/*
 !logs/.gitkeep
