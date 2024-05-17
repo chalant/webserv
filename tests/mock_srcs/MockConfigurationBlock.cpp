@@ -1,4 +1,5 @@
 #include "../mock_includes/MockConfigurationBlock.hpp"
+#include <stdexcept>
 
 /*
  * MockConfigurationBlock class is a mock implementation of the IConfiguration interface

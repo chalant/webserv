@@ -14,23 +14,23 @@ MockFactory::~MockFactory() {}
 
 IConnection *MockFactory::createConnection(std::pair<int, std::pair<std::string, std::string> >)
 {
-    return nullptr;
+    return NULL;
 }
 
 IRequest *MockFactory::createRequest()
 {
-    return nullptr;
+    return NULL;
 }
 
 IResponse *MockFactory::createResponse()
 {
-    return nullptr;
+    return NULL;
 }
 
 ISession *MockFactory::createSession(SessionId_t id)
 {
     static_cast<void>(id);
-    return nullptr;
+    return NULL;
 }
 
 // Path: tests/mock_srcs/MockFactory.cpp
