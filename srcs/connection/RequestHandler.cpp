@@ -117,11 +117,8 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
     }
     else // static content
     {
-		
         // Push the response to the buffer
-		std::cout << "Sending Stuff" << std::endl;
         this->_sendResponse(socketDescriptor);
-
         // return -1
         return Triplet_t(-1, std::pair<int, int>(-1, -1));
     }
@@ -179,13 +176,10 @@ int RequestHandler::_sendResponse(int socketDescriptor)
 {
     // Get a reference to the Response
     IResponse &response = this->_connectionManager.getResponse(socketDescriptor);
-
     // Get a reference to the Request
     IRequest &request = this->_connectionManager.getConnection(socketDescriptor).getRequest();
-
     // Serialise the response
     std::vector<char> serialisedResponse = response.serialise();
-
     // Push the response to the buffer
     this->_bufferManager.pushSocketBuffer(socketDescriptor, serialisedResponse);
 

@@ -22,7 +22,7 @@ Router::Router(const IConfiguration &configuration, ILogger &logger) : _configur
 
 	// For every server block in the configuration, insert a routeMapEntry into the _routes map
 	//const std::vector<IConfiguration *> servers = _configuration.getBlocks("server"); // Declare and initialize the 'servers' vector
-	const std::vector<IConfiguration *> servers = _configuration.getBlocks("http")[0]->getBlocks("server");
+	const std::vector<IConfiguration *>& servers = _configuration.getBlocks("http")[0]->getBlocks("server");
 	//std::vector<IConfiguration *>::iterator serverIt;
 	for (std::vector<IConfiguration *>::const_iterator serverIt = servers.begin(); serverIt != servers.end(); serverIt++)
 	{

@@ -101,7 +101,7 @@ ConfigurationLoader::~ConfigurationLoader() {
 	delete m_config;
 }
 
-const IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& path) {
+IConfiguration&	ConfigurationLoader::loadConfiguration(const std::string& path) {
 
 	std::ifstream	conf_stream(path.c_str());
 	if (!conf_stream.is_open())

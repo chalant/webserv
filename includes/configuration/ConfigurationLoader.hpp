@@ -15,7 +15,7 @@ class ConfigurationLoader
 	public:
 		ConfigurationLoader(ILogger& logger);
 		~ConfigurationLoader();
-		const IConfiguration&	loadConfiguration(const std::string& path);
+		IConfiguration&	loadConfiguration(const std::string& path);
 };
 
 #endif

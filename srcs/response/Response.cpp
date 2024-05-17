@@ -205,7 +205,7 @@ std::map<std::string, std::string> Response::getHeadersStringMap() const
     }
     return headers;
 }
-
+#include <iostream>
 // Serialise the response into a vector of chars
 std::vector<char> Response::serialise()
 {

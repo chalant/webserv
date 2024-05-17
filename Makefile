@@ -16,7 +16,7 @@ SOURCES     = srcs/
 INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
-FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
+FLAGS    	= 	-Wall -Werror -Wextra -g 
 # FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
 				
@@ -41,6 +41,7 @@ SRCS        =	main.cpp \
 				srcs/configuration/LocationBlock.cpp \
 				srcs/configuration/Defaults.cpp \
 				srcs/configuration/ConfigurationLoader.cpp \
+				srcs/configuration/BlockList.cpp \
 				srcs/constants/HttpHeaderHelper.cpp \
 				srcs/constants/HttpHelper.cpp \
 				srcs/constants/HttpMethodHelper.cpp \

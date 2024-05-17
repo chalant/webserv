@@ -15,12 +15,14 @@
 #include <string>
 #include <vector>
 
+class BlockList;
+
 class IConfiguration
 {
 public:
     virtual ~IConfiguration() {}
 
-    virtual const std::vector<IConfiguration *>&	getBlocks(const std::string &key) const = 0;
+    const virtual BlockList&	getBlocks(const std::string &key) const = 0;
     virtual const std::vector<std::string>&	getStringVector(const std::string &) const = 0;
     virtual const std::string&	getString(const std::string &parameter, size_t index = 0) const = 0;
     virtual int		getInt(const std::string &parameter, size_t index = 0) const = 0;
