@@ -35,8 +35,6 @@ Logger::Logger(IBufferManager &bufferManager)
 // Destructor: Handles cleanup tasks like flushing buffer and closing log file descriptor
 Logger::~Logger() 
 {
-    // Log the destruction of the Logger
-    this->log(VERBOSE, "Logger destroyed.");
 }
 
 // Method to get the current timestamp

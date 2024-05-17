@@ -154,4 +154,6 @@ int main()
 
   // Verify that the session ID was re-used
   assert(connectionManager.getNumberOfSessions() == 2);
+
+  return (0);
 }

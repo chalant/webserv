@@ -42,8 +42,8 @@ int MockLoggerConfiguration::getAccessLogFileDescriptor() const
 
 IBufferManager &MockLoggerConfiguration::getBufferManager() const
 {
-    IBufferManager *bufferManager = nullptr;
-    return *bufferManager; // Returning a nullptr is not allowed
+    IBufferManager *bufferManager = NULL;
+    return *bufferManager; // Returning a NULL is not allowed
 }
 
 std::string MockLoggerConfiguration::getErrorLogFile() const { return ""; }

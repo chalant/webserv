@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME		= webserv
+NAME		= Routing_test
 #-------------------SOURCES PATH----------------------
 SOURCES     = srcs/
 INCLUDES	= includes/
@@ -39,6 +39,8 @@ SRCS        =	main.cpp \
 				../../../srcs/configuration/ConfigurationBlock.cpp \
 				../../../srcs/configuration/LocationBlock.cpp \
 				../../../srcs/configuration/ConfigurationLoader.cpp \
+				../../../srcs/configuration/Defaults.cpp \
+				../../../srcs/utils/Converter.cpp \
 				../../../srcs/constants/HttpHeaderHelper.cpp \
 				../../../srcs/constants/HttpHelper.cpp \
 				../../../srcs/constants/HttpMethodHelper.cpp \

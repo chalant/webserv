@@ -48,6 +48,6 @@ int MockPollfdManager::getDescriptor(int position)
 
 bool MockPollfdManager::hasReachedCapacity() const { return false; }
 
-pollfd *MockPollfdManager::getPollfdArray() { return nullptr; }
+pollfd *MockPollfdManager::getPollfdArray() { return NULL; }
 
 // Path: tests/mock_srcs/MockPollfdManager.cpp

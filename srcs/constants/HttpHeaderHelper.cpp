@@ -122,6 +122,7 @@ std::vector<std::string> HttpHeaderHelper::_setHeaderList()
     headerList.push_back("x-forwarded-for");
     headerList.push_back("cookie");
     headerList.push_back("set-cookie");
+    headerList.push_back("upgrade-insecure-requests");
 
     return headerList;
 }
@@ -176,7 +177,7 @@ std::map<std::string, HttpHeader> HttpHeaderHelper::_setStringHttpHeaderMap()
     stringHttpHeaderMap["content-location"] = CONTENT_LOCATION;
     stringHttpHeaderMap["content-md5"] = CONTENT_MD5;
     stringHttpHeaderMap["content-range"] = CONTENT_RANGE;
-    stringHttpHeaderMap["Content-Type"] = CONTENT_TYPE;
+    stringHttpHeaderMap["content-type"] = CONTENT_TYPE;
     stringHttpHeaderMap["expires"] = EXPIRES;
     stringHttpHeaderMap["last-modified"] = LAST_MODIFIED;
     stringHttpHeaderMap["access-control-allow-origin"] = ACCESS_CONTROL_ALLOW_ORIGIN;

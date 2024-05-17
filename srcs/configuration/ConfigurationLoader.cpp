@@ -95,9 +95,6 @@ ConfigurationLoader::ConfigurationLoader(ILogger& logger): m_logger(logger) {
 
 //todo: delete all the blocks.
 ConfigurationLoader::~ConfigurationLoader() {
-	// Log the destruction of the configuration loader.
-	this->m_logger.log(VERBOSE, "ConfigurationLoader destroyed.");
-
 	delete m_config;
 }
 

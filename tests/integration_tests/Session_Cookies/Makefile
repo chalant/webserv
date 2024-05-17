@@ -27,6 +27,7 @@ SOURCES         = Session_Cookies_test_main.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
 				  ../../../srcs/configuration/ConfigurationBlock.cpp \
 				  ../../../srcs/configuration/LocationBlock.cpp \
+				  ../../../srcs/configuration/Defaults.cpp \
 				  ../../../srcs/utils/Converter.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockLogger.cpp \
