@@ -123,6 +123,11 @@ std::vector<std::string> HttpHeaderHelper::_setHeaderList()
     headerList.push_back("cookie");
     headerList.push_back("set-cookie");
     headerList.push_back("upgrade-insecure-requests");
+    headerList.push_back("sec-fetch-dest");
+    headerList.push_back("sec-fetch-mode");
+    headerList.push_back("sec-fetch-site");
+    headerList.push_back("sec-fetch-user");
+    headerList.push_back("priority");
 
     return headerList;
 }
@@ -202,6 +207,11 @@ std::map<std::string, HttpHeader> HttpHeaderHelper::_setStringHttpHeaderMap()
     stringHttpHeaderMap["cookie"] = COOKIE;
     stringHttpHeaderMap["set-cookie"] = SET_COOKIE;
 	stringHttpHeaderMap["upgrade-insecure-requests"] = UPGRADE_INSECURE_REQUESTS;
+    stringHttpHeaderMap["sec-fetch-dest"] = SEC_FETCH_DEST;
+    stringHttpHeaderMap["sec-fetch-mode"] = SEC_FETCH_MODE;
+    stringHttpHeaderMap["sec-fetch-site"] = SEC_FETCH_SITE;
+    stringHttpHeaderMap["sec-fetch-user"] = SEC_FETCH_USER;
+    stringHttpHeaderMap["priority"] = PRIORITY;
 
     return stringHttpHeaderMap;
 }
@@ -281,6 +291,11 @@ std::map<HttpHeader, std::string> HttpHeaderHelper::_setHttpHeaderStringMap()
     httpHeaderStringMap[COOKIE] = "cookie";
     httpHeaderStringMap[SET_COOKIE] = "set-cookie";
 	httpHeaderStringMap[UPGRADE_INSECURE_REQUESTS] = "upgrade-insecure-requests";
+    httpHeaderStringMap[SEC_FETCH_DEST] = "sec-fetch-dest";
+    httpHeaderStringMap[SEC_FETCH_MODE] = "sec-fetch-mode";
+    httpHeaderStringMap[SEC_FETCH_SITE] = "sec-fetch-site";
+    httpHeaderStringMap[SEC_FETCH_USER] = "sec-fetch-user";
+    httpHeaderStringMap[PRIORITY] = "priority";
 
     return httpHeaderStringMap;
 }

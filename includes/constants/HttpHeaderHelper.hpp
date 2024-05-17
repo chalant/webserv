@@ -106,6 +106,11 @@ enum HttpHeader
     X_XSS_PROTECTION,                    // Enables a cross-site scripting (XSS) filter in supported web browsers
     X_FORWARDED_FOR,                     // Contains the IP address of the client that initiated the request
 	UPGRADE_INSECURE_REQUESTS,			 // Expresses the client's preference for an encrypted and authenticated response, and that it can successfully handle the upgrade-insecure-requests CSP directive.
+    SEC_FETCH_DEST,                      // Indicates the destination of the fetch request
+    SEC_FETCH_MODE,                      // Indicates the mode of the fetch request
+    SEC_FETCH_SITE,                      // Indicates the site of the fetch request
+    SEC_FETCH_USER,                      // Indicates the user of the fetch request
+    PRIORITY,                            // Indicates the priority of the resource request 
 
     // Cookie Headers
     COOKIE,     // Request header for receiving cookies
