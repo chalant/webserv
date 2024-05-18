@@ -5,10 +5,12 @@
 
 ConfigurationBlock::ConfigurationBlock(ILogger &logger, const std::string name, Defaults &defaults) : _logger(logger), _name(name), m_defaults(defaults)
 {
+	this->push_back(this);
 }
 
 ConfigurationBlock::ConfigurationBlock(const ConfigurationBlock &parent, const std::string name, Defaults &defaults) : _logger(parent._logger), _name(name), m_defaults(defaults)
 {
+	this->push_back(this);
 }
 
 ConfigurationBlock::~ConfigurationBlock()
