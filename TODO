@@ -1,40 +1,5 @@
-Set up the Configuration | Configuration class (Yves is working on this)
+Implement the router (Lorenzo is working on this)
 
-Do the config parsing (also Yves)
+Implement Upload support
 
-Possibly re-evaluate polling system (which one, and timeout)
-
-Set up the client communication | ClientHandler class (DONE)
-
-Do the request parsing | RequestParser class (PRETTY MUCH DONE)
-
-Define the fields we want out of the parser | Request class (DONE)
-
-Do the Router initialisation | Router class (Lorenzo is working on this)
-
-Implement CGI (Maarten is working on this)
-
-Add another CGI
-
-Define the fields we need for the 'Response' | Response class (DONE)
-
-Do exception handling | IExceptionHandler class (DONE)
-
-Write Unit tests.
-    -RequestParser_test (needs extending)
-    -ClientHandler_test (needs extending + refactoring)
-    -etc.
-
-Implement Logging | ILogger class (DONE)
-
-Implement Cookie support
-
-Run siege tests, optimise code
-
-Maybe not necessary:
-    -Periodically check the state of cgi processes
-    -Periodically Check and bounce idle clients
-
-Continue adding clear comments and explanations throughout the codebase
-
-Keep this TODO up-to-date with new ideas and developments
+Test and fix bugs
