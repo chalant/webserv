@@ -1,4 +1,4 @@
-#if !defined(SYMBOLMATCHING_HPP)
+#ifndef SYMBOLMATCHING_HPP
 #define SYMBOLMATCHING_HPP
 
 #include "Tokenizer.hpp"

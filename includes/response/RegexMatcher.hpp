@@ -1,4 +1,4 @@
-#if !defined(REGEXMATCHER_HPP)
+#ifndef REGEXMATCHER_HPP
 #define REGEXMATCHER_HPP
 
 #include "IURIMatcher.hpp"

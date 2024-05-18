@@ -1,4 +1,4 @@
-#if !defined(DEFAULTMATCHER_HPP)
+#ifndef DEFAULTMATCHER_HPP
 #define DEFAULTMATCHER_HPP
 
 #include "IURIMatcher.hpp"

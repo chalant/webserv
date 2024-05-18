@@ -72,7 +72,7 @@ int main(void)
 	rule = arithmetic.addRule(num);
 	rule->addSymbol(&numbers);
 
-	std::vector<std::vector<EarleyItem>> sets = std::vector<std::vector<EarleyItem>>();
+	std::vector<std::vector<EarleyItem> > sets = std::vector<std::vector<EarleyItem> >();
 
 	std::vector<std::string> separators;	   // to be c++98 compliant, initialize the vector with the values
 	std::vector<std::string> reserved_symbols; // to be c++98 compliant, initialize the vector with the values

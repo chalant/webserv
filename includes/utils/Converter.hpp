@@ -1,4 +1,4 @@
-#if !defined(CONVERTER_HPP)
+#ifndef CONVERTER_HPP
 #define CONVERTER_HPP
 
 #include <string>

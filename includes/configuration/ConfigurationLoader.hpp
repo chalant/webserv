@@ -1,4 +1,4 @@
-#if !defined(CONFIGURATIONLOADER_HPP)
+#ifndef CONFIGURATIONLOADER_HPP
 #define CONFIGURATIONLOADER_HPP
 
 #include <string>

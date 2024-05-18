@@ -13,7 +13,7 @@
 class MockSocket : public ISocket
 {
 private:
-    mutable std::map<int, std::vector<char>> _socketData; // Map to store data for each socket
+    mutable std::map<int, std::vector<char> > _socketData; // Map to store data for each socket
 
 public:
     // Constructor
@@ -41,7 +41,7 @@ public:
     virtual int setNonBlocking(int fd) const;
 
     // Accepts an incoming connection
-    virtual std::pair<int, std::pair<std::string, std::string>> accept(int fd) const;
+    virtual std::pair<int, std::pair<std::string, std::string> > accept(int fd) const;
 
     // Sends data over the socket
     virtual int send(int recipientSocketFd, const std::vector<char> &data) const;

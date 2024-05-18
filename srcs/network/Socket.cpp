@@ -85,7 +85,7 @@ int Socket::setNonBlocking(int socketDescriptor) const
 }
 
 // Accept an incoming connection
-std::pair<int, std::pair<std::string, std::string>> Socket::accept(int serverSocketFd) const
+std::pair<int, std::pair<std::string, std::string> > Socket::accept(int serverSocketFd) const
 {
     // serverSocketFd: file descriptor of the listening socket
     // Returns: file descriptor for the new client socket (int) (-1 on error)

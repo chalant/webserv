@@ -5,7 +5,7 @@
 #include "../request/IRequest.hpp"
 #include "../configuration/IConfiguration.hpp"
 
-typedef std::pair<int, std::pair<int, int>> Triplet_t;
+typedef std::pair<int, std::pair<int, int> > Triplet_t;
 
 class IResponseGenerator
 {

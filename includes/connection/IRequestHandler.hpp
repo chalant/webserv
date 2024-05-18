@@ -3,7 +3,7 @@
 
 #include "../constants/HttpStatusCodeHelper.hpp"
 
-typedef std::pair<int, std::pair<int, int>> Triplet_t;
+typedef std::pair<int, std::pair<int, int> > Triplet_t;
 
 class IRequestHandler
 {

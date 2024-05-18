@@ -50,9 +50,9 @@ int main()
 
   // Mock Set the Configuration
   //   mockConfigurationBlock.setString("DefaultPort", "80");
-  //   mockConfigurationBlock.setInt("ClientHeaderBufferSize", 4096);
+  //   mockConfigurationBlock.setInt("client_header_buffer_size", 4096);
   //   mockConfigurationBlock.setSize_t("ClientMaxBodySize", 10000);
-  //   mockConfigurationBlock.setSize_t("ClientMaxUriSize", 1000);
+  //   mockConfigurationBlock.setSize_t("client_max_uri_size", 1000);
   //   mockConfigurationBlock.setStringVector("Methods", {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"});
 
   const IConfiguration &mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");

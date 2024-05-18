@@ -1,4 +1,4 @@
-#if !defined(URIMATCHER_HPP)
+#ifndef URIMATCHER_HPP
 #define URIMATCHER_HPP
 
 #include <string>

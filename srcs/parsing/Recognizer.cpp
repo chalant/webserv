@@ -45,7 +45,7 @@ Recognizer::~Recognizer()
 {
 }
 
-void Recognizer::scan(std::vector<std::vector<EarleyItem>> &sets, Token const &token, EarleyItem const &item)
+void Recognizer::scan(std::vector<std::vector<EarleyItem> > &sets, Token const &token, EarleyItem const &item)
 {
 	if (m_symbol->match(token))
 	{
@@ -54,7 +54,7 @@ void Recognizer::scan(std::vector<std::vector<EarleyItem>> &sets, Token const &t
 	}
 }
 
-void Recognizer::complete(Grammar const &grammar, std::vector<std::vector<EarleyItem>> &sets, std::vector<EarleyItem> &current_set, int item_index)
+void Recognizer::complete(Grammar const &grammar, std::vector<std::vector<EarleyItem> > &sets, std::vector<EarleyItem> &current_set, int item_index)
 {
 	EarleyItem *old_item;
 	EarleyItem *current_item;
@@ -93,7 +93,7 @@ void Recognizer::predict(const Grammar &grammar, std::vector<EarleyItem> &curren
 	}
 }
 
-void Recognizer::recognize(std::vector<Token> const &tokens, Grammar const &grammar, std::vector<std::vector<EarleyItem>> &sets)
+void Recognizer::recognize(std::vector<Token> const &tokens, Grammar const &grammar, std::vector<std::vector<EarleyItem> > &sets)
 {
 	std::vector<EarleyItem> *current_set;
 	EarleyItem *current_item;
@@ -141,7 +141,7 @@ void Recognizer::recognize(std::vector<Token> const &tokens, Grammar const &gram
 		throw ConfigSyntaxError(CRITICAL, "Syntax error at: \"" + tokens[sets.size() - 2].value + "\"", 2);
 }
 
-void Recognizer::print(Grammar const &grammar, std::vector<std::vector<EarleyItem>> &sets)
+void Recognizer::print(Grammar const &grammar, std::vector<std::vector<EarleyItem> > &sets)
 {
 	EarleyItem *item;
 	const GrammarRule *rule;

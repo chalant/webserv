@@ -215,13 +215,13 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
     std::string headerValue;
 
     // Set start value for client header buffer size
-    int clientHeaderBufferSize = this->_configuration.getInt("ClientHeaderBufferSize");
+    int client_header_buffer_size = this->_configuration.getInt("client_header_buffer_size");
 
     // Find colon to separate header name and value
     while (requestIterator != rawRequest.end() && *requestIterator != ':')
     {
         headerName += std::tolower(*requestIterator); // Convert to lowercase
-        clientHeaderBufferSize--;
+        client_header_buffer_size--;
         ++requestIterator;
     }
 
@@ -244,7 +244,7 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
     while (requestIterator != rawRequest.end() && !this->_isCRLF(requestIterator))
     {
         headerValue += std::tolower(*requestIterator); // Convert to lowercase
-        clientHeaderBufferSize--;
+        client_header_buffer_size--;
         ++requestIterator;
     }
 
@@ -254,7 +254,7 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
         throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
     }
     // Check if header size exceeds client header buffer size
-    if (clientHeaderBufferSize < 0)
+    if (client_header_buffer_size < 0)
     {
         throw HttpStatusCodeException(REQUEST_HEADER_FIELDS_TOO_LARGE, "Header fields too large");
     }
@@ -323,7 +323,7 @@ void RequestParser::_parseBody(std::vector<char>::const_iterator &requestIterato
     }
 
     // Check if body size exceeds client body buffer size
-    if (bodySize > this->_configuration.getSize_t("ClientBodyBufferSize"))
+    if (bodySize > this->_configuration.getSize_t("client_body_buffer_size"))
     {
         // throw '413' status error
         throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
@@ -355,7 +355,7 @@ std::vector<char> RequestParser::_unchunkBody(std::vector<char>::const_iterator 
     std::vector<char> body;
 
     // Set Max Size
-    size_t remainingRequestSize = this->_configuration.getSize_t("ClientBodyBufferSize");
+    size_t remainingRequestSize = this->_configuration.getSize_t("client_body_buffer_size");
 
     // Parse chunks
     while (requestIterator != rawRequest.end())

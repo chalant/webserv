@@ -19,7 +19,7 @@ Factory::~Factory()
     this->_logger.log(VERBOSE, "Factory destroyed.");
 }
 
-IConnection *Factory::createConnection(std::pair<int, std::pair<std::string, std::string>> clientInfo)
+IConnection *Factory::createConnection(std::pair<int, std::pair<std::string, std::string> > clientInfo)
 {
     return new Connection(clientInfo, this->_logger, this->createRequest(), this->createResponse());
 }

@@ -1,4 +1,4 @@
-#if !defined(LOCATIONBLOCK_HPP)
+#ifndef LOCATIONBLOCK_HPP
 #define LOCATIONBLOCK_HPP
 #include "../../includes/logger/ILogger.hpp"
 #include "../../includes/response/IURIMatcher.hpp"

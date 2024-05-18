@@ -3,7 +3,7 @@
 
 /*The Parser is responsible for building a the ParseTree*/
 
-void print_chart(std::vector<std::vector<EarleyEdge>> &chart, Grammar const &m_grammar)
+void print_chart(std::vector<std::vector<EarleyEdge> > &chart, Grammar const &m_grammar)
 {
 	GrammarRule const *rule;
 	EarleyEdge *edge;
@@ -53,7 +53,7 @@ static void print_parse_tree(ParseTree &parse_tree, int depth, const Grammar &gr
 
 // inverts the earley sets and turns them into a graph, that will be used to guide the parsing tree building
 // processs.
-static void buildChart(std::vector<std::vector<EarleyEdge>> &chart, std::vector<std::vector<EarleyItem>> &sets)
+static void buildChart(std::vector<std::vector<EarleyEdge> > &chart, std::vector<std::vector<EarleyItem> > &sets)
 {
 	EarleyItem *item;
 
@@ -73,7 +73,7 @@ static void buildChart(std::vector<std::vector<EarleyEdge>> &chart, std::vector<
 }
 
 // looks for the longest edge and sets it to be the starting point of our tree.
-static void setRootNode(ParseTree &tree, const Grammar &grammar, std::vector<std::vector<EarleyEdge>> &chart)
+static void setRootNode(ParseTree &tree, const Grammar &grammar, std::vector<std::vector<EarleyEdge> > &chart)
 {
 	EarleyEdge *longest = &chart[0][0];
 
@@ -90,8 +90,8 @@ static void setRootNode(ParseTree &tree, const Grammar &grammar, std::vector<std
 
 Parser::Parser(Grammar const &grammar) : m_grammar(grammar)
 {
-	m_earley_sets = std::vector<std::vector<EarleyItem>>();
-	m_chart = std::vector<std::vector<EarleyEdge>>();
+	m_earley_sets = std::vector<std::vector<EarleyItem> >();
+	m_chart = std::vector<std::vector<EarleyEdge> >();
 	m_recognizer = Recognizer();
 	m_parse_tree = new ParseTree();
 }

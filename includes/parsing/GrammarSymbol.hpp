@@ -1,4 +1,4 @@
-#if !defined(GRAMMARSYMBOL_HPP)
+#ifndef GRAMMARSYMBOL_HPP
 #define GRAMMARSYMBOL_HPP
 
 #include "Tokenizer.hpp"

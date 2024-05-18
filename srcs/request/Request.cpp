@@ -291,7 +291,7 @@ void Request::setMethod(const std::string &method)
 void Request::setUri(const std::string &uri)
 {
     // Check if the URI size exceeds the maximum allowed URI size
-    if (uri.size() > this->_configuration.getSize_t("ClientMaxUriSize"))
+    if (uri.size() > this->_configuration.getSize_t("client_max_uri_size"))
         throw HttpStatusCodeException(URI_TOO_LONG); // Throw '414' status error
 
     // Check if the URI contains any whitespace characters

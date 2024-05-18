@@ -11,7 +11,7 @@ class IFactory
 public:
     virtual ~IFactory(){};
 
-    virtual IConnection *createConnection(std::pair<int, std::pair<std::string, std::string>>) = 0;
+    virtual IConnection *createConnection(std::pair<int, std::pair<std::string, std::string> >) = 0;
     virtual IRequest *createRequest() = 0;
     virtual IResponse *createResponse() = 0;
     virtual ISession *createSession(SessionId_t id) = 0;

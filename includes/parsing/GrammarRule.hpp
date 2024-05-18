@@ -1,4 +1,4 @@
-#if !defined(GRAMMARRULE_HPP)
+#ifndef GRAMMARRULE_HPP
 #define GRAMMARRULE_HPP
 
 #include "SemanticAction.hpp"

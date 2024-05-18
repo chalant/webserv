@@ -37,7 +37,7 @@ private:
     time_t _lastAccess;                   // Last access time
 
 public:
-    Connection(std::pair<int, std::pair<std::string, std::string>> clientInfo, ILogger &logger, IRequest *request, IResponse *response, time_t timeout = DEFAULT_TIMEOUT);
+    Connection(std::pair<int, std::pair<std::string, std::string> > clientInfo, ILogger &logger, IRequest *request, IResponse *response, time_t timeout = DEFAULT_TIMEOUT);
     virtual ~Connection();
 
     // Setters

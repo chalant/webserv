@@ -22,7 +22,7 @@ int main()
     MockLogger mockErrorLogger;
     ConfigurationLoader confLoader(mockErrorLogger);
 
-    // mockConfigurationBlock.setInt("ClientHeaderBufferSize", 6000);
+    // mockConfigurationBlock.setInt("client_header_buffer_size", 6000);
 
     const IConfiguration &mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
     // Request Parser instance

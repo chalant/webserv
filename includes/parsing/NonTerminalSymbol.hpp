@@ -1,4 +1,4 @@
-#if !defined(NONTERMINALSYMBOL_HPP)
+#ifndef NONTERMINALSYMBOL_HPP
 #define NONTERMINALSYMBOL_HPP
 
 #include "GrammarSymbol.hpp"

@@ -1,4 +1,4 @@
-#if !defined(CONFIGURATIONLIST)
+#ifndef CONFIGURATIONLIST
 #define CONFIGURATIONLIST
 
 #include <vector>

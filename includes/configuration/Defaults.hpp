@@ -1,4 +1,4 @@
-#if !defined(DEFAULTS_HPP)
+#ifndef DEFAULTS_HPP
 #define DEFAULTS_HPP
 
 #include <string>

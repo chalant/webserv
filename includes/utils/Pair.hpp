@@ -1,4 +1,4 @@
-#if !defined(PAIR)
+#ifndef PAIR
 #define PAIR
 
 template <typename T, typename U>

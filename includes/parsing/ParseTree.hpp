@@ -1,4 +1,4 @@
-#if !defined(PARSETREE_HPP)
+#ifndef PARSETREE_HPP
 #define PARSETREE_HPP
 
 #include <vector>

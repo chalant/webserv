@@ -54,8 +54,8 @@ class Parser
 private:
 	Grammar const &m_grammar;
 	// std::vector<ASemanticAction<T> >& 		m_semantic_actions;
-	std::vector<std::vector<EarleyItem>> m_earley_sets;
-	std::vector<std::vector<EarleyEdge>> m_chart;
+	std::vector<std::vector<EarleyItem> > m_earley_sets;
+	std::vector<std::vector<EarleyEdge> > m_chart;
 	ParseTree *m_parse_tree;
 	Recognizer m_recognizer;
 	void m_buildTree(ParseTree &parse_tree, const std::vector<Token> &tokens);

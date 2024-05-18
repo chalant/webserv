@@ -18,7 +18,7 @@ public:
     virtual ~MockConnectionManager();
 
     // Methods related to connections
-    virtual void addConnection(std::pair<int, std::pair<std::string, std::string>> clientInfo);
+    virtual void addConnection(std::pair<int, std::pair<std::string, std::string> > clientInfo);
     virtual void removeConnection(SocketDescriptor_t socketDescriptor);
     virtual IConnection &getConnection(SocketDescriptor_t socketDescriptor);
     virtual IRequest &getRequest(SocketDescriptor_t socketDescriptor);

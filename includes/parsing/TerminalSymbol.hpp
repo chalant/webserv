@@ -1,4 +1,4 @@
-#if !defined(TERMINALSYMBOL_HPP)
+#ifndef TERMINALSYMBOL_HPP
 #define TERMINALSYMBOL_HPP
 
 #include "GrammarSymbol.hpp"
