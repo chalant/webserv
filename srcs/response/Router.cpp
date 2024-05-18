@@ -21,9 +21,9 @@ Router::Router(const IConfiguration &configuration, ILogger &logger) : _configur
 	this->_logger.log(VERBOSE, "Initializing Router...");
 
 	// For every server block in the configuration, insert a routeMapEntry into the _routes map
-	//const std::vector<IConfiguration *> servers = _configuration.getBlocks("server"); // Declare and initialize the 'servers' vector
-	const std::vector<IConfiguration *>& servers = _configuration.getBlocks("http")[0]->getBlocks("server");
-	//std::vector<IConfiguration *>::iterator serverIt;
+	// const std::vector<IConfiguration *> servers = _configuration.getBlocks("server"); // Declare and initialize the 'servers' vector
+	const std::vector<IConfiguration *> &servers = _configuration.getBlocks("http")[0]->getBlocks("server");
+	// std::vector<IConfiguration *>::iterator serverIt;
 	for (std::vector<IConfiguration *>::const_iterator serverIt = servers.begin(); serverIt != servers.end(); serverIt++)
 	{
 		this->_createServerRoutes(*serverIt);
@@ -53,8 +53,8 @@ void Router::_createRoutes(const IConfiguration *serverBlock)
 	std::vector<std::string>::iterator hostnameIt;
 	std::vector<std::string>::iterator portIt;
 	std::string prefix;
-	size_t	i = this->getRouteCount();
-	size_t	serverRoutesNumber = 0;
+	size_t i = this->getRouteCount();
+	size_t serverRoutesNumber = 0;
 	for (hostnameIt = hostnames.begin(); hostnameIt != hostnames.end(); hostnameIt++)
 	{
 		HttpHelper HttpHelper;
@@ -88,7 +88,7 @@ void Router::_createRoutes(const IConfiguration *serverBlock)
 	}
 	i = 0; // replace this later
 	// std::vector<std::string> methods = (*locationIt)->getStringVector("limitExcept");
-	//locationIt = locations.begin();
+	// locationIt = locations.begin();
 	//(*locationIt)->print(0);
 	for (locationIt = locations.begin(); locationIt != locations.end(); locationIt++)
 	{
@@ -100,7 +100,7 @@ void Router::_createRoutes(const IConfiguration *serverBlock)
 	std::sort(_routes.begin(), _routes.end());
 }
 
-std::string rfindSubstr(const std::string& str, char occurrence)
+std::string rfindSubstr(const std::string &str, char occurrence)
 {
 	size_t pos = str.rfind(occurrence);
 	if (pos != std::string::npos)
@@ -113,7 +113,7 @@ std::string rfindSubstr(const std::string& str, char occurrence)
 	}
 }
 
-bool	isCgiRequest(IRequest *req)
+bool isCgiRequest(IRequest *req)
 {
 	if (rfindSubstr(req->getUri(), '.') == ".py" || rfindSubstr(req->getUri(), '.') == ".php" || rfindSubstr(req->getUri(), '.') == ".pl")
 		return (true);
@@ -122,30 +122,30 @@ bool	isCgiRequest(IRequest *req)
 
 void Router::execRoute(IRequest *req, IResponse *res)
 {
-	(void)res; // remove this line when implementing the handler
+	(void)res;					// remove this line when implementing the handler
 	(void)this->_configuration; // remove this line when implementing the handler
-    std::vector<Route>::iterator i = _routes.begin();
+	std::vector<Route>::iterator i = _routes.begin();
 
 	// todo: implement isACgiRequest or equivalent matcher logic
-	//if (isACgiRequest(req)) // ends in .py, .php, .pl etc.
-    //{ 
-    //         // handle cgi request
-    //}
+	// if (isACgiRequest(req)) // ends in .py, .php, .pl etc.
+	//{
+	//         // handle cgi request
+	//}
 	if (isCgiRequest(req))
 	{
 		// need implementation ;
 		;
 	}
-    while (i != _routes.end())
-    {
-        // match request path with a route
-        if (req->getUri().find(i->getUri()) && req->getMethod() == i->getMethod())
-        {  
-            // i->handler(req, res); // handle static file // not implemented yet
-            break;
-        }
-        i++;
-    }
+	while (i != _routes.end())
+	{
+		// match request path with a route
+		if (req->getUri().find(i->getUri()) && req->getMethod() == i->getMethod())
+		{
+			// i->handler(req, res); // handle static file // not implemented yet
+			break;
+		}
+		i++;
+	}
 }
 
 std::string Route::getUri() const
@@ -166,22 +166,22 @@ HttpMethod Route::getMethod() const
 void Route::setMethod(const std::string newMethod)
 {
 	/*if (this->_httpHelper.isMethod(newMethod) == false)
-        throw HttpStatusCodeException(METHOD_NOT_ALLOWED, // Throw '405' status error
-                                      "unknown method: \"" + newMethod + "\"");
-    else if (this->_httpHelper.isSupportedMethod(newMethod) == false)
-        throw HttpStatusCodeException(NOT_IMPLEMENTED, // Throw '501' status error
-                                      "unsupported method: \"" + newMethod + "\"");*/
+		throw HttpStatusCodeException(METHOD_NOT_ALLOWED, // Throw '405' status error
+									  "unknown method: \"" + newMethod + "\"");
+	else if (this->_httpHelper.isSupportedMethod(newMethod) == false)
+		throw HttpStatusCodeException(NOT_IMPLEMENTED, // Throw '501' status error
+									  "unsupported method: \"" + newMethod + "\"");*/
 
-    // Set the method of the request
-    this->_method = this->_httpHelper.stringHttpMethodMap(newMethod);
+	// Set the method of the request
+	this->_method = this->_httpHelper.stringHttpMethodMap(newMethod);
 }
 
-bool Route::operator< (const Route &other) const 
+bool Route::operator<(const Route &other) const
 {
-        return (this->_uri.length() < other._uri.length());
+	return (this->_uri.length() < other._uri.length());
 }
 
-void Route::appendUri(const std::string& newString)
+void Route::appendUri(const std::string &newString)
 {
 	this->_uri.append(newString);
 }
@@ -198,13 +198,15 @@ size_t Router::getRouteCount(void) const
 	return (this->_routes.size());
 }
 
-std::vector<Route> Router::getRoutes(void) const {
+std::vector<Route> Router::getRoutes(void) const
+{
 	return (this->_routes);
 }
 
-Route& Route::operator= (const Route &other) 
+Route &Route::operator=(const Route &other)
 {
-	if (this != &other) {
+	if (this != &other)
+	{
 		this->_uri = other._uri;
 		this->_method = other._method;
 	}

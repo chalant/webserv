@@ -36,7 +36,7 @@ public:
     virtual int setNonBlocking(int fd) const = 0;
 
     // Accepts an incoming connection
-    virtual std::pair<int, std::pair<std::string, std::string> > accept(int fd) const = 0;
+    virtual std::pair<int, std::pair<std::string, std::string>> accept(int fd) const = 0;
 
     // Sends data over the socket
     virtual int send(int recipientSocketFd, const std::vector<char> &data) const = 0;

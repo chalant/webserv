@@ -17,7 +17,7 @@
 class IResponse
 {
 public:
-    virtual ~IResponse() {};
+    virtual ~IResponse(){};
 
     // Getters for status line, headers, and body
     virtual std::string getStatusLine() const = 0;

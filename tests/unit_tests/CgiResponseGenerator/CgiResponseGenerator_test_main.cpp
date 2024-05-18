@@ -9,7 +9,6 @@
 
 #include "../../../includes/configuration/ConfigurationLoader.hpp"
 
-
 // include the header files for the mock classes
 #include "../../mock_includes/MockRoute.hpp"
 #include "../../mock_includes/MockRequest.hpp"
@@ -21,7 +20,7 @@ int main()
     MockRoute mockRoute;
     MockRequest mockRequest;
     MockLogger mockLogger;
-	ConfigurationLoader	conf_loader(mockLogger);
+    ConfigurationLoader conf_loader(mockLogger);
 
     // Set Mock Route Variables
     std::string root = ".";
@@ -29,7 +28,7 @@ int main()
     mockRoute.setRoot(root);
     mockRoute.setPrefix(prefix);
 
-	const IConfiguration& mockConfigurationBlock = conf_loader.loadConfiguration("test_configuration.conf");
+    const IConfiguration &mockConfigurationBlock = conf_loader.loadConfiguration("test_configuration.conf");
 
     // Set Mock Configuration Variables
     // mockConfigurationBlock.setString("PhpCgiPath", "/usr/bin/php-cgi");
@@ -57,13 +56,14 @@ int main()
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);
-    
+
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
 
     // Read the response
     ssize_t bytesRead;
-    while ((bytesRead = read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0); // wait for the response
+    while ((bytesRead = read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
+        ;                         // wait for the response
     readBuffer[bytesRead] = '\0'; // Null-terminate the string
 
     // Close the pipe
@@ -86,12 +86,13 @@ int main()
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);
-    
+
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
 
     // Read the response
-    while ((bytesRead = read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0); // wait for the response
+    while ((bytesRead = read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
+        ;                         // wait for the response
     readBuffer[bytesRead] = '\0'; // Null-terminate the string
 
     // Close the pipe
@@ -103,10 +104,10 @@ int main()
     // Assert that name param is present in readBuffer
     assert(strstr(readBuffer, "name = John") != NULL);
 
-    // Test case 3: Generate a cgi python response with POST method
-    //*************************************************************
-    // Set the test script name
-    #include <sstream>
+// Test case 3: Generate a cgi python response with POST method
+//*************************************************************
+// Set the test script name
+#include <sstream>
 
     scriptName = "post_python.py";
 
@@ -129,7 +130,8 @@ int main()
     write(requestWritePipe, mockRequest.getBody().data(), mockRequest.getBody().size());
 
     // Read the response
-    while ((bytesRead = read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0); // wait for the response
+    while ((bytesRead = read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
+        ;                         // wait for the response
     readBuffer[bytesRead] = '\0'; // Null-terminate the string
 
     // Close the pipe

@@ -68,7 +68,7 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
 
         // Assign session to connection
         this->_connectionManager.assignSessionToConnection(connection, request, response);
-    
+
         // Delete these 2 lines once router is implemented
         Triplet_t cgiInfo(-1, std::pair<int, int>(-1, -1));
         throw HttpStatusCodeException(NOT_IMPLEMENTED, "RequestHandler::handleRequest: Router not implemented yet.");
@@ -93,7 +93,7 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
 
             // Push the request body to the request pipe
             this->_bufferManager.pushSocketBuffer(requestWritePipe, request.getBody());
-            
+
             return cgiInfo; // cgi content
         }
         else // static content

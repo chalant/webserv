@@ -11,13 +11,14 @@ the configuration block.
 
 class LocationBlock : public ConfigurationBlock
 {
-	private:
-		bool	m_is_regex;
-	public:
-		LocationBlock(ILogger &logger, const std::string name, Defaults& defaults, bool is_regex);
-		LocationBlock(const ConfigurationBlock &parent, const std::string name, Defaults& defaults, bool is_regex);
-		~LocationBlock();
-		virtual bool	isRegex(void) const;
+private:
+	bool m_is_regex;
+
+public:
+	LocationBlock(ILogger &logger, const std::string name, Defaults &defaults, bool is_regex);
+	LocationBlock(const ConfigurationBlock &parent, const std::string name, Defaults &defaults, bool is_regex);
+	~LocationBlock();
+	virtual bool isRegex(void) const;
 };
 
 #endif // LOCATIONBLOCK_HPP

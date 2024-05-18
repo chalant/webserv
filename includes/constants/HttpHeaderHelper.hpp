@@ -7,19 +7,19 @@
  * The HttpHeaderHelper class provides functionality for working with HTTP headers.
  * It defines an enum HttpHeader to represent standard HTTP headers and provides methods
  * to retrieve string representations of headers and vice versa.
- * 
+ *
  * Example:
- * 
+ *
  * HttpHeaderHelper helper;
  * std::string header = "accept";
  * HttpHeader httpHeader = helper.stringHttpHeaderMap(header);
  * std::string header = helper.httpHeaderStringMap(httpHeader);
- * 
+ *
  * std::string header = "proxy-autohorization";
  * if (helper.isHeaderName(header)) {std::cout << "Valid header name." << std::endl;}
- * 
+ *
  * Note: Invalid input to Map searches will throw an UnknownHeaderError exception.
- * 
+ *
  * IMPORTANT: Header strings representations in this class are all lowercase.
  *
  */
@@ -105,12 +105,12 @@ enum HttpHeader
     X_FRAME_OPTIONS,                     // Specifies whether a browser should be allowed to render a page in a frame, iframe, embed, or object
     X_XSS_PROTECTION,                    // Enables a cross-site scripting (XSS) filter in supported web browsers
     X_FORWARDED_FOR,                     // Contains the IP address of the client that initiated the request
-	UPGRADE_INSECURE_REQUESTS,			 // Expresses the client's preference for an encrypted and authenticated response, and that it can successfully handle the upgrade-insecure-requests CSP directive.
+    UPGRADE_INSECURE_REQUESTS,           // Expresses the client's preference for an encrypted and authenticated response, and that it can successfully handle the upgrade-insecure-requests CSP directive.
     SEC_FETCH_DEST,                      // Indicates the destination of the fetch request
     SEC_FETCH_MODE,                      // Indicates the mode of the fetch request
     SEC_FETCH_SITE,                      // Indicates the site of the fetch request
     SEC_FETCH_USER,                      // Indicates the user of the fetch request
-    PRIORITY,                            // Indicates the priority of the resource request 
+    PRIORITY,                            // Indicates the priority of the resource request
 
     // Cookie Headers
     COOKIE,     // Request header for receiving cookies

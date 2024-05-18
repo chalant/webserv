@@ -32,7 +32,8 @@ def get_executable_name(directory):
 
 def run_make_re(directory, executable_name):
     try:
-        subprocess.check_call(['make', 're'], cwd=directory, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(['make', 'fclean'], cwd=directory, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.check_call(['make', '-j8'], cwd=directory, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return True
     except subprocess.CalledProcessError as e:
         print(f"\t{executable_name.ljust(30)}{RED}BUILD FAIL{RESET}")

@@ -7,7 +7,7 @@
 class IBufferManager
 {
 public:
-    virtual ~IBufferManager() {};
+    virtual ~IBufferManager(){};
 
     // methods for managing buffers
     virtual ssize_t pushFileBuffer(int, const std::vector<char> &) = 0;

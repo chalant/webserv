@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager, const IConfiguration &configuration, IPollfdManager &pollfdManager)
-    :  _accessLogFile(configuration.getBlocks("http")[0]->getBlocks("server")[0]->getString("access_log")), // Currently only supports one access log file
+    : _accessLogFile(configuration.getBlocks("http")[0]->getBlocks("server")[0]->getString("access_log")), // Currently only supports one access log file
       _bufferManager(BufferManager),
       _pollfdManager(pollfdManager),
       _bufferSize(LOG_BUFFER_SIZE),
@@ -12,7 +12,7 @@ LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager, const IC
       _logLevelHelper()
 {
     // Set the error log file as the first word in the error_log directive
-    this->_errorLogFile =  configuration.getString("error_log", 0);
+    this->_errorLogFile = configuration.getString("error_log", 0);
     // Open the error log file if it is not set to "off"
     this->_errorLogFileDescriptor = this->_errorLogFile == "off" ? -2 : open(this->_errorLogFile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
@@ -20,11 +20,13 @@ LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager, const IC
     this->_errorLogEnabled = this->_errorLogFileDescriptor < 0 ? false : true;
 
     // Set the log level as the second word in the error_log directive
-    try 
+    try
     {
         std::string logLevel = configuration.getString("error_log", 1);
         this->_logLevel = this->_logLevelHelper.stringLogLevelMap(logLevel);
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e)
+    {
         this->_logLevel = DEFAULT_LOG_LEVEL; // If the log level is not set, or is invalid, set it to the default log level
     }
 

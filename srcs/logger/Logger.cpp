@@ -26,14 +26,14 @@
 Logger::Logger(IBufferManager &bufferManager)
     : _configuration(NULL),
       _bufferManager(bufferManager),
-      _logLevelHelper() 
+      _logLevelHelper()
 {
     // Log the initialization of the Logger
     this->log(VERBOSE, "Logger initialized.");
 }
 
 // Destructor: Handles cleanup tasks like flushing buffer and closing log file descriptor
-Logger::~Logger() 
+Logger::~Logger()
 {
 }
 
@@ -42,9 +42,9 @@ std::string Logger::_getCurrentTimestamp() const
 {
     std::stringstream stream;
     std::time_t currentTime = std::time(NULL);
-	char	buffer[80];
+    char buffer[80];
 
-	strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
+    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
     stream << buffer;
     return stream.str();
 }
@@ -127,8 +127,8 @@ void Logger::_appendMapToLog(std::ostringstream &logBufferStream, const std::str
     for (std::map<std::string, std::string>::const_iterator it = map.begin(); it != map.end(); ++it)
     {
         mapStream << it->first << ": " << it->second;
-		std::map<std::string, std::string>::const_iterator next = it;
-		next++;
+        std::map<std::string, std::string>::const_iterator next = it;
+        next++;
         if (next != map.end())
         {
             mapStream << ", ";
@@ -148,7 +148,7 @@ void Logger::configure(ILoggerConfiguration &configuration)
 // Method to push log messages to the buffer
 // returns 1 if a flush is requested, or 0 otherwise
 int Logger::_pushToBuffer(const std::string &logMessage, const int fileDescriptor)
-{ 
+{
     // Copy output to stderr
     std::cerr << logMessage;
 

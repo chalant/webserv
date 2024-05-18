@@ -73,19 +73,21 @@ std::string MockRequest::getQueryString() const
     return _testUri.substr(queryStart + 1);
 };
 
-std::string MockRequest::getContentLength() const { 
+std::string MockRequest::getContentLength() const
+{
     // Check if the content-length header is present
     if (_testHeaders.find("content-length") == _testHeaders.end())
         return "";
     return _testHeaders.at("content-length");
- };
+};
 
-std::string MockRequest::getContentType() const { 
+std::string MockRequest::getContentType() const
+{
     // Check if the content-type header is present
     if (_testHeaders.find("content-type") == _testHeaders.end())
         return "";
     return _testHeaders.at("content-type");
- };
+};
 
 std::string MockRequest::getPathInfo(const std::string &scriptName) const
 {
@@ -140,7 +142,7 @@ void MockRequest::setBody(const std::string &body)
 
 void MockRequest::addCookie(const std::string &key, const std::string &value) { _testHeaders.insert(std::make_pair(key, value)); };
 
-void MockRequest::setAuthority(){};
+void MockRequest::setAuthority() {};
 
 void MockRequest::addBodyParameter(const BodyParameter &bodyParameter) { _testBodyParameters.push_back(bodyParameter); };
 

@@ -7,7 +7,7 @@
  * Session class is used to store session data.
  * Its id is set and read from the session cookie.
  * Its lifetime is determined by the timeout since the last access.
- * 
+ *
  * It is owned by the ConnectionManager.
  *
  */

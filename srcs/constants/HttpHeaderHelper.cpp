@@ -206,7 +206,7 @@ std::map<std::string, HttpHeader> HttpHeaderHelper::_setStringHttpHeaderMap()
     stringHttpHeaderMap["x-forwarded-for"] = X_FORWARDED_FOR;
     stringHttpHeaderMap["cookie"] = COOKIE;
     stringHttpHeaderMap["set-cookie"] = SET_COOKIE;
-	stringHttpHeaderMap["upgrade-insecure-requests"] = UPGRADE_INSECURE_REQUESTS;
+    stringHttpHeaderMap["upgrade-insecure-requests"] = UPGRADE_INSECURE_REQUESTS;
     stringHttpHeaderMap["sec-fetch-dest"] = SEC_FETCH_DEST;
     stringHttpHeaderMap["sec-fetch-mode"] = SEC_FETCH_MODE;
     stringHttpHeaderMap["sec-fetch-site"] = SEC_FETCH_SITE;
@@ -290,7 +290,7 @@ std::map<HttpHeader, std::string> HttpHeaderHelper::_setHttpHeaderStringMap()
     httpHeaderStringMap[X_FORWARDED_FOR] = "x-forwarded-for";
     httpHeaderStringMap[COOKIE] = "cookie";
     httpHeaderStringMap[SET_COOKIE] = "set-cookie";
-	httpHeaderStringMap[UPGRADE_INSECURE_REQUESTS] = "upgrade-insecure-requests";
+    httpHeaderStringMap[UPGRADE_INSECURE_REQUESTS] = "upgrade-insecure-requests";
     httpHeaderStringMap[SEC_FETCH_DEST] = "sec-fetch-dest";
     httpHeaderStringMap[SEC_FETCH_MODE] = "sec-fetch-mode";
     httpHeaderStringMap[SEC_FETCH_SITE] = "sec-fetch-site";

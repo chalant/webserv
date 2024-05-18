@@ -3,14 +3,15 @@
 
 #include "IURIMatcher.hpp"
 
-class DefaultMatcher: public IURIMatcher
+class DefaultMatcher : public IURIMatcher
 {
-	private:
-		const std::string&	m_path;
-	public:
-		DefaultMatcher(const std::string& path);
-		~DefaultMatcher();
-		bool	match(const std::string& uri);
+private:
+	const std::string &m_path;
+
+public:
+	DefaultMatcher(const std::string &path);
+	~DefaultMatcher();
+	bool match(const std::string &uri);
 };
 
 #endif // DEFAULTMATCHER_HPP

@@ -3,7 +3,6 @@
 #include "../../includes/utils/Converter.hpp"
 #include <unistd.h>
 
-
 #define NO_EVENTS 0xC0
 #define KEEP_DESCRIPTOR 0x01
 
@@ -28,7 +27,7 @@ void EventManager::handleEvents()
 
         if (events == NO_EVENTS)
             continue;
-        
+
         short fileType = events & NO_EVENTS;
         if (fileType == SERVER_SOCKET)
         {
@@ -139,10 +138,10 @@ void EventManager::_handleRequest(ssize_t &pollfdIndex)
         int cgiPid = info.first;
         int responseReadPipe = info.second.first;
         int requestWritePipe = info.second.second;
-        
+
         // Log the dynamic serving
         this->_logger.log(VERBOSE, "[EVENTMANAGER] Dynamically serving client socket: " + Converter::toString(clientSocketDescriptor) + " waiting for process " + Converter::toString(cgiPid) + " (response read pipe: " + Converter::toString(responseReadPipe) + ", request write pipe: " + Converter::toString(requestWritePipe) + ")");
-        
+
         // Add the response read pipe to the poll set
         pollfd pollfd;
         pollfd.fd = responseReadPipe;

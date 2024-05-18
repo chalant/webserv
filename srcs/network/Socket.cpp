@@ -85,20 +85,20 @@ int Socket::setNonBlocking(int socketDescriptor) const
 }
 
 // Accept an incoming connection
-std::pair<int, std::pair<std::string, std::string> > Socket::accept(int serverSocketFd) const
+std::pair<int, std::pair<std::string, std::string>> Socket::accept(int serverSocketFd) const
 {
     // serverSocketFd: file descriptor of the listening socket
     // Returns: file descriptor for the new client socket (int) (-1 on error)
     //          client's IP address (std::string)
     //          client's port number (std::string)
-    
+
     // Address structure for the client
     struct sockaddr_in clientAddr;
     socklen_t clientAddrLen = sizeof(clientAddr);
-    
+
     // Accept the incoming connection and get the client socket descriptor
     int clientSocketFd = ::accept(serverSocketFd, (struct sockaddr *)&clientAddr, &clientAddrLen);
-    
+
     // Check for errors
     if (clientSocketFd == -1)
     {
@@ -120,7 +120,8 @@ std::pair<int, std::pair<std::string, std::string> > Socket::accept(int serverSo
 }
 
 // Sends data over the socket Non-Blockingly
-int Socket::send(int socketDescriptor, const std::vector<char> &data) const {
+int Socket::send(int socketDescriptor, const std::vector<char> &data) const
+{
     // Send data over the socket
     // socketDescriptor: File descriptor of the socket
     // data: Data to be sent

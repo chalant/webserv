@@ -27,7 +27,7 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnection
     int maxConnections = configuration.getBlocks("events")[0]->getInt("worker_connections");
 
     // Create a set to store unique IP:port combinations
-    std::set<std::pair<int, int> > processedEndpoints;
+    std::set<std::pair<int, int>> processedEndpoints;
 
     // Get the list of virtual servers
     std::vector<IConfiguration *> servers = configuration.getBlocks("http")[0]->getBlocks("server");
@@ -126,7 +126,7 @@ void Server::acceptConnection(int serverSocketDescriptor)
         throw MaximumConnectionsReachedError();
 
     // Accept incoming connection
-    std::pair<int, std::pair<std::string, std::string> > clientInfo = this->_socket.accept(serverSocketDescriptor);
+    std::pair<int, std::pair<std::string, std::string>> clientInfo = this->_socket.accept(serverSocketDescriptor);
     int clientSocketDescriptor = clientInfo.first;
     std::string clientIP = clientInfo.second.first;
     std::string clientPort = clientInfo.second.second;

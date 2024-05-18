@@ -56,13 +56,13 @@ int main(int argc, char **argv)
     // Instantiate the exceptionHandler.
     ExceptionHandler exceptionHandler(logger);
 
-	ConfigurationLoader	confLoader(logger);
+    ConfigurationLoader confLoader(logger);
 
     try
     {
 
         // load configuration from file and create the configuration object.
-        const IConfiguration& configuration = confLoader.loadConfiguration(configPath);
+        const IConfiguration &configuration = confLoader.loadConfiguration(configPath);
 
         // parse the configuration file
 

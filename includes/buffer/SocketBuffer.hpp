@@ -39,4 +39,3 @@ public:
 #endif // SOCKETBUFFER_HPP
 
 // Path: includes/buffer/SocketBuffer.hpp
-

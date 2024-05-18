@@ -23,7 +23,7 @@ typedef int SocketDescriptor_t;
 class IConnection
 {
 public:
-    virtual ~IConnection() {};
+    virtual ~IConnection(){};
 
     // Setters
     virtual void setSession(ISession *session) = 0;
@@ -40,7 +40,7 @@ public:
     virtual void setCgiInfo(int, int, int) = 0;
 
     // Connection management
-    virtual void touch() = 0; // Update the last access time
+    virtual void touch() = 0;            // Update the last access time
     virtual bool hasExpired() const = 0; // Check if the connection has expired
 };
 

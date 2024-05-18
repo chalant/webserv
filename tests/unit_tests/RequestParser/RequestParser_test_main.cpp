@@ -18,13 +18,13 @@ std::vector<char> stringToVector(const std::string &str);
 int main()
 {
     // Mock objects
-    //MockConfigurationBlock mockConfigurationBlock;
+    // MockConfigurationBlock mockConfigurationBlock;
     MockLogger mockErrorLogger;
-	ConfigurationLoader	confLoader(mockErrorLogger);
+    ConfigurationLoader confLoader(mockErrorLogger);
 
     // mockConfigurationBlock.setInt("ClientHeaderBufferSize", 6000);
 
-	const IConfiguration&	mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
+    const IConfiguration &mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
     // Request Parser instance
     RequestParser requestParser(mockConfigurationBlock, mockErrorLogger);
 

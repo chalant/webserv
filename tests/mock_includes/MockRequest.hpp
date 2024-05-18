@@ -5,7 +5,7 @@
  * MockRequest class is a mock implementation of the IRequest interface
  * This mock implementation is used for testing purposes to simulate the behavior of the IRequest interface
  * during unit testing without relying on the actual implementation.
-*/
+ */
 
 #include "../../includes/request/IRequest.hpp" // Include the base interface header
 
@@ -38,7 +38,7 @@ public:
 
     // Copy constructor
     MockRequest(const MockRequest &src);
-    
+
     // Copy assignment operator
     MockRequest &operator=(const MockRequest &src);
 
@@ -46,7 +46,7 @@ public:
     std::string getTestMethod() const;
     std::string getTestHttpVersion() const;
     std::map<std::string, std::string> getTestHeadersStringMap() const;
-  
+
     // Methods implementing the IRequest interface
     // These methods are overridden to provide custom behavior for testing.
 

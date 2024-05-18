@@ -18,7 +18,7 @@ MockConnectionManager::~MockConnectionManager()
 }
 
 // Methods related to connections
-void MockConnectionManager::addConnection(std::pair<int, std::pair<std::string, std::string> > clientInfo)
+void MockConnectionManager::addConnection(std::pair<int, std::pair<std::string, std::string>> clientInfo)
 {
     (void)clientInfo;
 }
@@ -93,4 +93,4 @@ void MockConnectionManager::collectGarbage()
 {
 }
 
-//path: tests/mock_srcs/MockConnectionManager.cpp
+// path: tests/mock_srcs/MockConnectionManager.cpp

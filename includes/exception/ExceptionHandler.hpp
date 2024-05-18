@@ -24,8 +24,8 @@
  */
 
 #include "IExceptionHandler.hpp"
-#include "../logger/ILogger.hpp"                         // Include necessary dependencies
-#include "../exception/WebservExceptions.hpp"              // Include necessary dependencies
+#include "../logger/ILogger.hpp"                 // Include necessary dependencies
+#include "../exception/WebservExceptions.hpp"    // Include necessary dependencies
 #include "../constants/HttpStatusCodeHelper.hpp" // Include necessary dependencies
 #include <string>
 
@@ -35,7 +35,7 @@ class Server;
 class ExceptionHandler : public IExceptionHandler
 {
 private:
-    ILogger &_logger;                            // Reference to the logger instance
+    ILogger &_logger;                                 // Reference to the logger instance
     Server *_server;                                  // Pointer to the server instance
     const HttpStatusCodeHelper _httpStatusCodeHelper; // Helper instance for HTTP status codes
     int _handleWebservException(const WebservException &e, const std::string &context = "") const;

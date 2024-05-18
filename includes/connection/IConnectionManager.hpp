@@ -7,8 +7,8 @@
  * This class is responsible for managing connections and sessions.
  * A connection in this context represents an active interaction with a client, which ends when the response is sent.
  * A session represents a session with a client, which can span multiple connections, and lasts until the inactivity timeout.
- * 
-*/
+ *
+ */
 
 #include <string>
 #include "IConnection.hpp"
@@ -16,10 +16,10 @@
 class IConnectionManager
 {
 public:
-    virtual ~IConnectionManager() {};
+    virtual ~IConnectionManager(){};
 
     // Methods related to connections
-    virtual void addConnection(std::pair<int, std::pair<std::string, std::string> >) = 0;
+    virtual void addConnection(std::pair<int, std::pair<std::string, std::string>>) = 0;
     virtual void removeConnection(SocketDescriptor_t) = 0;
     virtual IConnection &getConnection(SocketDescriptor_t) = 0;
     virtual IRequest &getRequest(SocketDescriptor_t) = 0;

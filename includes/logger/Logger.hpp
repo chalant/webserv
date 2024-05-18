@@ -66,7 +66,7 @@ public:
     // Logging methods
     virtual int log(const std::string &message);                          // Default method to log error messages
     virtual int log(const LogLevel logLevel, const std::string &message); // Method to log error messages
-    virtual int log(const IConnection &connection);                             // Method to log access events
+    virtual int log(const IConnection &connection);                       // Method to log access events
 
     // Configuration method
     virtual void configure(ILoggerConfiguration &configuration); // Method to configure the Logger instance

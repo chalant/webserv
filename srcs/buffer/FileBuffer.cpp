@@ -58,7 +58,7 @@ ssize_t FileBuffer::flush(int fileDescriptor, bool regardlessOfThreshold)
 
     if (bytesWritten == -1)
     {
-       return -1; // Error writing to file descriptor
+        return -1; // Error writing to file descriptor
     }
     else
     {

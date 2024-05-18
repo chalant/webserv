@@ -71,5 +71,3 @@ public:
 
 #endif // RESPONSE_HPP
 // Path: includes/Response.hpp
-
-

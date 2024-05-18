@@ -85,11 +85,11 @@ public:
         : WebservException(CRITICAL, "Invalid Configuration file.", 1){};
 };
 
-class ConfigSyntaxError: public WebservException
+class ConfigSyntaxError : public WebservException
 {
-	public:
-		ConfigSyntaxError(LogLevel logLevel, const std::string &message, int errorCode)
-			: WebservException(logLevel, message, errorCode) {};
+public:
+    ConfigSyntaxError(LogLevel logLevel, const std::string &message, int errorCode)
+        : WebservException(logLevel, message, errorCode){};
 };
 
 class MaximumConnectionsReachedError : public WebservException
@@ -245,7 +245,13 @@ public:
 class HttpStatusCodeException : public WebservException
 {
 private:
-    const std::string _getStatusCodeString(int statusCode) const { std::ostringstream oss; oss << statusCode; return oss.str(); }
+    const std::string _getStatusCodeString(int statusCode) const
+    {
+        std::ostringstream oss;
+        oss << statusCode;
+        return oss.str();
+    }
+
 public:
     HttpStatusCodeException(int statusCode)
         : WebservException(INFO, ("Http Status Code: \"" + this->_getStatusCodeString(statusCode) + "\""), statusCode){};

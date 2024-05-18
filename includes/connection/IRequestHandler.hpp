@@ -3,12 +3,12 @@
 
 #include "../constants/HttpStatusCodeHelper.hpp"
 
-typedef std::pair<int, std::pair<int, int> > Triplet_t;
+typedef std::pair<int, std::pair<int, int>> Triplet_t;
 
 class IRequestHandler
 {
 public:
-    virtual ~IRequestHandler() {};
+    virtual ~IRequestHandler(){};
 
     virtual Triplet_t handleRequest(int) = 0;
     virtual int handlePipeException(int) = 0;

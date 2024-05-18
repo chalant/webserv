@@ -20,14 +20,14 @@
 class FileBuffer : public IBuffer
 {
 private:
-    std::vector<char> _buffer;         // Buffer to hold data
-    const size_t _flushThreshold;      // Threshold at which to request a flush
-    const size_t _maxSize;             // Maximum size of the buffer
-    size_t _size;                      // Current size of the buffer
+    std::vector<char> _buffer;    // Buffer to hold data
+    const size_t _flushThreshold; // Threshold at which to request a flush
+    const size_t _maxSize;        // Maximum size of the buffer
+    size_t _size;                 // Current size of the buffer
 
 public:
     // Constructor with optional parameters
-    FileBuffer( size_t flushThreshold = DEFAULT_FLUSH_THRESHOLD, size_t maxSize = DEFAULT_MAX_SIZE);
+    FileBuffer(size_t flushThreshold = DEFAULT_FLUSH_THRESHOLD, size_t maxSize = DEFAULT_MAX_SIZE);
 
     // Destructor
     ~FileBuffer();

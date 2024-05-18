@@ -40,11 +40,11 @@ class RequestHandler : public IRequestHandler
 {
 private:
     // Private member variables
-    IBufferManager &_bufferManager;     // Reference to the buffer manager
-    IConnectionManager &_connectionManager;   // Reference to the connection manager
-    IClientHandler &_clientHandler;     // Handles communication with clients
-    const RequestParser _requestParser; // Parses incoming requests
-    IRouter &_router;                   // Routes requests to appropriate handlers
+    IBufferManager &_bufferManager;         // Reference to the buffer manager
+    IConnectionManager &_connectionManager; // Reference to the connection manager
+    IClientHandler &_clientHandler;         // Handles communication with clients
+    const RequestParser _requestParser;     // Parses incoming requests
+    IRouter &_router;                       // Routes requests to appropriate handlers
 
     // AResponseGenerator *_requestHandler;                 // Pointer to the recruited request handler
     HttpHelper _httpHelper;                     // Helper class for request-related operations

@@ -51,7 +51,7 @@ private:
 
     // Function to unchunk the body of an HTTP request
     std::vector<char> _unchunkBody(std::vector<char>::const_iterator &it,
-                      const std::vector<char> &rawRequest) const;
+                                   const std::vector<char> &rawRequest) const;
 
     // Function to parse the Upload Chunked Body
     void _parseBodyParameters(IRequest &parseRequest) const;

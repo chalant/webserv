@@ -8,7 +8,7 @@
  */
 
 #include "../../includes/configuration/IConfiguration.hpp" // Include the base interface header
-#include "../../includes/logger/ILogger.hpp"                 // Include the logger interface header
+#include "../../includes/logger/ILogger.hpp"               // Include the logger interface header
 #include "../../includes/configuration/BlockList.hpp"
 
 class BlockList;
@@ -16,7 +16,7 @@ class BlockList;
 class MockConfigurationBlock : public IConfiguration
 {
 private:
-    std::map<std::string, BlockList > _blocks;
+    std::map<std::string, BlockList> _blocks;
     std::map<std::string, std::vector<std::string> *> _directives;
     ILogger &_logger;
     const std::string _name;
@@ -47,7 +47,6 @@ public:
     virtual void print(size_t depth) const;
     virtual const std::string &getName() const;
     virtual bool isRegex(void) const;
-
 };
 
 #endif // MOCKCONFIGURATIONBLOCK_HPP

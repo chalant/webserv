@@ -62,7 +62,7 @@ int MockSocket::setNonBlocking(int fd) const
 }
 
 // Accepts an incoming connection
-std::pair<int, std::pair<std::string, std::string> > MockSocket::accept(int fd) const
+std::pair<int, std::pair<std::string, std::string>> MockSocket::accept(int fd) const
 {
     // Mock implementation for accepting an incoming connection
     // Returns a mock file descriptor for the new client socket

@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <cctype>
 
-
 /*
  * RequestParser.cpp
  *
@@ -267,9 +266,12 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
     this->_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + headerName + ": " + headerValue + "\"");
 
     // Add header to parsed request
-    try{
+    try
+    {
         parsedRequest.addHeader(headerName, headerValue);
-    } catch (const UnknownHeaderError &e){
+    }
+    catch (const UnknownHeaderError &e)
+    {
         // Log and continue
         this->_logger.log(WARN, e.what());
     }
@@ -391,13 +393,13 @@ std::vector<char> RequestParser::_unchunkBody(std::vector<char>::const_iterator 
         }
 
         // Check if body size exceeds maximum client body buffer size
-        //remainingRequestSize -= chunkSize;
+        // remainingRequestSize -= chunkSize;
         if (remainingRequestSize < chunkSize)
         {
             // throw '413' status error
             throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
         }
-		remainingRequestSize -= chunkSize;
+        remainingRequestSize -= chunkSize;
         // Append chunk to body
         body.insert(body.end(), requestIterator, requestIterator + chunkSize);
 

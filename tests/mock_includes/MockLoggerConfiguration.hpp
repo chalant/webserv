@@ -23,6 +23,7 @@ private:
     int _accessLogFileDescriptor;
     bool _errorLogEnabled;
     bool _accessLogEnabled;
+
 public:
     MockLoggerConfiguration(IBufferManager &bufferManager, const IConfiguration &configuration, IPollfdManager &pollfdManager);
 
@@ -41,7 +42,7 @@ public:
 
     // Testing purposes
     virtual void setBufferSize(size_t bufferSize);
-    virtual void setFileDescriptor(int errorLogFileDescriptor, int accessLogFileDescriptor=STDOUT_FILENO);
+    virtual void setFileDescriptor(int errorLogFileDescriptor, int accessLogFileDescriptor = STDOUT_FILENO);
 };
 
 #endif // MOCKLOGGERCONFIGURATION_HPP

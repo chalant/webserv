@@ -32,7 +32,6 @@ void MockConfigurationBlock::setBlock(const std::string &parameter, IConfigurati
 
     // Add the block to the BlockList
     this->_blocks[parameter].push_back(block);
-
 }
 
 void MockConfigurationBlock::setString(const std::string &parameter, const std::string &value)
@@ -142,13 +141,13 @@ bool MockConfigurationBlock::getBool(const std::string &parameter, size_t index)
     return false;
 }
 
-void	addBlock(const std::string& name, IConfiguration *block)
+void addBlock(const std::string &name, IConfiguration *block)
 {
     (void)name;
     (void)block;
 }
 
-void addDirective(const std::string& name, std::vector<std::string> *parameters)
+void addDirective(const std::string &name, std::vector<std::string> *parameters)
 {
     (void)name;
     (void)parameters;

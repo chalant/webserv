@@ -45,7 +45,7 @@ ConnectionManager::~ConnectionManager()
 }
 
 // Add a new connection
-void ConnectionManager::addConnection(std::pair<int, std::pair<std::string, std::string> > clientInfo)
+void ConnectionManager::addConnection(std::pair<int, std::pair<std::string, std::string>> clientInfo)
 {
     IConnection *connection = this->_factory.createConnection(clientInfo);
     _connections[clientInfo.first] = connection;

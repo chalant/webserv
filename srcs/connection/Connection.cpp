@@ -14,7 +14,7 @@
  */
 
 // Constructor
-Connection::Connection(std::pair<int, std::pair<std::string, std::string> > clientInfo, ILogger &logger, IRequest *request, IResponse *response, time_t timeout)
+Connection::Connection(std::pair<int, std::pair<std::string, std::string>> clientInfo, ILogger &logger, IRequest *request, IResponse *response, time_t timeout)
     : _socketDescriptor(clientInfo.first),
       _ip(clientInfo.second.first),
       _port(Converter::toInt(clientInfo.second.second)),
@@ -22,7 +22,7 @@ Connection::Connection(std::pair<int, std::pair<std::string, std::string> > clie
       _logger(logger),
       _request(request),
       _response(response),
-      _timeout(timeout) 
+      _timeout(timeout)
 {
     this->touch();
 }

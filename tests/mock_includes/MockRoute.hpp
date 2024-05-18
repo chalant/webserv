@@ -15,6 +15,7 @@ class MockRoute : public IRoute
 private:
     std::string _root;
     std::string _prefix;
+
 public:
     MockRoute(){};
     ~MockRoute(){};

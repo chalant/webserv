@@ -135,9 +135,8 @@ void Response::setErrorResponse(HttpStatusCode statusCode)
     this->setHeaders("content-type: text/html\r\n"
                      "content-length: " +
                      Converter::toString(body.length()) + "\r\n"
-                                                     "connection: close\r\n"
-                                                     "server: webserv/1.0\r\n"
-                                                     );
+                                                          "connection: close\r\n"
+                                                          "server: webserv/1.0\r\n");
     this->setBody(body);
 }
 
@@ -216,7 +215,7 @@ std::vector<char> Response::serialise()
 
     // Add headers
     this->addCookieHeaders(); // Add cookies to the headers first
-    const std::string& headers = this->getHeaders();
+    const std::string &headers = this->getHeaders();
     response.insert(response.end(), headers.begin(), headers.end());
 
     // Add a blank line
@@ -229,6 +228,5 @@ std::vector<char> Response::serialise()
     // Return the serialised response
     return response;
 }
-
 
 // Path: srcs/Response.cpp

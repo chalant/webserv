@@ -78,11 +78,11 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route, const IReq
         fcntl(bodyPipeFd[1], F_SETFL, O_NONBLOCK);
 
         // Free memory and keep the write end of the body pipe open and the read end of the response pipe open
-        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd, bodyPipeFd, NO_THROW | KEEP_RESPONSE_READ_PIPE | KEEP_BODY_WRITE_PIPE); 
+        this->_cleanUp(cgiArgs.data(), cgiEnv.data(), responsePipeFd, bodyPipeFd, NO_THROW | KEEP_RESPONSE_READ_PIPE | KEEP_BODY_WRITE_PIPE);
 
         // Log the Cgi info
-        this->_logger.log(VERBOSE, "Returning CGI info tuple; PID: " +  Converter::toString(pid) + "Response Pipe read end: " + Converter::toString(responsePipeFd[0]) + "Request Pipe write end: " + Converter::toString(responsePipeFd[1]));
-        
+        this->_logger.log(VERBOSE, "Returning CGI info tuple; PID: " + Converter::toString(pid) + "Response Pipe read end: " + Converter::toString(responsePipeFd[0]) + "Request Pipe write end: " + Converter::toString(responsePipeFd[1]));
+
         // Return the read end of the pipe to read the response later without blocking
         return std::make_pair(pid, std::make_pair(responsePipeFd[0], bodyPipeFd[1]));
     }

@@ -31,7 +31,7 @@ int MockLogger::log(const LogLevel logLevel, const std::string &message)
 {
     static_cast<void>(logLevel);
     // Construct the log message string
-    //std::string logMessageString = this->_getCurrentTimestamp() + " [" + this->_logLevelHelper.logLevelStringMap(logLevel) + "] " + message + "\n";
+    // std::string logMessageString = this->_getCurrentTimestamp() + " [" + this->_logLevelHelper.logLevelStringMap(logLevel) + "] " + message + "\n";
     std::string logMessageString = this->_getCurrentTimestamp() + " [LOGLEVEL] " + message + "\n";
 
     std::cout << logMessageString;
@@ -46,7 +46,8 @@ int MockLogger::log(const IConnection &connection)
 };
 
 // Method to configure the Logger instance
-void MockLogger::configure(ILoggerConfiguration &configuration){
+void MockLogger::configure(ILoggerConfiguration &configuration)
+{
     static_cast<void>(configuration);
 };
 
@@ -55,9 +56,9 @@ std::string MockLogger::_getCurrentTimestamp() const
 {
     std::stringstream stream;
     std::time_t currentTime = std::time(NULL);
-	char	buffer[80];
+    char buffer[80];
 
-	strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
+    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
     stream << buffer;
     return stream.str();
 }

@@ -12,14 +12,14 @@
 // Constructor
 ClientHandler::ClientHandler(const ISocket &socket, ILogger &logger)
     : _socket(socket),
-      _logger(logger) 
+      _logger(logger)
 {
     // Log the creation of the ClientHandler
     this->_logger.log(VERBOSE, "Clienthandler created.");
 }
 
 // Destructor
-ClientHandler::~ClientHandler() 
+ClientHandler::~ClientHandler()
 {
     // Log the destruction of the ClientHandler
     this->_logger.log(VERBOSE, "Clienthandler destroyed.");
@@ -68,7 +68,7 @@ const std::vector<char> ClientHandler::readRequest() const
 
     // Log the request read from the client
     this->_logger.log(VERBOSE, "[CLIENTHANDLER] Request on socket: " + Converter::toString(this->_socketDescriptor) + ": \"" + std::string(buffer.begin(), buffer.end()) + "\"");
-    
+
     // Return the buffer containing the request
     return buffer;
 }
@@ -82,7 +82,7 @@ ssize_t ClientHandler::sendResponse(const std::vector<char> &response) const
 
     // Log the response sent to the client
     this->_logger.log(VERBOSE, "[CLIENTHANDLER] Responded on socket: " + Converter::toString(this->_socketDescriptor) + ": \"" + std::string(response.begin(), response.end()) + "\"");
-    
+
     // Return the number of bytes sent
     return bytesSent;
 }

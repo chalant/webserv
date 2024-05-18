@@ -11,7 +11,7 @@
  */
 
 #ifdef __APPLE__ // Check if compiling on macOS
-	#define MSG_NOSIGNAL SO_NOSIGPIPE
+#define MSG_NOSIGNAL SO_NOSIGPIPE
 #endif
 
 #include "ISocket.hpp"
@@ -43,7 +43,7 @@ public:
     virtual int setNonBlocking(int fd) const;
 
     // Accepts an incoming connection
-    virtual std::pair<int, std::pair<std::string, std::string> > accept(int fd) const;
+    virtual std::pair<int, std::pair<std::string, std::string>> accept(int fd) const;
 
     // Sends data over the socket
     virtual int send(int recipientSocketFd, const std::vector<char> &data) const;

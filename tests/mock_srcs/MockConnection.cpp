@@ -32,7 +32,8 @@ IResponse &MockConnection::getResponse() const { return *this->_m_response; }
 
 ISession &MockConnection::getSession() const { return *this->_m_session; }
 
-void MockConnection::setCgiInfo(int cgiPid, int responseReadPipefd, int requestWritePipefd) {
+void MockConnection::setCgiInfo(int cgiPid, int responseReadPipefd, int requestWritePipefd)
+{
     static_cast<void>(cgiPid);
     static_cast<void>(responseReadPipefd);
     static_cast<void>(requestWritePipefd);

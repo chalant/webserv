@@ -8,14 +8,15 @@
 
 class ConfigurationLoader
 {
-	private:
-		ILogger&			m_logger;
-		ConfigurationBlock	*m_config;
-		Defaults			m_defaults;
-	public:
-		ConfigurationLoader(ILogger& logger);
-		~ConfigurationLoader();
-		IConfiguration&	loadConfiguration(const std::string& path);
+private:
+	ILogger &m_logger;
+	ConfigurationBlock *m_config;
+	Defaults m_defaults;
+
+public:
+	ConfigurationLoader(ILogger &logger);
+	~ConfigurationLoader();
+	IConfiguration &loadConfiguration(const std::string &path);
 };
 
 #endif

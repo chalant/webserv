@@ -44,18 +44,18 @@ int main()
   // Mock objects
   MockLogger logger;
   MockFactory factory;
-//   MockConfigurationBlock mockConfigurationBlock;
+  //   MockConfigurationBlock mockConfigurationBlock;
   MockConnection mockConnection;
-  ConfigurationLoader	confLoader(logger);
+  ConfigurationLoader confLoader(logger);
 
   // Mock Set the Configuration
-//   mockConfigurationBlock.setString("DefaultPort", "80");
-//   mockConfigurationBlock.setInt("ClientHeaderBufferSize", 4096);
-//   mockConfigurationBlock.setSize_t("ClientMaxBodySize", 10000);
-//   mockConfigurationBlock.setSize_t("ClientMaxUriSize", 1000);
-//   mockConfigurationBlock.setStringVector("Methods", {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"});
+  //   mockConfigurationBlock.setString("DefaultPort", "80");
+  //   mockConfigurationBlock.setInt("ClientHeaderBufferSize", 4096);
+  //   mockConfigurationBlock.setSize_t("ClientMaxBodySize", 10000);
+  //   mockConfigurationBlock.setSize_t("ClientMaxUriSize", 1000);
+  //   mockConfigurationBlock.setStringVector("Methods", {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"});
 
-  const IConfiguration&	mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
+  const IConfiguration &mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
 
   // Instantiate the objects under test
   HttpHelper httpHelper;
@@ -63,7 +63,6 @@ int main()
   Response response(httpHelper);
   ConnectionManager connectionManager(logger, factory);
   RequestParser requestParser(mockConfigurationBlock, logger);
-
 
   // Test 1: A Request without a session cookie
   //*******************************************
@@ -95,8 +94,7 @@ int main()
   std::string sessionCookieId = response.getCookie("session");
   assert(sessionCookieId != "");
 
-
-  //Test2: Another request without a session cookie
+  // Test2: Another request without a session cookie
   //***********************************************
   requestString = "GET /index.html HTTP/1.1\r\n"
                   "Host: 42.fr\r\n"
@@ -132,8 +130,9 @@ int main()
                   "Accept-Encoding: gzip, deflate\r\n"
                   "Connection: keep-alive\r\n"
                   "Referer: http://example.com/\r\n"
-                  "Cookie: username=JohnDoe; theme=light; session=" + sessionCookieId + "\r\n"
-                  "\r\n";
+                  "Cookie: username=JohnDoe; theme=light; session=" +
+                  sessionCookieId + "\r\n"
+                                    "\r\n";
   rawRequest = stringToVector(requestString);
 
   // Parse the request

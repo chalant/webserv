@@ -25,4 +25,4 @@ public:
 };
 
 #endif // ILOGGERCONFIGURATION_HPP
-// Path: includes/ILoggerConfiguration.hpp
+       // Path: includes/ILoggerConfiguration.hpp

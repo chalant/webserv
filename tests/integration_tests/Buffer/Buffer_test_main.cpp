@@ -39,19 +39,19 @@ int main()
   MockSocket mockSocket;
   MockServer mockServer;
   MockRequestHandler mockRequestHandler;
-  //MockConfigurationBlock mockConfigurationBlock;
+  // MockConfigurationBlock mockConfigurationBlock;
 
   // Instantiate the object under test
   BufferManager bufferManager(mockSocket);
   Logger logger(bufferManager);
   EventManager eventManager(mockPollfdManager, bufferManager, mockServer, mockRequestHandler, logger);
-  ConfigurationLoader	confLoader(logger);
+  ConfigurationLoader confLoader(logger);
 
-  const IConfiguration&	mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
+  const IConfiguration &mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
   // Open a test file, set flush threshold at 50 and mock add the fd to pollfd.
   int fd = open("temp.txt", O_CREAT | O_RDWR | O_TRUNC, 0666);
   MockLoggerConfiguration mockLoggerConfiguration(bufferManager, mockConfigurationBlock, mockPollfdManager);
-  
+
   mockLoggerConfiguration.setFileDescriptor(fd);
   mockLoggerConfiguration.setBufferSize(50);
   logger.configure(mockLoggerConfiguration);

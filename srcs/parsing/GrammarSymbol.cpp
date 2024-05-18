@@ -1,28 +1,33 @@
 #include "../../includes/parsing/Grammar.hpp"
 #include "../../includes/parsing/GrammarSymbol.hpp"
 
-AGrammarSymbol::~AGrammarSymbol() {
-
+AGrammarSymbol::~AGrammarSymbol()
+{
 }
 
-int	AGrammarSymbol::getRuleIndex() const {
+int AGrammarSymbol::getRuleIndex() const
+{
 	return m_rule_idx;
 }
 
-void	AGrammarSymbol::setRuleIndex(int index) {
+void AGrammarSymbol::setRuleIndex(int index)
+{
 	m_rule_idx = index;
 }
 
-bool	AGrammarSymbol::match(const Token& token) const {
+bool AGrammarSymbol::match(const Token &token) const
+{
 	(void)token;
 	return false;
 }
 
-bool	AGrammarSymbol::terminal(void) const {
+bool AGrammarSymbol::terminal(void) const
+{
 	return false;
 }
 
-bool	AGrammarSymbol::matchRule(const GrammarRule& rule) {
+bool AGrammarSymbol::matchRule(const GrammarRule &rule)
+{
 	(void)rule;
 	return false;
 }
