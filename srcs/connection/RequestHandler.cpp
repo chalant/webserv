@@ -68,6 +68,41 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
 
         // Assign session to connection
         this->_connectionManager.assignSessionToConnection(connection, request, response);
+    
+        // Delete these 2 lines once router is implemented
+        Triplet_t cgiInfo(-1, std::pair<int, int>(-1, -1));
+        throw HttpStatusCodeException(NOT_IMPLEMENTED, "RequestHandler::handleRequest: Router not implemented yet.");
+
+        // todo: Route the request, return the CGI info
+        // Triplet_t cgiInfo = this->_router.execRoute(request, response);
+
+        // If dynamic content is being created, return the info
+        if (cgiInfo.first != -1)
+        {
+            // Get CGI Info
+            int cgiPid = cgiInfo.first;
+            int responseReadPipe = cgiInfo.second.first;
+            int requestWritePipe = cgiInfo.second.second;
+
+            // Record the cgi info
+            connection.setCgiInfo(cgiPid, responseReadPipe, requestWritePipe);
+
+            // Record the pipes to connection socket mappings
+            this->_pipeRoutes[responseReadPipe] = socketDescriptor;
+            this->_pipeRoutes[requestWritePipe] = socketDescriptor;
+
+            // Push the request body to the request pipe
+            this->_bufferManager.pushSocketBuffer(requestWritePipe, request.getBody());
+            
+            return cgiInfo; // cgi content
+        }
+        else // static content
+        {
+            // Push the response to the buffer
+            this->_sendResponse(socketDescriptor);
+            // return -1
+            return Triplet_t(-1, std::pair<int, int>(-1, -1));
+        }
     }
 
     catch (const WebservException &e)
@@ -85,40 +120,6 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
         // Handle error response
         this->handleErrorResponse(socketDescriptor, statusCode);
 
-        // return -1
-        return Triplet_t(-1, std::pair<int, int>(-1, -1));
-    }
-
-    // todo: Route the request, return the CGI info
-    // Triplet_t cgiInfo = this->_router.execRoute(request, response);
-    // Set cgiInfo to -1 in the meantime
-    Triplet_t cgiInfo(-1, std::pair<int, int>(-1, -1));
-    this->_router.execRoute(&request, &response);
-
-    // If dynamic content is being created, return the info
-    if (cgiInfo.first != -1)
-    {
-        // Get CGI Info
-        int cgiPid = cgiInfo.first;
-        int responseReadPipe = cgiInfo.second.first;
-        int requestWritePipe = cgiInfo.second.second;
-
-        // Record the cgi info
-        connection.setCgiInfo(cgiPid, responseReadPipe, requestWritePipe);
-
-        // Record the pipes to connection socket mappings
-        this->_pipeRoutes[responseReadPipe] = socketDescriptor;
-        this->_pipeRoutes[requestWritePipe] = socketDescriptor;
-
-        // Push the request body to the request pipe
-        this->_bufferManager.pushSocketBuffer(requestWritePipe, request.getBody());
-        
-        return cgiInfo; // cgi content
-    }
-    else // static content
-    {
-        // Push the response to the buffer
-        this->_sendResponse(socketDescriptor);
         // return -1
         return Triplet_t(-1, std::pair<int, int>(-1, -1));
     }

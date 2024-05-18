@@ -96,8 +96,6 @@ void Connection::touch()
 
 bool Connection::hasExpired() const
 {
-    // Log the connection timeout
-    this->_logger.log("Connection timeout: " + Converter::toString(this->_timeout) + " seconds");
     return time(NULL) - this->_lastAccess > this->_timeout;
 }
 

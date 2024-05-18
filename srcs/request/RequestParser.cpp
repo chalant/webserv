@@ -267,7 +267,12 @@ void RequestParser::_parseHeader(std::vector<char>::const_iterator &requestItera
     this->_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + headerName + ": " + headerValue + "\"");
 
     // Add header to parsed request
-    parsedRequest.addHeader(headerName, headerValue);
+    try{
+        parsedRequest.addHeader(headerName, headerValue);
+    } catch (const UnknownHeaderError &e){
+        // Log and continue
+        this->_logger.log(WARN, e.what());
+    }
 
     // Parse cookies
     if (headerName == "cookie")

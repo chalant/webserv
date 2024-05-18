@@ -236,7 +236,7 @@ void ConnectionManager::collectGarbage()
     size_t retiredSessions = sessionCount - this->_sessions.size();
 
     // Log the garbage collection
-    this->_logger.log(DEBUG, "Garbage collection completed. Retired " + Converter::toString(retiredSessions) + " session" + (retiredSessions == 1 ? "." : "s."));
+    this->_logger.log(DEBUG, "Garbage collection completed. Retired " + Converter::toString(retiredSessions) + " session" + (retiredSessions == 1 ? "." : "s.") + " Remaining sessions: " + Converter::toString(this->_sessions.size()) + ".");
 }
 
 // Generate a unique session ID
