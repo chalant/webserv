@@ -27,13 +27,21 @@ BufferManager::~BufferManager()
 {
 
     // Clean up all buffers
-    std::map<int, IBuffer *>::iterator it;
-    for (it = this->_buffers.begin(); it != this->_buffers.end(); it++)
+    std::map<int, IBuffer *>::iterator it = this->_buffers.begin();
+    while (it != this->_buffers.end())
     {
         // Flush remaining data in each buffer and then destroy it
         while (it->second->flush(it->first, true) > 0) // flush remaining data blockingly (true)
             ;
-        this->destroyBuffer(it->first);
+        
+        // Duplicate itertor to avoid invalidating it
+        std::map<int, IBuffer *>::iterator it2 = it;
+
+        // Increment iterator before destroying buffer
+        it++;
+
+        // Destroy buffer
+        this->destroyBuffer(it2->first);
     }
 }
 

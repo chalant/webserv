@@ -56,7 +56,8 @@ ssize_t SocketBuffer::flush(int socketDescriptor, bool all)
     else
     {
         // Update buffer state after successful send
-        memmove(&this->_buffer[0], &this->_buffer[bytesSent], bytesSent);
+        if (static_cast<size_t>(bytesSent) != this->_size) // Not all data was sent
+            memmove(&this->_buffer[0], &this->_buffer[bytesSent], bytesSent);
         this->_size -= bytesSent;
     }
     return this->_size; // Return the remaining size of the buffer
