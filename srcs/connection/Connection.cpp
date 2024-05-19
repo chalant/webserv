@@ -25,7 +25,7 @@ Connection::Connection(std::pair<int, std::pair<std::string, std::string> > clie
       _response(response),
       _timeout(timeout)
 {
-    this->touch();
+    this->_lastAccess = time(NULL);
 }
 
 // Destructor
@@ -95,8 +95,14 @@ void Connection::touch()
     // Get the current time
     time_t now = time(NULL);
 
+    // Set time strings
+    //char *nowString = ctime(&now);
+    //char *thenString = ctime(&this->_lastAccess);
+
+    //this->_logger.log(VERBOSE, "Updating last access for session: " + Converter::toString(this->_session->getId()) + " from " + thenString + " to " + nowString);
+
     // Log the last access update
-    this->_logger.log(VERBOSE, "Updating last access for session: " + Converter::toString(this->_session->getId()) + " from " + ctime(&this->_lastAccess) + " to " + ctime(&now));
+    this->_logger.log(VERBOSE, "Updating last access for connection with: " + this->_remoteAddress + " from " + ctime(&this->_lastAccess) + " to " + ctime(&now));
     
     // Update the last access time
     this->_lastAccess = now;

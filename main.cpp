@@ -1,4 +1,5 @@
 #include "includes/configuration/ConfigurationLoader.hpp"
+#include "includes/constants/HttpHelper.hpp"
 #include "includes/network/Server.hpp"
 #include "includes/network/Socket.hpp"
 #include "includes/core/PollingService.hpp"
@@ -83,7 +84,7 @@ int main(int argc, char **argv)
         Server server(socket, pollfdManager, connectionManager, configuration, logger);
 
         // Instantiate the Router.
-        Router router(configuration, logger);
+        Router router(configuration, logger, HttpHelper());
 
         // Instantiate the RequestHandler.
         RequestHandler requestHandler(bufferManager, connectionManager, configuration, router, logger, exceptionHandler, clientHandler);

@@ -2,7 +2,7 @@
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
 #include <utility>
-#include <iostream>
+
 /*
  * RequestHandler class
  *

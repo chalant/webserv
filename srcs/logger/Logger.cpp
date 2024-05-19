@@ -1,5 +1,4 @@
 #include "../../includes/logger/Logger.hpp"
-#include <iomanip>
 #include <iostream>
 #include <ctime>
 
@@ -91,16 +90,18 @@ int Logger::log(const IConnection &connection)
 
     // Create a temporary stringstream object to construct the log message
     std::ostringstream logBufferStream;
-    logBufferStream << "timestamp=\"" << this->_getCurrentTimestamp() << "\" "
-                    << "clientIP=\"" << connection.getIp() << "\" "
-                    << "clientPort=\"" << connection.getPort() << "\" "
-                    << "method=\"" << request.getMethodString() << "\" "
-                    << "requestUri=\"" << request.getUri() << "\" "
-                    << "httpVersion=\"" << request.getHttpVersion() << "\" "
-                    << "statusCode=\"" << response.getStatusCodeString() << "\" "
-                    << "responseSize=\"" << response.getResponseSizeString() << "\" "
-                    << "userAgent=\"" << request.getHeaderValue(USER_AGENT) << "\" "
-                    << "referrer=\"" << request.getHeaderValue(REFERER) << "\" ";
+    logBufferStream << "{\n"
+                    << "\ttimestamp=\"" << this->_getCurrentTimestamp() << "\",\n"
+                    << "\tclientIP=\"" << connection.getIp() << "\",\n"
+                    << "\tclientPort=\"" << connection.getPort() << "\",\n"
+                    << "\tmethod=\"" << request.getMethodString() << "\",\n"
+                    << "\trequestUri=\"" << request.getUri() << "\",\n"
+                    << "\thttpVersion=\"" << request.getHttpVersion() << "\",\n"
+                    << "\tstatusCode=\"" << response.getStatusCodeString()
+                    << "\tresponseSize=\"" << response.getResponseSizeString() << "\",\n"
+                    << "\tuserAgent=\"" << request.getHeaderValue(USER_AGENT) << "\",\n"
+                    << "\treferrer=\"" << request.getHeaderValue(REFERER) << "\"\n"
+                    << "}\n";
 
     // Add request headers to the log message
     this->_appendMapToLog(logBufferStream, "requestHeaders", request.getHeadersStringMap());
