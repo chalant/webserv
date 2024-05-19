@@ -11,11 +11,11 @@ locationblock)*/
 #include <vector>
 #include <algorithm>
 
-Route::Route(const HttpHelper &httpHelper) : _httpHelper(httpHelper)
+Route::Route()
 {
 }
 
-Router::Router(const IConfiguration &configuration, ILogger &logger) : _configuration(configuration), _logger(logger)
+Router::Router(const IConfiguration &configuration, ILogger &logger, HttpHelper _httpHelper) : _configuration(configuration), _logger(logger), _httpHelper(_httpHelper)
 {
 	// Log the creation of the Router
 	this->_logger.log(VERBOSE, "Initializing Router...");
@@ -23,11 +23,11 @@ Router::Router(const IConfiguration &configuration, ILogger &logger) : _configur
 	// For every server block in the configuration, insert a routeMapEntry into the _routes map
 	// const std::vector<IConfiguration *> servers = _configuration.getBlocks("server"); // Declare and initialize the 'servers' vector
 	const std::vector<IConfiguration *> &servers = _configuration.getBlocks("http")[0]->getBlocks("server");
-	// std::vector<IConfiguration *>::iterator serverIt;
 	for (std::vector<IConfiguration *>::const_iterator serverIt = servers.begin(); serverIt != servers.end(); serverIt++)
 	{
 		this->_createServerRoutes(*serverIt);
 	}
+	
 }
 
 Router::~Router()
@@ -43,59 +43,49 @@ void Router::_createServerRoutes(const IConfiguration *serverBlock)
 
 void Router::_createRoutes(const IConfiguration *serverBlock)
 {
-
 	std::vector<IConfiguration *> locations = serverBlock->getBlocks("location");
-
 	std::vector<IConfiguration *>::iterator locationIt;
+
 	std::vector<std::string> hostnames = serverBlock->getStringVector("server_name");
+	std::vector<std::string>::iterator hostnameIt;
 
 	std::vector<std::string> ports = serverBlock->getStringVector("listen");
-	std::vector<std::string>::iterator hostnameIt;
 	std::vector<std::string>::iterator portIt;
+
 	std::string prefix;
+	std::vector<std::string> methods;
+
 	size_t i = this->getRouteCount();
-	size_t serverRoutesNumber = 0;
+
+
+	// Every Hostname has a number of routes multiplied by the number of locations multiplied by the number of ports
+	// Formula: Number of routes = nHostnames * nLocations * nPorts;
+
 	for (hostnameIt = hostnames.begin(); hostnameIt != hostnames.end(); hostnameIt++)
 	{
-		HttpHelper HttpHelper;
-		Route newRoute(HttpHelper);
-		_routes.push_back(newRoute);
-		_routes[i].setUri(*hostnameIt);
-		_routes[i++].appendUri(":");
-		serverRoutesNumber++;
-	}
-	i = this->getRouteCount() - serverRoutesNumber;
-	portIt = ports.begin();
-	size_t portCount = std::distance(portIt, ports.end());
-	size_t j;
-	size_t loopStop = this->getRouteCount();
-	while (i < loopStop)
-	{
-		j = 1;
-		while (j < portCount)
+		for (locationIt = locations.begin(); locationIt != locations.end(); locationIt++)
 		{
-			HttpHelper HttpHelper;
-			Route newRoute(HttpHelper);
-			_routes.push_back(newRoute);
-			_routes[i + j].setUri(_routes[i].getUri());
-			std::vector<std::string>::iterator nextPortIt = portIt;
-			std::advance(nextPortIt, j);
-			_routes[i + j].appendUri(*nextPortIt);
-			serverRoutesNumber++;
-			j++;
+			try 
+			{
+				methods = (*locationIt)->getStringVector("limit_except");
+			}
+			catch (std::exception&) 
+			{
+				methods.push_back("GET");
+			}		
+			prefix = (*locationIt)->getString("prefix");
+			for (portIt = ports.begin(); portIt != ports.end(); portIt++)
+			{
+				Route newRoute;
+				_routes.push_back(newRoute);
+				_routes[i].setUri(*hostnameIt);
+				_routes[i].appendUri(":");
+				_routes[i].appendUri(*portIt);
+				_routes[i].appendUri(prefix);
+				_routes[i].setMethod(methods[methods.size() - 1], this->_httpHelper);
+				i++;
+			}
 		}
-		_routes[i++].appendUri(*portIt);
-	}
-	i = 0; // replace this later
-	// std::vector<std::string> methods = (*locationIt)->getStringVector("limitExcept");
-	// locationIt = locations.begin();
-	//(*locationIt)->print(0);
-	for (locationIt = locations.begin(); locationIt != locations.end(); locationIt++)
-	{
-		prefix = (*locationIt)->getString("prefix");
-		//_routes[i].setMethod(methods[i]);
-		//_routes[i].setMethod((*locationIt)->getString("method"));
-		_routes[i++].appendUri(prefix);
 	}
 	std::sort(_routes.begin(), _routes.end());
 }
@@ -163,7 +153,7 @@ HttpMethod Route::getMethod() const
 	return (this->_method);
 }
 
-void Route::setMethod(const std::string newMethod)
+void Route::setMethod(const std::string newMethod, HttpHelper &httpHelper)
 {
 	/*if (this->_httpHelper.isMethod(newMethod) == false)
 		throw HttpStatusCodeException(METHOD_NOT_ALLOWED, // Throw '405' status error
@@ -173,12 +163,12 @@ void Route::setMethod(const std::string newMethod)
 									  "unsupported method: \"" + newMethod + "\"");*/
 
 	// Set the method of the request
-	this->_method = this->_httpHelper.stringHttpMethodMap(newMethod);
+	this->_method = httpHelper.stringHttpMethodMap(newMethod);
 }
 
 bool Route::operator<(const Route &other) const
 {
-	return (this->_uri.length() < other._uri.length());
+	return (this->_uri.length() > other._uri.length());
 }
 
 void Route::appendUri(const std::string &newString)

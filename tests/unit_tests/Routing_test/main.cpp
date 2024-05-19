@@ -6,6 +6,7 @@
 #include "../../../includes/configuration/ConfigurationLoader.hpp"
 #include "../../mock_includes/MockLogger.hpp"
 
+#include <cassert>
 #include <iostream>
 
 int main()
@@ -13,14 +14,15 @@ int main()
     MockLogger logger;
     ConfigurationLoader loader(logger);
     const IConfiguration &block = loader.loadConfiguration("test_configuration_router.conf");
-    // block.print(0);
-
-    Router router(block, logger);
+    HttpHelper httpHelper;
+    Router router(block, logger, httpHelper);
     size_t i = 0;
     while (i < router.getRouteCount())
     {
-        std::cout << "Route :" << router.getRoutes()[i++].getUri() << std::endl;
-        // std::cout << "Method: " << it->getMethod() << std::endl << std::endl;
+        std::cout << "Route :" << router.getRoutes()[i].getUri() << std::endl;
+        std::cout << "Method: " <<  httpHelper.httpMethodStringMap(router.getRoutes()[i].getMethod()) << std::endl << std::endl;
+        i++;
     }
+    assert (i == router.getRouteCount());
     return (0);
 }

@@ -21,15 +21,15 @@ locationblock)*/
 class Response;
 
 // Route structure with function pointer for handler
-struct Route
+class Route
 {
 public:
-    Route(const HttpHelper &httpHelper);
+    Route();
     std::string getUri() const;
     void setUri(std::string newUri);
     void appendUri(const std::string &newString);
     HttpMethod getMethod() const;
-    void setMethod(const std::string newMethod);
+    void setMethod(const std::string newMethod, HttpHelper &httpHelper);
     void (*handler)(IRequest *, IResponse *);
     bool operator<(const Route &other) const;
     Route &operator=(const Route &other);
@@ -37,14 +37,13 @@ public:
 private:
     std::string _uri;
     HttpMethod _method;
-    const HttpHelper &_httpHelper;
 };
 
 // Router class using std::map for route storage
 class Router : public IRouter
 {
 public:
-    Router(const IConfiguration &Configuration, ILogger &logger);
+    Router(const IConfiguration &Configuration, ILogger &logger, HttpHelper _httpHelper);
     ~Router();
     void addRoute(const IRequest &request, void (*newHandler)(IRequest *, IResponse *));
     void execRoute(IRequest *req, IResponse *res);
@@ -57,6 +56,7 @@ private:
     const IConfiguration &_configuration;
     std::vector<Route> _routes;
     ILogger &_logger;
+    HttpHelper _httpHelper;
 };
 
 #endif
