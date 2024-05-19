@@ -3,21 +3,21 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: llapage <llapage@student.42.fr>            +#+  +:+       +#+         #
+#    By: mde-clee <mde-clee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 10:54:31 by llapage           #+#    #+#              #
-#    Updated: 2024/04/10 14:18:25 by llapage          ###   ########.fr        #
+#    Updated: 2024/05/19 20:44:30 by mde-clee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME		= webserv
+NAME		= Routing_test
 #-------------------SOURCES PATH----------------------
 SOURCES     = srcs/
 INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
-FLAGS    	= 	-Wall -Werror -Wextra -g -fsanitize=address
-# FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
+#FLAGS    	= 	-Wall -Werror -Wextra -g -fsanitize=address
+FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
 				
 SRCS        =	main.cpp \

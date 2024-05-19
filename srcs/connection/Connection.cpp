@@ -1,5 +1,6 @@
 #include "../../includes/connection/Connection.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <ctime>
 
 /*
  * Connection class
@@ -91,7 +92,14 @@ void Connection::setCgiInfo(int cgiPid, int responseReadPipefd, int requestWrite
 // Connection management
 void Connection::touch()
 {
-    this->_lastAccess = time(NULL);
+    // Get the current time
+    time_t now = time(NULL);
+
+    // Log the last access update
+    this->_logger.log(VERBOSE, "Updating last access for session: " + Converter::toString(this->_session->getId()) + " from " + ctime(&this->_lastAccess) + " to " + ctime(&now));
+    
+    // Update the last access time
+    this->_lastAccess = now;
 }
 
 bool Connection::hasExpired() const
