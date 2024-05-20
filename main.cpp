@@ -124,6 +124,10 @@ int main(int argc, char **argv)
     }
     catch (WebservException &e)
     {
+        // Configure the logger with a null configuration.
+        LoggerConfiguration *null = NULL;
+        logger.configure(*null);
+
         // Handle setup exceptions.
         exceptionHandler.handleException(e, "webserv setup: ");
     }
