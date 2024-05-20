@@ -105,40 +105,49 @@ int Logger::log(const IConnection &connection)
     const IRequest &request = connection.getRequest();
     const IResponse &response = connection.getResponse();
 
-    // Create a temporary stringstream object to construct the log message
-    std::ostringstream logBufferStream;
-    logBufferStream << "{\n"
-                    << "\ttimestamp=\"" << this->_getCurrentTimestamp()
-                    << "\",\n"
-                    << "\tclientIP=\"" << connection.getIp() << "\",\n"
-                    << "\tclientPort=\"" << connection.getPort() << "\",\n"
-                    << "\tmethod=\"" << request.getMethodString() << "\",\n"
-                    << "\trequestUri=\"" << request.getUri() << "\",\n"
-                    << "\thttpVersion=\"" << request.getHttpVersion() << "\",\n"
-                    << "\tstatusCode=\"" << response.getStatusCodeString()
-                    << "\tresponseSize=\"" << response.getResponseSizeString()
-                    << "\",\n"
-                    << "\tuserAgent=\"" << request.getHeaderValue(USER_AGENT)
-                    << "\",\n"
-                    << "\treferrer=\"" << request.getHeaderValue(REFERER)
-                    << "\"\n";
- 
+    std::string logMessage;
+    try // Will fail in case of incorrect request/response
+    {
+        // Create a temporary stringstream object to construct the log message
+        std::ostringstream logBufferStream;
+        logBufferStream << "{\n"
+                        << "\ttimestamp=\"" << this->_getCurrentTimestamp()
+                        << "\",\n"
+                        << "\tclientIP=\"" << connection.getIp() << "\",\n"
+                        << "\tclientPort=\"" << connection.getPort() << "\",\n"
+                        << "\tmethod=\"" << request.getMethodString() << "\",\n"
+                        << "\trequestUri=\"" << request.getUri() << "\",\n"
+                        << "\thttpVersion=\"" << request.getHttpVersion()
+                        << "\",\n"
+                        << "\tstatusCode=\"" << response.getStatusCodeString()
+                        << "\tresponseSize=\""
+                        << response.getResponseSizeString() << "\",\n"
+                        << "\tuserAgent=\""
+                        << request.getHeaderValue(USER_AGENT) << "\",\n"
+                        << "\treferrer=\"" << request.getHeaderValue(REFERER)
+                        << "\"\n";
 
-    // Add request headers to the log message
-    this->_appendMapToLog(logBufferStream, "requestHeaders",
-                          request.getHeadersStringMap());
+        // Add request headers to the log message
+        this->_appendMapToLog(logBufferStream, "requestHeaders",
+                              request.getHeadersStringMap());
 
-    // Add response headers to the log message
-    this->_appendMapToLog(logBufferStream, "responseHeaders",
-                          response.getHeadersStringMap());
+        // Add response headers to the log message
+        this->_appendMapToLog(logBufferStream, "responseHeaders",
+                              response.getHeadersStringMap());
 
-    // Add cookies to the log message
-    this->_appendMapToLog(logBufferStream, "Cookies", request.getCookies());
+        // Add cookies to the log message
+        this->_appendMapToLog(logBufferStream, "Cookies", request.getCookies());
 
-    logBufferStream << "}\n";
+        logBufferStream << "}\n";
 
-    // Convert the log message string to a vector of chars
-    std::string logMessage = logBufferStream.str();
+        // Convert the log message string to a vector of chars
+        logMessage = logBufferStream.str();
+    }
+    catch (std::exception &e)
+    {
+        // Log the exception message
+        this->log(ERROR, e.what());
+    }
 
     // Push the log message to the access log file buffer if configured,
     // otherwise push to stderr buffer
