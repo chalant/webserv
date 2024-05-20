@@ -12,8 +12,8 @@
  *
  */
 
-#include <string>
 #include "../constants/LogLevelHelper.hpp"
+#include <string>
 
 // Forward declarations
 class IConnection;
@@ -23,15 +23,17 @@ class ILoggerConfiguration;
 class ILogger
 {
 public:
-    virtual ~ILogger(){};
+    virtual ~ILogger() {};
 
     // Logging methods
-    virtual int log(const std::string &) = 0;                 // Method to log error messages
-    virtual int log(const LogLevel, const std::string &) = 0; // Method to log error messages
-    virtual int log(const IConnection &) = 0;                 // Method to log access events
+    virtual int log(const std::string &) = 0; // Method to log error messages
+    virtual int log(const LogLevel,
+                    const std::string &) = 0; // Method to log error messages
+    virtual int log(const IConnection &) = 0; // Method to log access events
 
     // Configuration method
-    virtual void configure(ILoggerConfiguration &) = 0; // Method to configure the Logger instance
+    virtual void configure(ILoggerConfiguration &) = 0; // Method to configure
+                                                        // the Logger instance
 };
 
 #endif // ILOGGER_HPP

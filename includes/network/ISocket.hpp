@@ -10,15 +10,15 @@
  * controlling socket file descriptor flags, and closing the socket.
  */
 
+#include <string>
 #include <sys/socket.h>
 #include <vector>
-#include <string>
 
 // Interface for socket operations
 class ISocket
 {
 public:
-    virtual ~ISocket(){};
+    virtual ~ISocket() {};
 
     // Creates a socket
     virtual int socket() const = 0;
@@ -36,16 +36,20 @@ public:
     virtual int setNonBlocking(int fd) const = 0;
 
     // Accepts an incoming connection
-    virtual std::pair<int, std::pair<std::string, std::string> > accept(int fd) const = 0;
+    virtual std::pair<int, std::pair<std::string, std::string> >
+    accept(int fd) const = 0;
 
     // Sends data over the socket
-    virtual int send(int recipientSocketFd, const std::vector<char> &data) const = 0;
+    virtual int send(int recipientSocketFd,
+                     const std::vector<char> &data) const = 0;
 
     // Sends data over the socket blocking until all data is sent
-    virtual int sendAll(int recipientSocketFd, const std::vector<char> &data) const = 0;
+    virtual int sendAll(int recipientSocketFd,
+                        const std::vector<char> &data) const = 0;
 
     // Receives data from the socket
-    virtual ssize_t recv(int socketDescriptor, char *buffer, size_t len) const = 0;
+    virtual ssize_t recv(int socketDescriptor, char *buffer,
+                         size_t len) const = 0;
 };
 
 #endif // ISOCKET_HPP

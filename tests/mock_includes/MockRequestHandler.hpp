@@ -2,9 +2,10 @@
 #define MOCKREQUESTHANDLER_HPP
 
 /*
- * MockRequestHandler class is a mock implementation of the IRequestHandler interface
- * This mock implementation is used for testing purposes to simulate the behavior of the IRequestHandler interface
- * during unit testing without relying on the actual implementation.
+ * MockRequestHandler class is a mock implementation of the IRequestHandler
+ * interface This mock implementation is used for testing purposes to simulate
+ * the behavior of the IRequestHandler interface during unit testing without
+ * relying on the actual implementation.
  */
 
 #include "../../includes/connection/IRequestHandler.hpp" // Include the base interface header

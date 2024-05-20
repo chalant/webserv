@@ -4,9 +4,10 @@
 /*
  * HttpVersionHelper.cpp
  *
- * The HttpVersionHelper class provides functionality for working with HTTP versions.
- * It defines an enum HttpVersion to represent standard HTTP versions and provides methods
- * to retrieve string representations of versions and vice versa.
+ * The HttpVersionHelper class provides functionality for working with HTTP
+ * versions. It defines an enum HttpVersion to represent standard HTTP versions
+ * and provides methods to retrieve string representations of versions and vice
+ * versa.
  *
  */
 
@@ -14,10 +15,13 @@
 HttpHeaderHelper::HttpHeaderHelper()
     : _headerList(_setHeaderList()),
       _stringHttpHeaderMap(_setStringHttpHeaderMap()),
-      _httpHeaderStringMap(_setHttpHeaderStringMap()) {}
+      _httpHeaderStringMap(_setHttpHeaderStringMap())
+{
+}
 
 // Get string representation of HttpHeader enum value
-const std::string &HttpHeaderHelper::httpHeaderStringMap(HttpHeader header) const
+const std::string &
+HttpHeaderHelper::httpHeaderStringMap(HttpHeader header) const
 {
     if (_httpHeaderStringMap.find(header) != _httpHeaderStringMap.end())
     {
@@ -30,7 +34,8 @@ const std::string &HttpHeaderHelper::httpHeaderStringMap(HttpHeader header) cons
 }
 
 // Get HttpHeader enum value from string representation
-HttpHeader HttpHeaderHelper::stringHttpHeaderMap(const std::string &header) const
+HttpHeader
+HttpHeaderHelper::stringHttpHeaderMap(const std::string &header) const
 {
     if (_stringHttpHeaderMap.find(header) != _stringHttpHeaderMap.end())
     {
@@ -48,7 +53,8 @@ bool HttpHeaderHelper::isHeaderName(const std::string &header) const
     return _stringHttpHeaderMap.find(header) != _stringHttpHeaderMap.end();
 }
 
-// Helper function to initialize headerList with string representations of HTTP headers
+// Helper function to initialize headerList with string representations of HTTP
+// headers
 std::vector<std::string> HttpHeaderHelper::_setHeaderList()
 {
     std::vector<std::string> headerList;
@@ -132,170 +138,190 @@ std::vector<std::string> HttpHeaderHelper::_setHeaderList()
     return headerList;
 }
 
-// Helper function to initialize stringHttpHeaderMap with string representations of HTTP headers
+// Helper function to initialize stringHttpHeaderMap with string representations
+// of HTTP headers
 std::map<std::string, HttpHeader> HttpHeaderHelper::_setStringHttpHeaderMap()
 {
     std::map<std::string, HttpHeader> stringHttpHeaderMap;
 
     // Add mappings from string representations to HttpHeader enum values
-    stringHttpHeaderMap["cache-control"] = CACHE_CONTROL;
-    stringHttpHeaderMap["connection"] = CONNECTION;
-    stringHttpHeaderMap["date"] = DATE;
-    stringHttpHeaderMap["pragma"] = PRAGMA;
-    stringHttpHeaderMap["trailer"] = TRAILER;
-    stringHttpHeaderMap["transfer-encoding"] = TRANSFER_ENCODING;
-    stringHttpHeaderMap["upgrade"] = UPGRADE;
-    stringHttpHeaderMap["via"] = VIA;
-    stringHttpHeaderMap["warning"] = WARNING;
-    stringHttpHeaderMap["accept"] = ACCEPT;
-    stringHttpHeaderMap["accept-charset"] = ACCEPT_CHARSET;
-    stringHttpHeaderMap["accept-encoding"] = ACCEPT_ENCODING;
-    stringHttpHeaderMap["accept-language"] = ACCEPT_LANGUAGE;
-    stringHttpHeaderMap["authorization"] = AUTHORIZATION;
-    stringHttpHeaderMap["expect"] = EXPECT;
-    stringHttpHeaderMap["from"] = FROM;
-    stringHttpHeaderMap["host"] = HOST;
-    stringHttpHeaderMap["if-match"] = IF_MATCH;
-    stringHttpHeaderMap["if-modified-since"] = IF_MODIFIED_SINCE;
-    stringHttpHeaderMap["if-none-match"] = IF_NONE_MATCH;
-    stringHttpHeaderMap["if-range"] = IF_RANGE;
-    stringHttpHeaderMap["if-unmodified-since"] = IF_UNMODIFIED_SINCE;
-    stringHttpHeaderMap["max-forwards"] = MAX_FORWARDS;
-    stringHttpHeaderMap["proxy-authorization"] = PROXY_AUTHORIZATION;
-    stringHttpHeaderMap["range"] = RANGE;
-    stringHttpHeaderMap["referer"] = REFERER;
-    stringHttpHeaderMap["te"] = TE;
-    stringHttpHeaderMap["user-agent"] = USER_AGENT;
-    stringHttpHeaderMap["accept-ranges"] = ACCEPT_RANGES;
-    stringHttpHeaderMap["age"] = AGE;
-    stringHttpHeaderMap["etag"] = ETAG;
-    stringHttpHeaderMap["location"] = LOCATION;
-    stringHttpHeaderMap["proxy-authenticate"] = PROXY_AUTHENTICATE;
-    stringHttpHeaderMap["retry-after"] = RETRY_AFTER;
-    stringHttpHeaderMap["server"] = SERVER;
-    stringHttpHeaderMap["vary"] = VARY;
-    stringHttpHeaderMap["www-authenticate"] = WWW_AUTHENTICATE;
-    stringHttpHeaderMap["allow"] = ALLOW;
-    stringHttpHeaderMap["content-encoding"] = CONTENT_ENCODING;
-    stringHttpHeaderMap["content-language"] = CONTENT_LANGUAGE;
-    stringHttpHeaderMap["content-length"] = CONTENT_LENGTH;
-    stringHttpHeaderMap["content-location"] = CONTENT_LOCATION;
-    stringHttpHeaderMap["content-md5"] = CONTENT_MD5;
-    stringHttpHeaderMap["content-range"] = CONTENT_RANGE;
-    stringHttpHeaderMap["content-type"] = CONTENT_TYPE;
-    stringHttpHeaderMap["expires"] = EXPIRES;
-    stringHttpHeaderMap["last-modified"] = LAST_MODIFIED;
-    stringHttpHeaderMap["access-control-allow-origin"] = ACCESS_CONTROL_ALLOW_ORIGIN;
-    stringHttpHeaderMap["access-control-allow-methods"] = ACCESS_CONTROL_ALLOW_METHODS;
-    stringHttpHeaderMap["access-control-allow-headers"] = ACCESS_CONTROL_ALLOW_HEADERS;
-    stringHttpHeaderMap["access-control-max-age"] = ACCESS_CONTROL_MAX_AGE;
-    stringHttpHeaderMap["access-control-allow-credentials"] = ACCESS_CONTROL_ALLOW_CREDENTIALS;
-    stringHttpHeaderMap["access-control-expose-headers"] = ACCESS_CONTROL_EXPOSE_HEADERS;
-    stringHttpHeaderMap["access-control-request-method"] = ACCESS_CONTROL_REQUEST_METHOD;
-    stringHttpHeaderMap["access-control-request-headers"] = ACCESS_CONTROL_REQUEST_HEADERS;
-    stringHttpHeaderMap["content-disposition"] = CONTENT_DISPOSITION;
-    stringHttpHeaderMap["content-security-policy"] = CONTENT_SECURITY_POLICY;
-    stringHttpHeaderMap["content-security-policy-report-only"] = CONTENT_SECURITY_POLICY_REPORT_ONLY;
-    stringHttpHeaderMap["dnt"] = DNT;
-    stringHttpHeaderMap["forwarded"] = FORWARDED;
-    stringHttpHeaderMap["origin"] = ORIGIN;
-    stringHttpHeaderMap["timing-allow-origin"] = TIMING_ALLOW_ORIGIN;
-    stringHttpHeaderMap["x-content-type-options"] = X_CONTENT_TYPE_OPTIONS;
-    stringHttpHeaderMap["x-frame-options"] = X_FRAME_OPTIONS;
-    stringHttpHeaderMap["x-xss-protection"] = X_XSS_PROTECTION;
-    stringHttpHeaderMap["x-forwarded-for"] = X_FORWARDED_FOR;
-    stringHttpHeaderMap["cookie"] = COOKIE;
-    stringHttpHeaderMap["set-cookie"] = SET_COOKIE;
-    stringHttpHeaderMap["upgrade-insecure-requests"] = UPGRADE_INSECURE_REQUESTS;
-    stringHttpHeaderMap["sec-fetch-dest"] = SEC_FETCH_DEST;
-    stringHttpHeaderMap["sec-fetch-mode"] = SEC_FETCH_MODE;
-    stringHttpHeaderMap["sec-fetch-site"] = SEC_FETCH_SITE;
-    stringHttpHeaderMap["sec-fetch-user"] = SEC_FETCH_USER;
-    stringHttpHeaderMap["priority"] = PRIORITY;
+    stringHttpHeaderMap[ "cache-control" ] = CACHE_CONTROL;
+    stringHttpHeaderMap[ "connection" ] = CONNECTION;
+    stringHttpHeaderMap[ "date" ] = DATE;
+    stringHttpHeaderMap[ "pragma" ] = PRAGMA;
+    stringHttpHeaderMap[ "trailer" ] = TRAILER;
+    stringHttpHeaderMap[ "transfer-encoding" ] = TRANSFER_ENCODING;
+    stringHttpHeaderMap[ "upgrade" ] = UPGRADE;
+    stringHttpHeaderMap[ "via" ] = VIA;
+    stringHttpHeaderMap[ "warning" ] = WARNING;
+    stringHttpHeaderMap[ "accept" ] = ACCEPT;
+    stringHttpHeaderMap[ "accept-charset" ] = ACCEPT_CHARSET;
+    stringHttpHeaderMap[ "accept-encoding" ] = ACCEPT_ENCODING;
+    stringHttpHeaderMap[ "accept-language" ] = ACCEPT_LANGUAGE;
+    stringHttpHeaderMap[ "authorization" ] = AUTHORIZATION;
+    stringHttpHeaderMap[ "expect" ] = EXPECT;
+    stringHttpHeaderMap[ "from" ] = FROM;
+    stringHttpHeaderMap[ "host" ] = HOST;
+    stringHttpHeaderMap[ "if-match" ] = IF_MATCH;
+    stringHttpHeaderMap[ "if-modified-since" ] = IF_MODIFIED_SINCE;
+    stringHttpHeaderMap[ "if-none-match" ] = IF_NONE_MATCH;
+    stringHttpHeaderMap[ "if-range" ] = IF_RANGE;
+    stringHttpHeaderMap[ "if-unmodified-since" ] = IF_UNMODIFIED_SINCE;
+    stringHttpHeaderMap[ "max-forwards" ] = MAX_FORWARDS;
+    stringHttpHeaderMap[ "proxy-authorization" ] = PROXY_AUTHORIZATION;
+    stringHttpHeaderMap[ "range" ] = RANGE;
+    stringHttpHeaderMap[ "referer" ] = REFERER;
+    stringHttpHeaderMap[ "te" ] = TE;
+    stringHttpHeaderMap[ "user-agent" ] = USER_AGENT;
+    stringHttpHeaderMap[ "accept-ranges" ] = ACCEPT_RANGES;
+    stringHttpHeaderMap[ "age" ] = AGE;
+    stringHttpHeaderMap[ "etag" ] = ETAG;
+    stringHttpHeaderMap[ "location" ] = LOCATION;
+    stringHttpHeaderMap[ "proxy-authenticate" ] = PROXY_AUTHENTICATE;
+    stringHttpHeaderMap[ "retry-after" ] = RETRY_AFTER;
+    stringHttpHeaderMap[ "server" ] = SERVER;
+    stringHttpHeaderMap[ "vary" ] = VARY;
+    stringHttpHeaderMap[ "www-authenticate" ] = WWW_AUTHENTICATE;
+    stringHttpHeaderMap[ "allow" ] = ALLOW;
+    stringHttpHeaderMap[ "content-encoding" ] = CONTENT_ENCODING;
+    stringHttpHeaderMap[ "content-language" ] = CONTENT_LANGUAGE;
+    stringHttpHeaderMap[ "content-length" ] = CONTENT_LENGTH;
+    stringHttpHeaderMap[ "content-location" ] = CONTENT_LOCATION;
+    stringHttpHeaderMap[ "content-md5" ] = CONTENT_MD5;
+    stringHttpHeaderMap[ "content-range" ] = CONTENT_RANGE;
+    stringHttpHeaderMap[ "content-type" ] = CONTENT_TYPE;
+    stringHttpHeaderMap[ "expires" ] = EXPIRES;
+    stringHttpHeaderMap[ "last-modified" ] = LAST_MODIFIED;
+    stringHttpHeaderMap[ "access-control-allow-origin" ] =
+        ACCESS_CONTROL_ALLOW_ORIGIN;
+    stringHttpHeaderMap[ "access-control-allow-methods" ] =
+        ACCESS_CONTROL_ALLOW_METHODS;
+    stringHttpHeaderMap[ "access-control-allow-headers" ] =
+        ACCESS_CONTROL_ALLOW_HEADERS;
+    stringHttpHeaderMap[ "access-control-max-age" ] = ACCESS_CONTROL_MAX_AGE;
+    stringHttpHeaderMap[ "access-control-allow-credentials" ] =
+        ACCESS_CONTROL_ALLOW_CREDENTIALS;
+    stringHttpHeaderMap[ "access-control-expose-headers" ] =
+        ACCESS_CONTROL_EXPOSE_HEADERS;
+    stringHttpHeaderMap[ "access-control-request-method" ] =
+        ACCESS_CONTROL_REQUEST_METHOD;
+    stringHttpHeaderMap[ "access-control-request-headers" ] =
+        ACCESS_CONTROL_REQUEST_HEADERS;
+    stringHttpHeaderMap[ "content-disposition" ] = CONTENT_DISPOSITION;
+    stringHttpHeaderMap[ "content-security-policy" ] = CONTENT_SECURITY_POLICY;
+    stringHttpHeaderMap[ "content-security-policy-report-only" ] =
+        CONTENT_SECURITY_POLICY_REPORT_ONLY;
+    stringHttpHeaderMap[ "dnt" ] = DNT;
+    stringHttpHeaderMap[ "forwarded" ] = FORWARDED;
+    stringHttpHeaderMap[ "origin" ] = ORIGIN;
+    stringHttpHeaderMap[ "timing-allow-origin" ] = TIMING_ALLOW_ORIGIN;
+    stringHttpHeaderMap[ "x-content-type-options" ] = X_CONTENT_TYPE_OPTIONS;
+    stringHttpHeaderMap[ "x-frame-options" ] = X_FRAME_OPTIONS;
+    stringHttpHeaderMap[ "x-xss-protection" ] = X_XSS_PROTECTION;
+    stringHttpHeaderMap[ "x-forwarded-for" ] = X_FORWARDED_FOR;
+    stringHttpHeaderMap[ "cookie" ] = COOKIE;
+    stringHttpHeaderMap[ "set-cookie" ] = SET_COOKIE;
+    stringHttpHeaderMap[ "upgrade-insecure-requests" ] =
+        UPGRADE_INSECURE_REQUESTS;
+    stringHttpHeaderMap[ "sec-fetch-dest" ] = SEC_FETCH_DEST;
+    stringHttpHeaderMap[ "sec-fetch-mode" ] = SEC_FETCH_MODE;
+    stringHttpHeaderMap[ "sec-fetch-site" ] = SEC_FETCH_SITE;
+    stringHttpHeaderMap[ "sec-fetch-user" ] = SEC_FETCH_USER;
+    stringHttpHeaderMap[ "priority" ] = PRIORITY;
 
     return stringHttpHeaderMap;
 }
 
-// Helper function to initialize httpHeaderStringMap with mappings from HttpHeader enum values to string representations
+// Helper function to initialize httpHeaderStringMap with mappings from
+// HttpHeader enum values to string representations
 std::map<HttpHeader, std::string> HttpHeaderHelper::_setHttpHeaderStringMap()
 {
     std::map<HttpHeader, std::string> httpHeaderStringMap;
 
     // Add mappings from HttpHeader enum values to string representations
-    httpHeaderStringMap[CACHE_CONTROL] = "cache-control";
-    httpHeaderStringMap[CONNECTION] = "connection";
-    httpHeaderStringMap[DATE] = "date";
-    httpHeaderStringMap[PRAGMA] = "pragma";
-    httpHeaderStringMap[TRAILER] = "trailer";
-    httpHeaderStringMap[TRANSFER_ENCODING] = "transfer-encoding";
-    httpHeaderStringMap[UPGRADE] = "upgrade";
-    httpHeaderStringMap[VIA] = "via";
-    httpHeaderStringMap[WARNING] = "warning";
-    httpHeaderStringMap[ACCEPT] = "accept";
-    httpHeaderStringMap[ACCEPT_CHARSET] = "accept-charset";
-    httpHeaderStringMap[ACCEPT_ENCODING] = "accept-encoding";
-    httpHeaderStringMap[ACCEPT_LANGUAGE] = "accept-language";
-    httpHeaderStringMap[AUTHORIZATION] = "authorization";
-    httpHeaderStringMap[EXPECT] = "expect";
-    httpHeaderStringMap[FROM] = "from";
-    httpHeaderStringMap[HOST] = "host";
-    httpHeaderStringMap[IF_MATCH] = "if-match";
-    httpHeaderStringMap[IF_MODIFIED_SINCE] = "if-modified-since";
-    httpHeaderStringMap[IF_NONE_MATCH] = "if-none-match";
-    httpHeaderStringMap[IF_RANGE] = "if-range";
-    httpHeaderStringMap[IF_UNMODIFIED_SINCE] = "if-unmodified-since";
-    httpHeaderStringMap[MAX_FORWARDS] = "max-forwards";
-    httpHeaderStringMap[PROXY_AUTHORIZATION] = "proxy-authorization";
-    httpHeaderStringMap[RANGE] = "range";
-    httpHeaderStringMap[REFERER] = "referer";
-    httpHeaderStringMap[TE] = "te";
-    httpHeaderStringMap[USER_AGENT] = "user-agent";
-    httpHeaderStringMap[ACCEPT_RANGES] = "accept-ranges";
-    httpHeaderStringMap[AGE] = "age";
-    httpHeaderStringMap[ETAG] = "etag";
-    httpHeaderStringMap[LOCATION] = "location";
-    httpHeaderStringMap[PROXY_AUTHENTICATE] = "proxy-authenticate";
-    httpHeaderStringMap[RETRY_AFTER] = "retry-after";
-    httpHeaderStringMap[SERVER] = "server";
-    httpHeaderStringMap[VARY] = "vary";
-    httpHeaderStringMap[WWW_AUTHENTICATE] = "www-authenticate";
-    httpHeaderStringMap[ALLOW] = "allow";
-    httpHeaderStringMap[CONTENT_ENCODING] = "content-encoding";
-    httpHeaderStringMap[CONTENT_LANGUAGE] = "content-language";
-    httpHeaderStringMap[CONTENT_LENGTH] = "content-length";
-    httpHeaderStringMap[CONTENT_LOCATION] = "content-location";
-    httpHeaderStringMap[CONTENT_MD5] = "content-md5";
-    httpHeaderStringMap[CONTENT_RANGE] = "content-range";
-    httpHeaderStringMap[CONTENT_TYPE] = "content-type";
-    httpHeaderStringMap[EXPIRES] = "expires";
-    httpHeaderStringMap[LAST_MODIFIED] = "last-modified";
-    httpHeaderStringMap[ACCESS_CONTROL_ALLOW_ORIGIN] = "access-control-allow-origin";
-    httpHeaderStringMap[ACCESS_CONTROL_ALLOW_METHODS] = "access-control-allow-methods";
-    httpHeaderStringMap[ACCESS_CONTROL_ALLOW_HEADERS] = "access-control-allow-headers";
-    httpHeaderStringMap[ACCESS_CONTROL_MAX_AGE] = "access-control-max-age";
-    httpHeaderStringMap[ACCESS_CONTROL_ALLOW_CREDENTIALS] = "access-control-allow-credentials";
-    httpHeaderStringMap[ACCESS_CONTROL_EXPOSE_HEADERS] = "access-control-expose-headers";
-    httpHeaderStringMap[ACCESS_CONTROL_REQUEST_METHOD] = "access-control-request-method";
-    httpHeaderStringMap[ACCESS_CONTROL_REQUEST_HEADERS] = "access-control-request-headers";
-    httpHeaderStringMap[CONTENT_DISPOSITION] = "content-disposition";
-    httpHeaderStringMap[CONTENT_SECURITY_POLICY] = "content-security-policy";
-    httpHeaderStringMap[CONTENT_SECURITY_POLICY_REPORT_ONLY] = "content-security-policy-report-only";
-    httpHeaderStringMap[DNT] = "dnt";
-    httpHeaderStringMap[FORWARDED] = "forwarded";
-    httpHeaderStringMap[ORIGIN] = "origin";
-    httpHeaderStringMap[TIMING_ALLOW_ORIGIN] = "timing-allow-origin";
-    httpHeaderStringMap[X_CONTENT_TYPE_OPTIONS] = "x-content-type-options";
-    httpHeaderStringMap[X_FRAME_OPTIONS] = "x-frame-options";
-    httpHeaderStringMap[X_XSS_PROTECTION] = "x-xss-protection";
-    httpHeaderStringMap[X_FORWARDED_FOR] = "x-forwarded-for";
-    httpHeaderStringMap[COOKIE] = "cookie";
-    httpHeaderStringMap[SET_COOKIE] = "set-cookie";
-    httpHeaderStringMap[UPGRADE_INSECURE_REQUESTS] = "upgrade-insecure-requests";
-    httpHeaderStringMap[SEC_FETCH_DEST] = "sec-fetch-dest";
-    httpHeaderStringMap[SEC_FETCH_MODE] = "sec-fetch-mode";
-    httpHeaderStringMap[SEC_FETCH_SITE] = "sec-fetch-site";
-    httpHeaderStringMap[SEC_FETCH_USER] = "sec-fetch-user";
-    httpHeaderStringMap[PRIORITY] = "priority";
+    httpHeaderStringMap[ CACHE_CONTROL ] = "cache-control";
+    httpHeaderStringMap[ CONNECTION ] = "connection";
+    httpHeaderStringMap[ DATE ] = "date";
+    httpHeaderStringMap[ PRAGMA ] = "pragma";
+    httpHeaderStringMap[ TRAILER ] = "trailer";
+    httpHeaderStringMap[ TRANSFER_ENCODING ] = "transfer-encoding";
+    httpHeaderStringMap[ UPGRADE ] = "upgrade";
+    httpHeaderStringMap[ VIA ] = "via";
+    httpHeaderStringMap[ WARNING ] = "warning";
+    httpHeaderStringMap[ ACCEPT ] = "accept";
+    httpHeaderStringMap[ ACCEPT_CHARSET ] = "accept-charset";
+    httpHeaderStringMap[ ACCEPT_ENCODING ] = "accept-encoding";
+    httpHeaderStringMap[ ACCEPT_LANGUAGE ] = "accept-language";
+    httpHeaderStringMap[ AUTHORIZATION ] = "authorization";
+    httpHeaderStringMap[ EXPECT ] = "expect";
+    httpHeaderStringMap[ FROM ] = "from";
+    httpHeaderStringMap[ HOST ] = "host";
+    httpHeaderStringMap[ IF_MATCH ] = "if-match";
+    httpHeaderStringMap[ IF_MODIFIED_SINCE ] = "if-modified-since";
+    httpHeaderStringMap[ IF_NONE_MATCH ] = "if-none-match";
+    httpHeaderStringMap[ IF_RANGE ] = "if-range";
+    httpHeaderStringMap[ IF_UNMODIFIED_SINCE ] = "if-unmodified-since";
+    httpHeaderStringMap[ MAX_FORWARDS ] = "max-forwards";
+    httpHeaderStringMap[ PROXY_AUTHORIZATION ] = "proxy-authorization";
+    httpHeaderStringMap[ RANGE ] = "range";
+    httpHeaderStringMap[ REFERER ] = "referer";
+    httpHeaderStringMap[ TE ] = "te";
+    httpHeaderStringMap[ USER_AGENT ] = "user-agent";
+    httpHeaderStringMap[ ACCEPT_RANGES ] = "accept-ranges";
+    httpHeaderStringMap[ AGE ] = "age";
+    httpHeaderStringMap[ ETAG ] = "etag";
+    httpHeaderStringMap[ LOCATION ] = "location";
+    httpHeaderStringMap[ PROXY_AUTHENTICATE ] = "proxy-authenticate";
+    httpHeaderStringMap[ RETRY_AFTER ] = "retry-after";
+    httpHeaderStringMap[ SERVER ] = "server";
+    httpHeaderStringMap[ VARY ] = "vary";
+    httpHeaderStringMap[ WWW_AUTHENTICATE ] = "www-authenticate";
+    httpHeaderStringMap[ ALLOW ] = "allow";
+    httpHeaderStringMap[ CONTENT_ENCODING ] = "content-encoding";
+    httpHeaderStringMap[ CONTENT_LANGUAGE ] = "content-language";
+    httpHeaderStringMap[ CONTENT_LENGTH ] = "content-length";
+    httpHeaderStringMap[ CONTENT_LOCATION ] = "content-location";
+    httpHeaderStringMap[ CONTENT_MD5 ] = "content-md5";
+    httpHeaderStringMap[ CONTENT_RANGE ] = "content-range";
+    httpHeaderStringMap[ CONTENT_TYPE ] = "content-type";
+    httpHeaderStringMap[ EXPIRES ] = "expires";
+    httpHeaderStringMap[ LAST_MODIFIED ] = "last-modified";
+    httpHeaderStringMap[ ACCESS_CONTROL_ALLOW_ORIGIN ] =
+        "access-control-allow-origin";
+    httpHeaderStringMap[ ACCESS_CONTROL_ALLOW_METHODS ] =
+        "access-control-allow-methods";
+    httpHeaderStringMap[ ACCESS_CONTROL_ALLOW_HEADERS ] =
+        "access-control-allow-headers";
+    httpHeaderStringMap[ ACCESS_CONTROL_MAX_AGE ] = "access-control-max-age";
+    httpHeaderStringMap[ ACCESS_CONTROL_ALLOW_CREDENTIALS ] =
+        "access-control-allow-credentials";
+    httpHeaderStringMap[ ACCESS_CONTROL_EXPOSE_HEADERS ] =
+        "access-control-expose-headers";
+    httpHeaderStringMap[ ACCESS_CONTROL_REQUEST_METHOD ] =
+        "access-control-request-method";
+    httpHeaderStringMap[ ACCESS_CONTROL_REQUEST_HEADERS ] =
+        "access-control-request-headers";
+    httpHeaderStringMap[ CONTENT_DISPOSITION ] = "content-disposition";
+    httpHeaderStringMap[ CONTENT_SECURITY_POLICY ] = "content-security-policy";
+    httpHeaderStringMap[ CONTENT_SECURITY_POLICY_REPORT_ONLY ] =
+        "content-security-policy-report-only";
+    httpHeaderStringMap[ DNT ] = "dnt";
+    httpHeaderStringMap[ FORWARDED ] = "forwarded";
+    httpHeaderStringMap[ ORIGIN ] = "origin";
+    httpHeaderStringMap[ TIMING_ALLOW_ORIGIN ] = "timing-allow-origin";
+    httpHeaderStringMap[ X_CONTENT_TYPE_OPTIONS ] = "x-content-type-options";
+    httpHeaderStringMap[ X_FRAME_OPTIONS ] = "x-frame-options";
+    httpHeaderStringMap[ X_XSS_PROTECTION ] = "x-xss-protection";
+    httpHeaderStringMap[ X_FORWARDED_FOR ] = "x-forwarded-for";
+    httpHeaderStringMap[ COOKIE ] = "cookie";
+    httpHeaderStringMap[ SET_COOKIE ] = "set-cookie";
+    httpHeaderStringMap[ UPGRADE_INSECURE_REQUESTS ] =
+        "upgrade-insecure-requests";
+    httpHeaderStringMap[ SEC_FETCH_DEST ] = "sec-fetch-dest";
+    httpHeaderStringMap[ SEC_FETCH_MODE ] = "sec-fetch-mode";
+    httpHeaderStringMap[ SEC_FETCH_SITE ] = "sec-fetch-site";
+    httpHeaderStringMap[ SEC_FETCH_USER ] = "sec-fetch-user";
+    httpHeaderStringMap[ PRIORITY ] = "priority";
 
     return httpHeaderStringMap;
 }

@@ -7,10 +7,10 @@
  * Holds buffers intended for socket descriptors.
  */
 
+#include "../network/ISocket.hpp"
 #include "IBuffer.hpp"
 #include <cstring>
 #include <vector>
-#include "../network/ISocket.hpp"
 
 class SocketBuffer : public IBuffer
 {

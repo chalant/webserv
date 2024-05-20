@@ -5,9 +5,9 @@
  * Connection class
  *
  * This class represents a network connection and interaction with a client.
- * It stores the socket descriptor, client IP address, port number, and remote address,
- * as well as pointers to the request and response objects.
- * Its lifetime is tied to the active connection with the client.
+ * It stores the socket descriptor, client IP address, port number, and remote
+ * address, as well as pointers to the request and response objects. Its
+ * lifetime is tied to the active connection with the client.
  *
  * It is owned by the ConnectionManager.
  *
@@ -15,15 +15,15 @@
 
 typedef int SocketDescriptor_t;
 
-#include <string>
+#include "../connection/ISession.hpp"
 #include "../request/IRequest.hpp"
 #include "../response/IResponse.hpp"
-#include "../connection/ISession.hpp"
+#include <string>
 
 class IConnection
 {
 public:
-    virtual ~IConnection(){};
+    virtual ~IConnection() {};
 
     // Setters
     virtual void setSession(ISession *session) = 0;

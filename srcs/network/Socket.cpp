@@ -1,7 +1,7 @@
 #include "../../includes/network/Socket.hpp"
 #include <sstream>
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 
 /*
  * Socket - Class for socket operations.
@@ -57,7 +57,8 @@ int Socket::bind(int socketDescriptor, int ip, int port) const
 int Socket::listen(int socketDescriptor, int maxConnections) const
 {
     // listen for incoming connections on the socket
-    // maxConnections: maximum number of pending connections in the socket's listen queue
+    // maxConnections: maximum number of pending connections in the socket's
+    // listen queue
     return ::listen(socketDescriptor, maxConnections);
 }
 
@@ -85,7 +86,8 @@ int Socket::setNonBlocking(int socketDescriptor) const
 }
 
 // Accept an incoming connection
-std::pair<int, std::pair<std::string, std::string> > Socket::accept(int serverSocketFd) const
+std::pair<int, std::pair<std::string, std::string> >
+Socket::accept(int serverSocketFd) const
 {
     // serverSocketFd: file descriptor of the listening socket
     // Returns: file descriptor for the new client socket (int) (-1 on error)
@@ -97,7 +99,8 @@ std::pair<int, std::pair<std::string, std::string> > Socket::accept(int serverSo
     socklen_t clientAddrLen = sizeof(clientAddr);
 
     // Accept the incoming connection and get the client socket descriptor
-    int clientSocketFd = ::accept(serverSocketFd, (struct sockaddr *)&clientAddr, &clientAddrLen);
+    int clientSocketFd = ::accept(
+        serverSocketFd, (struct sockaddr *)&clientAddr, &clientAddrLen);
 
     // Check for errors
     if (clientSocketFd == -1)
@@ -127,7 +130,8 @@ int Socket::send(int socketDescriptor, const std::vector<char> &data) const
     // data: Data to be sent
     // Returns the number of bytes sent
     // -1 is returned on error
-    return ::send(socketDescriptor, data.data(), data.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
+    return ::send(socketDescriptor, data.data(), data.size(),
+                  MSG_DONTWAIT | MSG_NOSIGNAL);
 }
 
 // Sends data over the socket blocking until all data is sent
@@ -144,7 +148,6 @@ int Socket::sendAll(int socketDescriptor, const std::vector<char> &data) const
 // Receives data from the socket Non-Blockingly
 ssize_t Socket::recv(int socketDescriptor, char *buffer, size_t len) const
 {
-
     // receive data from the socket
     // socketDescriptor: file descriptor of the socket
     // returns the received data

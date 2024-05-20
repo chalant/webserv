@@ -9,9 +9,7 @@
 
 // Constructor
 FileBuffer::FileBuffer(size_t flushThreshold, size_t maxSize)
-    : _flushThreshold(flushThreshold),
-      _maxSize(maxSize),
-      _size(0)
+    : _flushThreshold(flushThreshold), _maxSize(maxSize), _size(0)
 {
     // Reserve memory for the buffer based on the flush threshold
     _buffer.reserve(flushThreshold);
@@ -25,7 +23,8 @@ FileBuffer::~FileBuffer()
 }
 
 // Push data into the buffer
-// Returns -1 if the max size is reached, 1 if the flush threshold is reached, or 0 otherwise
+// Returns -1 if the max size is reached, 1 if the flush threshold is reached,
+// or 0 otherwise
 ssize_t FileBuffer::push(const std::vector<char> &data)
 {
     // Check if the absolute max size of the buffer is reached
@@ -38,8 +37,8 @@ ssize_t FileBuffer::push(const std::vector<char> &data)
     this->_buffer.insert(this->_buffer.end(), data.begin(), data.end());
     this->_size += data.size();
 
-    // Return 1 to request a flush if the buffer size exceeds the flush threshold
-    // Otherwise, return 0
+    // Return 1 to request a flush if the buffer size exceeds the flush
+    // threshold Otherwise, return 0
     return (this->_size > this->_flushThreshold);
 }
 
@@ -50,11 +49,13 @@ ssize_t FileBuffer::flush(int fileDescriptor, bool regardlessOfThreshold)
     // Check if the buffer size is less than the flush threshold
     if (regardlessOfThreshold == false && this->_size < this->_flushThreshold)
     {
-        return this->_size; // Not enough data to flush, do nothing, just return the remaining size of the buffer
+        return this->_size; // Not enough data to flush, do nothing, just return
+                            // the remaining size of the buffer
     }
 
     // Write the buffer to the file descriptor
-    ssize_t bytesWritten = ::write(fileDescriptor, this->_buffer.data(), this->_size);
+    ssize_t bytesWritten =
+        ::write(fileDescriptor, this->_buffer.data(), this->_size);
 
     if (bytesWritten == -1)
     {
@@ -67,7 +68,8 @@ ssize_t FileBuffer::flush(int fileDescriptor, bool regardlessOfThreshold)
         if (this->_size > 0)
         {
             // Shift the remaining data to the beginning of the buffer
-            memmove(&this->_buffer[0], &this->_buffer[bytesWritten], bytesWritten);
+            memmove(&this->_buffer[ 0 ], &this->_buffer[ bytesWritten ],
+                    bytesWritten);
         }
     }
     return this->_size; // Return the remaining size of the buffer

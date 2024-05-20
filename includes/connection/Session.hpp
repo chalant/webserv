@@ -15,16 +15,16 @@
 #define DEFAULT_TIMEOUT 300 // 5 minutes
 
 #include "ISession.hpp"
+#include <ctime>
 #include <map>
 #include <string>
-#include <ctime>
 
 class Session : public ISession
 {
 private:
-    const SessionId_t _id;                    // Unique session id
-    const time_t _timeout;                    // Time elapsed before session expires
-    time_t _lastAccess;                       // Last time session was accessed
+    const SessionId_t _id; // Unique session id
+    const time_t _timeout; // Time elapsed before session expires
+    time_t _lastAccess;    // Last time session was accessed
     std::map<std::string, std::string> _data; // Session data
 
 public:
@@ -34,11 +34,13 @@ public:
     // Destructor
     ~Session();
 
-    virtual void touch();                                                   // Update last access time
-    virtual bool hasExpired() const;                                        // Check if session has expired
-    virtual void setData(const std::string &key, const std::string &value); // Set session data
-    virtual std::string getData(const std::string &key) const;              // Get session data
-    virtual SessionId_t getId() const;                                      // Get session id
+    virtual void touch();            // Update last access time
+    virtual bool hasExpired() const; // Check if session has expired
+    virtual void setData(const std::string &key,
+                         const std::string &value); // Set session data
+    virtual std::string
+    getData(const std::string &key) const; // Get session data
+    virtual SessionId_t getId() const;     // Get session id
 };
 
 #endif // SESSION_HPP

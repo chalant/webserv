@@ -6,8 +6,8 @@
 class IURIMatcher
 {
 public:
-	virtual ~IURIMatcher(){};
-	virtual bool match(const std::string &uri) = 0;
+    virtual ~IURIMatcher() {};
+    virtual bool match(const std::string &uri) = 0;
 };
 
 #endif // URIMATCHER_HPP

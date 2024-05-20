@@ -9,21 +9,25 @@
  *   - in the main block: error_log <path> <level>
  *   - in the http block: access_log <path>
  *
- * To disable error logging, set the error_log directive to "off": 'error_log off'
- * To disable access logging, set the access_log directive to "off": 'access_log off'
+ * To disable error logging, set the error_log directive to "off": 'error_log
+ * off' To disable access logging, set the access_log directive to "off":
+ * 'access_log off'
  *
- * NOTE: supported log levels currently are: verbose, debug, info, warn, error, critical
+ * NOTE: supported log levels currently are: verbose, debug, info, warn, error,
+ * critical
  */
 
-#define LOG_BUFFER_SIZE 4096   // 4KB
-#define DEFAULT_LOG_LEVEL WARN // Default log level - Delete this line once Configuration default values are implemented
+#define LOG_BUFFER_SIZE 4096 // 4KB
+#define DEFAULT_LOG_LEVEL                                                      \
+    WARN // Default log level - Delete this line once Configuration default
+         // values are implemented
 
+#include "../configuration/BlockList.hpp"
+#include "../configuration/IConfiguration.hpp"
+#include "../constants/LogLevelHelper.hpp"
+#include "../pollfd/IPollfdManager.hpp"
 #include "ILoggerConfiguration.hpp"
 #include <fcntl.h>
-#include "../configuration/IConfiguration.hpp"
-#include "../configuration/BlockList.hpp"
-#include "../pollfd/IPollfdManager.hpp"
-#include "../constants/LogLevelHelper.hpp"
 
 class LoggerConfiguration : public ILoggerConfiguration
 {
@@ -41,7 +45,9 @@ private:
     LogLevelHelper _logLevelHelper;
 
 public:
-    LoggerConfiguration(IBufferManager &BufferManager, const IConfiguration &configuration, IPollfdManager &pollfdManager);
+    LoggerConfiguration(IBufferManager &BufferManager,
+                        const IConfiguration &configuration,
+                        IPollfdManager &pollfdManager);
     ~LoggerConfiguration();
 
     virtual void setErrorLogEnabled(bool enabled);

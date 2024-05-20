@@ -10,9 +10,9 @@
  *
  */
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 // Forward declaration of WebServer exceptions
 class WebservExceptions;
@@ -32,9 +32,14 @@ class LogLevelHelper
 {
 private:
     // Member variables
-    const std::vector<std::string> _logLevelList;             // List of string representations of log levels
-    const std::map<std::string, LogLevel> _stringLogLevelMap; // Map of string representations to LogLevel enum values
-    const std::map<LogLevel, std::string> _logLevelStringMap; // Map of LogLevel enum values to string representations
+    const std::vector<std::string>
+        _logLevelList; // List of string representations of log levels
+    const std::map<std::string, LogLevel>
+        _stringLogLevelMap; // Map of string representations to LogLevel
+                            // enum values
+    const std::map<LogLevel, std::string>
+        _logLevelStringMap; // Map of LogLevel enum values to string
+                            // representations
 
     // Private member functions for initialization
     static std::vector<std::string> _setLogLevelList();
@@ -46,8 +51,10 @@ public:
     LogLevelHelper();
 
     // Member functions to access data
-    const std::string &logLevelStringMap(LogLevel logLevel) const; // Get string representation of LogLevel
-    LogLevel stringLogLevelMap(const std::string &logLevel) const; // Get LogLevel enum value from string representation
+    const std::string &logLevelStringMap(
+        LogLevel logLevel) const; // Get string representation of LogLevel
+    LogLevel stringLogLevelMap(const std::string &logLevel)
+        const; // Get LogLevel enum value from string representation
 };
 
 #endif // LOGLEVELHELPER_HPP

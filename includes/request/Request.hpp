@@ -4,15 +4,17 @@
 /*
  * Request: Represents an HTTP request.
  *
- * This class encapsulates the components of an HTTP request, including the request method, Uri,
- * HTTP version, requestHeaders, and an optional body. It provides getter and setter methods to
- * access and modify these components, following the HTTP protocol specifications.
+ * This class encapsulates the components of an HTTP request, including the
+ * request method, Uri, HTTP version, requestHeaders, and an optional body. It
+ * provides getter and setter methods to access and modify these components,
+ * following the HTTP protocol specifications.
  *
- * It takes responsability to verifying the validity of its components and throws exceptions if
- * any component is invalid.
+ * It takes responsability to verifying the validity of its components and
+ * throws exceptions if any component is invalid.
  *
- * Instances of this class are typically created by the RequestParser class, which parses raw
- * HTTP request strings and constructs Request objects from them.
+ * Instances of this class are typically created by the RequestParser class,
+ * which parses raw HTTP request strings and constructs Request objects from
+ * them.
  *
  * Usage:
  * - Use getter methods to retrieve the properties of the request.
@@ -31,12 +33,12 @@
  *
  */
 
-#include "IRequest.hpp"
-#include <string>
-#include <vector>
-#include <map>
 #include "../configuration/IConfiguration.hpp"
 #include "../constants/HttpHelper.hpp"
+#include "IRequest.hpp"
+#include <map>
+#include <string>
+#include <vector>
 
 class Request : public IRequest
 {

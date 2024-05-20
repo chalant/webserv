@@ -3,8 +3,9 @@
 
 /*
  * MockSocket class is a mock implementation of the ISocket interface
- * This mock implementation is used for testing purposes to simulate the behavior of the ISocket interface
- * during unit testing without relying on the actual implementation.
+ * This mock implementation is used for testing purposes to simulate the
+ * behavior of the ISocket interface during unit testing without relying on the
+ * actual implementation.
  */
 
 #include "../../includes/network/ISocket.hpp" // Include the base interface header
@@ -13,7 +14,8 @@
 class MockSocket : public ISocket
 {
 private:
-    mutable std::map<int, std::vector<char> > _socketData; // Map to store data for each socket
+    mutable std::map<int, std::vector<char> >
+        _socketData; // Map to store data for each socket
 
 public:
     // Constructor
@@ -41,13 +43,16 @@ public:
     virtual int setNonBlocking(int fd) const;
 
     // Accepts an incoming connection
-    virtual std::pair<int, std::pair<std::string, std::string> > accept(int fd) const;
+    virtual std::pair<int, std::pair<std::string, std::string> >
+    accept(int fd) const;
 
     // Sends data over the socket
-    virtual int send(int recipientSocketFd, const std::vector<char> &data) const;
+    virtual int send(int recipientSocketFd,
+                     const std::vector<char> &data) const;
 
     // Sends data over the socket blocking until all data is sent
-    virtual int sendAll(int recipientSocketFd, const std::vector<char> &data) const;
+    virtual int sendAll(int recipientSocketFd,
+                        const std::vector<char> &data) const;
 
     // Receives data from the socket
     virtual ssize_t recv(int socketDescriptor, char *buffer, size_t len) const;

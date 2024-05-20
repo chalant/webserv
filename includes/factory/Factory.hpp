@@ -1,10 +1,10 @@
 #ifndef FACTORY_HPP
 #define FACTORY_HPP
 
-#include "IFactory.hpp"
 #include "../configuration/IConfiguration.hpp"
-#include "../logger/ILogger.hpp"
 #include "../constants/HttpHelper.hpp"
+#include "../logger/ILogger.hpp"
+#include "IFactory.hpp"
 
 class Factory : public IFactory
 {
@@ -17,7 +17,8 @@ public:
     Factory(const IConfiguration &configuration, ILogger &_logger);
     virtual ~Factory();
 
-    virtual IConnection *createConnection(std::pair<int, std::pair<std::string, std::string> >);
+    virtual IConnection *
+        createConnection(std::pair<int, std::pair<std::string, std::string> >);
     virtual IRequest *createRequest();
     virtual IResponse *createResponse();
     virtual ISession *createSession(SessionId_t id);

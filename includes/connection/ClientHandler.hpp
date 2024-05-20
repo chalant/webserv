@@ -4,14 +4,15 @@
 /*
  * Summary:
  * ClientHandler class is responsible for handling communication with clients.
- * It reads requests from clients and sends responses back. It also handles errors
- * that occur during communication and logs them appropriately.
+ * It reads requests from clients and sends responses back. It also handles
+ * errors that occur during communication and logs them appropriately.
  */
 
-#include "IClientHandler.hpp"
 #include <string>
+
 #include "../logger/ILogger.hpp"
 #include "../network/ISocket.hpp"
+#include "IClientHandler.hpp"
 
 class ClientHandler : public IClientHandler
 {
@@ -21,7 +22,8 @@ private:
     ILogger &_logger;       // Reference to the error logger object
 
 public:
-    // Constructor: Initializes the ClientHandler with an error logger and exception handler
+    // Constructor: Initializes the ClientHandler with an error logger and
+    // exception handler
     ClientHandler(const ISocket &socket, ILogger &logger);
 
     // Destructor

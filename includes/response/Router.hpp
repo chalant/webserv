@@ -8,15 +8,15 @@ locationblock)*/
 #ifndef ROUTER_HPP
 #define ROUTER_HPP
 
-#include <string>
-#include <vector>
+#include "../configuration/IConfiguration.hpp"
+#include "../constants/HttpMethodHelper.hpp"
+#include "../logger/ILogger.hpp"
 #include "../request/IRequest.hpp"
 #include "../request/Request.hpp"
 #include "../response/IResponse.hpp"
-#include "../constants/HttpMethodHelper.hpp"
-#include "../configuration/IConfiguration.hpp"
-#include "../logger/ILogger.hpp"
 #include "IRouter.hpp"
+#include <string>
+#include <vector>
 
 class Response;
 
@@ -43,9 +43,11 @@ private:
 class Router : public IRouter
 {
 public:
-    Router(const IConfiguration &Configuration, ILogger &logger, HttpHelper _httpHelper);
+    Router(const IConfiguration &Configuration, ILogger &logger,
+           HttpHelper _httpHelper);
     ~Router();
-    void addRoute(const IRequest &request, void (*newHandler)(IRequest *, IResponse *));
+    void addRoute(const IRequest &request,
+                  void (*newHandler)(IRequest *, IResponse *));
     void execRoute(IRequest *req, IResponse *res);
     std::vector<Route> getRoutes(void) const;
     size_t getRouteCount(void) const;

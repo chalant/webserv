@@ -7,9 +7,7 @@
  */
 
 // Constructor
-SocketBuffer::SocketBuffer(ISocket &socket)
-    : _size(0),
-      _socket(socket)
+SocketBuffer::SocketBuffer(ISocket &socket) : _size(0), _socket(socket)
 
 {
     // Reserve initial memory for the buffer
@@ -48,16 +46,18 @@ ssize_t SocketBuffer::flush(int socketDescriptor, bool all)
     if (bytesSent == -1)
     {
         // Error occurred during send
-        // Since we call this only when poll() returns POLLOUT, we assume the error is not related to blocking
-        // Clear the buffer and return -1
+        // Since we call this only when poll() returns POLLOUT, we assume the
+        // error is not related to blocking Clear the buffer and return -1
         this->_buffer.clear();
         return -1;
     }
     else
     {
         // Update buffer state after successful send
-        if (static_cast<size_t>(bytesSent) != this->_size) // Not all data was sent
-            memmove(&this->_buffer[0], &this->_buffer[bytesSent], bytesSent);
+        if (static_cast<size_t>(bytesSent) !=
+            this->_size) // Not all data was sent
+            memmove(&this->_buffer[ 0 ], &this->_buffer[ bytesSent ],
+                    bytesSent);
         this->_size -= bytesSent;
     }
     return this->_size; // Return the remaining size of the buffer

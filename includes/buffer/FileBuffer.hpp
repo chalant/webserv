@@ -27,7 +27,8 @@ private:
 
 public:
     // Constructor with optional parameters
-    FileBuffer(size_t flushThreshold = DEFAULT_FLUSH_THRESHOLD, size_t maxSize = DEFAULT_MAX_SIZE);
+    FileBuffer(size_t flushThreshold = DEFAULT_FLUSH_THRESHOLD,
+               size_t maxSize = DEFAULT_MAX_SIZE);
 
     // Destructor
     ~FileBuffer();

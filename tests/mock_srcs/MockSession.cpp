@@ -9,31 +9,16 @@
  */
 
 // Destructor
-MockSession::~MockSession()
-{
-}
+MockSession::~MockSession() {}
 
-void MockSession::touch()
-{
-}
+void MockSession::touch() {}
 
-bool MockSession::hasExpired() const
-{
-    return false;
-}
+bool MockSession::hasExpired() const { return false; }
 
-void MockSession::setData(const std::string &, const std::string &)
-{
-}
+void MockSession::setData(const std::string &, const std::string &) {}
 
-std::string MockSession::getData(const std::string &) const
-{
-    return "";
-}
+std::string MockSession::getData(const std::string &) const { return ""; }
 
-SessionId_t MockSession::getId() const
-{
-    return 0;
-}
+SessionId_t MockSession::getId() const { return 0; }
 
 // Path: tests/mock_srcs/MockConnectionManager.cpp

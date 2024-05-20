@@ -5,22 +5,22 @@
  * IClientHandler.hpp
  * Abstract base class for ClientHandler in webserv
  *
- * This file defines the ClientHandler interface, which serves as the abstract base
- * class for the ClientHandler in webserv.
- * IClientHandler allows for polymorphic behavior and dependency injection,
- * thereby enabling us to create a MockClientHandler class for isolated unit testing.
+ * This file defines the ClientHandler interface, which serves as the abstract
+ * base class for the ClientHandler in webserv. IClientHandler allows for
+ * polymorphic behavior and dependency injection, thereby enabling us to create
+ * a MockClientHandler class for isolated unit testing.
  *
  */
 
-#include <vector>
 #include <string>
 #include <sys/socket.h>
+#include <vector>
 
 class IClientHandler
 {
 public:
     // Virtual destructor
-    virtual ~IClientHandler(){};
+    virtual ~IClientHandler() {};
 
     // Setter
     virtual void setSocketDescriptor(int socketDescriptor) = 0;

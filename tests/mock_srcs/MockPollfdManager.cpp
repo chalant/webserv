@@ -16,18 +16,30 @@ void MockPollfdManager::addRegularFilePollfd(pollfd pollFd)
     this->_pollfdQueue.back().revents |= REGULAR_FILE;
 }
 
-void MockPollfdManager::addServerSocketPollfd(pollfd pollFd) { static_cast<void>(pollFd); }
+void MockPollfdManager::addServerSocketPollfd(pollfd pollFd)
+{
+    static_cast<void>(pollFd);
+}
 
-void MockPollfdManager::addClientSocketPollfd(pollfd pollFd) { static_cast<void>(pollFd); }
+void MockPollfdManager::addClientSocketPollfd(pollfd pollFd)
+{
+    static_cast<void>(pollFd);
+}
 
-void MockPollfdManager::addPipePollfd(pollfd pollFd) { static_cast<void>(pollFd); }
+void MockPollfdManager::addPipePollfd(pollfd pollFd)
+{
+    static_cast<void>(pollFd);
+}
 
 void MockPollfdManager::removePollfd(int position)
 {
     this->_pollfdQueue.erase(this->_pollfdQueue.begin() + position);
 }
 
-void MockPollfdManager::addPollOut(int position) { static_cast<void>(position); }
+void MockPollfdManager::addPollOut(int position)
+{
+    static_cast<void>(position);
+}
 
 void MockPollfdManager::closeAllFileDescriptors() {}
 
@@ -38,12 +50,12 @@ size_t MockPollfdManager::getPollfdQueueSize() const
 
 short MockPollfdManager::getEvents(int position)
 {
-    return this->_pollfdQueue[position].revents;
+    return this->_pollfdQueue[ position ].revents;
 }
 
 int MockPollfdManager::getDescriptor(int position)
 {
-    return this->_pollfdQueue[position].fd;
+    return this->_pollfdQueue[ position ].fd;
 }
 
 bool MockPollfdManager::hasReachedCapacity() const { return false; }

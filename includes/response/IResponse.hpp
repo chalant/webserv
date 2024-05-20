@@ -9,15 +9,15 @@
  *
  */
 
-#include <string>
-#include <map>
-#include "../constants/HttpStatusCodeHelper.hpp"
 #include "../constants/HttpHeaderHelper.hpp"
+#include "../constants/HttpStatusCodeHelper.hpp"
+#include <map>
+#include <string>
 
 class IResponse
 {
 public:
-    virtual ~IResponse(){};
+    virtual ~IResponse() {};
 
     // Getters for status line, headers, and body
     virtual std::string getStatusLine() const = 0;

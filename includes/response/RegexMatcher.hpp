@@ -6,12 +6,12 @@
 class RegexMatcher : public IURIMatcher
 {
 private:
-	const std::string &m_pattern;
+    const std::string &m_pattern;
 
 public:
-	RegexMatcher(const std::string &pattern);
-	~RegexMatcher();
-	virtual bool match(const std::string &uri);
+    RegexMatcher(const std::string &pattern);
+    ~RegexMatcher();
+    virtual bool match(const std::string &uri);
 };
 
 #endif // REGEXMATCHER_HPP

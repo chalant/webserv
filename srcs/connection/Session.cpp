@@ -12,9 +12,7 @@
  */
 
 // Constructor
-Session::Session(SessionId_t id, time_t timeout)
-    : _id(id),
-      _timeout(timeout)
+Session::Session(SessionId_t id, time_t timeout) : _id(id), _timeout(timeout)
 {
     this->touch();
 }
@@ -23,10 +21,7 @@ Session::Session(SessionId_t id, time_t timeout)
 Session::~Session() {}
 
 // Touch session updates last access time
-void Session::touch()
-{
-    this->_lastAccess = time(NULL);
-}
+void Session::touch() { this->_lastAccess = time(NULL); }
 
 // Check if session has expired
 bool Session::hasExpired() const
@@ -37,13 +32,14 @@ bool Session::hasExpired() const
 // Set session data
 void Session::setData(const std::string &key, const std::string &value)
 {
-    this->_data[key] = value;
+    this->_data[ key ] = value;
 }
 
 // Get session data
 std::string Session::getData(const std::string &key) const
 {
-    std::map<std::string, std::string>::const_iterator it = this->_data.find(key);
+    std::map<std::string, std::string>::const_iterator it =
+        this->_data.find(key);
 
     if (it == this->_data.end())
         return "";
@@ -51,9 +47,6 @@ std::string Session::getData(const std::string &key) const
 }
 
 // Get session id
-SessionId_t Session::getId() const
-{
-    return this->_id;
-}
+SessionId_t Session::getId() const { return this->_id; }
 
 // Path: srcs/connection/Session.cpp

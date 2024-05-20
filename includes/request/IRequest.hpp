@@ -12,12 +12,12 @@
  *
  */
 
-#include <string>
-#include <map>
-#include <vector>
+#include "../constants/HttpHeaderHelper.hpp"
 #include "../constants/HttpMethodHelper.hpp"
 #include "../constants/HttpVersionHelper.hpp"
-#include "../constants/HttpHeaderHelper.hpp"
+#include <map>
+#include <string>
+#include <vector>
 
 struct BodyParameter
 {
@@ -31,7 +31,7 @@ struct BodyParameter
 class IRequest
 {
 public:
-    virtual ~IRequest(){};
+    virtual ~IRequest() {};
 
     // Getters
     virtual HttpMethod getMethod() const = 0;
@@ -62,10 +62,12 @@ public:
     virtual void setMethod(const std::string &method) = 0;
     virtual void setUri(const std::string &uri) = 0;
     virtual void setHttpVersion(const std::string &httpVersion) = 0;
-    virtual void addHeader(const std::string &key, const std::string &value) = 0;
+    virtual void addHeader(const std::string &key,
+                           const std::string &value) = 0;
     virtual void setBody(const std::vector<char> &body) = 0;
     virtual void setBody(const std::string &body) = 0;
-    virtual void addCookie(const std::string &key, const std::string &value) = 0;
+    virtual void addCookie(const std::string &key,
+                           const std::string &value) = 0;
     virtual void setAuthority() = 0;
     virtual void addBodyParameter(const BodyParameter &bodyParameter) = 0;
     virtual void setUploadRequest(bool uploadRequest) = 0;

@@ -1,9 +1,9 @@
 #include <cassert>
 
 // include the header file for the class under test
-#include "../../../includes/request/RequestParser.hpp"
-#include "../../../includes/exception/WebservExceptions.hpp"
 #include "../../../includes/constants/HttpStatusCodeHelper.hpp"
+#include "../../../includes/exception/WebservExceptions.hpp"
+#include "../../../includes/request/RequestParser.hpp"
 
 #include "../../../includes/configuration/ConfigurationLoader.hpp"
 
@@ -24,7 +24,8 @@ int main()
 
     // mockConfigurationBlock.setInt("client_header_buffer_size", 6000);
 
-    const IConfiguration &mockConfigurationBlock = confLoader.loadConfiguration("test_configuration.conf");
+    const IConfiguration &mockConfigurationBlock =
+        confLoader.loadConfiguration("test_configuration.conf");
     // Request Parser instance
     RequestParser requestParser(mockConfigurationBlock, mockErrorLogger);
 
@@ -35,7 +36,9 @@ int main()
     // GET /index.html HTTP/1.1
     // Host: 42.fr
     // content-length: 0
-    std::vector<char> rawRequest = stringToVector("GET /index.html HTTP/1.1\r\nHost: 42.fr\r\ncontent-length: 0\r\n\r\n");
+    std::vector<char> rawRequest =
+        stringToVector("GET /index.html HTTP/1.1\r\nHost: "
+                       "42.fr\r\ncontent-length: 0\r\n\r\n");
 
     // Parse the raw request
     requestParser.parseRequest(rawRequest, mockRequest);
@@ -78,7 +81,7 @@ std::vector<char> stringToVector(const std::string &str)
     std::vector<char> vec;
     for (size_t i = 0; i < str.size(); i++)
     {
-        vec.push_back(str[i]);
+        vec.push_back(str[ i ]);
     }
     return vec;
 }

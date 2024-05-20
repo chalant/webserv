@@ -1,16 +1,17 @@
 #include "../mock_includes/MockClientHandler.hpp"
 
 /*
- * MockClientHandler class is a mock implementation of the IClientHandler interface
- * This mock implementation is used for testing purposes to simulate the behavior of the IClientHandler interface
- * during unit testing without relying on the actual implementation.
+ * MockClientHandler class is a mock implementation of the IClientHandler
+ * interface This mock implementation is used for testing purposes to simulate
+ * the behavior of the IClientHandler interface during unit testing without
+ * relying on the actual implementation.
  */
 
 // Constructor
-MockClientHandler::MockClientHandler() : IClientHandler(){};
+MockClientHandler::MockClientHandler() : IClientHandler() {};
 
 // Destructor
-MockClientHandler::~MockClientHandler(){};
+MockClientHandler::~MockClientHandler() {};
 
 // Setter
 void MockClientHandler::setSocketDescriptor(int socketDescriptor)

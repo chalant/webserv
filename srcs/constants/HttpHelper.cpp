@@ -3,19 +3,19 @@
 /*
  * HttpHelper.hpp
  *
- * The HttpHelper class provides functionality for working with HTTP request components,
- * including methods, versions, and headers. It encapsulates instances of helper classes
- * for HTTP methods, versions, and headers, providing convenient access to their functionality.
+ * The HttpHelper class provides functionality for working with HTTP request
+ * components, including methods, versions, and headers. It encapsulates
+ * instances of helper classes for HTTP methods, versions, and headers,
+ * providing convenient access to their functionality.
  *
  * Path: includes/constants/HttpHelper.hpp
  */
 
 // Constructor to initialize helper classes
 HttpHelper::HttpHelper()
-    : _methodHelper(),
-      _versionHelper(),
-      _headerHelper(),
-      _statusCodeHelper() {}
+    : _methodHelper(), _versionHelper(), _headerHelper(), _statusCodeHelper()
+{
+}
 
 // Get string representation of HttpMethod enum value
 const std::string &HttpHelper::httpMethodStringMap(HttpMethod method) const
@@ -78,13 +78,15 @@ bool HttpHelper::isHeaderName(const std::string &header) const
 }
 
 // Get string representation of HttpStatusCode enum value
-const std::string &HttpHelper::httpStatusCodeStringMap(HttpStatusCode statusCode) const
+const std::string &
+HttpHelper::httpStatusCodeStringMap(HttpStatusCode statusCode) const
 {
     return this->_statusCodeHelper.httpStatusCodeStringMap(statusCode);
 }
 
 // Get HttpStatusCode enum value from string representation
-HttpStatusCode HttpHelper::stringHttpStatusCodeMap(const std::string &statusCode) const
+HttpStatusCode
+HttpHelper::stringHttpStatusCodeMap(const std::string &statusCode) const
 {
     return this->_statusCodeHelper.stringHttpStatusCodeMap(statusCode);
 }

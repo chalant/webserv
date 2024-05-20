@@ -3,8 +3,9 @@
 
 /*
  * MockServer class is a mock implementation of the IServer interface
- * This mock implementation is used for testing purposes to simulate the behavior of the IServer interface
- * during unit testing without relying on the actual implementation.
+ * This mock implementation is used for testing purposes to simulate the
+ * behavior of the IServer interface during unit testing without relying on the
+ * actual implementation.
  */
 
 #include "../../includes/network/IServer.hpp" // Include the base interface header

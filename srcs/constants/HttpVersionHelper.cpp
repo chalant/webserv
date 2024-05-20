@@ -4,9 +4,10 @@
 /*
  * HttpVersionHelper.hpp
  *
- * The HttpVersionHelper class provides functionality for working with HTTP versions.
- * It defines an enum HttpVersion to represent standard HTTP versions and provides methods
- * to retrieve string representations of versions and vice versa.
+ * The HttpVersionHelper class provides functionality for working with HTTP
+ * versions. It defines an enum HttpVersion to represent standard HTTP versions
+ * and provides methods to retrieve string representations of versions and vice
+ * versa.
  *
  */
 
@@ -14,10 +15,13 @@
 HttpVersionHelper::HttpVersionHelper()
     : _versionList(_setVersionList()),
       _stringHttpVersionMap(_setStringHttpVersionMap()),
-      _httpVersionStringMap(_setHttpVersionStringMap()) {}
+      _httpVersionStringMap(_setHttpVersionStringMap())
+{
+}
 
 // Get string representation of HttpVersion enum value
-const std::string &HttpVersionHelper::httpVersionStringMap(HttpVersion version) const
+const std::string &
+HttpVersionHelper::httpVersionStringMap(HttpVersion version) const
 {
     if (_httpVersionStringMap.find(version) != _httpVersionStringMap.end())
     {
@@ -30,7 +34,8 @@ const std::string &HttpVersionHelper::httpVersionStringMap(HttpVersion version) 
 }
 
 // Get HttpVersion enum value from string representation
-HttpVersion HttpVersionHelper::stringHttpVersionMap(const std::string &version) const
+HttpVersion
+HttpVersionHelper::stringHttpVersionMap(const std::string &version) const
 {
     if (_stringHttpVersionMap.find(version) != _stringHttpVersionMap.end())
     {
@@ -48,7 +53,8 @@ bool HttpVersionHelper::isHttpVersion(const std::string &version) const
     return _stringHttpVersionMap.find(version) != _stringHttpVersionMap.end();
 }
 
-// Helper function to initialize VersionList with string representations of HTTP versions
+// Helper function to initialize VersionList with string representations of HTTP
+// versions
 std::vector<std::string> HttpVersionHelper::_setVersionList()
 {
     std::vector<std::string> VersionList;
@@ -63,32 +69,34 @@ std::vector<std::string> HttpVersionHelper::_setVersionList()
     return VersionList;
 }
 
-// Helper function to initialize stringHttpVersionMap with mappings from string representations to HttpVersion enum values
+// Helper function to initialize stringHttpVersionMap with mappings from string
+// representations to HttpVersion enum values
 std::map<std::string, HttpVersion> HttpVersionHelper::_setStringHttpVersionMap()
 {
     std::map<std::string, HttpVersion> stringHttpVersionMap;
 
     // Add mappings from string representations to HttpVersion enum values
-    stringHttpVersionMap["HTTP/0.9"] = HTTP_0_9;
-    stringHttpVersionMap["HTTP/1.0"] = HTTP_1_0;
-    stringHttpVersionMap["HTTP/1.1"] = HTTP_1_1;
-    stringHttpVersionMap["HTTP/2.0"] = HTTP_2_0;
-    stringHttpVersionMap["HTTP/3.0"] = HTTP_3_0;
+    stringHttpVersionMap[ "HTTP/0.9" ] = HTTP_0_9;
+    stringHttpVersionMap[ "HTTP/1.0" ] = HTTP_1_0;
+    stringHttpVersionMap[ "HTTP/1.1" ] = HTTP_1_1;
+    stringHttpVersionMap[ "HTTP/2.0" ] = HTTP_2_0;
+    stringHttpVersionMap[ "HTTP/3.0" ] = HTTP_3_0;
 
     return stringHttpVersionMap;
 }
 
-// Helper function to initialize httpVersionStringMap with mappings from HttpVersion enum values to string representations
+// Helper function to initialize httpVersionStringMap with mappings from
+// HttpVersion enum values to string representations
 std::map<HttpVersion, std::string> HttpVersionHelper::_setHttpVersionStringMap()
 {
     std::map<HttpVersion, std::string> httpVersionStringMap;
 
     // Add mappings from HttpVersion enum values to string representations
-    httpVersionStringMap[HTTP_0_9] = "HTTP/0.9";
-    httpVersionStringMap[HTTP_1_0] = "HTTP/1.0";
-    httpVersionStringMap[HTTP_1_1] = "HTTP/1.1";
-    httpVersionStringMap[HTTP_2_0] = "HTTP/2.0";
-    httpVersionStringMap[HTTP_3_0] = "HTTP/3.0";
+    httpVersionStringMap[ HTTP_0_9 ] = "HTTP/0.9";
+    httpVersionStringMap[ HTTP_1_0 ] = "HTTP/1.0";
+    httpVersionStringMap[ HTTP_1_1 ] = "HTTP/1.1";
+    httpVersionStringMap[ HTTP_2_0 ] = "HTTP/2.0";
+    httpVersionStringMap[ HTTP_3_0 ] = "HTTP/3.0";
 
     return httpVersionStringMap;
 }

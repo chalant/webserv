@@ -12,20 +12,15 @@ MockFactory::MockFactory() {}
 
 MockFactory::~MockFactory() {}
 
-IConnection *MockFactory::createConnection(std::pair<int, std::pair<std::string, std::string> >)
+IConnection *MockFactory::createConnection(
+    std::pair<int, std::pair<std::string, std::string> >)
 {
     return NULL;
 }
 
-IRequest *MockFactory::createRequest()
-{
-    return NULL;
-}
+IRequest *MockFactory::createRequest() { return NULL; }
 
-IResponse *MockFactory::createResponse()
-{
-    return NULL;
-}
+IResponse *MockFactory::createResponse() { return NULL; }
 
 ISession *MockFactory::createSession(SessionId_t id)
 {

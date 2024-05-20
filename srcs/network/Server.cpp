@@ -1,49 +1,56 @@
 #include "../../includes/network/Server.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
-#include <set>
 #include <cstdlib>
+#include <set>
 
 /*
- * The Server class is responsible for managing core operations of webserv, including initialization, connection handling, and termination.
+ * The Server class is responsible for managing core operations of webserv,
+ * including initialization, connection handling, and termination.
  *
- * It oversees socket creation, binding, and listening for incoming connections, all configured for non-blocking operation.
- * Leveraging the poll() polling mechanism, Server monitors events on the server socket, log file descriptors, and client connections,
- * facilitating the acceptance of incoming connections and their inclusion in the monitoring queue.
+ * It oversees socket creation, binding, and listening for incoming connections,
+ * all configured for non-blocking operation. Leveraging the poll() polling
+ * mechanism, Server monitors events on the server socket, log file descriptors,
+ * and client connections, facilitating the acceptance of incoming connections
+ * and their inclusion in the monitoring queue.
  *
  */
 
-/* Constructor - Initializes the Server object and sets up the server socket and polling file descriptors.*/
-Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnectionManager &connectionManager, const IConfiguration &configuration, ILogger &logger)
-    : _socket(socket),
-      _pollfdManager(pollfdManager),
-      _connectionManager(connectionManager),
-      _logger(logger)
+/* Constructor - Initializes the Server object and sets up the server socket and
+ * polling file descriptors.*/
+Server::Server(const ISocket &socket, IPollfdManager &pollfdManager,
+               IConnectionManager &connectionManager,
+               const IConfiguration &configuration, ILogger &logger)
+    : _socket(socket), _pollfdManager(pollfdManager),
+      _connectionManager(connectionManager), _logger(logger)
 {
     // Log server initialization
     this->_logger.log(VERBOSE, "Initializing Server...");
 
     // Get the maximum connections value
-    int maxConnections = configuration.getBlocks("events")[0]->getInt("worker_connections");
+    int maxConnections =
+        configuration.getBlocks("events")[ 0 ]->getInt("worker_connections");
 
     // Create a set to store unique IP:port combinations
     std::set<std::pair<int, int> > processedEndpoints;
 
     // Get the list of virtual servers
-    std::vector<IConfiguration *> servers = configuration.getBlocks("http")[0]->getBlocks("server");
+    std::vector<IConfiguration *> servers =
+        configuration.getBlocks("http")[ 0 ]->getBlocks("server");
 
     // For each virtual server
-    for (std::vector<IConfiguration *>::iterator serverIterator = servers.begin();
-         serverIterator != servers.end();
-         serverIterator++)
+    for (std::vector<IConfiguration *>::iterator serverIterator =
+             servers.begin();
+         serverIterator != servers.end(); serverIterator++)
     {
         // Get the list of listen directives
-        std::vector<std::string> listenVector = (*serverIterator)->getStringVector("listen");
+        std::vector<std::string> listenVector =
+            (*serverIterator)->getStringVector("listen");
 
         // For each listen directive
-        for (std::vector<std::string>::iterator listenIterator = listenVector.begin();
-             listenIterator != listenVector.end();
-             listenIterator++)
+        for (std::vector<std::string>::iterator listenIterator =
+                 listenVector.begin();
+             listenIterator != listenVector.end(); listenIterator++)
         {
             int ip = 0; // Default IP to 0 (all network interfaces)
             int port;
@@ -60,10 +67,13 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager, IConnection
                 port = Converter::toInt(*listenIterator);
             }
 
-            // Check if the current IP:port combination has already been processed
-            if (processedEndpoints.find(std::make_pair(ip, port)) == processedEndpoints.end())
+            // Check if the current IP:port combination has already been
+            // processed
+            if (processedEndpoints.find(std::make_pair(ip, port)) ==
+                processedEndpoints.end())
             {
-                // Add the current IP:port combination to the set of processed endpoints
+                // Add the current IP:port combination to the set of processed
+                // endpoints
                 processedEndpoints.insert(std::make_pair(ip, port));
 
                 // Initialize a new socket
@@ -109,14 +119,13 @@ void Server::_initializeServerSocket(int ip, int port, int maxConnections)
     this->_pollfdManager.addServerSocketPollfd(pollfd);
 
     // Log server socket initialization
-    this->_logger.log(INFO, "Server socket initialized. Listening on " + (ip ? Converter::toString(ip) : "ALL") + ":" + Converter::toString(port));
+    this->_logger.log(INFO, "Server socket initialized. Listening on " +
+                                (ip ? Converter::toString(ip) : "ALL") + ":" +
+                                Converter::toString(port));
 }
 
 /* Terminate server*/
-void Server::terminate(int exitCode)
-{
-    exit(exitCode);
-}
+void Server::terminate(int exitCode) { exit(exitCode); }
 
 /* Accept a new client connection*/
 void Server::acceptConnection(int serverSocketDescriptor)
@@ -126,7 +135,8 @@ void Server::acceptConnection(int serverSocketDescriptor)
         throw MaximumConnectionsReachedError();
 
     // Accept incoming connection
-    std::pair<int, std::pair<std::string, std::string> > clientInfo = this->_socket.accept(serverSocketDescriptor);
+    std::pair<int, std::pair<std::string, std::string> > clientInfo =
+        this->_socket.accept(serverSocketDescriptor);
     int clientSocketDescriptor = clientInfo.first;
     std::string clientIP = clientInfo.second.first;
     std::string clientPort = clientInfo.second.second;
@@ -148,5 +158,6 @@ void Server::acceptConnection(int serverSocketDescriptor)
         throw SocketSetError();
 
     // Log accepted connection
-    this->_logger.log(VERBOSE, "Accepted new connection from " + clientIP + ":" + clientPort + ".");
+    this->_logger.log(VERBOSE, "Accepted new connection from " + clientIP +
+                                   ":" + clientPort + ".");
 }

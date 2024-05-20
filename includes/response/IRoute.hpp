@@ -1,13 +1,13 @@
 #ifndef IROUTE_HPP
 #define IROUTE_HPP
 
-#include <string>
 #include "../constants/HttpMethodHelper.hpp"
+#include <string>
 
 class IRoute
 {
 public:
-    virtual ~IRoute(){};
+    virtual ~IRoute() {};
 
     virtual std::string getUri() const = 0;
     virtual void setUri(std::string newUri) = 0;

@@ -4,7 +4,7 @@
 class IServer
 {
 public:
-    virtual ~IServer(){};
+    virtual ~IServer() {};
 
     virtual void acceptConnection(int) = 0;
     virtual void terminate(int) = 0;

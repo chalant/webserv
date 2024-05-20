@@ -2,8 +2,9 @@
 
 /*
  * MockSocket class is a mock implementation of the ISocket interface
- * This mock implementation is used for testing purposes to simulate the behavior of the ISocket interface
- * during unit testing without relying on the actual implementation.
+ * This mock implementation is used for testing purposes to simulate the
+ * behavior of the ISocket interface during unit testing without relying on the
+ * actual implementation.
  */
 
 // Constructor
@@ -62,7 +63,8 @@ int MockSocket::setNonBlocking(int fd) const
 }
 
 // Accepts an incoming connection
-std::pair<int, std::pair<std::string, std::string> > MockSocket::accept(int fd) const
+std::pair<int, std::pair<std::string, std::string> >
+MockSocket::accept(int fd) const
 {
     // Mock implementation for accepting an incoming connection
     // Returns a mock file descriptor for the new client socket
@@ -77,16 +79,17 @@ int MockSocket::send(int socketDescriptor, const std::vector<char> &data) const
 {
     // Mock implementation for sending data over the socket
     // Returns the number of bytes sent
-    this->_socketData[socketDescriptor] = data;
+    this->_socketData[ socketDescriptor ] = data;
     return data.size();
 }
 
 // Sends data over the socket blocking until all data is sent
-int MockSocket::sendAll(int socketDescriptor, const std::vector<char> &data) const
+int MockSocket::sendAll(int socketDescriptor,
+                        const std::vector<char> &data) const
 {
-    // Mock implementation for sending data over the socket blocking until all data is sent
-    // Returns the number of bytes sent
-    this->_socketData[socketDescriptor] = data;
+    // Mock implementation for sending data over the socket blocking until all
+    // data is sent Returns the number of bytes sent
+    this->_socketData[ socketDescriptor ] = data;
     return data.size();
 }
 
@@ -97,17 +100,19 @@ ssize_t MockSocket::recv(int socketDescriptor, char *buffer, size_t len) const
     // Returns the number of bytes received
     if (this->_socketData.find(socketDescriptor) != this->_socketData.end())
     {
-        std::vector<char> &data = this->_socketData[socketDescriptor]; // Get reference to data
+        std::vector<char> &data =
+            this->_socketData[ socketDescriptor ]; // Get reference to data
         size_t i;
         for (i = 0; i < len && i < data.size(); i++)
         {
-            buffer[i] = data[i];
+            buffer[ i ] = data[ i ];
         }
 
         // Erase characters from data
         data.erase(data.begin(), data.begin() + i);
 
-        // If there are no characters left in data, erase the entry from _socketData
+        // If there are no characters left in data, erase the entry from
+        // _socketData
         if (data.empty())
         {
             this->_socketData.erase(socketDescriptor);

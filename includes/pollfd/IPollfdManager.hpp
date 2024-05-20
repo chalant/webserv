@@ -5,15 +5,15 @@
  * IPollfdManager.hpp
  * Abstract base class for PollfdManager in webserv
  *
- * This file defines the PollfdManager interface, which serves as the abstract base
- * class for the PollfdManager in webserv.
- * IPollfdManager allows for polymorphic behavior and dependency injection,
- * thereby enabling us to create a MockPollfdManager class for isolated unit testing.
+ * This file defines the PollfdManager interface, which serves as the abstract
+ * base class for the PollfdManager in webserv. IPollfdManager allows for
+ * polymorphic behavior and dependency injection, thereby enabling us to create
+ * a MockPollfdManager class for isolated unit testing.
  *
  */
 
-#include <poll.h>
 #include <cstddef>
+#include <poll.h>
 
 enum DescriptorType
 {
@@ -43,7 +43,8 @@ public:
     // Method to remove a file descriptor from the pollfdQueue
     virtual void removePollfd(int position) = 0;
 
-    // Method to add the POLLOUT event for a specific position in the pollfdQueue
+    // Method to add the POLLOUT event for a specific position in the
+    // pollfdQueue
     virtual void addPollOut(int position) = 0;
 
     // Method to close all file descriptors in the pollfdQueue
@@ -55,7 +56,8 @@ public:
     // Method to get the events at a specific position in the pollfdQueue
     virtual short getEvents(int position) = 0;
 
-    // Method to get the file descriptor at a specific position in the pollfdQueue
+    // Method to get the file descriptor at a specific position in the
+    // pollfdQueue
     virtual int getDescriptor(int position) = 0;
 
     // Method to check if the pollfdQueue has reached its capacity

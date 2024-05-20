@@ -2,9 +2,10 @@
 #define MOCKCLIENTHANDLER_HPP
 
 /*
- * MockClientHandler class is a mock implementation of the IClientHandler interface
- * This mock implementation is used for testing purposes to simulate the behavior of the IClientHandler interface
- * during unit testing without relying on the actual implementation.
+ * MockClientHandler class is a mock implementation of the IClientHandler
+ * interface This mock implementation is used for testing purposes to simulate
+ * the behavior of the IClientHandler interface during unit testing without
+ * relying on the actual implementation.
  */
 
 #include "../../includes/connection/IClientHandler.hpp" // Include the base interface header

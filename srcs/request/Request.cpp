@@ -4,15 +4,17 @@
 /*
  * Request: Represents an HTTP request.
  *
- * This class encapsulates the components of an HTTP request, including the request method, Uri,
- * HTTP version, requestHeaders, and an optional body. It provides getter and setter methods to
- * access and modify these components, following the HTTP protocol specifications.
+ * This class encapsulates the components of an HTTP request, including the
+ * request method, Uri, HTTP version, requestHeaders, and an optional body. It
+ * provides getter and setter methods to access and modify these components,
+ * following the HTTP protocol specifications.
  *
- * It takes responsability to verifying the validity of its components and throws exceptions if
- * any component is invalid.
+ * It takes responsability to verifying the validity of its components and
+ * throws exceptions if any component is invalid.
  *
- * Instances of this class are typically created by the RequestParser class, which parses raw
- * HTTP request strings and constructs Request objects from them.
+ * Instances of this class are typically created by the RequestParser class,
+ * which parses raw HTTP request strings and constructs Request objects from
+ * them.
  *
  * Usage:
  * - Use getter methods to retrieve the properties of the request.
@@ -31,10 +33,13 @@
  *
  */
 
-// Constructor initializes the Request object with a HttpHelper and a IConfiguration object
-Request::Request(const IConfiguration &configuration, const HttpHelper &httpHelper)
-    : _configuration(configuration),
-      _httpHelper(httpHelper) {}
+// Constructor initializes the Request object with a HttpHelper and a
+// IConfiguration object
+Request::Request(const IConfiguration &configuration,
+                 const HttpHelper &httpHelper)
+    : _configuration(configuration), _httpHelper(httpHelper)
+{
+}
 
 // Copy assignment operator
 Request &Request::operator=(const Request &src)
@@ -52,8 +57,8 @@ Request &Request::operator=(const Request &src)
 }
 
 // Copy constructor
-Request::Request(const Request &src) : _configuration(src._configuration),
-                                       _httpHelper(src._httpHelper)
+Request::Request(const Request &src)
+    : _configuration(src._configuration), _httpHelper(src._httpHelper)
 {
     // Copy constructor for copying the contents of another Request object
     *this = src; // Use the assignment operator to copy the contents
@@ -63,10 +68,7 @@ Request::Request(const Request &src) : _configuration(src._configuration),
 Request::~Request() {}
 
 // Getter function for retrieving the HTTP method of the request
-HttpMethod Request::getMethod() const
-{
-    return this->_method;
-}
+HttpMethod Request::getMethod() const { return this->_method; }
 
 // Getter function for retrieving the string representation of the HTTP method
 std::string Request::getMethodString() const
@@ -75,16 +77,10 @@ std::string Request::getMethodString() const
 }
 
 // Getter function for retrieving the URI of the request
-std::string Request::getUri() const
-{
-    return this->_uri;
-}
+std::string Request::getUri() const { return this->_uri; }
 
 // Getter function for retrieving the HTTP version of the request
-HttpVersion Request::getHttpVersion() const
-{
-    return this->_httpVersion;
-}
+HttpVersion Request::getHttpVersion() const { return this->_httpVersion; }
 
 // Getter function for retrieving the string representation of the HTTP version
 std::string Request::getHttpVersionString() const
@@ -102,10 +98,13 @@ const std::map<HttpHeader, std::string> Request::getHeaders() const
 std::map<std::string, std::string> Request::getHeadersStringMap() const
 {
     std::map<std::string, std::string> headersStrings;
-    for (std::map<HttpHeader, std::string>::const_iterator it = this->_headers.begin(); it != this->_headers.end(); ++it)
+    for (std::map<HttpHeader, std::string>::const_iterator it =
+             this->_headers.begin();
+         it != this->_headers.end(); ++it)
     {
         // Convert enum keys to string keys and copy values
-        headersStrings[this->_httpHelper.httpHeaderStringMap(it->first)] = it->second;
+        headersStrings[ this->_httpHelper.httpHeaderStringMap(it->first) ] =
+            it->second;
     }
     return headersStrings;
 }
@@ -143,10 +142,7 @@ std::string Request::getHeaderValue(HttpHeader header) const
 }
 
 // Getter function for retrieving the body of the request
-const std::vector<char> Request::getBody() const
-{
-    return this->_body;
-}
+const std::vector<char> Request::getBody() const { return this->_body; }
 
 // Getter function for retrieving the body of the request as a string
 std::string Request::getBodyString() const
@@ -166,7 +162,8 @@ std::string Request::getQueryString() const
     }
     else
     {
-        return ""; // Return an empty string if the URI does not contain a query string
+        return ""; // Return an empty string if the URI does not contain a query
+                   // string
     }
 }
 
@@ -181,7 +178,8 @@ std::string Request::getContentLength() const
     }
     else
     {
-        return ""; // Return an empty string if the 'content-length' header does not exist
+        return ""; // Return an empty string if the 'content-length' header does
+                   // not exist
     }
 }
 
@@ -196,7 +194,8 @@ std::string Request::getContentType() const
     }
     else
     {
-        return ""; // Return an empty string if the 'content-type' header does not exist
+        return ""; // Return an empty string if the 'content-type' header does
+                   // not exist
     }
 }
 
@@ -206,7 +205,8 @@ std::string Request::getPathInfo(const std::string &scriptName) const
     // Check if the URI contains the script name
     size_t scriptNamePos = this->_uri.find(scriptName);
     if (scriptNamePos == std::string::npos)
-        return ""; // Return an empty string if the URI does not contain the script name
+        return ""; // Return an empty string if the URI does not contain the
+                   // script name
 
     // Calculate the start of the path info
     size_t pathInfoStart = scriptNamePos + scriptName.size();
@@ -244,22 +244,13 @@ std::string Request::getClientIp() const
 }
 
 // Getter function for retrieving the host name
-std::string Request::getHostName() const
-{
-    return this->_hostName;
-}
+std::string Request::getHostName() const { return this->_hostName; }
 
 // Getter function for retrieving the host port
-std::string Request::getHostPort() const
-{
-    return this->_hostPort;
-}
+std::string Request::getHostPort() const { return this->_hostPort; }
 
 // Getter function for retrieving the authority of the request
-std::string Request::getAuthority() const
-{
-    return this->_authority;
-}
+std::string Request::getAuthority() const { return this->_authority; }
 
 // Getter function for retrieving the body parameters
 const std::vector<BodyParameter> &Request::getBodyParameters() const
@@ -268,20 +259,19 @@ const std::vector<BodyParameter> &Request::getBodyParameters() const
 }
 
 // Getter function for checking if the request is an upload request
-bool Request::isUploadRequest() const
-{
-    return this->_uploadRequest;
-}
+bool Request::isUploadRequest() const { return this->_uploadRequest; }
 
 // Setter function for setting the method of the request
 void Request::setMethod(const std::string &method)
 {
     if (this->_httpHelper.isMethod(method) == false)
-        throw HttpStatusCodeException(METHOD_NOT_ALLOWED, // Throw '405' status error
-                                      "unknown method: \"" + method + "\"");
+        throw HttpStatusCodeException(
+            METHOD_NOT_ALLOWED, // Throw '405' status error
+            "unknown method: \"" + method + "\"");
     else if (this->_httpHelper.isSupportedMethod(method) == false)
-        throw HttpStatusCodeException(NOT_IMPLEMENTED, // Throw '501' status error
-                                      "unsupported method: \"" + method + "\"");
+        throw HttpStatusCodeException(
+            NOT_IMPLEMENTED, // Throw '501' status error
+            "unsupported method: \"" + method + "\"");
 
     // Set the method of the request
     this->_method = this->_httpHelper.stringHttpMethodMap(method);
@@ -307,8 +297,9 @@ void Request::setUri(const std::string &uri)
 void Request::setHttpVersion(const std::string &httpVersion)
 {
     // Set the HTTP version of the request
-    // Use the HttpHelper to map the string representation of the HTTP version to an HttpVersion enum value
-    // If the HTTP version is not recognized, an UnknownHttpVersionError is thrown
+    // Use the HttpHelper to map the string representation of the HTTP version
+    // to an HttpVersion enum value If the HTTP version is not recognized, an
+    // UnknownHttpVersionError is thrown
     this->_httpVersion = this->_httpHelper.stringHttpVersionMap(httpVersion);
 }
 
@@ -316,14 +307,17 @@ void Request::setHttpVersion(const std::string &httpVersion)
 void Request::addHeader(const std::string &key, const std::string &value)
 {
     // Check if the key contains trailing whitespace
-    if (!key.empty() && (key[key.length() - 1] == ' ' || key[key.length() - 1] == '\t'))
+    if (!key.empty() &&
+        (key[ key.length() - 1 ] == ' ' || key[ key.length() - 1 ] == '\t'))
     {
-        throw HttpStatusCodeException(BAD_REQUEST, "trailing whitespace in header key");
+        throw HttpStatusCodeException(BAD_REQUEST,
+                                      "trailing whitespace in header key");
     }
 
     // Convert the key to lowercase
     std::string lowercaseKey = key;
-    for (std::string::iterator it = lowercaseKey.begin(); it != lowercaseKey.end(); ++it)
+    for (std::string::iterator it = lowercaseKey.begin();
+         it != lowercaseKey.end(); ++it)
     {
         *it = std::tolower(static_cast<unsigned char>(*it));
     }
@@ -334,7 +328,7 @@ void Request::addHeader(const std::string &key, const std::string &value)
     {
         name = this->_httpHelper.stringHttpHeaderMap(lowercaseKey);
         // Add the header to the internal headers map
-        this->_headers[name] = value;
+        this->_headers[ name ] = value;
     }
     catch (const UnknownHeaderError &e)
     {
@@ -352,7 +346,8 @@ void Request::setBody(const std::vector<char> &body)
 
     // Check if the body size exceeds the maximum allowed body size
     if (body.size() > this->_configuration.getSize_t("ClientMaxBodySize"))
-        throw HttpStatusCodeException(PAYLOAD_TOO_LARGE); // Throw '413' status error
+        throw HttpStatusCodeException(
+            PAYLOAD_TOO_LARGE); // Throw '413' status error
 
     // Set the body of the request
     this->_body = body;
@@ -372,17 +367,17 @@ void Request::setBody(const std::string &body)
 void Request::addCookie(const std::string &key, const std::string &value)
 {
     // Add the cookie to the internal cookies map
-    this->_cookies[key] = value;
+    this->_cookies[ key ] = value;
 }
 
 // Setter function for setting the authority of the request
 void Request::setAuthority()
 {
     // Check if the 'Host' header exists in the map
-    if (this->_headers[HOST] == "")
+    if (this->_headers[ HOST ] == "")
         throw HttpStatusCodeException(BAD_REQUEST, // Throw '400' status error
                                       "missing Host header");
-    std::istringstream hostStream(this->_headers[HOST]);
+    std::istringstream hostStream(this->_headers[ HOST ]);
     if (std::getline(hostStream, this->_hostName, ':'))
     {
         // If the host header contains a port number, set the host port
@@ -390,7 +385,8 @@ void Request::setAuthority()
     }
     else
     {
-        // If the host header does not contain a port number, set the host port to the default port
+        // If the host header does not contain a port number, set the host port
+        // to the default port
         this->_hostPort = this->_configuration.getString("DefaultPort");
     }
 

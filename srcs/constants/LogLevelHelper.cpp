@@ -14,7 +14,9 @@
 LogLevelHelper::LogLevelHelper()
     : _logLevelList(_setLogLevelList()),
       _stringLogLevelMap(_setStringLogLevelMap()),
-      _logLevelStringMap(_setLogLevelStringMap()) {}
+      _logLevelStringMap(_setLogLevelStringMap())
+{
+}
 
 // Get string representation of LogLevel enum value
 const std::string &LogLevelHelper::logLevelStringMap(LogLevel logLevel) const
@@ -42,7 +44,8 @@ LogLevel LogLevelHelper::stringLogLevelMap(const std::string &logLevel) const
     }
 }
 
-// Helper function to initialize LogLevelList with string representations of HTTP logLevels
+// Helper function to initialize LogLevelList with string representations of
+// HTTP logLevels
 std::vector<std::string> LogLevelHelper::_setLogLevelList()
 {
     std::vector<std::string> logLevelList;
@@ -59,36 +62,38 @@ std::vector<std::string> LogLevelHelper::_setLogLevelList()
     return logLevelList;
 }
 
-// Helper function to initialize stringLogLevelMap with mappings from string representations to LogLevel enum values
+// Helper function to initialize stringLogLevelMap with mappings from string
+// representations to LogLevel enum values
 std::map<std::string, LogLevel> LogLevelHelper::_setStringLogLevelMap()
 {
     std::map<std::string, LogLevel> stringLogLevelMap;
 
     // Add mappings from string representations to LogLevel enum values
-    stringLogLevelMap["verbose"] = VERBOSE;
-    stringLogLevelMap["debug"] = DEBUG;
-    stringLogLevelMap["info"] = INFO;
-    stringLogLevelMap["warn"] = WARN;
-    stringLogLevelMap["error"] = ERROR;
-    stringLogLevelMap["critical"] = CRITICAL;
-    stringLogLevelMap["unknown"] = UNKNOWN;
+    stringLogLevelMap[ "verbose" ] = VERBOSE;
+    stringLogLevelMap[ "debug" ] = DEBUG;
+    stringLogLevelMap[ "info" ] = INFO;
+    stringLogLevelMap[ "warn" ] = WARN;
+    stringLogLevelMap[ "error" ] = ERROR;
+    stringLogLevelMap[ "critical" ] = CRITICAL;
+    stringLogLevelMap[ "unknown" ] = UNKNOWN;
 
     return stringLogLevelMap;
 }
 
-// Helper function to initialize logLevelStringMap with mappings from LogLevel enum values to string representations
+// Helper function to initialize logLevelStringMap with mappings from LogLevel
+// enum values to string representations
 std::map<LogLevel, std::string> LogLevelHelper::_setLogLevelStringMap()
 {
     std::map<LogLevel, std::string> logLevelStringMap;
 
     // Add mappings from LogLevel enum values to string representations
-    logLevelStringMap[VERBOSE] = "verbose";
-    logLevelStringMap[DEBUG] = "debug";
-    logLevelStringMap[INFO] = "info";
-    logLevelStringMap[WARN] = "warn";
-    logLevelStringMap[ERROR] = "error";
-    logLevelStringMap[CRITICAL] = "critical";
-    logLevelStringMap[UNKNOWN] = "unknown";
+    logLevelStringMap[ VERBOSE ] = "verbose";
+    logLevelStringMap[ DEBUG ] = "debug";
+    logLevelStringMap[ INFO ] = "info";
+    logLevelStringMap[ WARN ] = "warn";
+    logLevelStringMap[ ERROR ] = "error";
+    logLevelStringMap[ CRITICAL ] = "critical";
+    logLevelStringMap[ UNKNOWN ] = "unknown";
 
     return logLevelStringMap;
 }

@@ -10,37 +10,31 @@
  */
 
 // Default constructor
-Response::Response(const HttpHelper &httpHelper)
-    : _httpHelper(httpHelper) {}
+Response::Response(const HttpHelper &httpHelper) : _httpHelper(httpHelper) {}
 
 // Destructor
 Response::~Response() {}
 
 // Getter for status line
-std::string Response::getStatusLine() const
-{
-    return this->_statusLine;
-}
+std::string Response::getStatusLine() const { return this->_statusLine; }
 
 // Getter for headers - returns 1 string with all headers
 std::string Response::getHeaders() const
 {
     std::string headers;
-    for (std::map<HttpHeader, std::string>::const_iterator it = _headers.begin();
-         it != this->_headers.end();
-         it++)
+    for (std::map<HttpHeader, std::string>::const_iterator it =
+             _headers.begin();
+         it != this->_headers.end(); it++)
     {
         // Construct each header line in the format "HeaderName: Value\r\n"
-        headers += this->_httpHelper.httpHeaderStringMap(it->first) + ": " + it->second + "\r\n";
+        headers += this->_httpHelper.httpHeaderStringMap(it->first) + ": " +
+                   it->second + "\r\n";
     }
     return headers;
 }
 
 // Getter for body
-std::string Response::getBody() const
-{
-    return this->_body;
-}
+std::string Response::getBody() const { return this->_body; }
 
 // Setter for status line - string input
 void Response::setStatusLine(std::string statusLine)
@@ -59,15 +53,15 @@ void Response::setStatusLine(HttpStatusCode statusCode)
 void Response::setHeaders(std::vector<std::string> headers)
 {
     for (std::vector<std::string>::iterator it = headers.begin();
-         it != headers.end();
-         it++)
+         it != headers.end(); it++)
     {
         std::string header = *it;
         std::string headerName = header.substr(0, header.find(":"));
         std::string headerValue = header.substr(header.find(":") + 1);
-        HttpHeader headerEnum = this->_httpHelper.stringHttpHeaderMap(headerName);
+        HttpHeader headerEnum =
+            this->_httpHelper.stringHttpHeaderMap(headerName);
         // Add header to the map
-        this->_headers[headerEnum] = headerValue;
+        this->_headers[ headerEnum ] = headerValue;
     }
 }
 
@@ -81,40 +75,42 @@ void Response::setHeaders(std::string headers)
         headers = headers.substr(headers.find("\r\n") + 2);
         std::string headerName = header.substr(0, header.find(":"));
         std::string headerValue = header.substr(header.find(":") + 1);
-        HttpHeader headerEnum = this->_httpHelper.stringHttpHeaderMap(headerName);
+        HttpHeader headerEnum =
+            this->_httpHelper.stringHttpHeaderMap(headerName);
         // Add header to the map
-        this->_headers[headerEnum] = headerValue;
+        this->_headers[ headerEnum ] = headerValue;
     }
 }
 
 // Add a header to the map - Enum, string input
 void Response::addHeader(HttpHeader header, std::string value)
 {
-    this->_headers[header] = value;
+    this->_headers[ header ] = value;
 }
 
 // Add a header to the map - string, string input
 void Response::addHeader(std::string header, std::string value)
 {
     HttpHeader headerEnum = this->_httpHelper.stringHttpHeaderMap(header);
-    this->_headers[headerEnum] = value;
+    this->_headers[ headerEnum ] = value;
 }
 
 // Add a cookie to the map
 void Response::addCookie(std::string key, std::string value)
 {
-    this->_cookies[key] = value;
+    this->_cookies[ key ] = value;
 }
 
 // Add Cookie Headers to the response
 void Response::addCookieHeaders()
 {
-    for (std::map<std::string, std::string>::const_iterator it = this->_cookies.begin();
-         it != this->_cookies.end();
-         ++it)
+    for (std::map<std::string, std::string>::const_iterator it =
+             this->_cookies.begin();
+         it != this->_cookies.end(); ++it)
     {
         // Construct the Set-Cookie header for the current cookie
-        std::string cookieHeader = it->first + "=" + it->second + "; HttpOnly; Secure; SameSite=Strict;";
+        std::string cookieHeader = it->first + "=" + it->second +
+                                   "; HttpOnly; Secure; SameSite=Strict;";
 
         // Add the Set-Cookie header to the response
         this->addHeader(SET_COOKIE, cookieHeader);
@@ -122,10 +118,7 @@ void Response::addCookieHeaders()
 }
 
 // Setter for body
-void Response::setBody(std::string body)
-{
-    this->_body = body;
-}
+void Response::setBody(std::string body) { this->_body = body; }
 
 // Set all response fields from a status code
 void Response::setErrorResponse(HttpStatusCode statusCode)
@@ -134,9 +127,10 @@ void Response::setErrorResponse(HttpStatusCode statusCode)
     std::string body = this->_httpHelper.getHtmlPage(statusCode);
     this->setHeaders("content-type: text/html\r\n"
                      "content-length: " +
-                     Converter::toString(body.length()) + "\r\n"
-                                                          "connection: close\r\n"
-                                                          "server: webserv/1.0\r\n");
+                     Converter::toString(body.length()) +
+                     "\r\n"
+                     "connection: close\r\n"
+                     "server: webserv/1.0\r\n");
     this->setBody(body);
 }
 
@@ -166,13 +160,16 @@ std::string Response::getStatusCodeString() const
 // Calculate the size of the response
 std::string Response::getResponseSizeString() const
 {
-    return Converter::toString(this->_statusLine.length() + this->getHeaders().length() + this->_body.length());
+    return Converter::toString(this->_statusLine.length() +
+                               this->getHeaders().length() +
+                               this->_body.length());
 }
 
 // Calculate the size of the response in bytes
 size_t Response::getResponseSize() const
 {
-    return this->_statusLine.length() + this->getHeaders().length() + this->_body.length();
+    return this->_statusLine.length() + this->getHeaders().length() +
+           this->_body.length();
 }
 
 // Get the map of cookies
@@ -184,7 +181,8 @@ std::map<std::string, std::string> Response::getCookiesMap() const
 // Get a specific cookie from the map
 std::string Response::getCookie(const std::string &key) const
 {
-    std::map<std::string, std::string>::const_iterator it = this->_cookies.find(key);
+    std::map<std::string, std::string>::const_iterator it =
+        this->_cookies.find(key);
     if (it != this->_cookies.end())
     {
         return it->second;
@@ -196,11 +194,12 @@ std::string Response::getCookie(const std::string &key) const
 std::map<std::string, std::string> Response::getHeadersStringMap() const
 {
     std::map<std::string, std::string> headers;
-    for (std::map<HttpHeader, std::string>::const_iterator it = this->_headers.begin();
-         it != this->_headers.end();
-         it++)
+    for (std::map<HttpHeader, std::string>::const_iterator it =
+             this->_headers.begin();
+         it != this->_headers.end(); it++)
     {
-        headers[this->_httpHelper.httpHeaderStringMap(it->first)] = it->second;
+        headers[ this->_httpHelper.httpHeaderStringMap(it->first) ] =
+            it->second;
     }
     return headers;
 }
@@ -211,7 +210,8 @@ std::vector<char> Response::serialise()
     std::vector<char> response;
 
     // Add status line
-    response.insert(response.end(), this->_statusLine.begin(), this->_statusLine.end());
+    response.insert(response.end(), this->_statusLine.begin(),
+                    this->_statusLine.end());
 
     // Add headers
     this->addCookieHeaders(); // Add cookies to the headers first

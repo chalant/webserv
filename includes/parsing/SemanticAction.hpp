@@ -24,7 +24,8 @@
 // // 	public:
 // // 		ASemanticAction() {};
 // // 		virtual ~ASemanticAction();
-// // 		virtual	void	execute(std::stack<std::string>& container, Token const & token);
+// // 		virtual	void	execute(std::stack<std::string>& container,
+// Token const & token);
 // // 		virtual	void	execute(std::stack<std::string>& container);
 // // };
 

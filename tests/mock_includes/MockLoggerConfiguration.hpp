@@ -6,10 +6,10 @@
  * Mocks the LoggerConfiguration class
  */
 
-#include "../../includes/logger/ILoggerConfiguration.hpp"
 #include "../../includes/buffer/IBufferManager.hpp"
-#include "../../includes/pollfd/IPollfdManager.hpp"
 #include "../../includes/configuration/IConfiguration.hpp"
+#include "../../includes/logger/ILoggerConfiguration.hpp"
+#include "../../includes/pollfd/IPollfdManager.hpp"
 #include <unistd.h>
 
 class MockLoggerConfiguration : public ILoggerConfiguration
@@ -25,7 +25,9 @@ private:
     bool _accessLogEnabled;
 
 public:
-    MockLoggerConfiguration(IBufferManager &bufferManager, const IConfiguration &configuration, IPollfdManager &pollfdManager);
+    MockLoggerConfiguration(IBufferManager &bufferManager,
+                            const IConfiguration &configuration,
+                            IPollfdManager &pollfdManager);
 
     virtual ~MockLoggerConfiguration();
     virtual void setErrorLogEnabled(bool);
@@ -42,7 +44,8 @@ public:
 
     // Testing purposes
     virtual void setBufferSize(size_t bufferSize);
-    virtual void setFileDescriptor(int errorLogFileDescriptor, int accessLogFileDescriptor = STDOUT_FILENO);
+    virtual void setFileDescriptor(int errorLogFileDescriptor,
+                                   int accessLogFileDescriptor = STDOUT_FILENO);
 };
 
 #endif // MOCKLOGGERCONFIGURATION_HPP

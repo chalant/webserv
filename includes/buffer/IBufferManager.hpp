@@ -1,13 +1,13 @@
 #ifndef IBUFFERMANAGER_HPP
 #define IBUFFERMANAGER_HPP
 
-#include <vector>
 #include <sys/types.h>
+#include <vector>
 
 class IBufferManager
 {
 public:
-    virtual ~IBufferManager(){};
+    virtual ~IBufferManager() {};
 
     // methods for managing buffers
     virtual ssize_t pushFileBuffer(int, const std::vector<char> &) = 0;

@@ -17,8 +17,8 @@ private:
     std::string _prefix;
 
 public:
-    MockRoute(){};
-    ~MockRoute(){};
+    MockRoute() {};
+    ~MockRoute() {};
 
     virtual std::string getUri() const;
     virtual void setUri(std::string newUri);

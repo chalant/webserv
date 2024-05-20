@@ -1,26 +1,28 @@
 #include "../mock_includes/MockLogger.hpp"
+#include <ctime>
 #include <iomanip>
 #include <iostream>
-#include <ctime>
 #include <sstream>
 
 /*
  * MockLogger class is a mock implementation of the ILogger interface
- * This mock implementation is used for testing purposes to simulate the behavior of the ILogger interface
- * during unit testing without relying on the actual implementation.
+ * This mock implementation is used for testing purposes to simulate the
+ * behavior of the ILogger interface during unit testing without relying on the
+ * actual implementation.
  */
 
 // Constructor
-MockLogger::MockLogger() : ILogger(){};
+MockLogger::MockLogger() : ILogger() {};
 
 // Destructor
-MockLogger::~MockLogger(){};
+MockLogger::~MockLogger() {};
 
 // Default log method
 int MockLogger::log(const std::string &message)
 {
     // Construct the log message string
-    std::string logMessageString = this->_getCurrentTimestamp() + " " + message + "\n";
+    std::string logMessageString =
+        this->_getCurrentTimestamp() + " " + message + "\n";
 
     std::cout << logMessageString;
     return 0;
@@ -31,8 +33,11 @@ int MockLogger::log(const LogLevel logLevel, const std::string &message)
 {
     static_cast<void>(logLevel);
     // Construct the log message string
-    // std::string logMessageString = this->_getCurrentTimestamp() + " [" + this->_logLevelHelper.logLevelStringMap(logLevel) + "] " + message + "\n";
-    std::string logMessageString = this->_getCurrentTimestamp() + " [LOGLEVEL] " + message + "\n";
+    // std::string logMessageString = this->_getCurrentTimestamp() + " [" +
+    // this->_logLevelHelper.logLevelStringMap(logLevel) + "] " + message +
+    // "\n";
+    std::string logMessageString =
+        this->_getCurrentTimestamp() + " [LOGLEVEL] " + message + "\n";
 
     std::cout << logMessageString;
     return 0;
@@ -56,7 +61,7 @@ std::string MockLogger::_getCurrentTimestamp() const
 {
     std::stringstream stream;
     std::time_t currentTime = std::time(NULL);
-    char buffer[80];
+    char buffer[ 80 ];
 
     strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
     stream << buffer;

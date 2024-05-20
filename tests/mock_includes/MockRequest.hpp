@@ -3,8 +3,9 @@
 
 /*
  * MockRequest class is a mock implementation of the IRequest interface
- * This mock implementation is used for testing purposes to simulate the behavior of the IRequest interface
- * during unit testing without relying on the actual implementation.
+ * This mock implementation is used for testing purposes to simulate the
+ * behavior of the IRequest interface during unit testing without relying on the
+ * actual implementation.
  */
 
 #include "../../includes/request/IRequest.hpp" // Include the base interface header

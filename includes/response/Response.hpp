@@ -9,8 +9,8 @@
  *
  */
 
-#include "IResponse.hpp"
 #include "../../includes/constants/HttpHelper.hpp"
+#include "IResponse.hpp"
 
 class Response : public IResponse
 {

@@ -2,10 +2,11 @@
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
 
-PollingService::PollingService(IPollfdManager &pollfdManager, ILogger &logger, int timeout)
-    : _pollfdManager(pollfdManager),
-      _logger(logger),
-      _timeout(timeout) {}
+PollingService::PollingService(IPollfdManager &pollfdManager, ILogger &logger,
+                               int timeout)
+    : _pollfdManager(pollfdManager), _logger(logger), _timeout(timeout)
+{
+}
 
 PollingService::~PollingService() {}
 
@@ -24,9 +25,12 @@ void PollingService::pollEvents()
 
     // Log poll result
     if (pollResult == 0) // Timeout occurred
-        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
+        this->_logger.log(
+            VERBOSE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
     else // Events occurred
-        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " + Converter::toString(pollResult) + " events.");
+        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " +
+                                       Converter::toString(pollResult) +
+                                       " events.");
 }
 
 void PollingService::setPollingTimeout(int timeout)

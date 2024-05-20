@@ -12,18 +12,20 @@
  *
  */
 
-#include <vector>
 #include <unistd.h>
+#include <vector>
 
 class IBuffer
 {
 public:
-    virtual ~IBuffer(){};
+    virtual ~IBuffer() {};
 
     // Buffer methods
-    virtual ssize_t push(const std::vector<char> &) = 0; // Method to append a vector of characters to the buffer
-    virtual ssize_t flush(int, bool = false) = 0;        // Method to flush the buffer
-    virtual std::vector<char> peek() const = 0;          // Method to peek at the buffer
+    virtual ssize_t
+    push(const std::vector<char> &) = 0; // Method to append a vector of
+                                         // characters to the buffer
+    virtual ssize_t flush(int, bool = false) = 0; // Method to flush the buffer
+    virtual std::vector<char> peek() const = 0; // Method to peek at the buffer
 };
 
 #endif // IBUFFER_HPP

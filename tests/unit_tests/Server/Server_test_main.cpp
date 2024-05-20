@@ -5,11 +5,11 @@
 #include "../../../includes/network/Server.hpp"
 
 // include the header files for the mock classes
-#include "../../mock_includes/MockLogger.hpp"
-#include "../../mock_includes/MockSocket.hpp"
-#include "../../mock_includes/MockPollfdManager.hpp"
-#include "../../mock_includes/MockConnectionManager.hpp"
 #include "../../mock_includes/MockConfigurationBlock.hpp"
+#include "../../mock_includes/MockConnectionManager.hpp"
+#include "../../mock_includes/MockLogger.hpp"
+#include "../../mock_includes/MockPollfdManager.hpp"
+#include "../../mock_includes/MockSocket.hpp"
 
 int main()
 {
@@ -32,7 +32,8 @@ int main()
     mockConfiguration.setBlock("events", &mockEvents);
 
     // Instantiate the Server instance
-    Server server(mockSocket, mockPollfdManager, mockConnectionManager, mockConfiguration, mockLogger);
+    Server server(mockSocket, mockPollfdManager, mockConnectionManager,
+                  mockConfiguration, mockLogger);
 
     // Verify that sockets are up and listening
 }

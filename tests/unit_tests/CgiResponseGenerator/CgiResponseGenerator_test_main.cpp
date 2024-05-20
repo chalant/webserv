@@ -1,8 +1,8 @@
 #include <cassert>
-#include <sys/socket.h>
 #include <cstring>
-#include <unistd.h>
 #include <sstream>
+#include <sys/socket.h>
+#include <unistd.h>
 
 // include the header file for the class under test
 #include "../../../includes/response/CgiResponseGenerator.hpp"
@@ -10,9 +10,9 @@
 #include "../../../includes/configuration/ConfigurationLoader.hpp"
 
 // include the header files for the mock classes
-#include "../../mock_includes/MockRoute.hpp"
-#include "../../mock_includes/MockRequest.hpp"
 #include "../../mock_includes/MockLogger.hpp"
+#include "../../mock_includes/MockRequest.hpp"
+#include "../../mock_includes/MockRoute.hpp"
 
 int main()
 {
@@ -28,7 +28,8 @@ int main()
     mockRoute.setRoot(root);
     mockRoute.setPrefix(prefix);
 
-    const IConfiguration &mockConfigurationBlock = conf_loader.loadConfiguration("test_configuration.conf");
+    const IConfiguration &mockConfigurationBlock =
+        conf_loader.loadConfiguration("test_configuration.conf");
 
     // Set Mock Configuration Variables
     // mockConfigurationBlock.setString("PhpCgiPath", "/usr/bin/php-cgi");
@@ -40,7 +41,7 @@ int main()
     int requestWritePipe;
 
     // Declare a read buffer
-    char readBuffer[1024];
+    char readBuffer[ 1024 ];
 
     // Instantiate the CgiResponseGenerator object
     CgiResponseGenerator cgiResponseGenerator(mockLogger);
@@ -55,16 +56,18 @@ int main()
     mockRequest.setUri("/mock-cgi-bin/" + scriptName);
 
     // Generate cgi response
-    cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);
+    cgiInfo = cgiResponseGenerator.generateResponse(
+        mockRoute, mockRequest, mockConfigurationBlock, scriptName);
 
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
 
     // Read the response
     ssize_t bytesRead;
-    while ((bytesRead = read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
-        ;                         // wait for the response
-    readBuffer[bytesRead] = '\0'; // Null-terminate the string
+    while ((bytesRead =
+                read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
+        ;                           // wait for the response
+    readBuffer[ bytesRead ] = '\0'; // Null-terminate the string
 
     // Close the pipe
     close(responseReadPipe); // Close the read end of the pipe
@@ -85,15 +88,17 @@ int main()
     mockRequest.setUri("/mock-cgi-bin/" + scriptName + "?name=John&age=30");
 
     // Generate cgi response
-    cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);
+    cgiInfo = cgiResponseGenerator.generateResponse(
+        mockRoute, mockRequest, mockConfigurationBlock, scriptName);
 
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
 
     // Read the response
-    while ((bytesRead = read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
-        ;                         // wait for the response
-    readBuffer[bytesRead] = '\0'; // Null-terminate the string
+    while ((bytesRead =
+                read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
+        ;                           // wait for the response
+    readBuffer[ bytesRead ] = '\0'; // Null-terminate the string
 
     // Close the pipe
     close(responseReadPipe); // Close the read end of the pipe
@@ -120,27 +125,33 @@ int main()
     mockRequest.addHeader("content-length", bodySizeStream.str());
 
     // Generate cgi response
-    cgiInfo = cgiResponseGenerator.generateResponse(mockRoute, mockRequest, mockConfigurationBlock, scriptName);
+    cgiInfo = cgiResponseGenerator.generateResponse(
+        mockRoute, mockRequest, mockConfigurationBlock, scriptName);
 
     // Get the pipe file descriptors
     responseReadPipe = cgiInfo.second.first;
     requestWritePipe = cgiInfo.second.second;
 
     // Write the request body to the pipe
-    write(requestWritePipe, mockRequest.getBody().data(), mockRequest.getBody().size());
+    write(requestWritePipe, mockRequest.getBody().data(),
+          mockRequest.getBody().size());
 
     // Read the response
-    while ((bytesRead = read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
-        ;                         // wait for the response
-    readBuffer[bytesRead] = '\0'; // Null-terminate the string
+    while ((bytesRead =
+                read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
+        ;                           // wait for the response
+    readBuffer[ bytesRead ] = '\0'; // Null-terminate the string
 
     // Close the pipe
     close(responseReadPipe); // Close the read end of the pipe
 
-    // Assert that the line "POST Data:\nHello, world! (from the body)" is present in readBuffer
-    assert(strstr(readBuffer, "POST Data:\nHello, world! (from the body)") != NULL);
+    // Assert that the line "POST Data:\nHello, world! (from the body)" is
+    // present in readBuffer
+    assert(strstr(readBuffer, "POST Data:\nHello, world! (from the body)") !=
+           NULL);
 
     return 0;
 }
 
-// Path: tests/unit_tests/CgiResponseGenerator/CgiResponseGenerator_test_main.cpp
+// Path:
+// tests/unit_tests/CgiResponseGenerator/CgiResponseGenerator_test_main.cpp

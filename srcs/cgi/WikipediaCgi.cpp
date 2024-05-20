@@ -1,6 +1,6 @@
 #include <iostream>
-#include <string>
 #include <sstream>
+#include <string>
 
 std::string httpGet(const std::string &url)
 {
@@ -12,7 +12,7 @@ std::string httpGet(const std::string &url)
         return "";
 
     // Read the output of the curl command
-    char buffer[128];
+    char buffer[ 128 ];
     while (!feof(pipe))
         if (fgets(buffer, 128, pipe) != NULL)
             oss << buffer;
@@ -40,7 +40,7 @@ std::string extractFromJson(const std::string &json)
 int main(int argc, char **argv)
 {
     // the first argument is the query
-    std::string query(argv[1]);
+    std::string query(argv[ 1 ]);
 
     // initialize the response
     std::ostringstream response;
@@ -49,7 +49,10 @@ int main(int argc, char **argv)
     std::string body;
 
     // Make a Wikipedia API request for the query
-    std::string jsonResponse = httpGet("https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=" + query + "&redirects=true");
+    std::string jsonResponse =
+        httpGet("https://en.wikipedia.org/w/"
+                "api.php?action=query&format=json&prop=extracts&titles=" +
+                query + "&redirects=true");
 
     // check if the request failed
     if (jsonResponse.empty())
@@ -72,7 +75,8 @@ int main(int argc, char **argv)
                "<head>\n"
                "    <meta charset=\"UTF-8\">\n"
                "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n"
-               "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
+               "    <meta name=\"viewport\" content=\"width=device-width, "
+               "initial-scale=1.0\">\n"
                "    <title>Wikipedia Extract</title>\n"
                "    <style>\n"
                "        body {\n"
@@ -118,14 +122,16 @@ int main(int argc, char **argv)
                "    <div class=\"container\">\n"
                "        <div class=\"extract\">\n"
                "            <h1>Wikipedia Extract for '" +
-               query + "'</h1>\n"
-                       "            <p>" +
-               extractFromJson(jsonResponse) + "</p>\n"
-                                               "            <div class=\"version\">webserv/1.0</div>\n"
-                                               "        </div>\n"
-                                               "    </div>\n"
-                                               "</body>\n"
-                                               "</html>";
+               query +
+               "'</h1>\n"
+               "            <p>" +
+               extractFromJson(jsonResponse) +
+               "</p>\n"
+               "            <div class=\"version\">webserv/1.0</div>\n"
+               "        </div>\n"
+               "    </div>\n"
+               "</body>\n"
+               "</html>";
     }
 
     response << "content-type: text/html\r\n";

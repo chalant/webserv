@@ -1,10 +1,10 @@
 #ifndef POLLINGSERVICE_HPP
 #define POLLINGSERVICE_HPP
 
+#include "../logger/ILogger.hpp"
+#include "../pollfd/IPollfdManager.hpp"
 #include "IPollingService.hpp"
 #include <poll.h>
-#include "../pollfd/IPollfdManager.hpp"
-#include "../logger/ILogger.hpp"
 
 class PollingService : public IPollingService
 {
@@ -14,7 +14,8 @@ private:
     int _timeout;
 
 public:
-    PollingService(IPollfdManager &pollfdManager, ILogger &logger, int timeout = 100);
+    PollingService(IPollfdManager &pollfdManager, ILogger &logger,
+                   int timeout = 100);
     ~PollingService();
 
     virtual void pollEvents();
