@@ -38,7 +38,6 @@ SRCS        =	main.cpp \
 				srcs/parsing/Parser.cpp \
 				srcs/parsing/ParsingUtils.cpp \
 				srcs/configuration/ConfigurationBlock.cpp \
-				srcs/configuration/LocationBlock.cpp \
 				srcs/configuration/Defaults.cpp \
 				srcs/configuration/ConfigurationLoader.cpp \
 				srcs/configuration/BlockList.cpp \

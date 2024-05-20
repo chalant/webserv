@@ -29,7 +29,6 @@ SOURCES         = configuration_test.cpp \
 				  ../../../srcs/response/DefaultMatcher.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
 				  ../../../srcs/configuration/ConfigurationBlock.cpp \
-				  ../../../srcs/configuration/LocationBlock.cpp \
 				  ../../../srcs/configuration/Defaults.cpp \
 				  ../../../srcs/configuration/BlockList.cpp \
 				  ../../../srcs/utils/Converter.cpp

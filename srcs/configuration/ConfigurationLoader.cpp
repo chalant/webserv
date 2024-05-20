@@ -1,6 +1,5 @@
 #include "../../includes/configuration/ConfigurationLoader.hpp"
 #include "../../includes/configuration/Defaults.hpp"
-#include "../../includes/configuration/LocationBlock.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/parsing/Grammar.hpp"
 #include "../../includes/parsing/NonTerminalSymbol.hpp"
@@ -71,30 +70,20 @@ static void add_block(const std::vector<Token> &tokens, const Grammar &grammar,
     const std::string rule_name =
         grammar.getRule(parse_tree[ 1 ]->ruleIndex())->getName();
 
-    // check if it is a block with at prefix and retreive the prefix.
-    if (rule_name == "prefix")
+    // check if it is a block with at block_parameters and retreive the block_parameters.
+    if (rule_name == "block-parameters")
     {
         int start = 0;
         // NOTE: the ConfigurationBlock could have a regex mode...
+		new_block = new ConfigurationBlock(
+                block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, defaults);
         if (tokens[ (*parse_tree[ 1 ])[ 0 ]->tokenIndex() ].value == "~")
         {
-            new_block = new LocationBlock(
-                block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, defaults,
-                true);
             start = 1;
+			new_block->isRegex(true);
         }
-        else
-        {
-            new_block = new LocationBlock(
-                block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, defaults,
-                false);
-        }
-        std::vector<std::string> &params = new_block->addDirective(rule_name);
-        for (size_t i = start; i < parse_tree[ 1 ]->size(); i++)
-        {
-            params.push_back(
-                tokens[ (*parse_tree[ 1 ])[ i ]->tokenIndex() ].value);
-        }
+        std::vector<std::string> &params = new_block->getParameters();
+		get_values(tokens, *(*parse_tree[ 1 ])[ start ], params);
         build_config(tokens, grammar, *parse_tree[ 3 ], *new_block, defaults);
     }
     else
@@ -139,7 +128,7 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     NonTerminalSymbol configuration("configuration", 0);
     NonTerminalSymbol block_element("configuration-element", 1);
     NonTerminalSymbol block("block", 2);
-    NonTerminalSymbol prefix("prefix", 22);
+    NonTerminalSymbol block_parameters("block-parameters", 22);
     NonTerminalSymbol directive("directive", 3);
     NonTerminalSymbol parameters("parameters", 4);
     NonTerminalSymbol comment_list("comment-list", 23);
@@ -195,17 +184,17 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
 
     rule = grammar.addRule(block);
     rule->addSymbol(&string_);
-    rule->addSymbol(&prefix);
+    rule->addSymbol(&block_parameters);
     rule->addSymbol(&curl_open);
     rule->addSymbol(&configuration);
     rule->addSymbol(&curl_close);
 
-    rule = grammar.addRule(prefix);
+    rule = grammar.addRule(block_parameters);
     rule->addSymbol(&regex);
-    rule->addSymbol(&string_);
+    rule->addSymbol(&parameters);
 
-    rule = grammar.addRule(prefix);
-    rule->addSymbol(&string_);
+    rule = grammar.addRule(block_parameters);
+    rule->addSymbol(&parameters);
 
     // comment-list
     rule = grammar.addRule(comment_list);

@@ -5,7 +5,6 @@ locationblock)*/
 
 #include "../../includes/response/Router.hpp"
 #include "../../includes/configuration/ConfigurationLoader.hpp"
-#include "../../includes/configuration/LocationBlock.hpp"
 #include "../../includes/constants/HttpMethodHelper.hpp"
 #include <algorithm>
 #include <iostream>
@@ -73,15 +72,10 @@ void Router::_createRoutes(const IConfiguration *serverBlock)
         for (locationIt = locations.begin(); locationIt != locations.end();
              locationIt++)
         {
-            try
-            {
-                methods = (*locationIt)->getStringVector("limit_except");
-            }
-            catch (std::exception &)
-            {
-                methods.push_back("GET");
-            }
-            prefix = (*locationIt)->getString("prefix");
+			//methods = (*locationIt)->getStringVector("limit_except");
+			methods = (*locationIt)->getBlocks("limit_except")[0]->getParameters();
+            //prefix = (*locationIt)->getString("prefix");
+			prefix = (*locationIt)->getParameters()[0];
             for (portIt = ports.begin(); portIt != ports.end(); portIt++)
             {
                 Route newRoute;

@@ -17,7 +17,7 @@ INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
 #FLAGS    	= 	-Wall -Werror -Wextra -g -fsanitize=address
-FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
+#FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
 				
 SRCS        =	main.cpp \
@@ -38,7 +38,6 @@ SRCS        =	main.cpp \
 				../../../srcs/parsing/Parser.cpp \
 				../../../srcs/parsing/ParsingUtils.cpp \
 				../../../srcs/configuration/ConfigurationBlock.cpp \
-				../../../srcs/configuration/LocationBlock.cpp \
 				../../../srcs/configuration/Defaults.cpp \
 				../../../srcs/configuration/ConfigurationLoader.cpp \
 				../../../srcs/configuration/BlockList.cpp \
