@@ -36,8 +36,7 @@ private:
 
 public:
     Server(const ISocket &_socket, IPollfdManager &pollfdManager,
-           IConnectionManager &connectionManager,
-           IConfiguration &configuration,
+           IConnectionManager &connectionManager, IConfiguration &configuration,
            ILogger &logger); // Constructor for Server class
     ~Server();               // Destructor for Server class
 

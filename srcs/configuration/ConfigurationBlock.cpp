@@ -47,25 +47,25 @@ const BlockList &ConfigurationBlock::getBlocks(const std::string &key)
     {
         _logger.log(DEBUG,
                     "ConfigurationBlock::getBlocks: " + key + " not found");
-		BlockList	*blk = &_blocks[ key ];
-		blk->push_back(new ConfigurationBlock(*this, key, m_defaults));
-		return *blk;
+        BlockList *blk = &_blocks[ key ];
+        blk->push_back(new ConfigurationBlock(*this, key, m_defaults));
+        return *blk;
     }
 }
 
 const std::vector<std::string> &
 ConfigurationBlock::getStringVector(const std::string &key) const
 {
-	try
-	{
-		return *_directives.at(key);
-	}
-	catch(const std::exception& e)
-	{
+    try
+    {
+        return *_directives.at(key);
+    }
+    catch (const std::exception &e)
+    {
         _logger.log(DEBUG, "ConfigurationBlock::getString: " + key +
                                " not found using default");
         return m_defaults.getDirectiveParameters(key);
-	}
+    }
 }
 
 const std::string &ConfigurationBlock::getString(const std::string &key,
@@ -77,7 +77,8 @@ const std::string &ConfigurationBlock::getString(const std::string &key,
     }
     catch (std::exception &e)
     {
-        const std::string &res = m_defaults.getDirectiveParameters(key)[ index ];
+        const std::string &res =
+            m_defaults.getDirectiveParameters(key)[ index ];
         _logger.log(DEBUG, "ConfigurationBlock::getString: " + key +
                                " not found defaulting to " + res);
         return res;
@@ -100,7 +101,7 @@ int ConfigurationBlock::getInt(const std::string &key, size_t index = 0) const
                                _directives.at(key)->at(index) +
                                " not an integer");
     }
-    return Converter::toInt(m_defaults.getDirectiveParameters( key )[ index ]);
+    return Converter::toInt(m_defaults.getDirectiveParameters(key)[ index ]);
 }
 
 size_t ConfigurationBlock::getSize_t(const std::string &key,
@@ -201,18 +202,16 @@ void ConfigurationBlock::print(size_t depth = 0) const
     }
 }
 
-std::vector<std::string>&
-ConfigurationBlock::getParameters(void) 
+std::vector<std::string> &ConfigurationBlock::getParameters(void)
 {
-	if (_parameters.size() == 0)
-	{
-		return m_defaults.getBlockParameters(this->_name);
-	}
-	return	_parameters;
+    if (_parameters.size() == 0)
+    {
+        return m_defaults.getBlockParameters(this->_name);
+    }
+    return _parameters;
 }
 
-std::vector<std::string>&
-ConfigurationBlock::setParameters(void) 
+std::vector<std::string> &ConfigurationBlock::setParameters(void)
 {
     return _parameters;
 }

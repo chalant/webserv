@@ -38,8 +38,8 @@ public:
     virtual bool isRegex(void) const;
     virtual void isRegex(bool value);
     virtual const std::string &getName() const;
-	virtual std::vector<std::string> &getParameters(void);
-	std::vector<std::string>	&setParameters(void);
+    virtual std::vector<std::string> &getParameters(void);
+    std::vector<std::string> &setParameters(void);
     void print(size_t depth) const;
 };
 
