@@ -36,7 +36,7 @@ def run_make_re(directory, executable_name):
         subprocess.check_call(['make', '-j8'], cwd=directory, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return True
     except subprocess.CalledProcessError as e:
-        print(f"\t{executable_name.ljust(31)}{RED}BUILD FAIL{RESET}")
+        print(f"\t{executable_name.ljust(33)}{RED}BUILD FAIL{RESET}")
         return False
 
 def run_executable(directory, executable_name):
@@ -46,9 +46,9 @@ def run_executable(directory, executable_name):
     if os.path.isfile(absolute_executable_path) and os.access(absolute_executable_path, os.X_OK):
         result = subprocess.run([absolute_executable_path], cwd=directory, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         if result.returncode == 0:
-            print(f"\t{executable_name.ljust(31)}{GREEN}OK!{RESET}")
+            print(f"\t{executable_name.ljust(33)}{GREEN}OK!{RESET}")
         else:
-            print(f"\t{executable_name.ljust(31)}{RED}ERROR{RESET}")
+            print(f"\t{executable_name.ljust(33)}{RED}ERROR{RESET}")
 
 def run_python_files(directory):
     for file in os.listdir(directory):
@@ -56,7 +56,7 @@ def run_python_files(directory):
         try:
             subprocess.check_call(['python3', script_path], stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError as e:
-            print(f"\t{file.ljust(31)}{RED}ERROR{RESET}")
+            print(f"\t{file.ljust(33)}{RED}ERROR{RESET}")
 
 
 def main():

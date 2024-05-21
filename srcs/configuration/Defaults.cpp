@@ -1,5 +1,4 @@
 #include "../../includes/configuration/Defaults.hpp"
-#include <iostream>
 
 Defaults::Defaults()
 {
@@ -20,3 +19,5 @@ const std::string &Defaults::operator[](const std::string &key)
 {
     return m_pairs[ key ];
 }
+
+// Path: srcs/configuration/Defaults.cpp

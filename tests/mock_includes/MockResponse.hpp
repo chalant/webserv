@@ -10,10 +10,19 @@
  */
 
 #include "../../includes/response/IResponse.hpp"
+#include "../../includes/constants/HttpHelper.hpp"
 
 class MockResponse : public IResponse
 {
+private:
+    HttpHelper _httpHelper;
+    std::string _statusLine;
+    std::map<HttpHeader, std::string> _headers;
+    std::string _body;
 public:
+    // Default constructor
+    MockResponse();
+
     // Destructor
     virtual ~MockResponse();
 

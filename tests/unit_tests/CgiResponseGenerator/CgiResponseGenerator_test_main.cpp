@@ -12,6 +12,7 @@
 // include the header files for the mock classes
 #include "../../mock_includes/MockLogger.hpp"
 #include "../../mock_includes/MockRequest.hpp"
+#include "../../mock_includes/MockResponse.hpp"
 #include "../../mock_includes/MockRoute.hpp"
 
 int main()
@@ -19,6 +20,7 @@ int main()
     // Mock objects
     MockRoute mockRoute;
     MockRequest mockRequest;
+    MockResponse mockResponse;
     MockLogger mockLogger;
     ConfigurationLoader conf_loader(mockLogger);
 
@@ -57,7 +59,7 @@ int main()
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockConfigurationBlock, scriptName);
+        mockRoute, mockRequest, mockResponse, mockConfigurationBlock, scriptName);
 
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
@@ -89,7 +91,7 @@ int main()
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockConfigurationBlock, scriptName);
+        mockRoute, mockRequest, mockResponse, mockConfigurationBlock, scriptName);
 
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
@@ -126,7 +128,7 @@ int main()
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockConfigurationBlock, scriptName);
+        mockRoute, mockRequest, mockResponse, mockConfigurationBlock, scriptName);
 
     // Get the pipe file descriptors
     responseReadPipe = cgiInfo.second.first;

@@ -2,6 +2,11 @@ NAME            = Server_test
 
 SOURCES         = Server_test_main.cpp \
                   ../../../srcs/network/Server.cpp \
+				  ../../../srcs/constants/HttpStatusCodeHelper.cpp \
+				  ../../../srcs/constants/HttpMethodHelper.cpp \
+				  ../../../srcs/constants/HttpHeaderHelper.cpp \
+				  ../../../srcs/constants/HttpVersionHelper.cpp \
+				  ../../../srcs/constants/HttpHelper.cpp \
 				  ../../../srcs/utils/Converter.cpp \
 				  ../../../srcs/configuration/BlockList.cpp
 

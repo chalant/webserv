@@ -1,7 +1,7 @@
-NAME            = CgiResponseGenerator_test
+NAME            = StaticFileResponseGenerator_test
 
-SOURCES         = CgiResponseGenerator_test_main.cpp \
-                  ../../../srcs/response/CgiResponseGenerator.cpp \
+SOURCES         = StaticFileResponseGenerator_test_main.cpp \
+                  ../../../srcs/response/StaticFileResponseGenerator.cpp \
 				  ../../../srcs/constants/HttpStatusCodeHelper.cpp \
 				  ../../../srcs/constants/HttpMethodHelper.cpp \
 				  ../../../srcs/constants/HttpHeaderHelper.cpp \

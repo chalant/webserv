@@ -39,6 +39,7 @@ public:
 
     virtual Triplet_t generateResponse(const IRoute &route,
                                        const IRequest &request,
+                                       IResponse &response,
                                        const IConfiguration &configuration,
                                        const std::string &scriptName = "");
 };

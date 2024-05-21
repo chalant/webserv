@@ -3,6 +3,7 @@
 
 #include "../configuration/IConfiguration.hpp"
 #include "../request/IRequest.hpp"
+#include "../response/IResponse.hpp"
 #include "IRoute.hpp"
 
 typedef std::pair<int, std::pair<int, int> > Triplet_t;
@@ -14,6 +15,7 @@ public:
 
     virtual Triplet_t generateResponse(const IRoute &route,
                                        const IRequest &request,
+                                       IResponse &response,
                                        const IConfiguration &configuration,
                                        const std::string &scriptName = "") = 0;
 };

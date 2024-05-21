@@ -20,9 +20,12 @@ CgiResponseGenerator::~CgiResponseGenerator() {}
 // returns the cgi process Info (pid, read end of the response pipe, write end
 // of the body pipe) Throws an exception if an error occurs
 Triplet_t CgiResponseGenerator::generateResponse(
-    const IRoute &route, const IRequest &request,
+    const IRoute &route, const IRequest &request, IResponse &response,
     const IConfiguration &configuration, const std::string &scriptName)
 {
+    // void the unused IResponse &response
+    (void)response;
+    
     // Set cgi arguments
     std::vector<char *> cgiArgs;
     this->_setCgiArguments(scriptName, route, configuration, cgiArgs);
