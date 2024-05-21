@@ -7,7 +7,11 @@
 class StaticFileResponseGenerator : public IResponseGenerator
 {
 private:
+    const std::map<std::string, std::string> _mimeTypes;
     ILogger &_logger;
+
+    std::map<std::string, std::string> _initialiseMimeTypes() const;
+    std::string _getMimeType(const std::string &filePath) const;
 
 public:
     StaticFileResponseGenerator(ILogger &logger);
