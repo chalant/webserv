@@ -2,8 +2,9 @@
 
 // Constructor
 Route::Route(const std::string path, const std::string root,
-             IResponseGenerator &responseGenerator)
-    : _path(path), _root(root), _responseGenerator(responseGenerator)
+             const std::string index, IResponseGenerator &responseGenerator)
+    : _path(path), _root(root), _index(index),
+      _responseGenerator(responseGenerator)
 {
 }
 
@@ -15,6 +16,9 @@ std::string Route::getPath() const { return this->_path; }
 
 // Get the root
 std::string Route::getRoot() const { return this->_root; }
+
+// Get the index
+std::string Route::getIndex() const { return this->_index; }
 
 // Get the response generator
 IResponseGenerator *Route::getResponseGenerator() const
