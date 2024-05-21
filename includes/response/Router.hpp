@@ -43,7 +43,7 @@ private:
 class Router : public IRouter
 {
 public:
-    Router(const IConfiguration &Configuration, ILogger &logger,
+    Router(IConfiguration &Configuration, ILogger &logger,
            HttpHelper _httpHelper);
     ~Router();
     void addRoute(const IRequest &request,
@@ -53,9 +53,9 @@ public:
     size_t getRouteCount(void) const;
 
 private:
-    void _createServerRoutes(const IConfiguration *serverBlock);
-    void _createRoutes(const IConfiguration *serverBlock);
-    const IConfiguration &_configuration;
+    void _createServerRoutes(IConfiguration *serverBlock);
+    void _createRoutes(IConfiguration *serverBlock);
+    IConfiguration &_configuration;
     std::vector<Route> _routes;
     ILogger &_logger;
     HttpHelper _httpHelper;

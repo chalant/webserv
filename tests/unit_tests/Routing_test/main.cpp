@@ -13,7 +13,7 @@ int main()
 {
     MockLogger logger;
     ConfigurationLoader loader(logger);
-    const IConfiguration &block =
+    IConfiguration &block =
         loader.loadConfiguration("test_configuration_router.conf");
     HttpHelper httpHelper;
     Router router(block, logger, httpHelper);

@@ -39,7 +39,7 @@ private:
 
 public:
     // Constructor for PollfdManager class
-    PollfdManager(const IConfiguration &configuration);
+    PollfdManager(IConfiguration &configuration);
 
     // Destructor for PollfdManager class
     ~PollfdManager();

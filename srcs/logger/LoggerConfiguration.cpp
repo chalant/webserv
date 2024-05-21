@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager,
-                                         const IConfiguration &configuration,
+                                         IConfiguration &configuration,
                                          IPollfdManager &pollfdManager)
     : _accessLogFile(configuration.getBlocks("http")[ 0 ]
                          ->getBlocks("server")[ 0 ]

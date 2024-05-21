@@ -63,7 +63,7 @@ int main(int argc, char **argv)
     try
     {
         // load configuration from file and create the configuration object.
-        const IConfiguration &configuration =
+        IConfiguration &configuration =
             confLoader.loadConfiguration(configPath);
 
         // parse the configuration file
