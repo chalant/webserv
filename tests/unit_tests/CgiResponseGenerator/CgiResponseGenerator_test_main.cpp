@@ -59,7 +59,8 @@ int main()
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockResponse, mockConfigurationBlock, scriptName);
+        mockRoute, mockRequest, mockResponse, mockConfigurationBlock,
+        scriptName);
 
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
@@ -91,7 +92,8 @@ int main()
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockResponse, mockConfigurationBlock, scriptName);
+        mockRoute, mockRequest, mockResponse, mockConfigurationBlock,
+        scriptName);
 
     // Get the read pipe file descriptor
     responseReadPipe = cgiInfo.second.first;
@@ -128,7 +130,8 @@ int main()
 
     // Generate cgi response
     cgiInfo = cgiResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockResponse, mockConfigurationBlock, scriptName);
+        mockRoute, mockRequest, mockResponse, mockConfigurationBlock,
+        scriptName);
 
     // Get the pipe file descriptors
     responseReadPipe = cgiInfo.second.first;

@@ -22,7 +22,8 @@ public:
     // Getters for status line, headers, and body
     virtual std::string getStatusLine() const = 0;
     virtual std::string getHeaders() const = 0;
-    virtual std::string getBody() const = 0;
+    virtual std::string getBodyString() const = 0;
+    virtual std::vector<char> getBody() const = 0;
 
     // Setters for status line, headers, and body
     virtual void setStatusLine(std::string statusLine) = 0;
@@ -34,6 +35,7 @@ public:
     virtual void addCookie(std::string key, std::string value) = 0;
     virtual void addCookieHeaders() = 0;
     virtual void setBody(std::string body) = 0;
+    virtual void setBody(std::vector<char> body) = 0;
 
     // Set error response with appropriate status code
     virtual void setErrorResponse(HttpStatusCode statusCode) = 0;

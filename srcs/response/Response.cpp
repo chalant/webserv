@@ -10,7 +10,10 @@
  */
 
 // Default constructor
-Response::Response(const HttpHelper &httpHelper) : _httpHelper(httpHelper) {}
+Response::Response(const HttpHelper &httpHelper)
+    : _contentLength(0), _httpHelper(httpHelper)
+{
+}
 
 // Destructor
 Response::~Response() {}
@@ -33,8 +36,11 @@ std::string Response::getHeaders() const
     return headers;
 }
 
-// Getter for body
-std::string Response::getBody() const { return this->_body; }
+// Getter for body string
+std::string Response::getBodyString() const { return this->_body.data(); }
+
+// Getter for body vector
+std::vector<char> Response::getBody() const { return this->_body; }
 
 // Setter for status line - string input
 void Response::setStatusLine(std::string statusLine)
@@ -117,8 +123,18 @@ void Response::addCookieHeaders()
     }
 }
 
-// Setter for body
-void Response::setBody(std::string body) { this->_body = body; }
+// Setter for body - string input
+void Response::setBody(std::string body)
+{
+    this->setBody(std::vector<char>(body.begin(), body.end()));
+}
+
+// Setter for body - vector of chars input
+void Response::setBody(std::vector<char> body)
+{
+    this->_body = body;
+    this->_contentLength = body.size();
+}
 
 // Set all response fields from a status code
 void Response::setErrorResponse(HttpStatusCode statusCode)
@@ -148,7 +164,7 @@ void Response::setResponse(std::vector<char> response)
     this->_statusLine = responseString.substr(0, responseString.find("\r\n"));
     responseString = responseString.substr(responseString.find("\r\n") + 2);
     this->setHeaders(responseString.substr(0, responseString.find("\r\n\r\n")));
-    this->_body = responseString.substr(responseString.find("\r\n\r\n") + 4);
+    this->setBody(responseString.substr(responseString.find("\r\n\r\n") + 4));
 }
 
 // Extract the status code from the status line
@@ -162,14 +178,14 @@ std::string Response::getResponseSizeString() const
 {
     return Converter::toString(this->_statusLine.length() +
                                this->getHeaders().length() +
-                               this->_body.length());
+                               this->_body.size());
 }
 
 // Calculate the size of the response in bytes
 size_t Response::getResponseSize() const
 {
     return this->_statusLine.length() + this->getHeaders().length() +
-           this->_body.length();
+           this->_body.size();
 }
 
 // Get the map of cookies

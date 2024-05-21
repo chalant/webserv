@@ -22,7 +22,10 @@ private:
     std::map<HttpHeader, std::string> _headers;
 
     // Response body
-    std::string _body;
+    std::vector<char> _body;
+
+    // Body size
+    size_t _contentLength;
 
     // Response Cookies
     std::map<std::string, std::string> _cookies;
@@ -37,7 +40,8 @@ public:
     // Getters for status line, headers, and body
     virtual std::string getStatusLine() const;
     virtual std::string getHeaders() const;
-    virtual std::string getBody() const;
+    virtual std::string getBodyString() const;
+    virtual std::vector<char> getBody() const;
 
     // Setters for status line, headers, and body
     virtual void setStatusLine(std::string statusLine);
@@ -49,6 +53,7 @@ public:
     virtual void addCookie(std::string key, std::string value);
     virtual void addCookieHeaders();
     virtual void setBody(std::string body);
+    virtual void setBody(std::vector<char> body);
 
     // Set error response with appropriate status code
     virtual void setErrorResponse(HttpStatusCode statusCode);

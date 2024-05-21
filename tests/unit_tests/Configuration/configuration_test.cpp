@@ -9,8 +9,8 @@ int main()
     ConfigurationLoader loader(logger);
     IConfiguration &block =
         loader.loadConfiguration("test_configuration_file.conf");
-    //block.print(0);
-    // test defaults
+    // block.print(0);
+    //  test defaults
     const std::string &val = block.getString("server_name");
     //(void)val;
     const BlockList &blocks = block.getBlocks("location");

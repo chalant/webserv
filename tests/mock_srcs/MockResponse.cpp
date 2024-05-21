@@ -24,7 +24,12 @@ std::string MockResponse::getStatusLine() const { return this->_statusLine; }
 
 std::string MockResponse::getHeaders() const { return ""; }
 
-std::string MockResponse::getBody() const { return this->_body; }
+std::string MockResponse::getBodyString() const
+{
+    return std::string(this->_body.begin(), this->_body.end());
+}
+
+std::vector<char> MockResponse::getBody() const { return this->_body; }
 
 // Setters for status line, headers, and body
 void MockResponse::setStatusLine(std::string statusLine)
@@ -89,7 +94,12 @@ void MockResponse::addCookie(std::string key, std::string value)
 
 void MockResponse::addCookieHeaders() {}
 
-void MockResponse::setBody(std::string body) { this->_body = body; }
+void MockResponse::setBody(std::string body)
+{
+    this->setBody(std::vector<char>(body.begin(), body.end()));
+}
+
+void MockResponse::setBody(std::vector<char> body) { this->_body = body; }
 
 // Set error response with appropriate status code
 void MockResponse::setErrorResponse(HttpStatusCode statusCode)

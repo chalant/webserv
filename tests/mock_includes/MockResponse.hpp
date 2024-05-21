@@ -9,8 +9,8 @@
  *
  */
 
-#include "../../includes/response/IResponse.hpp"
 #include "../../includes/constants/HttpHelper.hpp"
+#include "../../includes/response/IResponse.hpp"
 
 class MockResponse : public IResponse
 {
@@ -18,7 +18,8 @@ private:
     HttpHelper _httpHelper;
     std::string _statusLine;
     std::map<HttpHeader, std::string> _headers;
-    std::string _body;
+    std::vector<char> _body;
+
 public:
     // Default constructor
     MockResponse();
@@ -29,7 +30,8 @@ public:
     // Getters for status line, headers, and body
     virtual std::string getStatusLine() const;
     virtual std::string getHeaders() const;
-    virtual std::string getBody() const;
+    virtual std::string getBodyString() const;
+    virtual std::vector<char> getBody() const;
 
     // Setters for status line, headers, and body
     virtual void setStatusLine(std::string statusLine);
@@ -41,6 +43,7 @@ public:
     virtual void addCookie(std::string key, std::string value);
     virtual void addCookieHeaders();
     virtual void setBody(std::string body);
+    virtual void setBody(std::vector<char> body);
 
     // Set error response with appropriate status code
     virtual void setErrorResponse(HttpStatusCode statusCode);

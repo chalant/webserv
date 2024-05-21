@@ -70,8 +70,8 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
 }
 
 // Resolve extension
-std::string StaticFileResponseGenerator::_getMimeType(
-    const std::string &filePath) const
+std::string
+StaticFileResponseGenerator::_getMimeType(const std::string &filePath) const
 {
     std::string extension;
 
