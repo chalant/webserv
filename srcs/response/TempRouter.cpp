@@ -17,9 +17,10 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
     // temp set a single route
     std::string path = configuration.getString("path");
     std::string root = configuration.getString("root");
+    std::string index = configuration.getString("index");
     IResponseGenerator *responseGenerator =
         new StaticFileResponseGenerator(this->_logger);
-    this->_route = new Route(path, root, *responseGenerator);
+    this->_route = new Route(path, root, index, *responseGenerator);
 }
 
 // Destructor

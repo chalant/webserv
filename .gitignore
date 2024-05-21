@@ -14,5 +14,6 @@ ClientHandler_test
 RequestParser_test
 Routing_test
 Server_test
+StaticFileResponseGenerator_test
 logs/*
 !logs/.gitkeep

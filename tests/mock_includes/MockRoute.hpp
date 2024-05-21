@@ -22,6 +22,7 @@ public:
 
     virtual std::string getRoot() const;
     virtual std::string getPath() const;
+    virtual std::string getIndex() const;
     virtual void setRoot(std::string &root);
     virtual void setPath(std::string &prefix);
     virtual IResponseGenerator *getResponseGenerator() const;

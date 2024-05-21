@@ -15,6 +15,8 @@ std::string MockRoute::getRoot() const { return this->_root; }
 
 std::string MockRoute::getPath() const { return this->_path; }
 
+std::string MockRoute::getIndex() const { return ""; }
+
 void MockRoute::setRoot(std::string &root) { this->_root = root; }
 
 void MockRoute::setPath(std::string &prefix) { this->_path = prefix; }

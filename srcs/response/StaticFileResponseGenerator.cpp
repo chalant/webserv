@@ -22,6 +22,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     // Get the file path
     std::string root = route.getRoot();
     std::string uri = request.getUri();
+
     // if root does not end with a slash and uri does not start with a slash
     if (root[ root.size() - 1 ] != '/' && uri[ 0 ] != '/')
     {
@@ -30,38 +31,59 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     }
     std::string filePath = root + uri;
 
-    // Open the file
-    std::ifstream file(filePath);
+    // check if the filePath is a directory
+    if (filePath[ filePath.size() - 1 ] == '/')
+    {
+        // append the default file name
+        filePath += route.getIndex();
+    }
+
+    // open the file in binary mode, in read mode and at the end
+    std::ifstream file(filePath,
+                       std::ios::in | std::ios::binary | std::ios::ate);
     if (!file.is_open())
     {
-        // Log the error
+        // log the error
         _logger.log(ERROR, "Could not open file: " + filePath);
 
-        // Set the response
+        // set the response
         response.setErrorResponse(NOT_FOUND);
     }
     else
     {
-        // Declare the variables
-        std::string status;
-        std::string headers;
-        std::string body;
+        // log the file being served
+        _logger.log(INFO, "Serving file: " + filePath);
 
-        // Read the file, build the body
-        std::string line;
-        while (std::getline(file, line))
+        // get the size of the file
+        std::streampos size = file.tellg();
+
+        // set the position of the file to the beginning
+        file.seekg(0, std::ios::beg);
+
+        // read the file into the body
+        std::vector<char> body(size);
+        file.read(&body[ 0 ], size);
+
+        // check if the file was read successfully
+        if (!file)
         {
-            body += line + "\n";
+            // log the error
+            _logger.log(ERROR, "Error reading file: " + filePath);
+
+            // set the response
+            response.setErrorResponse(INTERNAL_SERVER_ERROR);
         }
+        else
+        {
+            // close the file
+            file.close();
 
-        // Close the file
-        file.close();
-
-        // Set the response
-        response.setBody(body);
-        response.setStatusLine(OK);
-        response.addHeader(CONTENT_TYPE, this->_getMimeType(filePath));
-        response.addHeader(CONTENT_LENGTH, std::to_string(body.size()));
+            // set the response
+            response.setBody(body);
+            response.setStatusLine(OK);
+            response.addHeader(CONTENT_TYPE, this->_getMimeType(filePath));
+            response.addHeader(CONTENT_LENGTH, std::to_string(body.size()));
+        }
     }
 
     // return -1

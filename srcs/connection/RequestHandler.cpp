@@ -75,14 +75,14 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
                                                            response);
 
         // Delete these 3 lines once router is implemented
-        (void)this->_router;
-        Triplet_t cgiInfo(-1, std::pair<int, int>(-1, -1));
-        throw HttpStatusCodeException(
-            NOT_IMPLEMENTED,
-            "RequestHandler::handleRequest: Router not implemented yet.");
+        //(void)this->_router;
+        // Triplet_t cgiInfo(-1, std::pair<int, int>(-1, -1));
+        // throw HttpStatusCodeException(
+        //   NOT_IMPLEMENTED,
+        //   "RequestHandler::handleRequest: Router not implemented yet.");
 
         // todo: Route the request, return the CGI info
-        // Triplet_t cgiInfo = this->_router.execRoute(&request, &response);
+        Triplet_t cgiInfo = this->_router.execRoute(&request, &response);
 
         // If dynamic content is being created, return the info
         if (cgiInfo.first != -1)

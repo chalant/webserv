@@ -65,7 +65,7 @@ int main()
 
     // Verify that the content of the file was added to the response body
     assert(mockResponse.getBodyString() ==
-           "This is the content of MockFile1.txt\n");
+           "This is the content of MockFile1.txt");
 
     return 0;
 }
