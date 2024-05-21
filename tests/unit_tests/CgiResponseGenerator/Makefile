@@ -3,6 +3,10 @@ NAME            = CgiResponseGenerator_test
 SOURCES         = CgiResponseGenerator_test_main.cpp \
                   ../../../srcs/response/CgiResponseGenerator.cpp \
 				  ../../../srcs/constants/HttpStatusCodeHelper.cpp \
+				  ../../../srcs/constants/HttpMethodHelper.cpp \
+				  ../../../srcs/constants/HttpHeaderHelper.cpp \
+				  ../../../srcs/constants/HttpVersionHelper.cpp \
+				  ../../../srcs/constants/HttpHelper.cpp \
 				  ../../../srcs/parsing/Grammar.cpp \
 				  ../../../srcs/parsing/GrammarRule.cpp \
 				  ../../../srcs/parsing/GrammarSymbol.cpp \
@@ -18,13 +22,13 @@ SOURCES         = CgiResponseGenerator_test_main.cpp \
 				  ../../../srcs/parsing/Tokenizer.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
 				  ../../../srcs/configuration/ConfigurationBlock.cpp \
-				  ../../../srcs/configuration/LocationBlock.cpp \
 				  ../../../srcs/configuration/BlockList.cpp \
 				  ../../../srcs/configuration/Defaults.cpp \
 				  ../../../srcs/utils/Converter.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockRoute.cpp \
 				  ../../mock_srcs/MockRequest.cpp \
+				  ../../mock_srcs/MockResponse.cpp \
 				  ../../mock_srcs/MockLogger.cpp
 
 INCLUDES        = -I../../../includes

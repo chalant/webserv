@@ -1,5 +1,4 @@
 #include "../../includes/configuration/Defaults.hpp"
-#include <iostream>
 
 Defaults::Defaults()
 {
@@ -32,3 +31,5 @@ std::vector<std::string>	&Defaults::getDirectiveParameters(const std::string& ke
 {
 	return m_directive_parameters[ key ];
 }
+
+// Path: srcs/configuration/Defaults.cpp

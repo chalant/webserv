@@ -35,7 +35,7 @@ public:
     virtual void print(size_t depth) const = 0;
     virtual const std::string &getName() const = 0;
     virtual bool isRegex(void) const = 0;
-	virtual std::vector<std::string>	&getParameters(void) = 0;
+    virtual std::vector<std::string> &getParameters(void) = 0;
 };
 
 #endif // IConfiguration_HPP

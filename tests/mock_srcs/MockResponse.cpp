@@ -1,4 +1,9 @@
 #include "../mock_includes/MockResponse.hpp"
+#include "../../includes/constants/HttpHelper.hpp"
+#include "../../includes/utils/Converter.hpp"
+#include <map>
+#include <string>
+#include <vector>
 
 /*
  * MockResponse class
@@ -8,30 +13,61 @@
  *
  */
 
+// Default constructor
+MockResponse::MockResponse() : _httpHelper(HttpHelper()) {}
+
 // Destructor
 MockResponse::~MockResponse() {}
 
 // Getters for status line, headers, and body
-std::string MockResponse::getStatusLine() const { return ""; }
+std::string MockResponse::getStatusLine() const { return this->_statusLine; }
 
 std::string MockResponse::getHeaders() const { return ""; }
 
-std::string MockResponse::getBody() const { return ""; }
+std::string MockResponse::getBody() const { return this->_body; }
 
 // Setters for status line, headers, and body
-void MockResponse::setStatusLine(std::string statusLine) { (void)statusLine; }
+void MockResponse::setStatusLine(std::string statusLine)
+{
+    this->_statusLine = statusLine;
+}
 
 void MockResponse::setStatusLine(HttpStatusCode statusCode)
 {
-    (void)statusCode;
+    // Set status line based on the status code
+    this->_statusLine = this->_httpHelper.getStatusLine(statusCode);
 }
 
 void MockResponse::setHeaders(std::vector<std::string> headers)
 {
-    (void)headers;
+    for (std::vector<std::string>::iterator it = headers.begin();
+         it != headers.end(); it++)
+    {
+        std::string header = *it;
+        std::string headerName = header.substr(0, header.find(":"));
+        std::string headerValue = header.substr(header.find(":") + 1);
+        HttpHeader headerEnum =
+            this->_httpHelper.stringHttpHeaderMap(headerName);
+        // Add header to the map
+        this->_headers[ headerEnum ] = headerValue;
+    }
 }
 
-void MockResponse::setHeaders(std::string headers) { (void)headers; }
+void MockResponse::setHeaders(std::string headers)
+{
+    // Parse headers in the format "HeaderName: Value\r\n"
+    while (headers.find("\r\n") != std::string::npos)
+    {
+        std::string header = headers.substr(0, headers.find("\r\n"));
+        headers = headers.substr(headers.find("\r\n") + 2);
+        std::string headerName = header.substr(0, header.find(":"));
+        std::string headerValue = header.substr(header.find(":") + 1);
+        HttpHeader headerEnum =
+            this->_httpHelper.stringHttpHeaderMap(headerName);
+        // Add header to the map
+        this->_headers[ headerEnum ] = headerValue;
+    }
+}
 
 void MockResponse::addHeader(HttpHeader header, std::string value)
 {
@@ -53,12 +89,20 @@ void MockResponse::addCookie(std::string key, std::string value)
 
 void MockResponse::addCookieHeaders() {}
 
-void MockResponse::setBody(std::string body) { (void)body; }
+void MockResponse::setBody(std::string body) { this->_body = body; }
 
 // Set error response with appropriate status code
 void MockResponse::setErrorResponse(HttpStatusCode statusCode)
 {
-    (void)statusCode;
+    this->setStatusLine(statusCode);
+    std::string body = this->_httpHelper.getHtmlPage(statusCode);
+    this->setHeaders("content-type: text/html\r\n"
+                     "content-length: " +
+                     Converter::toString(body.length()) +
+                     "\r\n"
+                     "connection: close\r\n"
+                     "server: webserv/1.0\r\n");
+    this->setBody(body);
 }
 
 void MockResponse::setErrorResponse(int statusCode) { (void)statusCode; }

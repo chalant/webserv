@@ -26,4 +26,4 @@ public:
 };
 
 #endif // IEXCEPTIONHANDLER_HPP
-       // Path: includes/ILogger.hpp
+       // Path: includes/exeption/IExceptionHandler.hpp
