@@ -70,20 +70,21 @@ static void add_block(const std::vector<Token> &tokens, const Grammar &grammar,
     const std::string rule_name =
         grammar.getRule(parse_tree[ 1 ]->ruleIndex())->getName();
 
-    // check if it is a block with at block_parameters and retreive the block_parameters.
+    // check if it is a block with at block_parameters and retreive the
+    // block_parameters.
     if (rule_name == "block-parameters")
     {
         int start = 0;
         // NOTE: the ConfigurationBlock could have a regex mode...
-		new_block = new ConfigurationBlock(
-                block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, defaults);
+        new_block = new ConfigurationBlock(
+            block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, defaults);
         if (tokens[ (*parse_tree[ 1 ])[ 0 ]->tokenIndex() ].value == "~")
         {
             start = 1;
-			new_block->isRegex(true);
+            new_block->isRegex(true);
         }
         std::vector<std::string> &params = new_block->getParameters();
-		get_values(tokens, *(*parse_tree[ 1 ])[ start ], params);
+        get_values(tokens, *(*parse_tree[ 1 ])[ start ], params);
         build_config(tokens, grammar, *parse_tree[ 3 ], *new_block, defaults);
     }
     else

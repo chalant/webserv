@@ -13,7 +13,8 @@ ConfigurationBlock::ConfigurationBlock(ILogger &logger, const std::string name,
 ConfigurationBlock::ConfigurationBlock(const ConfigurationBlock &parent,
                                        const std::string name,
                                        Defaults &defaults)
-    : _logger(parent._logger), _name(name), m_defaults(defaults), m_is_regex(false)
+    : _logger(parent._logger), _name(name), m_defaults(defaults),
+      m_is_regex(false)
 {
     this->push_back(this);
 }
@@ -177,22 +178,21 @@ void ConfigurationBlock::print(size_t depth = 0) const
         for (size_t i = 0; i < it->second.size(); i++)
         {
             std::cout << std::setw(depth + 2) << "• " << it->first << " ";
-			std::vector<std::string>	&params = it->second[ i ]->getParameters();
-			for (size_t j = 0; j < params.size(); j++)
-			{
-				std::cout << params[j] << " ";
-			}
-			std::cout << std::endl;
+            std::vector<std::string> &params = it->second[ i ]->getParameters();
+            for (size_t j = 0; j < params.size(); j++)
+            {
+                std::cout << params[ j ] << " ";
+            }
+            std::cout << std::endl;
             it->second[ i ]->print(depth + 4);
         }
         std::cout << std::endl;
     }
 }
 
-std::vector<std::string>&
-ConfigurationBlock::getParameters(void) 
+std::vector<std::string> &ConfigurationBlock::getParameters(void)
 {
-	return	_parameters;
+    return _parameters;
 }
 
 const std::string &ConfigurationBlock::getName(void) const { return _name; }

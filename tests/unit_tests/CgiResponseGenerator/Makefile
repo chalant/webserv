@@ -18,7 +18,6 @@ SOURCES         = CgiResponseGenerator_test_main.cpp \
 				  ../../../srcs/parsing/Tokenizer.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
 				  ../../../srcs/configuration/ConfigurationBlock.cpp \
-				  ../../../srcs/configuration/LocationBlock.cpp \
 				  ../../../srcs/configuration/BlockList.cpp \
 				  ../../../srcs/configuration/Defaults.cpp \
 				  ../../../srcs/utils/Converter.cpp

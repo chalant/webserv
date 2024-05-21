@@ -15,9 +15,9 @@ private:
     const std::string _name;
     std::map<std::string, BlockList> _blocks;
     std::map<std::string, std::vector<std::string> *> _directives;
-	std::vector<std::string>	_parameters;
+    std::vector<std::string> _parameters;
     Defaults &m_defaults;
-	bool	m_is_regex;
+    bool m_is_regex;
 
 public:
     ConfigurationBlock(ILogger &logger, const std::string name,
@@ -36,9 +36,9 @@ public:
     virtual void addBlock(const std::string &name, IConfiguration *block);
     std::vector<std::string> &addDirective(const std::string &name);
     virtual bool isRegex(void) const;
-	virtual void isRegex(bool value);
+    virtual void isRegex(bool value);
     virtual const std::string &getName() const;
-	virtual std::vector<std::string> &getParameters(void);
+    virtual std::vector<std::string> &getParameters(void);
     void print(size_t depth) const;
 };
 

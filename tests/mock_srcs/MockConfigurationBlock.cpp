@@ -11,7 +11,7 @@
 // Constructor
 MockConfigurationBlock::MockConfigurationBlock(ILogger &logger,
                                                const std::string name)
-    : _blocks(), _directives(), _logger(logger), _name(name)
+    : _blocks(), _directives(), _parameters(), _logger(logger), _name(name)
 {
 }
 
@@ -175,5 +175,10 @@ void MockConfigurationBlock::print(size_t depth) const
 const std::string &MockConfigurationBlock::getName() const { return _name; }
 
 bool MockConfigurationBlock::isRegex(void) const { return false; }
+
+std::vector<std::string> &MockConfigurationBlock::getParameters(void)
+{
+    return this->_parameters;
+}
 
 // Path: tests/mock_headers/MockLogger.hpp

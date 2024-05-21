@@ -19,6 +19,7 @@ class MockConfigurationBlock : public IConfiguration
 private:
     std::map<std::string, BlockList> _blocks;
     std::map<std::string, std::vector<std::string> *> _directives;
+    std::vector<std::string> _parameters;
     ILogger &_logger;
     const std::string _name;
 
@@ -52,6 +53,7 @@ public:
     virtual void print(size_t depth) const;
     virtual const std::string &getName() const;
     virtual bool isRegex(void) const;
+    virtual std::vector<std::string> &getParameters(void);
 };
 
 #endif // MOCKCONFIGURATIONBLOCK_HPP
