@@ -80,8 +80,7 @@ void MockConfigurationBlock::setInt(const std::string &parameter, int value)
 }
 
 // Getters
-const BlockList &
-MockConfigurationBlock::getBlocks(const std::string &parameter)
+const BlockList &MockConfigurationBlock::getBlocks(const std::string &parameter)
 {
     this->_logger.log(DEBUG, "Getting Block '" + parameter + "'");
     try

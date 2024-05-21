@@ -77,6 +77,10 @@ const std::string &ConfigurationBlock::getString(const std::string &key,
     }
     catch (std::exception &e)
     {
+        std::cout << "key : " << key << std::endl;
+        std::cout << "index : " << index << std::endl;
+        std::cout << "res:  " << m_defaults.getDirectiveParameter(key, index)
+                  << std::endl;
         const std::string &res =
             m_defaults.getDirectiveParameters(key)[ index ];
         _logger.log(DEBUG, "ConfigurationBlock::getString: " + key +

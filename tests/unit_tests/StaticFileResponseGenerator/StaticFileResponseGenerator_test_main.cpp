@@ -26,7 +26,7 @@ int main()
     std::string root = "../../mock_files";
     std::string prefix = "/";
     mockRoute.setRoot(root);
-    mockRoute.setPrefix(prefix);
+    mockRoute.setPath(prefix);
 
     const IConfiguration &mockConfigurationBlock =
         conf_loader.loadConfiguration("test_configuration.conf");

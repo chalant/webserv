@@ -22,7 +22,7 @@
 RequestHandler::RequestHandler(IBufferManager &bufferManager,
                                IConnectionManager &connectionManager,
                                const IConfiguration &configuration,
-                               IRouter &router, ILogger &logger,
+                               ITempRouter &router, ILogger &logger,
                                const IExceptionHandler &exceptionHandler,
                                IClientHandler &clientHandler)
     : _bufferManager(bufferManager), _connectionManager(connectionManager),
@@ -82,7 +82,7 @@ Triplet_t RequestHandler::handleRequest(int socketDescriptor)
             "RequestHandler::handleRequest: Router not implemented yet.");
 
         // todo: Route the request, return the CGI info
-        // Triplet_t cgiInfo = this->_router.execRoute(request, response);
+        // Triplet_t cgiInfo = this->_router.execRoute(&request, &response);
 
         // If dynamic content is being created, return the info
         if (cgiInfo.first != -1)

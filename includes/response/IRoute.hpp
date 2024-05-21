@@ -1,23 +1,18 @@
 #ifndef IROUTE_HPP
 #define IROUTE_HPP
 
-#include "../constants/HttpMethodHelper.hpp"
 #include <string>
+
+class IResponseGenerator;
 
 class IRoute
 {
 public:
     virtual ~IRoute() {};
 
-    virtual std::string getUri() const = 0;
-    virtual void setUri(std::string newUri) = 0;
-    virtual HttpMethod getMethod() const = 0;
-    virtual void setMethod(HttpMethod newMethod) = 0;
-    // virtual void (*handler)(IRequest *, IResponse *) = 0;
     virtual std::string getRoot() const = 0;
-    virtual std::string getPrefix() const = 0;
-    virtual void setRoot(std::string &root) = 0;
-    virtual void setPrefix(std::string &prefix) = 0;
+    virtual std::string getPath() const = 0;
+    virtual IResponseGenerator *getResponseGenerator() const = 0;
 };
 
 #endif // IROUTE_HPP

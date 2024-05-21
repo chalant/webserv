@@ -17,6 +17,7 @@ public:
     ~Defaults();
     std::vector<std::string> &getBlockParameters(const std::string &key);
     std::vector<std::string> &getDirectiveParameters(const std::string &key);
+    std::string getDirectiveParameter(const std::string &key, int index);
 };
 
 #endif // DEFAULTS_HPP

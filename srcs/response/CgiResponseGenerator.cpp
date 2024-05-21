@@ -152,10 +152,10 @@ void CgiResponseGenerator::_setCgiEnvironment(const std::string &scriptName,
     cgiEnv.push_back(
         strdup(("CONTENT_TYPE=" + request.getContentType()).c_str()));
     cgiEnv.push_back(strdup(("SCRIPT_FILENAME=" + route.getRoot() +
-                             route.getPrefix() + "/" + scriptName)
+                             route.getPath() + "/" + scriptName)
                                 .c_str()));
-    cgiEnv.push_back(strdup(
-        ("SCRIPT_NAME=" + route.getPrefix() + "/" + scriptName).c_str()));
+    cgiEnv.push_back(
+        strdup(("SCRIPT_NAME=" + route.getPath() + "/" + scriptName).c_str()));
     std::string pathInfo = request.getPathInfo(scriptName);
     cgiEnv.push_back(strdup(("PATH_INFO=" + pathInfo).c_str()));
     cgiEnv.push_back(
@@ -216,7 +216,7 @@ char *CgiResponseGenerator::_getScriptPath(const std::string &scriptName,
     std::string rootPath = route.getRoot();
 
     // Get the prefix
-    std::string prefix = route.getPrefix();
+    std::string prefix = route.getPath();
 
     // Return the script path without the query string
     return strdup((rootPath + prefix + "/" + scriptName)
@@ -232,7 +232,7 @@ std::string CgiResponseGenerator::_getPathTranslated(std::string &pathInfo,
     std::string rootPath = route.getRoot();
 
     // Get the location prefix
-    std::string prefix = route.getPrefix();
+    std::string prefix = route.getPath();
 
     // Return the path translated
     return rootPath + prefix + pathInfo;

@@ -14,8 +14,9 @@ Defaults::Defaults()
     m_directive_parameters[ "deny" ].push_back("all");
     m_block_parameters[ "location" ].push_back("/");
     m_block_parameters[ "limit_except" ].push_back("GET");
-    m_block_parameters[ "root" ].push_back("sample_site");
-    m_block_parameters[ "index" ].push_back("index.html");
+    m_directive_parameters[ "root" ].push_back("sample_site");
+    m_directive_parameters[ "index" ].push_back("index.html");
+    m_directive_parameters[ "path" ].push_back("/"); // temp for testing
 }
 
 Defaults::~Defaults() {}
@@ -29,6 +30,12 @@ std::vector<std::string> &
 Defaults::getDirectiveParameters(const std::string &key)
 {
     return m_directive_parameters[ key ];
+}
+
+std::string Defaults::getDirectiveParameter(const std::string &key, int index)
+{
+    std::vector<std::string> &vec = m_directive_parameters[ key ];
+    return vec[ index ];
 }
 
 // Path: srcs/configuration/Defaults.cpp

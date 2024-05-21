@@ -28,7 +28,7 @@ int main()
     std::string root = ".";
     std::string prefix = "/mock-cgi-bin";
     mockRoute.setRoot(root);
-    mockRoute.setPrefix(prefix);
+    mockRoute.setPath(prefix);
 
     const IConfiguration &mockConfigurationBlock =
         conf_loader.loadConfiguration("test_configuration.conf");

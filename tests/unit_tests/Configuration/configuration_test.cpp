@@ -1,7 +1,7 @@
 #include "../../../includes/configuration/ConfigurationLoader.hpp"
 #include "../../mock_includes/MockLogger.hpp"
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 int main()
 {
@@ -24,8 +24,9 @@ int main()
     //  {
     //  	std::cout << "BLOCKS! " << (*itr)->getName() << std::endl;
     //  }
-	// test if the default is valid
-	std::vector<std::string> blk = block.getBlocks("limit_except")[0]->getParameters();
-	assert(blk[0] == "GET");
-	return 0;
+    // test if the default is valid
+    std::vector<std::string> blk =
+        block.getBlocks("limit_except")[ 0 ]->getParameters();
+    assert(blk[ 0 ] == "GET");
+    return 0;
 }

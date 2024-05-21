@@ -7,23 +7,18 @@
  *
  */
 
-std::string MockRoute::getUri() const { return ""; }
+MockRoute::MockRoute() {}
 
-void MockRoute::setUri(std::string newUri) { static_cast<void>(newUri); }
-
-HttpMethod MockRoute::getMethod() const { return GET; }
-
-void MockRoute::setMethod(HttpMethod newMethod)
-{
-    static_cast<void>(newMethod);
-}
+MockRoute::~MockRoute() {}
 
 std::string MockRoute::getRoot() const { return this->_root; }
 
-std::string MockRoute::getPrefix() const { return this->_prefix; }
+std::string MockRoute::getPath() const { return this->_path; }
 
 void MockRoute::setRoot(std::string &root) { this->_root = root; }
 
-void MockRoute::setPrefix(std::string &prefix) { this->_prefix = prefix; }
+void MockRoute::setPath(std::string &prefix) { this->_path = prefix; }
+
+IResponseGenerator *MockRoute::getResponseGenerator() const { return NULL; }
 
 // Path: tests/mock_srcs/MockRoute.cpp

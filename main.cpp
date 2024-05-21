@@ -3,7 +3,6 @@
 #include "includes/connection/ClientHandler.hpp"
 #include "includes/connection/ConnectionManager.hpp"
 #include "includes/connection/RequestHandler.hpp"
-#include "includes/constants/HttpHelper.hpp"
 #include "includes/core/EventManager.hpp"
 #include "includes/core/PollingService.hpp"
 #include "includes/exception/ExceptionHandler.hpp"
@@ -13,7 +12,7 @@
 #include "includes/network/Server.hpp"
 #include "includes/network/Socket.hpp"
 #include "includes/pollfd/PollfdManager.hpp"
-#include "includes/response/Router.hpp"
+#include "includes/response/TempRouter.hpp"
 
 /*
  * webserv Workflow:
@@ -87,7 +86,8 @@ int main(int argc, char **argv)
                       logger);
 
         // Instantiate the Router.
-        Router router(configuration, logger, HttpHelper());
+        // Router router(configuration, logger, HttpHelper());
+        TempRouter router(configuration, logger);
 
         // Instantiate the RequestHandler.
         RequestHandler requestHandler(bufferManager, connectionManager,

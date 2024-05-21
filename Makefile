@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: llapage <llapage@student.42.fr>            +#+  +:+       +#+         #
+#    By: mde-clee <mde-clee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 10:54:31 by llapage           #+#    #+#              #
-#    Updated: 2024/04/10 14:18:25 by llapage          ###   ########.fr        #
+#    Updated: 2024/05/21 17:05:23 by mde-clee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,6 +73,8 @@ SRCS        =	main.cpp \
 				srcs/response/RegexMatcher.cpp \
 				srcs/response/Response.cpp \
 				srcs/response/Router.cpp \
+				srcs/response/TempRouter.cpp \
+				srcs/response/Route.cpp \
 				srcs/response/StaticFileResponseGenerator.cpp \
 				srcs/response/UploadResponseGenerator.cpp
 				
