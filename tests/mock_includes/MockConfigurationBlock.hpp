@@ -41,7 +41,7 @@ public:
     // Methods implementing the IConfiguration interface
     // These methods are overridden to provide custom behavior for testing.
 
-    virtual const BlockList &getBlocks(const std::string &parameter) const;
+    virtual const BlockList &getBlocks(const std::string &parameter);
     virtual const std::vector<std::string> &
     getStringVector(const std::string &parameter) const;
     virtual const std::string &getString(const std::string &parameter,
