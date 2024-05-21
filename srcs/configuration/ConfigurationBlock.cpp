@@ -46,7 +46,7 @@ const BlockList &ConfigurationBlock::getBlocks(const std::string &key)
     catch (std::exception &e)
     {
         _logger.log(DEBUG,
-                    "ConfigurationBlock::getBlocks: " + key + " not found");
+                    "ConfigurationBlock::getBlocks: " + key + " not found using default");
         BlockList *blk = &_blocks[ key ];
         blk->push_back(new ConfigurationBlock(*this, key, m_defaults));
         return *blk;
