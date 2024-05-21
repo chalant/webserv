@@ -82,7 +82,7 @@ static void add_block(const std::vector<Token> &tokens, const Grammar &grammar,
             start = 1;
 			new_block->isRegex(true);
         }
-        std::vector<std::string> &params = new_block->getParameters();
+        std::vector<std::string> &params = new_block->setParameters();
 		get_values(tokens, *(*parse_tree[ 1 ])[ start ], params);
         build_config(tokens, grammar, *parse_tree[ 3 ], *new_block, defaults);
     }

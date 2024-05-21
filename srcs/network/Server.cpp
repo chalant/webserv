@@ -20,7 +20,7 @@
  * polling file descriptors.*/
 Server::Server(const ISocket &socket, IPollfdManager &pollfdManager,
                IConnectionManager &connectionManager,
-               const IConfiguration &configuration, ILogger &logger)
+               IConfiguration &configuration, ILogger &logger)
     : _socket(socket), _pollfdManager(pollfdManager),
       _connectionManager(connectionManager), _logger(logger)
 {

@@ -25,7 +25,7 @@ public:
     ConfigurationBlock(const ConfigurationBlock &parent, const std::string name,
                        Defaults &defaults);
     ~ConfigurationBlock();
-    virtual const BlockList &getBlocks(const std::string &key) const;
+    virtual const BlockList &getBlocks(const std::string &key);
     virtual const std::vector<std::string> &
     getStringVector(const std::string &key) const;
     virtual const std::string &getString(const std::string &parameter,
@@ -39,6 +39,7 @@ public:
 	virtual void isRegex(bool value);
     virtual const std::string &getName() const;
 	virtual std::vector<std::string> &getParameters(void);
+	std::vector<std::string>	&setParameters(void);
     void print(size_t depth) const;
 };
 

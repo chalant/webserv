@@ -46,7 +46,7 @@ private:
 
 public:
     LoggerConfiguration(IBufferManager &BufferManager,
-                        const IConfiguration &configuration,
+                        IConfiguration &configuration,
                         IPollfdManager &pollfdManager);
     ~LoggerConfiguration();
 

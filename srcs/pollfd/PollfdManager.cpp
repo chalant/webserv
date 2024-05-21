@@ -14,7 +14,7 @@
  */
 
 // Constructor for PollFdManager class
-PollfdManager::PollfdManager(const IConfiguration &configuration)
+PollfdManager::PollfdManager(IConfiguration &configuration)
     : _pollfds(
           configuration.getBlocks("events")[ 0 ]->getInt("worker_connections") +
           3) // + 3 for server socket, error log, and access log, or

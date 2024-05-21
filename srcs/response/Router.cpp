@@ -12,7 +12,7 @@ locationblock)*/
 
 Route::Route() {}
 
-Router::Router(const IConfiguration &configuration, ILogger &logger,
+Router::Router(IConfiguration &configuration, ILogger &logger,
                HttpHelper _httpHelper)
     : _configuration(configuration), _logger(logger), _httpHelper(_httpHelper)
 {
@@ -39,12 +39,12 @@ Router::~Router()
     this->_logger.log(VERBOSE, "Router destroyed.");
 }
 
-void Router::_createServerRoutes(const IConfiguration *serverBlock)
+void Router::_createServerRoutes(IConfiguration *serverBlock)
 {
     this->_createRoutes(serverBlock);
 }
 
-void Router::_createRoutes(const IConfiguration *serverBlock)
+void Router::_createRoutes(IConfiguration *serverBlock)
 {
     std::vector<IConfiguration *> locations =
         serverBlock->getBlocks("location");
