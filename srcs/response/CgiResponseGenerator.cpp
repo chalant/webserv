@@ -25,7 +25,7 @@ Triplet_t CgiResponseGenerator::generateResponse(
 {
     // void the unused IResponse &response
     (void)response;
-    
+
     // Set cgi arguments
     std::vector<char *> cgiArgs;
     this->_setCgiArguments(scriptName, route, configuration, cgiArgs);
