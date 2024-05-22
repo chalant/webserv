@@ -5,13 +5,15 @@ this class is derived from AResponseGenerator, and is selected by 'Router'*/
 #define POSTMETHODRESPONSEGENERATOR_HPP
 
 #include "../../includes/response/IResponseGenerator.hpp"
+#include "../../includes/logger/ILogger.hpp"
 
 class PostMethodResponseGenerator: public IResponseGenerator
 {
 	private:
-		/* data */
+		ILogger	&_logger;
+		std::map<std::string, std::string>	_mime_type_extension;
 	public:
-		PostMethodResponseGenerator(/* args */);
+		PostMethodResponseGenerator(ILogger &logger);
 		~PostMethodResponseGenerator();
 		Triplet_t	generateResponse(const IRoute &route, 
 									const IRequest &request,
