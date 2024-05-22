@@ -16,8 +16,8 @@ SOURCES     = srcs/
 INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
-#FLAGS    	= 	-Wall -Werror -Wextra -g 
-FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
+FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
+#FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
 				
 SRCS        =	main.cpp \
@@ -25,6 +25,7 @@ SRCS        =	main.cpp \
 				srcs/buffer/FileBuffer.cpp \
 				srcs/buffer/SocketBuffer.cpp \
 				srcs/utils/Converter.cpp \
+				srcs/utils/SignalHandler.cpp \
 				srcs/parsing/Grammar.cpp \
 				srcs/parsing/GrammarRule.cpp \
 				srcs/parsing/GrammarSymbol.cpp \

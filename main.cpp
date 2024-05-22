@@ -13,6 +13,7 @@
 #include "includes/network/Socket.hpp"
 #include "includes/pollfd/PollfdManager.hpp"
 #include "includes/response/TempRouter.hpp"
+#include "includes/utils/SignalHandler.hpp"
 
 /*
  * webserv Workflow:
@@ -35,6 +36,7 @@
 
 int main(int argc, char **argv)
 {
+	SignalHandler::sigint();
     // Get the configuration file path.
     std::string configPath;
     if (argc == 1)
