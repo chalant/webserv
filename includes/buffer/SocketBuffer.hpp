@@ -16,7 +16,6 @@ class SocketBuffer : public IBuffer
 {
 private:
     std::vector<char> _buffer; // Buffer to hold data
-    size_t _size;              // Current size of the buffer
     ISocket &_socket;          // Socket object for sending data
 
 public:

@@ -7,7 +7,7 @@
  */
 
 // Constructor
-SocketBuffer::SocketBuffer(ISocket &socket) : _size(0), _socket(socket)
+SocketBuffer::SocketBuffer(ISocket &socket) : _socket(socket)
 
 {
     // Reserve initial memory for the buffer
@@ -26,10 +26,9 @@ ssize_t SocketBuffer::push(const std::vector<char> &data)
 {
     // Append data to the buffer
     this->_buffer.insert(this->_buffer.end(), data.begin(), data.end());
-    // Update the size of the buffer
-    this->_size += data.size();
 
-    return data.size(); // Return the number of bytes pushed
+    // Return the number of bytes pushed
+    return data.size();
 }
 
 // Send the buffer to the socket descriptor
@@ -37,10 +36,10 @@ ssize_t SocketBuffer::push(const std::vector<char> &data)
 ssize_t SocketBuffer::flush(int socketDescriptor, bool all)
 {
     // Attempt to send the buffer to the socket
-    ssize_t bytesSent;
+    ssize_t bytesSent = 0;
     if (all == true) // will block until all data is sent
         bytesSent = this->_socket.sendAll(socketDescriptor, this->_buffer);
-    else
+    else // will send as much data as possible without blocking
         bytesSent = this->_socket.send(socketDescriptor, this->_buffer);
 
     if (bytesSent == -1)
@@ -54,13 +53,13 @@ ssize_t SocketBuffer::flush(int socketDescriptor, bool all)
     else
     {
         // Update buffer state after successful send
-        if (static_cast<size_t>(bytesSent) !=
-            this->_size) // Not all data was sent
-            memmove(&this->_buffer[ 0 ], &this->_buffer[ bytesSent ],
-                    bytesSent);
-        this->_size -= bytesSent;
+        size_t bytesRemaining =
+            this->_buffer.size() - static_cast<size_t>(bytesSent);
+        memmove(&this->_buffer[ 0 ], &this->_buffer[ bytesSent ],
+                bytesRemaining);
+        this->_buffer.resize(bytesRemaining);
     }
-    return this->_size; // Return the remaining size of the buffer
+    return this->_buffer.size(); // Return the remaining size of the buffer
 }
 
 // Peek at the buffer
