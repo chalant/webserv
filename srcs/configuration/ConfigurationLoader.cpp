@@ -275,7 +275,7 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     // Pair<const std::vector<Token>&, ParseTree&>	result = parser.parse(path.c_str(), grammar);
 	std::ifstream conf_stream(path.c_str());
     if (!conf_stream.is_open())
-        throw InvalidConfigFileError();
+		throw InvalidConfigFileError();
 	Tokenizer tokenizer(m_separators, m_reserved_symbols);
     Parser parser(grammar);
     const std::vector<Token> &tokens = tokenizer.tokenize(conf_stream);
@@ -293,6 +293,5 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
 
     // Log the end of loading of the configuration file.
     this->m_logger.log(VERBOSE, "Configuration file loaded successfully.");
-	m_config->print(0);
     return *m_config;
 }

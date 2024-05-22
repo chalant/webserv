@@ -42,6 +42,6 @@ Triplet_t	PostMethodResponseGenerator::generateResponse(const IRoute &route,
 		response.setErrorResponse(NOT_FOUND);
 	}
 
-
+	
 	return std::make_pair(-1, std::make_pair(-1, -1));
 }
