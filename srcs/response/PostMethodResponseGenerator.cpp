@@ -24,6 +24,5 @@ Triplet_t	PostMethodResponseGenerator::generateResponse(const IRoute &route,
 	(void)response;
 	(void)configuration;
 	(void)scriptName;
-	
 	return std::make_pair(-1, std::make_pair(-1, -1));
 }

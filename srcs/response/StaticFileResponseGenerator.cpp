@@ -1,4 +1,5 @@
 #include "../../includes/response/StaticFileResponseGenerator.hpp"
+#include "../../includes/utils/Converter.hpp"
 #include <fstream>
 
 // Constructor
@@ -26,7 +27,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     // if root does not end with a slash and uri does not start with a slash
     if (root[ root.size() - 1 ] != '/' && uri[ 0 ] != '/')
     {
-        // add a slash to the root
+     // add a slash to the root
         root += "/";
     }
     std::string filePath = root + uri;
@@ -39,7 +40,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     }
 
     // open the file in binary mode, in read mode and at the end
-    std::ifstream file(filePath,
+    std::ifstream file(filePath.c_str(),
                        std::ios::in | std::ios::binary | std::ios::ate);
     if (!file.is_open())
     {
@@ -52,7 +53,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     else
     {
         // log the file being served
-        _logger.log(INFO, "Serving file: " + filePath);
+        _logger.log(VERBOSE, "Serving file: " + filePath);
 
         // get the size of the file
         std::streampos size = file.tellg();
@@ -82,7 +83,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
             response.setBody(body);
             response.setStatusLine(OK);
             response.addHeader(CONTENT_TYPE, this->_getMimeType(filePath));
-            response.addHeader(CONTENT_LENGTH, std::to_string(body.size()));
+            response.addHeader(CONTENT_LENGTH, Converter::toString(body.size()));
         }
     }
 
