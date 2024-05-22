@@ -17,9 +17,9 @@
 class ClientHandler : public IClientHandler
 {
 private:
-    const ISocket &_socket; // Reference to the Socket instance
-    int _socketDescriptor;  // Socket descriptor for client connection
-    ILogger &_logger;       // Reference to the error logger object
+    const ISocket &m_socket; // Reference to the Socket instance
+    int m_socket_descriptor;  // Socket descriptor for client connection
+    ILogger &m_logger;       // Reference to the error logger object
 
 public:
     // Constructor: Initializes the ClientHandler with an error logger and
@@ -30,7 +30,7 @@ public:
     ~ClientHandler();
 
     // Setter method to set the socket descriptor
-    void setSocketDescriptor(int socketDescriptor);
+    void setSocketDescriptor(int socket_descriptor);
 
     // Method to read a request from the client
     const std::vector<char> readRequest() const;

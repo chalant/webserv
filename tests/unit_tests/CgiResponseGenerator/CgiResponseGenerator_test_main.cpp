@@ -18,141 +18,141 @@
 int main()
 {
     // Mock objects
-    MockRoute mockRoute;
-    MockRequest mockRequest;
-    MockResponse mockResponse;
-    MockLogger mockLogger;
-    ConfigurationLoader conf_loader(mockLogger);
+    MockRoute mock_route;
+    MockRequest mock_request;
+    MockResponse mock_response;
+    MockLogger mock_logger;
+    ConfigurationLoader conf_loader(mock_logger);
 
     // Set Mock Route Variables
     std::string root = ".";
     std::string prefix = "/mock-cgi-bin";
-    mockRoute.setRoot(root);
-    mockRoute.setPath(prefix);
+    mock_route.setRoot(root);
+    mock_route.setPath(prefix);
 
-    const IConfiguration &mockConfigurationBlock =
+    const IConfiguration &mock_configuration_block =
         conf_loader.loadConfiguration("test_configuration.conf");
 
     // Set Mock Configuration Variables
-    // mockConfigurationBlock.setString("PhpCgiPath", "/usr/bin/php-cgi");
-    // mockConfigurationBlock.setString("PythonCgiPath", "/usr/bin/python3");
+    // mock_configuration_block.setString("PhpCgiPath", "/usr/bin/php-cgi");
+    // mock_configuration_block.setString("PythonCgiPath", "/usr/bin/python3");
 
     // Declare cgi info
-    Triplet_t cgiInfo; // <cgiPid, <responseReadPipe, requestWritePipe> >
-    int responseReadPipe;
-    int requestWritePipe;
+    Triplet_t cgi_info; // <cgi_pid, <response_read_pipe, request_write_pipe> >
+    int response_read_pipe;
+    int request_write_pipe;
 
     // Declare a read buffer
-    char readBuffer[ 1024 ];
+    char read_buffer[ 1024 ];
 
     // Instantiate the CgiResponseGenerator object
-    CgiResponseGenerator cgiResponseGenerator(mockLogger);
+    CgiResponseGenerator cgi_response_generator(mock_logger);
 
     // Test case 1: Generate a simple cgi python response
     //***************************************************
     // Set the test script name
-    std::string scriptName = "hello_world.py";
+    std::string script_name = "hello_world.py";
 
     // Set the request variables
-    mockRequest.setMethod("GET");
-    mockRequest.setUri("/mock-cgi-bin/" + scriptName);
+    mock_request.setMethod("GET");
+    mock_request.setUri("/mock-cgi-bin/" + script_name);
 
     // Generate cgi response
-    cgiInfo = cgiResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockResponse, mockConfigurationBlock,
-        scriptName);
+    cgi_info = cgi_response_generator.generateResponse(
+        mock_route, mock_request, mock_response, mock_configuration_block,
+        script_name);
 
     // Get the read pipe file descriptor
-    responseReadPipe = cgiInfo.second.first;
+    response_read_pipe = cgi_info.second.first;
 
     // Read the response
-    ssize_t bytesRead;
-    while ((bytesRead =
-                read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
+    ssize_t bytes_read;
+    while ((bytes_read =
+                read(response_read_pipe, read_buffer, sizeof(read_buffer))) <= 0)
         ;                           // wait for the response
-    readBuffer[ bytesRead ] = '\0'; // Null-terminate the string
+    read_buffer[ bytes_read ] = '\0'; // Null-terminate the string
 
     // Close the pipe
-    close(responseReadPipe); // Close the read end of the pipe
+    close(response_read_pipe); // Close the read end of the pipe
 
-    // Assert that "content-type: text/plain" is present in readBuffer
-    assert(strstr(readBuffer, "content-type: text/plain") != NULL);
+    // Assert that "content-type: text/plain" is present in read_buffer
+    assert(strstr(read_buffer, "content-type: text/plain") != NULL);
 
-    // Assert that "Hello, world!" is present in readBuffer
-    assert(strstr(readBuffer, "Hello, world!") != NULL);
+    // Assert that "Hello, world!" is present in read_buffer
+    assert(strstr(read_buffer, "Hello, world!") != NULL);
 
     // Test case 2: Generate a cgi python response with query parameters
     //******************************************************************
     // Set the test script name
-    scriptName = "query_params_python.py";
+    script_name = "query_params_python.py";
 
     // Set the request variables
-    mockRequest.setMethod("GET");
-    mockRequest.setUri("/mock-cgi-bin/" + scriptName + "?name=John&age=30");
+    mock_request.setMethod("GET");
+    mock_request.setUri("/mock-cgi-bin/" + script_name + "?name=John&age=30");
 
     // Generate cgi response
-    cgiInfo = cgiResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockResponse, mockConfigurationBlock,
-        scriptName);
+    cgi_info = cgi_response_generator.generateResponse(
+        mock_route, mock_request, mock_response, mock_configuration_block,
+        script_name);
 
     // Get the read pipe file descriptor
-    responseReadPipe = cgiInfo.second.first;
+    response_read_pipe = cgi_info.second.first;
 
     // Read the response
-    while ((bytesRead =
-                read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
+    while ((bytes_read =
+                read(response_read_pipe, read_buffer, sizeof(read_buffer))) <= 0)
         ;                           // wait for the response
-    readBuffer[ bytesRead ] = '\0'; // Null-terminate the string
+    read_buffer[ bytes_read ] = '\0'; // Null-terminate the string
 
     // Close the pipe
-    close(responseReadPipe); // Close the read end of the pipe
+    close(response_read_pipe); // Close the read end of the pipe
 
-    // Assert that age param is present in readBuffer
-    assert(strstr(readBuffer, "age = 30") != NULL);
+    // Assert that age param is present in read_buffer
+    assert(strstr(read_buffer, "age = 30") != NULL);
 
-    // Assert that name param is present in readBuffer
-    assert(strstr(readBuffer, "name = John") != NULL);
+    // Assert that name param is present in read_buffer
+    assert(strstr(read_buffer, "name = John") != NULL);
 
 // Test case 3: Generate a cgi python response with POST method
 //*************************************************************
 // Set the test script name
 #include <sstream>
 
-    scriptName = "post_python.py";
+    script_name = "post_python.py";
 
     // Set the request variables
-    mockRequest.setMethod("POST");
-    mockRequest.setUri("/mock-cgi-bin/" + scriptName + "?name=John&age=30");
-    mockRequest.setBody("Hello, world! (from the body)");
-    std::ostringstream bodySizeStream;
-    bodySizeStream << mockRequest.getBody().size();
-    mockRequest.addHeader("content-length", bodySizeStream.str());
+    mock_request.setMethod("POST");
+    mock_request.setUri("/mock-cgi-bin/" + script_name + "?name=John&age=30");
+    mock_request.setBody("Hello, world! (from the body)");
+    std::ostringstream body_size_stream;
+    body_size_stream << mock_request.getBody().size();
+    mock_request.addHeader("content-length", body_size_stream.str());
 
     // Generate cgi response
-    cgiInfo = cgiResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockResponse, mockConfigurationBlock,
-        scriptName);
+    cgi_info = cgi_response_generator.generateResponse(
+        mock_route, mock_request, mock_response, mock_configuration_block,
+        script_name);
 
     // Get the pipe file descriptors
-    responseReadPipe = cgiInfo.second.first;
-    requestWritePipe = cgiInfo.second.second;
+    response_read_pipe = cgi_info.second.first;
+    request_write_pipe = cgi_info.second.second;
 
     // Write the request body to the pipe
-    write(requestWritePipe, mockRequest.getBody().data(),
-          mockRequest.getBody().size());
+    write(request_write_pipe, mock_request.getBody().data(),
+          mock_request.getBody().size());
 
     // Read the response
-    while ((bytesRead =
-                read(responseReadPipe, readBuffer, sizeof(readBuffer))) <= 0)
+    while ((bytes_read =
+                read(response_read_pipe, read_buffer, sizeof(read_buffer))) <= 0)
         ;                           // wait for the response
-    readBuffer[ bytesRead ] = '\0'; // Null-terminate the string
+    read_buffer[ bytes_read ] = '\0'; // Null-terminate the string
 
     // Close the pipe
-    close(responseReadPipe); // Close the read end of the pipe
+    close(response_read_pipe); // Close the read end of the pipe
 
     // Assert that the line "POST Data:\nHello, world! (from the body)" is
-    // present in readBuffer
-    assert(strstr(readBuffer, "POST Data:\nHello, world! (from the body)") !=
+    // present in read_buffer
+    assert(strstr(read_buffer, "POST Data:\nHello, world! (from the body)") !=
            NULL);
 
     return 0;

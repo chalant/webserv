@@ -9,12 +9,12 @@
 class PollingService : public IPollingService
 {
 private:
-    IPollfdManager &_pollfdManager;
-    ILogger &_logger;
-    int _timeout;
+    IPollfdManager &m_pollfd_manager;
+    ILogger &m_logger;
+    int m_timeout;
 
 public:
-    PollingService(IPollfdManager &pollfdManager, ILogger &logger,
+    PollingService(IPollfdManager &pollfd_manager, ILogger &logger,
                    int timeout = 100);
     ~PollingService();
 

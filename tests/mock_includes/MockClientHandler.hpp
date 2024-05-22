@@ -23,7 +23,7 @@ public:
     // These methods are overridden to provide custom behavior for testing.
 
     // Setter
-    virtual void setSocketDescriptor(int socketDescriptor);
+    virtual void setSocketDescriptor(int socket_descriptor);
 
     // Methods to read and send requests and responses
     virtual const std::vector<char> readRequest() const;

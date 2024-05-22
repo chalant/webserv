@@ -19,10 +19,10 @@
 class TempRouter : public ITempRouter
 {
 private:
-    IConfiguration &_configuration;
-    ILogger &_logger;
-    HttpHelper _httpHelper;
-    IRoute *_route;
+    IConfiguration &m_configuration;
+    ILogger &m_logger;
+    HttpHelper m_http_helper;
+    IRoute *m_route;
 
 public:
     TempRouter(IConfiguration &Configuration, ILogger &logger);

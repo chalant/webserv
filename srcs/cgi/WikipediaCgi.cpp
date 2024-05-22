@@ -49,13 +49,13 @@ int main(int argc, char **argv)
     std::string body;
 
     // Make a Wikipedia API request for the query
-    std::string jsonResponse =
+    std::string json_response =
         httpGet("https://en.wikipedia.org/w/"
                 "api.php?action=query&format=json&prop=extracts&titles=" +
                 query + "&redirects=true");
 
     // check if the request failed
-    if (jsonResponse.empty())
+    if (json_response.empty())
     {
         // pipe failed, set error Status Line
         response << "HTTP/1.1 500 Internal Server Error\r\n";
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
                query +
                "'</h1>\n"
                "            <p>" +
-               extractFromJson(jsonResponse) +
+               extractFromJson(json_response) +
                "</p>\n"
                "            <div class=\"version\">webserv/1.0</div>\n"
                "        </div>\n"

@@ -11,11 +11,11 @@
 class ConfigurationBlock : public IConfiguration, public BlockList
 {
 private:
-    ILogger &_logger;
-    const std::string _name;
-    std::map<std::string, BlockList> _blocks;
-    std::map<std::string, std::vector<std::string> *> _directives;
-    std::vector<std::string> _parameters;
+    ILogger &m_logger;
+    const std::string m_name;
+    std::map<std::string, BlockList> m_blocks;
+    std::map<std::string, std::vector<std::string> *> m_directives;
+    std::vector<std::string> m_parameters;
     Defaults &m_defaults;
     bool m_is_regex;
 

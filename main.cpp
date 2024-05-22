@@ -38,53 +38,53 @@ int main(int argc, char **argv)
 {
 	SignalHandler::sigint();
     // Get the configuration file path.
-    std::string configPath;
+    std::string config_path;
     if (argc == 1)
-        configPath = "config/default.conf";
+        config_path = "config/default.conf";
     else
-        configPath = argv[ 1 ];
+        config_path = argv[ 1 ];
 
     // Instantiate the Socket instance.
     Socket socket;
 
-    // Instantiate the bufferManager.
-    BufferManager bufferManager(socket);
+    // Instantiate the buffer_manager.
+    BufferManager buffer_manager(socket);
 
     // Instantiate the logger.
-    Logger logger(bufferManager);
+    Logger logger(buffer_manager);
 
     // Instantiate the Client Handler.
-    ClientHandler clientHandler(socket, logger);
+    ClientHandler client_handler(socket, logger);
 
-    // Instantiate the exceptionHandler.
-    ExceptionHandler exceptionHandler(logger);
+    // Instantiate the exception_handler.
+    ExceptionHandler exception_handler(logger);
 
-    ConfigurationLoader confLoader(logger);
+    ConfigurationLoader conf_loader(logger);
 
     try
     {
         // load configuration from file and create the configuration object.
         IConfiguration &configuration =
-            confLoader.loadConfiguration(configPath);
+            conf_loader.loadConfiguration(config_path);
 
         // parse the configuration file
 
         // Instantiate the PollfdManager.
-        PollfdManager pollfdManager(configuration);
+        PollfdManager pollfd_manager(configuration);
 
         // Configure the logger
-        LoggerConfiguration loggerConfiguration(bufferManager, configuration,
-                                                pollfdManager);
-        logger.configure(loggerConfiguration);
+        LoggerConfiguration logger_configuration(buffer_manager, configuration,
+                                                pollfd_manager);
+        logger.configure(logger_configuration);
 
         // Instantiate the Factory.
         Factory factory(configuration, logger);
 
         // Instantiate the ConnectionManager.
-        ConnectionManager connectionManager(logger, factory);
+        ConnectionManager connection_manager(logger, factory);
 
         // Instantiate the Server.
-        Server server(socket, pollfdManager, connectionManager, configuration,
+        Server server(socket, pollfd_manager, connection_manager, configuration,
                       logger);
 
         // Instantiate the Router.
@@ -92,16 +92,16 @@ int main(int argc, char **argv)
         TempRouter router(configuration, logger);
 
         // Instantiate the RequestHandler.
-        RequestHandler requestHandler(bufferManager, connectionManager,
+        RequestHandler request_handler(buffer_manager, connection_manager,
                                       configuration, router, logger,
-                                      exceptionHandler, clientHandler);
+                                      exception_handler, client_handler);
 
         // Instantiate the PollingService.
-        PollingService pollingService(pollfdManager, logger);
+        PollingService polling_service(pollfd_manager, logger);
 
         // Instantiate the EventManager.
-        EventManager eventManager(pollfdManager, bufferManager, server,
-                                  requestHandler, logger);
+        EventManager event_manager(pollfd_manager, buffer_manager, server,
+                                  request_handler, logger);
 
         // Start the webserv core cycle.
         while (true)
@@ -109,18 +109,18 @@ int main(int argc, char **argv)
             try
             {
                 // Poll events.
-                pollingService.pollEvents();
+                polling_service.pollEvents();
 
                 // Handle events.
-                eventManager.handleEvents();
+                event_manager.handleEvents();
 
                 // Collect garbage.
-                connectionManager.collectGarbage();
+                connection_manager.collectGarbage();
             }
             catch (WebservException &e)
             {
                 // Handle exceptions.
-                exceptionHandler.handleException(e, "webserv core cycle: ");
+                exception_handler.handleException(e, "webserv core cycle: ");
             }
         }
     }
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
         logger.configure(*null);
 
         // Handle setup exceptions.
-        exceptionHandler.handleException(e, "webserv setup: ");
+        exception_handler.handleException(e, "webserv setup: ");
     }
 }
 

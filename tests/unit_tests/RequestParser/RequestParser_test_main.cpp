@@ -8,7 +8,6 @@
 #include "../../../includes/configuration/ConfigurationLoader.hpp"
 
 // include the header files for the mock classes
-// #include "MockConfigurationBlock.hpp"
 #include "../../mock_includes/MockLogger.hpp"
 #include "../../mock_includes/MockRequest.hpp"
 
@@ -18,50 +17,50 @@ std::vector<char> stringToVector(const std::string &str);
 int main()
 {
     // Mock objects
-    // MockConfigurationBlock mockConfigurationBlock;
-    MockLogger mockErrorLogger;
-    ConfigurationLoader confLoader(mockErrorLogger);
+    // MockConfigurationBlock mock_configuration_block;
+    MockLogger mock_logger;
+    ConfigurationLoader conf_loader(mock_logger);
 
-    // mockConfigurationBlock.setInt("client_header_buffer_size", 6000);
+    // mock_configuration_block.setInt("client_header_buffer_size", 6000);
 
-    const IConfiguration &mockConfigurationBlock =
-        confLoader.loadConfiguration("test_configuration.conf");
+    const IConfiguration &mock_configuration_block =
+        conf_loader.loadConfiguration("test_configuration.conf");
     // Request Parser instance
-    RequestParser requestParser(mockConfigurationBlock, mockErrorLogger);
+    RequestParser request_parser(mock_configuration_block, mock_logger);
 
     // Recipient of the Request Parser's output
-    MockRequest mockRequest;
+    MockRequest mock_request;
 
     // test case 1: A Valid IRequest
     // GET /index.html HTTP/1.1
     // Host: 42.fr
     // content-length: 0
-    std::vector<char> rawRequest =
+    std::vector<char> raw_request =
         stringToVector("GET /index.html HTTP/1.1\r\nHost: "
                        "42.fr\r\ncontent-length: 0\r\n\r\n");
 
     // Parse the raw request
-    requestParser.parseRequest(rawRequest, mockRequest);
+    request_parser.parseRequest(raw_request, mock_request);
     // Verify the parsed Request object
     // If the request is invalid, an exception will be thrown
     // otherwise the test will pass
-    assert(mockRequest.getTestMethod() == "GET");
-    assert(mockRequest.getUri() == "/index.html");
-    assert(mockRequest.getTestHttpVersion() == "HTTP/1.1");
-    std::map<std::string, std::string> expectedHeaders;
-    expectedHeaders.insert(std::make_pair("host", "42.fr"));
-    expectedHeaders.insert(std::make_pair("content-length", "0"));
-    assert(mockRequest.getHeadersStringMap() == expectedHeaders);
+    assert(mock_request.getTestMethod() == "GET");
+    assert(mock_request.getUri() == "/index.html");
+    assert(mock_request.getTestHttpVersion() == "HTTP/1.1");
+    std::map<std::string, std::string> expected_headers;
+    expected_headers.insert(std::make_pair("host", "42.fr"));
+    expected_headers.insert(std::make_pair("content-length", "0"));
+    assert(mock_request.getHeadersStringMap() == expected_headers);
     // Clear the contents of the Request object for the next test
-    mockRequest.clear();
+    mock_request.clear();
 
     // test case 2: An incomplete Request
     // GET
-    rawRequest = stringToVector("GET");
+    raw_request = stringToVector("GET");
     try
     {
         // Parse the raw request
-        requestParser.parseRequest(rawRequest, mockRequest);
+        request_parser.parseRequest(raw_request, mock_request);
         // If the request is invalid, an exception will be thrown
         // otherwise the test will fail
         assert(false);

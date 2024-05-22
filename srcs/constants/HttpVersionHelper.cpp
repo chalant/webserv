@@ -13,9 +13,9 @@
 
 // Constructor initializes member variables using helper functions
 HttpVersionHelper::HttpVersionHelper()
-    : _versionList(_setVersionList()),
-      _stringHttpVersionMap(_setStringHttpVersionMap()),
-      _httpVersionStringMap(_setHttpVersionStringMap())
+    : m_version_list(m_setVersionList()),
+      m_string_http_version_map(m_setStringHttpVersionMap()),
+      m_http_version_string_map(m_setHttpVersionStringMap())
 {
 }
 
@@ -23,9 +23,9 @@ HttpVersionHelper::HttpVersionHelper()
 const std::string &
 HttpVersionHelper::httpVersionStringMap(HttpVersion version) const
 {
-    if (_httpVersionStringMap.find(version) != _httpVersionStringMap.end())
+    if (m_http_version_string_map.find(version) != m_http_version_string_map.end())
     {
-        return _httpVersionStringMap.at(version);
+        return m_http_version_string_map.at(version);
     }
     else
     {
@@ -37,9 +37,9 @@ HttpVersionHelper::httpVersionStringMap(HttpVersion version) const
 HttpVersion
 HttpVersionHelper::stringHttpVersionMap(const std::string &version) const
 {
-    if (_stringHttpVersionMap.find(version) != _stringHttpVersionMap.end())
+    if (m_string_http_version_map.find(version) != m_string_http_version_map.end())
     {
-        return _stringHttpVersionMap.at(version);
+        return m_string_http_version_map.at(version);
     }
     else
     {
@@ -50,55 +50,55 @@ HttpVersionHelper::stringHttpVersionMap(const std::string &version) const
 // Member function to check if a string is a valid HTTP version
 bool HttpVersionHelper::isHttpVersion(const std::string &version) const
 {
-    return _stringHttpVersionMap.find(version) != _stringHttpVersionMap.end();
+    return m_string_http_version_map.find(version) != m_string_http_version_map.end();
 }
 
-// Helper function to initialize VersionList with string representations of HTTP
+// Helper function to initialize m_version_list with string representations of HTTP
 // versions
-std::vector<std::string> HttpVersionHelper::_setVersionList()
+std::vector<std::string> HttpVersionHelper::m_setVersionList()
 {
-    std::vector<std::string> VersionList;
+    std::vector<std::string> version_list;
 
-    // Add string representations of HTTP versions to VersionList
-    VersionList.push_back("HTTP/0.9");
-    VersionList.push_back("HTTP/1.0");
-    VersionList.push_back("HTTP/1.1");
-    VersionList.push_back("HTTP/2.0");
-    VersionList.push_back("HTTP/3.0");
+    // Add string representations of HTTP versions to version_list
+    version_list.push_back("HTTP/0.9");
+    version_list.push_back("HTTP/1.0");
+    version_list.push_back("HTTP/1.1");
+    version_list.push_back("HTTP/2.0");
+    version_list.push_back("HTTP/3.0");
 
-    return VersionList;
+    return version_list;
 }
 
-// Helper function to initialize stringHttpVersionMap with mappings from string
+// Helper function to initialize m_string_http_version_map with mappings from string
 // representations to HttpVersion enum values
-std::map<std::string, HttpVersion> HttpVersionHelper::_setStringHttpVersionMap()
+std::map<std::string, HttpVersion> HttpVersionHelper::m_setStringHttpVersionMap()
 {
-    std::map<std::string, HttpVersion> stringHttpVersionMap;
+    std::map<std::string, HttpVersion> string_http_version_map;
 
     // Add mappings from string representations to HttpVersion enum values
-    stringHttpVersionMap[ "HTTP/0.9" ] = HTTP_0_9;
-    stringHttpVersionMap[ "HTTP/1.0" ] = HTTP_1_0;
-    stringHttpVersionMap[ "HTTP/1.1" ] = HTTP_1_1;
-    stringHttpVersionMap[ "HTTP/2.0" ] = HTTP_2_0;
-    stringHttpVersionMap[ "HTTP/3.0" ] = HTTP_3_0;
+    string_http_version_map[ "HTTP/0.9" ] = HTTP_0_9;
+    string_http_version_map[ "HTTP/1.0" ] = HTTP_1_0;
+    string_http_version_map[ "HTTP/1.1" ] = HTTP_1_1;
+    string_http_version_map[ "HTTP/2.0" ] = HTTP_2_0;
+    string_http_version_map[ "HTTP/3.0" ] = HTTP_3_0;
 
-    return stringHttpVersionMap;
+    return string_http_version_map;
 }
 
-// Helper function to initialize httpVersionStringMap with mappings from
+// Helper function to initialize m_http_version_string_map with mappings from
 // HttpVersion enum values to string representations
-std::map<HttpVersion, std::string> HttpVersionHelper::_setHttpVersionStringMap()
+std::map<HttpVersion, std::string> HttpVersionHelper::m_setHttpVersionStringMap()
 {
-    std::map<HttpVersion, std::string> httpVersionStringMap;
+    std::map<HttpVersion, std::string> http_version_string_map;
 
     // Add mappings from HttpVersion enum values to string representations
-    httpVersionStringMap[ HTTP_0_9 ] = "HTTP/0.9";
-    httpVersionStringMap[ HTTP_1_0 ] = "HTTP/1.0";
-    httpVersionStringMap[ HTTP_1_1 ] = "HTTP/1.1";
-    httpVersionStringMap[ HTTP_2_0 ] = "HTTP/2.0";
-    httpVersionStringMap[ HTTP_3_0 ] = "HTTP/3.0";
+    http_version_string_map[ HTTP_0_9 ] = "HTTP/0.9";
+    http_version_string_map[ HTTP_1_0 ] = "HTTP/1.0";
+    http_version_string_map[ HTTP_1_1 ] = "HTTP/1.1";
+    http_version_string_map[ HTTP_2_0 ] = "HTTP/2.0";
+    http_version_string_map[ HTTP_3_0 ] = "HTTP/3.0";
 
-    return httpVersionStringMap;
+    return http_version_string_map;
 }
 
 // Path: srcs/constants/HttpMethodHelper.cpp

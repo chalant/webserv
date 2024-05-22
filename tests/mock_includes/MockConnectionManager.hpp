@@ -19,11 +19,11 @@ public:
 
     // Methods related to connections
     virtual void addConnection(
-        std::pair<int, std::pair<std::string, std::string> > clientInfo);
-    virtual void removeConnection(SocketDescriptor_t socketDescriptor);
-    virtual IConnection &getConnection(SocketDescriptor_t socketDescriptor);
-    virtual IRequest &getRequest(SocketDescriptor_t socketDescriptor);
-    virtual IResponse &getResponse(SocketDescriptor_t socketDescriptor);
+        std::pair<int, std::pair<std::string, std::string> > client_info);
+    virtual void removeConnection(SocketDescriptor_t socket_descriptor);
+    virtual IConnection &getConnection(SocketDescriptor_t socket_descriptor);
+    virtual IRequest &getRequest(SocketDescriptor_t socket_descriptor);
+    virtual IResponse &getResponse(SocketDescriptor_t socket_descriptor);
 
     // Methods related to sessions
     virtual SessionId_t addSession();

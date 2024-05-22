@@ -52,25 +52,25 @@
 class WebservException : public std::exception
 {
 private:
-    LogLevel _logLevel;
-    const std::string _message;
-    int _errorCode;
+    LogLevel m_log_level;
+    const std::string m_message;
+    int m_error_code;
 
 public:
     // Constructor
-    WebservException(LogLevel logLevel, const std::string &message,
-                     int errorCode)
-        : _logLevel(logLevel), _message(message), _errorCode(errorCode) {};
+    WebservException(LogLevel log_level, const std::string &message,
+                     int error_code)
+        : m_log_level(log_level), m_message(message), m_error_code(error_code) {};
 
     // Destructor
     virtual ~WebservException() throw() {}
 
     // Override what() method
-    virtual const char *what() const throw() { return this->_message.c_str(); }
+    virtual const char *what() const throw() { return this->m_message.c_str(); }
 
     // Getter methods
-    LogLevel getLogLevel() const { return this->_logLevel; }
-    int getErrorCode() const { return this->_errorCode; }
+    LogLevel getLogLevel() const { return this->m_log_level; }
+    int getErrorCode() const { return this->m_error_code; }
 };
 
 // Derived error classes
@@ -91,9 +91,9 @@ public:
 class ConfigSyntaxError : public WebservException
 {
 public:
-    ConfigSyntaxError(LogLevel logLevel, const std::string &message,
-                      int errorCode)
-        : WebservException(logLevel, message, errorCode) {};
+    ConfigSyntaxError(LogLevel log_level, const std::string &message,
+                      int error_code)
+        : WebservException(log_level, message, error_code) {};
 };
 
 class MaximumConnectionsReachedError : public WebservException
@@ -230,8 +230,8 @@ class UnknownLogLevelError : public WebservException
 public:
     UnknownLogLevelError()
         : WebservException(ERROR, "Unknown log level.", 1) {};
-    UnknownLogLevelError(const std::string &logLevel)
-        : WebservException(ERROR, "Unknown log level: \"" + logLevel + "\"",
+    UnknownLogLevelError(const std::string &log_level)
+        : WebservException(ERROR, "Unknown log level: \"" + log_level + "\"",
                            1) {};
 };
 
@@ -240,33 +240,33 @@ class UnknownHttpStatusCodeError : public WebservException
 public:
     UnknownHttpStatusCodeError()
         : WebservException(ERROR, "Unknown HTTP status code.", 1) {};
-    UnknownHttpStatusCodeError(const std::string &statusCode)
+    UnknownHttpStatusCodeError(const std::string &status_code)
         : WebservException(
-              ERROR, "Unknown HTTP status code: \"" + statusCode + "\"", 1) {};
+              ERROR, "Unknown HTTP status code: \"" + status_code + "\"", 1) {};
 };
 
 class HttpStatusCodeException : public WebservException
 {
 private:
-    const std::string _getStatusCodeString(int statusCode) const
+    const std::string _getStatusCodeString(int status_code) const
     {
         std::ostringstream oss;
-        oss << statusCode;
+        oss << status_code;
         return oss.str();
     }
 
 public:
-    HttpStatusCodeException(int statusCode)
+    HttpStatusCodeException(int status_code)
         : WebservException(INFO,
                            ("Http Status Code: \"" +
-                            this->_getStatusCodeString(statusCode) + "\""),
-                           statusCode) {};
-    HttpStatusCodeException(int statusCode, const std::string &message)
+                            this->_getStatusCodeString(status_code) + "\""),
+                           status_code) {};
+    HttpStatusCodeException(int status_code, const std::string &message)
         : WebservException(INFO,
                            ("Http Status Code " +
-                            this->_getStatusCodeString(statusCode) + ": " +
+                            this->_getStatusCodeString(status_code) + ": " +
                             message),
-                           statusCode)
+                           status_code)
     {
     }
 };

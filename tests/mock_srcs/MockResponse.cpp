@@ -14,33 +14,33 @@
  */
 
 // Default constructor
-MockResponse::MockResponse() : _httpHelper(HttpHelper()) {}
+MockResponse::MockResponse() : m_http_helper(HttpHelper()) {}
 
 // Destructor
 MockResponse::~MockResponse() {}
 
 // Getters for status line, headers, and body
-std::string MockResponse::getStatusLine() const { return this->_statusLine; }
+std::string MockResponse::getStatusLine() const { return this->m_status_line; }
 
 std::string MockResponse::getHeaders() const { return ""; }
 
 std::string MockResponse::getBodyString() const
 {
-    return std::string(this->_body.begin(), this->_body.end());
+    return std::string(this->m_body.begin(), this->m_body.end());
 }
 
-std::vector<char> MockResponse::getBody() const { return this->_body; }
+std::vector<char> MockResponse::getBody() const { return this->m_body; }
 
 // Setters for status line, headers, and body
-void MockResponse::setStatusLine(std::string statusLine)
+void MockResponse::setStatusLine(std::string status_line)
 {
-    this->_statusLine = statusLine;
+    this->m_status_line = status_line;
 }
 
-void MockResponse::setStatusLine(HttpStatusCode statusCode)
+void MockResponse::setStatusLine(HttpStatusCode status_code)
 {
     // Set status line based on the status code
-    this->_statusLine = this->_httpHelper.getStatusLine(statusCode);
+    this->m_status_line = this->m_http_helper.getStatusLine(status_code);
 }
 
 void MockResponse::setHeaders(std::vector<std::string> headers)
@@ -49,12 +49,12 @@ void MockResponse::setHeaders(std::vector<std::string> headers)
          it != headers.end(); it++)
     {
         std::string header = *it;
-        std::string headerName = header.substr(0, header.find(":"));
-        std::string headerValue = header.substr(header.find(":") + 1);
-        HttpHeader headerEnum =
-            this->_httpHelper.stringHttpHeaderMap(headerName);
+        std::string header_name = header.substr(0, header.find(":"));
+        std::string header_value = header.substr(header.find(":") + 1);
+        HttpHeader header_enum =
+            this->m_http_helper.stringHttpHeaderMap(header_name);
         // Add header to the map
-        this->_headers[ headerEnum ] = headerValue;
+        this->m_headers[ header_enum ] = header_value;
     }
 }
 
@@ -65,12 +65,12 @@ void MockResponse::setHeaders(std::string headers)
     {
         std::string header = headers.substr(0, headers.find("\r\n"));
         headers = headers.substr(headers.find("\r\n") + 2);
-        std::string headerName = header.substr(0, header.find(":"));
-        std::string headerValue = header.substr(header.find(":") + 1);
-        HttpHeader headerEnum =
-            this->_httpHelper.stringHttpHeaderMap(headerName);
+        std::string header_name = header.substr(0, header.find(":"));
+        std::string header_value = header.substr(header.find(":") + 1);
+        HttpHeader header_enum =
+            this->m_http_helper.stringHttpHeaderMap(header_name);
         // Add header to the map
-        this->_headers[ headerEnum ] = headerValue;
+        this->m_headers[ header_enum ] = header_value;
     }
 }
 
@@ -99,13 +99,13 @@ void MockResponse::setBody(std::string body)
     this->setBody(std::vector<char>(body.begin(), body.end()));
 }
 
-void MockResponse::setBody(std::vector<char> body) { this->_body = body; }
+void MockResponse::setBody(std::vector<char> body) { this->m_body = body; }
 
 // Set error response with appropriate status code
-void MockResponse::setErrorResponse(HttpStatusCode statusCode)
+void MockResponse::setErrorResponse(HttpStatusCode status_code)
 {
-    this->setStatusLine(statusCode);
-    std::string body = this->_httpHelper.getHtmlPage(statusCode);
+    this->setStatusLine(status_code);
+    std::string body = this->m_http_helper.getHtmlPage(status_code);
     this->setHeaders("content-type: text/html\r\n"
                      "content-length: " +
                      Converter::toString(body.length()) +
@@ -115,7 +115,7 @@ void MockResponse::setErrorResponse(HttpStatusCode statusCode)
     this->setBody(body);
 }
 
-void MockResponse::setErrorResponse(int statusCode) { (void)statusCode; }
+void MockResponse::setErrorResponse(int status_code) { (void)status_code; }
 
 // Set response fields from a complete response vector
 void MockResponse::setResponse(std::vector<char> response) { (void)response; }

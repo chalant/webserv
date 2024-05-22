@@ -14,14 +14,14 @@ RED = '\033[91m'
 YELLOW = '\033[93m'
 RESET = '\033[0m'
 
-def find_makefile_dirs(path):
+def findMakefileDirs(path):
     makefile_dirs = []
     for root, dirs, files in os.walk(path):
         if 'Makefile' in files:
             makefile_dirs.append(root)
     return makefile_dirs
 
-def get_executable_name(directory):
+def getExecutableName(directory):
     makefile_path = os.path.join(directory, 'Makefile')
     with open(makefile_path, 'r') as file:
         for line in file:
@@ -30,7 +30,7 @@ def get_executable_name(directory):
                 return match.group(1)
     return None
 
-def run_make_re(directory, executable_name):
+def runMakeRe(directory, executable_name):
     try:
         subprocess.run(['make', 'fclean'], cwd=directory, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.check_call(['make', '-j8'], cwd=directory, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -39,7 +39,7 @@ def run_make_re(directory, executable_name):
         print(f"\t{executable_name.ljust(33)}{RED}BUILD FAIL{RESET}")
         return False
 
-def run_executable(directory, executable_name):
+def runExecutable(directory, executable_name):
     executable_path = os.path.join(directory, executable_name)
     absolute_executable_path = os.path.abspath(executable_path)
 
@@ -50,7 +50,7 @@ def run_executable(directory, executable_name):
         else:
             print(f"\t{executable_name.ljust(33)}{RED}ERROR{RESET}")
 
-def run_python_files(directory):
+def runPythonFiles(directory):
     for file in os.listdir(directory):
         script_path = os.path.join(directory, file)
         try:
@@ -63,21 +63,21 @@ def main():
     print(f"{YELLOW}Running Webserv Test Suite...\n{RESET}")
 
     print(f"{YELLOW}\tUnit tests:{RESET}")
-    unit_test_dirs = find_makefile_dirs("unit_tests")
+    unit_test_dirs = findMakefileDirs("unit_tests")
     for directory in unit_test_dirs:
-        executable_name = get_executable_name(directory)
-        if run_make_re(directory, executable_name):
-            run_executable(directory, executable_name)
+        executable_name = getExecutableName(directory)
+        if runMakeRe(directory, executable_name):
+            runExecutable(directory, executable_name)
     
     print(f"\n{YELLOW}\tIntegration tests:{RESET}")
-    integration_test_dirs = find_makefile_dirs("integration_tests")
+    integration_test_dirs = findMakefileDirs("integration_tests")
     for directory in integration_test_dirs:
-        executable_name = get_executable_name(directory)
-        if run_make_re(directory, executable_name):
-            run_executable(directory, executable_name)
+        executable_name = getExecutableName(directory)
+        if runMakeRe(directory, executable_name):
+            runExecutable(directory, executable_name)
 
     print(f"\n{YELLOW}\tSystem tests:{RESET}")
-    run_python_files("system_tests")
+    runPythonFiles("system_tests")
     
     print(f"\n{YELLOW}...done{RESET}")
 

@@ -34,7 +34,7 @@ public:
     virtual int bind(int fd, int ip, int port) const;
 
     // Listens for incoming connections
-    virtual int listen(int fd, int maxConnections) const;
+    virtual int listen(int fd, int max_connections) const;
 
     // Performs file control operations on a socket
     virtual int fcntl(int fd, int cmd, int arg) const;
@@ -47,15 +47,15 @@ public:
     accept(int fd) const;
 
     // Sends data over the socket
-    virtual int send(int recipientSocketFd,
+    virtual int send(int recipient_socket_fd,
                      const std::vector<char> &data) const;
 
     // Sends data over the socket blocking until all data is sent
-    virtual int sendAll(int recipientSocketFd,
+    virtual int sendAll(int recipient_socket_fd,
                         const std::vector<char> &data) const;
 
     // Receives data from the socket
-    virtual ssize_t recv(int socketDescriptor, char *buffer, size_t len) const;
+    virtual ssize_t recv(int socket_descriptor, char *buffer, size_t len) const;
 };
 
 #endif // SOCKET_HPP

@@ -4,7 +4,7 @@
 
 // Constructor
 StaticFileResponseGenerator::StaticFileResponseGenerator(ILogger &logger)
-    : _mimeTypes(_initialiseMimeTypes()), _logger(logger)
+    : m_mime_types(m_initialiseMimeTypes()), m_logger(logger)
 {
 }
 
@@ -14,11 +14,11 @@ StaticFileResponseGenerator::~StaticFileResponseGenerator() {}
 // Generate response
 Triplet_t StaticFileResponseGenerator::generateResponse(
     const IRoute &route, const IRequest &request, IResponse &response,
-    const IConfiguration &configuration, const std::string &scriptName)
+    const IConfiguration &configuration, const std::string &script_name)
 {
     // void the unused parameters
     (void)configuration;
-    (void)scriptName;
+    (void)script_name;
 
     // Get the file path
     std::string root = route.getRoot();
@@ -30,22 +30,22 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
      // add a slash to the root
         root += "/";
     }
-    std::string filePath = root + uri;
+    std::string file_path = root + uri;
 
-    // check if the filePath is a directory
-    if (filePath[ filePath.size() - 1 ] == '/')
+    // check if the file_path is a directory
+    if (file_path[ file_path.size() - 1 ] == '/')
     {
         // append the default file name
-        filePath += route.getIndex();
+        file_path += route.getIndex();
     }
 
     // open the file in binary mode, in read mode and at the end
-    std::ifstream file(filePath.c_str(),
+    std::ifstream file(file_path.c_str(),
                        std::ios::in | std::ios::binary | std::ios::ate);
     if (!file.is_open())
     {
         // log the error
-        _logger.log(ERROR, "Could not open file: " + filePath);
+        m_logger.log(ERROR, "Could not open file: " + file_path);
 
         // set the response
         response.setErrorResponse(NOT_FOUND);
@@ -53,7 +53,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     else
     {
         // log the file being served
-        _logger.log(VERBOSE, "Serving file: " + filePath);
+        m_logger.log(VERBOSE, "Serving file: " + file_path);
 
         // get the size of the file
         std::streampos size = file.tellg();
@@ -69,7 +69,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
         if (!file)
         {
             // log the error
-            _logger.log(ERROR, "Error reading file: " + filePath);
+            m_logger.log(ERROR, "Error reading file: " + file_path);
 
             // set the response
             response.setErrorResponse(INTERNAL_SERVER_ERROR);
@@ -82,7 +82,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
             // set the response
             response.setBody(body);
             response.setStatusLine(OK);
-            response.addHeader(CONTENT_TYPE, this->_getMimeType(filePath));
+            response.addHeader(CONTENT_TYPE, this->m_getMimeType(file_path));
             response.addHeader(CONTENT_LENGTH, Converter::toString(body.size()));
         }
     }
@@ -94,55 +94,55 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
 
 // Resolve extension
 std::string
-StaticFileResponseGenerator::_getMimeType(const std::string &filePath) const
+StaticFileResponseGenerator::m_getMimeType(const std::string &file_path) const
 {
     std::string extension;
 
     // Find the last dot
-    size_t dotPosition = filePath.find_last_of(".");
+    size_t dot_position = file_path.find_last_of(".");
 
     // Get the extension
-    if (dotPosition == std::string::npos)
+    if (dot_position == std::string::npos)
         extension = "unknown";
     else
-        extension = filePath.substr(dotPosition + 1);
+        extension = file_path.substr(dot_position + 1);
 
     // Return the mime type
-    return this->_mimeTypes.at(extension);
+    return this->m_mime_types.at(extension);
 }
 
 // Set the mime types
 std::map<std::string, std::string>
-StaticFileResponseGenerator::_initialiseMimeTypes() const
+StaticFileResponseGenerator::m_initialiseMimeTypes() const
 {
-    std::map<std::string, std::string> mimeTypes;
-    mimeTypes[ "txt" ] = "text/plain";
-    mimeTypes[ "html" ] = "text/html";
-    mimeTypes[ "css" ] = "text/css";
-    mimeTypes[ "js" ] = "text/javascript";
-    mimeTypes[ "jpg" ] = "image/jpeg";
-    mimeTypes[ "jpeg" ] = "image/jpeg";
-    mimeTypes[ "png" ] = "image/png";
-    mimeTypes[ "gif" ] = "image/gif";
-    mimeTypes[ "ico" ] = "image/x-icon";
-    mimeTypes[ "json" ] = "application/json";
-    mimeTypes[ "pdf" ] = "application/pdf";
-    mimeTypes[ "zip" ] = "application/zip";
-    mimeTypes[ "tar" ] = "application/x-tar";
-    mimeTypes[ "xml" ] = "application/xml";
-    mimeTypes[ "mp3" ] = "audio/mpeg";
-    mimeTypes[ "wav" ] = "audio/wav";
-    mimeTypes[ "mp4" ] = "video/mp4";
-    mimeTypes[ "mpeg" ] = "video/mpeg";
-    mimeTypes[ "webm" ] = "video/webm";
-    mimeTypes[ "woff" ] = "font/woff";
-    mimeTypes[ "woff2" ] = "font/woff2";
-    mimeTypes[ "ttf" ] = "font/ttf";
-    mimeTypes[ "otf" ] = "font/otf";
-    mimeTypes[ "eot" ] = "font/eot";
-    mimeTypes[ "svg" ] = "image/svg+xml";
-    mimeTypes[ "unknown" ] = "application/octet-stream";
-    return mimeTypes;
+    std::map<std::string, std::string> mime_types;
+    mime_types[ "txt" ] = "text/plain";
+    mime_types[ "html" ] = "text/html";
+    mime_types[ "css" ] = "text/css";
+    mime_types[ "js" ] = "text/javascript";
+    mime_types[ "jpg" ] = "image/jpeg";
+    mime_types[ "jpeg" ] = "image/jpeg";
+    mime_types[ "png" ] = "image/png";
+    mime_types[ "gif" ] = "image/gif";
+    mime_types[ "ico" ] = "image/x-icon";
+    mime_types[ "json" ] = "application/json";
+    mime_types[ "pdf" ] = "application/pdf";
+    mime_types[ "zip" ] = "application/zip";
+    mime_types[ "tar" ] = "application/x-tar";
+    mime_types[ "xml" ] = "application/xml";
+    mime_types[ "mp3" ] = "audio/mpeg";
+    mime_types[ "wav" ] = "audio/wav";
+    mime_types[ "mp4" ] = "video/mp4";
+    mime_types[ "mpeg" ] = "video/mpeg";
+    mime_types[ "webm" ] = "video/webm";
+    mime_types[ "woff" ] = "font/woff";
+    mime_types[ "woff2" ] = "font/woff2";
+    mime_types[ "ttf" ] = "font/ttf";
+    mime_types[ "otf" ] = "font/otf";
+    mime_types[ "eot" ] = "font/eot";
+    mime_types[ "svg" ] = "image/svg+xml";
+    mime_types[ "unknown" ] = "application/octet-stream";
+    return mime_types;
 }
 
 // Path: srcs/response/Response.cpp

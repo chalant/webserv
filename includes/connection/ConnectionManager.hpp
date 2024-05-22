@@ -28,11 +28,11 @@ class ConnectionManager : public IConnectionManager
 {
 private:
     std::map<SocketDescriptor_t, IConnection *>
-        _connections;                            // active connections
-    std::map<SessionId_t, ISession *> _sessions; // active sessions
-    time_t _lastGarbageCollection; // last time garbage collection was performed
-    IFactory &_factory; // factory object to create connections and sessions
-    ILogger &_logger;   // logger object
+        m_connections;                            // active connections
+    std::map<SessionId_t, ISession *> m_sessions; // active sessions
+    time_t m_last_garbage_collection; // last time garbage collection was performed
+    IFactory &m_factory; // factory object to create connections and sessions
+    ILogger &m_logger;   // logger object
 
     // Generate a unique session ID
     SessionId_t _generateSessionId() const;
@@ -47,11 +47,11 @@ public:
 
     // Methods related to connections
     virtual void addConnection(
-        std::pair<int, std::pair<std::string, std::string> > clientInfo);
-    virtual void removeConnection(SocketDescriptor_t socketDescriptor);
-    virtual IConnection &getConnection(SocketDescriptor_t socketDescriptor);
-    virtual IRequest &getRequest(SocketDescriptor_t socketDescriptor);
-    virtual IResponse &getResponse(SocketDescriptor_t socketDescriptor);
+        std::pair<int, std::pair<std::string, std::string> > client_info);
+    virtual void removeConnection(SocketDescriptor_t socket_descriptor);
+    virtual IConnection &getConnection(SocketDescriptor_t socket_descriptor);
+    virtual IRequest &getRequest(SocketDescriptor_t socket_descriptor);
+    virtual IResponse &getResponse(SocketDescriptor_t socket_descriptor);
 
     // Methods related to sessions
     virtual SessionId_t addSession();

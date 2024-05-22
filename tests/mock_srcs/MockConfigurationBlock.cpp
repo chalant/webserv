@@ -11,7 +11,7 @@
 // Constructor
 MockConfigurationBlock::MockConfigurationBlock(ILogger &logger,
                                                const std::string name)
-    : _blocks(), _directives(), _parameters(), _logger(logger), _name(name)
+    : m_blocks(), m_directives(), m_parameters(), m_logger(logger), m_name(name)
 {
 }
 
@@ -19,8 +19,8 @@ MockConfigurationBlock::MockConfigurationBlock(ILogger &logger,
 MockConfigurationBlock::~MockConfigurationBlock()
 {
     for (std::map<std::string, std::vector<std::string> *>::const_iterator it =
-             _directives.begin();
-         it != _directives.end(); ++it)
+             m_directives.begin();
+         it != m_directives.end(); ++it)
     {
         delete it->second;
     }
@@ -30,31 +30,31 @@ MockConfigurationBlock::~MockConfigurationBlock()
 void MockConfigurationBlock::setBlock(const std::string &parameter,
                                       IConfiguration *block)
 {
-    this->_logger.log(DEBUG, "Setting Block '" + parameter + "' to '" +
+    this->m_logger.log(DEBUG, "Setting Block '" + parameter + "' to '" +
                                  block->getName() + "'");
 
     // Add the block to the BlockList
-    this->_blocks[ parameter ].push_back(block);
+    this->m_blocks[ parameter ].push_back(block);
 }
 
 void MockConfigurationBlock::setString(const std::string &parameter,
                                        const std::string &value)
 {
-    this->_logger.log(DEBUG, "Setting Directive '" + parameter + "' to " +
+    this->m_logger.log(DEBUG, "Setting Directive '" + parameter + "' to " +
                                  value + "'");
 
     // Check if the parameter already exists
-    if (_directives.find(parameter) != _directives.end())
+    if (m_directives.find(parameter) != m_directives.end())
     {
         // If it exists, add the value to the existing vector
-        _directives[ parameter ]->push_back(value);
+        m_directives[ parameter ]->push_back(value);
     }
     else
     {
         // If it doesn't exist, create a new vector with one element
         std::vector<std::string> *vec = new std::vector<std::string>;
         vec->push_back(value);
-        _directives[ parameter ] = vec;
+        m_directives[ parameter ] = vec;
     }
 }
 
@@ -82,10 +82,10 @@ void MockConfigurationBlock::setInt(const std::string &parameter, int value)
 // Getters
 const BlockList &MockConfigurationBlock::getBlocks(const std::string &parameter)
 {
-    this->_logger.log(DEBUG, "Getting Block '" + parameter + "'");
+    this->m_logger.log(DEBUG, "Getting Block '" + parameter + "'");
     try
     {
-        return (_blocks.at(parameter));
+        return (m_blocks.at(parameter));
     }
     catch (const std::out_of_range &e)
     {
@@ -98,7 +98,7 @@ MockConfigurationBlock::getStringVector(const std::string &parameter) const
 {
     try
     {
-        return (*_directives.at(parameter));
+        return (*m_directives.at(parameter));
     }
     catch (const std::out_of_range &e)
     {
@@ -109,9 +109,9 @@ MockConfigurationBlock::getStringVector(const std::string &parameter) const
 const std::string &MockConfigurationBlock::getString(const std::string &key,
                                                      size_t index) const
 {
-    this->_logger.log(DEBUG, "Getting Directive '" + key + "' at index " +
+    this->m_logger.log(DEBUG, "Getting Directive '" + key + "' at index " +
                                  std::to_string(index) + "'");
-    return _directives.at(key)->at(index);
+    return m_directives.at(key)->at(index);
 }
 
 int MockConfigurationBlock::getInt(const std::string &parameter,
@@ -119,7 +119,7 @@ int MockConfigurationBlock::getInt(const std::string &parameter,
 {
     try
     {
-        return (std::stoi(_directives.at(parameter)->at(index)));
+        return (std::stoi(m_directives.at(parameter)->at(index)));
     }
     catch (const std::out_of_range &e)
     {
@@ -137,7 +137,7 @@ size_t MockConfigurationBlock::getSize_t(const std::string &parameter,
 {
     try
     {
-        return (std::stoul(_directives.at(parameter)->at(index)));
+        return (std::stoul(m_directives.at(parameter)->at(index)));
     }
     catch (const std::out_of_range &e)
     {
@@ -171,13 +171,13 @@ void MockConfigurationBlock::print(size_t depth) const
     static_cast<void>(depth);
 }
 
-const std::string &MockConfigurationBlock::getName() const { return _name; }
+const std::string &MockConfigurationBlock::getName() const { return m_name; }
 
 bool MockConfigurationBlock::isRegex(void) const { return false; }
 
 std::vector<std::string> &MockConfigurationBlock::getParameters(void)
 {
-    return this->_parameters;
+    return this->m_parameters;
 }
 
 // Path: tests/mock_headers/MockLogger.hpp

@@ -26,24 +26,24 @@
  * WebservExceptions.hpp file.
  */
 
-// Constructor: Initializes ExceptionHandler with an logger instance, _server
+// Constructor: Initializes ExceptionHandler with an logger instance, m_server
 // linking is deferred
 ExceptionHandler::ExceptionHandler(ILogger &logger)
-    : _logger(logger), _server(NULL)
+    : m_logger(logger), m_server(NULL)
 {
     // Log debug message indicating the creation of an ExceptionHandler
     // instance.
-    this->_logger.log(VERBOSE, "ExceptionHandler created.");
+    this->m_logger.log(VERBOSE, "ExceptionHandler created.");
 }
 
 // Constructor: Initializes ExceptionHandler with an logger instance and a
 // pointer to the server instance.
 ExceptionHandler::ExceptionHandler(ILogger &logger, Server *server)
-    : _logger(logger), _server(server)
+    : m_logger(logger), m_server(server)
 {
     // Log debug message indicating the creation of an ExceptionHandler
     // instance.
-    this->_logger.log(VERBOSE, "ExceptionHandler created.");
+    this->m_logger.log(VERBOSE, "ExceptionHandler created.");
 }
 
 // Destructor: No dynamic memory management, so a default destructor is
@@ -52,16 +52,16 @@ ExceptionHandler::~ExceptionHandler()
 {
     // Log debug message indicating the destruction of an ExceptionHandler
     // instance.
-    this->_logger.log(VERBOSE, "ExceptionHandler destroyed.");
+    this->m_logger.log(VERBOSE, "ExceptionHandler destroyed.");
 }
 
-// _handleWebservException method: Logs exception details and handles critical
+// m_handleWebservException method: Logs exception details and handles critical
 // exceptions.
-int ExceptionHandler::_handleWebservException(const WebservException &e,
+int ExceptionHandler::m_handleWebservException(const WebservException &e,
                                               const std::string &context) const
 {
     // Log the exception details, including context and error message.
-    this->_logger.log(e.getLogLevel(), "[EXCEPTION] " + context +
+    this->m_logger.log(e.getLogLevel(), "[EXCEPTION] " + context +
                                            (context.empty() ? ": " : " : ") +
                                            e.what());
 
@@ -69,19 +69,19 @@ int ExceptionHandler::_handleWebservException(const WebservException &e,
     if (e.getLogLevel() == CRITICAL)
     {
         // If critical, log termination message and terminate the server.
-        this->_logger.log(CRITICAL, "webserv will now terminate.");
-        if (this->_server)
-            this->_server->terminate(e.getErrorCode());
+        this->m_logger.log(CRITICAL, "webserv will now terminate.");
+        if (this->m_server)
+            this->m_server->terminate(e.getErrorCode());
     }
     return e.getErrorCode();
 }
 
-// _handleStandardException method: Logs standard exception details
-int ExceptionHandler::_handleStandardException(const std::exception &e,
+// m_handleStandardException method: Logs standard exception details
+int ExceptionHandler::m_handleStandardException(const std::exception &e,
                                                const std::string &context) const
 {
     // Log the exception details, including context and error message.
-    this->_logger.log(UNKNOWN, "[EXCEPTION] " + context +
+    this->m_logger.log(UNKNOWN, "[EXCEPTION] " + context +
                                    (context.empty() ? ": " : " : ") + e.what());
     return 0;
 }
@@ -94,11 +94,11 @@ int ExceptionHandler::handleException(const std::exception &e,
     if (const WebservException *wse =
             dynamic_cast<const WebservException *>(&e))
     {
-        return this->_handleWebservException(*wse, context);
+        return this->m_handleWebservException(*wse, context);
     }
     else
     {
-        return this->_handleStandardException(e, context);
+        return this->m_handleStandardException(e, context);
     }
 }
 

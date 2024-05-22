@@ -178,18 +178,18 @@ class HttpHeaderHelper
 private:
     // Member variables
     const std::vector<std::string>
-        _headerList; // List of string representations of HTTP headers
+        m_header_list; // List of string representations of HTTP headers
     const std::map<std::string, HttpHeader>
-        _stringHttpHeaderMap; // Map of string representations to HttpHeader
+        m_string_http_header_map; // Map of string representations to HttpHeader
                               // enum values
     const std::map<HttpHeader, std::string>
-        _httpHeaderStringMap; // Map of HttpHeader enum values to string
+        m_http_header_string_map; // Map of HttpHeader enum values to string
                               // representations
 
     // Private member functions for initialization
-    static std::vector<std::string> _setHeaderList();
-    static std::map<std::string, HttpHeader> _setStringHttpHeaderMap();
-    static std::map<HttpHeader, std::string> _setHttpHeaderStringMap();
+    static std::vector<std::string> m_setHeaderList();
+    static std::map<std::string, HttpHeader> m_setStringHttpHeaderMap();
+    static std::map<HttpHeader, std::string> m_setHttpHeaderStringMap();
 
 public:
     // Constructor

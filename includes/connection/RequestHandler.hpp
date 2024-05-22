@@ -45,45 +45,45 @@ class RequestHandler : public IRequestHandler
 {
 private:
     // Private member variables
-    IBufferManager &_bufferManager;         // the buffer manager
-    IConnectionManager &_connectionManager; // the connection manager
-    IClientHandler &_clientHandler;     // Handles communication with clients
-    const RequestParser _requestParser; // Parses incoming requests
-    ITempRouter &_router; // Routes requests to appropriate handlers
+    IBufferManager &m_buffer_manager;         // the buffer manager
+    IConnectionManager &m_connection_manager; // the connection manager
+    IClientHandler &m_client_handler;     // Handles communication with clients
+    const RequestParser m_request_parser; // Parses incoming requests
+    ITempRouter &m_router; // Routes requests to appropriate handlers
 
-    // AResponseGenerator *_requestHandler;                 // Pointer to the
+    // AResponseGenerator *m_request_handler;                 // Pointer to the
     // recruited request handler
-    HttpHelper _httpHelper; // Helper class for request-related operations
-    ILogger &_logger;       // Reference to the logger
-    const IExceptionHandler &_exceptionHandler; // Ref to the exception handler
-    std::map<int, int> _pipeRoutes; // pipe descriptors to socket descriptors
+    HttpHelper m_http_helper; // Helper class for request-related operations
+    ILogger &m_logger;       // Reference to the logger
+    const IExceptionHandler &m_exception_handler; // Ref to the exception handler
+    std::map<int, int> m_pipe_routes; // pipe descriptors to socket descriptors
 
     // private method
-    int _sendResponse(int socketDescriptor);
+    int m_sendResponse(int socket_descriptor);
 
 public:
     // Constructor
-    RequestHandler(IBufferManager &bufferManager,
-                   IConnectionManager &connectionManager,
+    RequestHandler(IBufferManager &buffer_manager,
+                   IConnectionManager &connection_manager,
                    const IConfiguration &configuration, ITempRouter &router,
-                   ILogger &logger, const IExceptionHandler &IExceptionHandler,
-                   IClientHandler &clientHandler);
+                   ILogger &logger, const IExceptionHandler &exception_handler,
+                   IClientHandler &client_handler);
 
     // Destructor
     ~RequestHandler();
 
     // Handles client requests
-    Triplet_t handleRequest(int socketDescriptor);
+    Triplet_t handleRequest(int socket_descriptor);
 
     // Handles exceptions related to pipe events
-    int handlePipeException(int pipeDescriptor);
+    int handlePipeException(int pipe_descriptor);
 
     // Handles reading response from pipe
-    int handlePipeRead(int pipeDescriptor);
+    int handlePipeRead(int pipe_descriptor);
 
     // Handles error responses
-    void handleErrorResponse(int socketDescriptor, int statusCode);
-    void handleErrorResponse(int socketDescriptor, HttpStatusCode statusCode);
+    void handleErrorResponse(int socket_descriptor, int status_code);
+    void handleErrorResponse(int socket_descriptor, HttpStatusCode status_code);
 };
 
 #endif // CONNECTIONS_HPP

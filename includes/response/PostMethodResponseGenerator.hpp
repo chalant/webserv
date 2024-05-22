@@ -10,8 +10,8 @@ this class is derived from AResponseGenerator, and is selected by 'Router'*/
 class PostMethodResponseGenerator: public IResponseGenerator
 {
 	private:
-		ILogger	&_logger;
-		std::map<std::string, std::string>	_mime_type_extension;
+		ILogger	&m_logger;
+		std::map<std::string, std::string>	m_mime_type_extension;
 	public:
 		PostMethodResponseGenerator(ILogger &logger);
 		~PostMethodResponseGenerator();
@@ -19,7 +19,7 @@ class PostMethodResponseGenerator: public IResponseGenerator
 									const IRequest &request,
 									IResponse &response,
 									const IConfiguration &configuration,
-									const std::string &scriptName = "");
+									const std::string &script_name = "");
 };
 
 #endif

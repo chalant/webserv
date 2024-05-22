@@ -43,7 +43,7 @@ Recognizer::Recognizer()
 
 Recognizer::~Recognizer() {}
 
-void Recognizer::scan(std::vector<std::vector<EarleyItem> > &sets,
+void Recognizer::m_scan(std::vector<std::vector<EarleyItem> > &sets,
                       Token const &token, EarleyItem const &item)
 {
     if (m_symbol->match(token))
@@ -53,7 +53,7 @@ void Recognizer::scan(std::vector<std::vector<EarleyItem> > &sets,
     }
 }
 
-void Recognizer::complete(Grammar const &grammar,
+void Recognizer::m_complete(Grammar const &grammar,
                           std::vector<std::vector<EarleyItem> > &sets,
                           std::vector<EarleyItem> &current_set, int item_index)
 {
@@ -81,7 +81,7 @@ void Recognizer::complete(Grammar const &grammar,
     }
 }
 
-void Recognizer::predict(const Grammar &grammar,
+void Recognizer::m_predict(const Grammar &grammar,
                          std::vector<EarleyItem> &current_set)
 {
     for (size_t i = 0; i < grammar.size(); i++)
@@ -128,16 +128,16 @@ void Recognizer::recognize(std::vector<Token> const &tokens,
             m_symbol = next_symbol(grammar, *current_item);
             if (m_symbol == NULL)
             {
-                complete(grammar, sets, sets[ i ], j);
+                m_complete(grammar, sets, sets[ i ], j);
             }
             else if (m_symbol->terminal() &&
                      static_cast<size_t>(i) < tokens.size())
             {
-                scan(sets, tokens[ i ], *current_item);
+                m_scan(sets, tokens[ i ], *current_item);
             }
             else
             {
-                predict(grammar, sets[ i ]);
+                m_predict(grammar, sets[ i ]);
             }
         }
     }

@@ -44,35 +44,35 @@ class Request : public IRequest
 {
 private:
     // Request line components
-    HttpMethod _method;
-    std::string _uri;
-    HttpVersion _httpVersion;
+    HttpMethod m_method;
+    std::string m_uri;
+    HttpVersion m_http_version;
 
     // Request headers
-    std::map<HttpHeader, std::string> _headers;
+    std::map<HttpHeader, std::string> m_headers;
 
     // Request body
-    std::vector<char> _body;
+    std::vector<char> m_body;
 
     // Included Request parameters
-    std::string _hostName;
-    std::string _hostPort;
-    std::string _authority;
-    std::map<std::string, std::string> _queryParameters;
-    std::pair<std::string, std::string> _remoteAddress;
-    std::map<std::string, std::string> _cookies;
-    std::vector<BodyParameter> _bodyParameters;
-    bool _uploadRequest;
-    std::string _requestId;
-    std::string _rawRequest;
-    const IConfiguration &_configuration;
+    std::string m_host_name;
+    std::string m_host_port;
+    std::string m_authority;
+    std::map<std::string, std::string> m_query_parameters;
+    std::pair<std::string, std::string> m_remote_address;
+    std::map<std::string, std::string> m_cookies;
+    std::vector<BodyParameter> m_body_parameters;
+    bool m_upload_request;
+    std::string m_request_id;
+    std::string m_raw_request;
+    const IConfiguration &m_configuration;
 
     // Helper
-    const HttpHelper &_httpHelper;
+    const HttpHelper &m_http_helper;
 
 public:
     // Constructor and Destructor
-    Request(const IConfiguration &configuration, const HttpHelper &httpHelper);
+    Request(const IConfiguration &configuration, const HttpHelper &http_helper);
     Request(const Request &src);
     ~Request();
 
@@ -96,7 +96,7 @@ public:
     std::string getQueryString() const;
     std::string getContentLength() const;
     std::string getContentType() const;
-    std::string getPathInfo(const std::string &scriptName) const;
+    std::string getPathInfo(const std::string &script_name) const;
     std::string getClientIp() const;
     std::string getHostName() const;
     std::string getHostPort() const;
@@ -107,14 +107,14 @@ public:
     // Setters
     void setMethod(const std::string &method);
     void setUri(const std::string &uri);
-    void setHttpVersion(const std::string &httpVersion);
+    void setHttpVersion(const std::string &http_version);
     void addHeader(const std::string &key, const std::string &value);
     void setBody(const std::vector<char> &body);
     void setBody(const std::string &body);
     void addCookie(const std::string &key, const std::string &value);
     void setAuthority();
-    void addBodyParameter(const BodyParameter &bodyParameter);
-    void setUploadRequest(bool uploadRequest);
+    void addBodyParameter(const BodyParameter &body_parameter);
+    void setUploadRequest(bool upload_request);
 };
 
 #endif // REQUEST_HPP

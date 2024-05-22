@@ -66,7 +66,7 @@ Tokenizer::Tokenizer(const std::vector<std::string> separators,
 
 Tokenizer::~Tokenizer() {}
 
-void Tokenizer::makeTokens(const std::string &str)
+void Tokenizer::m_makeTokens(const std::string &str)
 {
     size_t start = 0;
     size_t i = 0;
@@ -91,7 +91,7 @@ void Tokenizer::makeTokens(const std::string &str)
 const std::vector<Token> &Tokenizer::tokenize(const std::string &str)
 {
     m_tokens.clear();
-    makeTokens(str);
+    m_makeTokens(str);
     return m_tokens;
 }
 
@@ -106,7 +106,7 @@ const std::vector<Token> &Tokenizer::tokenize(std::ifstream &stream)
     m_tokens.clear();
     while (std::getline(stream, line))
     {
-        makeTokens(line);
+        m_makeTokens(line);
     }
     return m_tokens;
 }

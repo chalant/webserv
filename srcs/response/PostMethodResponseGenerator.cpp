@@ -3,17 +3,17 @@
 
 
 PostMethodResponseGenerator::PostMethodResponseGenerator(ILogger &logger)
-	: _logger(logger)
+	: m_logger(logger)
 {
-	_mime_type_extension[ "text/plain" ] = "txt";
-    _mime_type_extension[ "text/html" ] = "html";
-    _mime_type_extension[ "image/jpeg" ] = "jpg";
-    _mime_type_extension[ "image/png" ] = "png";
-    _mime_type_extension[ "application/json" ] = "json";
-    _mime_type_extension[ "application/pdf" ] = "pdf";
-    _mime_type_extension[ "audio/mpeg" ] = "mp3";
-    _mime_type_extension[ "video/mp4" ] = "mp4";
-    _mime_type_extension[ "application/zip" ] = "zip";
+	m_mime_type_extension[ "text/plain" ] = "txt";
+    m_mime_type_extension[ "text/html" ] = "html";
+    m_mime_type_extension[ "image/jpeg" ] = "jpg";
+    m_mime_type_extension[ "image/png" ] = "png";
+    m_mime_type_extension[ "application/json" ] = "json";
+    m_mime_type_extension[ "application/pdf" ] = "pdf";
+    m_mime_type_extension[ "audio/mpeg" ] = "mp3";
+    m_mime_type_extension[ "video/mp4" ] = "mp4";
+    m_mime_type_extension[ "application/zip" ] = "zip";
 }
 
 PostMethodResponseGenerator::~PostMethodResponseGenerator()
@@ -24,20 +24,20 @@ Triplet_t	PostMethodResponseGenerator::generateResponse(const IRoute &route,
 									const IRequest &request,
                                     IResponse &response,
                                     const IConfiguration &configuration,
-                                    const std::string &scriptName)
+                                    const std::string &script_name)
 {
 	(void)route;
 	(void)request;
 	(void)response;
 	(void)configuration;
-	(void)scriptName;
+	(void)script_name;
 	std::string file_path = route.getRoot() + route.getPath();
 
 	std::ofstream	file(file_path.c_str());
 
 	if (!file.is_open())
 	{
-		_logger.log(ERROR, "Could not open file: " + file_path);
+		m_logger.log(ERROR, "Could not open file: " + file_path);
 		//todo: need a proper error reponse for this case.
 		response.setErrorResponse(NOT_FOUND);
 	}

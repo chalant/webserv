@@ -21,9 +21,9 @@
 
 struct BodyParameter
 {
-    std::string dispositionType;
-    std::string contentType;
-    std::string fieldName;
+    std::string disposition_type;
+    std::string content_type;
+    std::string field_name;
     std::map<std::string, std::string> headers;
     std::string data;
 };
@@ -50,7 +50,7 @@ public:
     virtual std::string getQueryString() const = 0;
     virtual std::string getContentLength() const = 0;
     virtual std::string getContentType() const = 0;
-    virtual std::string getPathInfo(const std::string &scriptName) const = 0;
+    virtual std::string getPathInfo(const std::string &script_name) const = 0;
     virtual std::string getClientIp() const = 0;
     virtual std::string getHostName() const = 0;
     virtual std::string getHostPort() const = 0;
@@ -61,7 +61,7 @@ public:
     // Setters
     virtual void setMethod(const std::string &method) = 0;
     virtual void setUri(const std::string &uri) = 0;
-    virtual void setHttpVersion(const std::string &httpVersion) = 0;
+    virtual void setHttpVersion(const std::string &http_version) = 0;
     virtual void addHeader(const std::string &key,
                            const std::string &value) = 0;
     virtual void setBody(const std::vector<char> &body) = 0;
@@ -69,8 +69,8 @@ public:
     virtual void addCookie(const std::string &key,
                            const std::string &value) = 0;
     virtual void setAuthority() = 0;
-    virtual void addBodyParameter(const BodyParameter &bodyParameter) = 0;
-    virtual void setUploadRequest(bool uploadRequest) = 0;
+    virtual void addBodyParameter(const BodyParameter &body_parameter) = 0;
+    virtual void setUploadRequest(bool upload_request) = 0;
 };
 
 #endif // IREQUEST_HPP

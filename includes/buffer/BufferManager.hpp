@@ -36,9 +36,9 @@ class SocketBuffer;
 class BufferManager : public IBufferManager
 {
 private:
-    std::map<int, IBuffer *> _buffers;
-    size_t _flushThreshold;
-    ISocket &_socket;
+    std::map<int, IBuffer *> m_buffers;
+    size_t m_flush_threshold;
+    ISocket &m_socket;
 
 public:
     // Constructor
@@ -48,10 +48,10 @@ public:
     ~BufferManager();
 
     // Push into a file buffer
-    ssize_t pushFileBuffer(int fileDescriptor, const std::vector<char> &data);
+    ssize_t pushFileBuffer(int file_descriptor, const std::vector<char> &data);
 
     // Push into a socket buffer
-    ssize_t pushSocketBuffer(int socketDescriptor,
+    ssize_t pushSocketBuffer(int socket_descriptor,
                              const std::vector<char> &data);
 
     // Flush the buffer for a specific descriptor

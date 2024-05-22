@@ -35,12 +35,12 @@
  * using the log() method.
  *
  * Example error log:
- * this->_logger.log(INFO, "listening on port 8080");
+ * this->m_logger.log(INFO, "listening on port 8080");
  * Output in error log: timestamp="2011-01-01T01:11:11" level="[info]"
  * message="listening on port 8080"
  *
  * Example access log:
- * this->_logger.log(request, response);
+ * this->m_logger.log(request, response);
  * Output in access log: timestamp="2011-01-01T01:11:11" clientIP="127.0.0.1"
  * method="GET" requestURI="/index.php" httpVersion="HTTP/1.1" etc.
  */
@@ -58,23 +58,23 @@
 class Logger : public ILogger
 {
 private:
-    ILoggerConfiguration *_configuration;
-    IBufferManager &_bufferManager;
-    const LogLevelHelper _logLevelHelper;
+    ILoggerConfiguration *m_configuration;
+    IBufferManager &m_buffer_manager;
+    const LogLevelHelper m_log_level_helper;
 
     // Private methods
     std::string
-    _getCurrentTimestamp() const; // Method to get the current timestamp
-    void _appendMapToLog(std::ostringstream &ss, const std::string &fieldName,
-                         const std::map<std::string, std::string> &dataMap)
+    m_getCurrentTimestamp() const; // Method to get the current timestamp
+    void m_appendMapToLog(std::ostringstream &ss, const std::string &field_name,
+                         const std::map<std::string, std::string> &data_map)
         const; // Method to append a map to the log message
-    int _pushToBuffer(const std::string &logMessage,
-                      const int fileDescriptor); // Method to push log messages
+    int m_pushToBuffer(const std::string &log_message,
+                      const int file_descriptor); // Method to push log messages
                                                  // to the buffer
 
 public:
     // Constructors and Destructor
-    Logger(IBufferManager &bufferManager); // Constructor
+    Logger(IBufferManager &buffer_manager); // Constructor
     virtual ~Logger();                     // Destructor
 
     // Getter method

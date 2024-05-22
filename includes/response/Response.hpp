@@ -16,25 +16,25 @@ class Response : public IResponse
 {
 private:
     // Response Status line
-    std::string _statusLine;
+    std::string m_status_line;
 
     // Response headers
-    std::map<HttpHeader, std::string> _headers;
+    std::map<HttpHeader, std::string> m_headers;
 
     // Response body
-    std::vector<char> _body;
+    std::vector<char> m_body;
 
     // Body size
-    size_t _contentLength;
+    size_t m_content_length;
 
     // Response Cookies
-    std::map<std::string, std::string> _cookies;
+    std::map<std::string, std::string> m_cookies;
 
     // Helper
-    const HttpHelper &_httpHelper;
+    const HttpHelper &m_http_helper;
 
 public:
-    Response(const HttpHelper &httpHelper);
+    Response(const HttpHelper &http_helper);
     ~Response();
 
     // Getters for status line, headers, and body
@@ -44,8 +44,8 @@ public:
     virtual std::vector<char> getBody() const;
 
     // Setters for status line, headers, and body
-    virtual void setStatusLine(std::string statusLine);
-    virtual void setStatusLine(HttpStatusCode statusCode);
+    virtual void setStatusLine(std::string status_line);
+    virtual void setStatusLine(HttpStatusCode status_code);
     virtual void setHeaders(std::vector<std::string> headers);
     virtual void setHeaders(std::string headers);
     virtual void addHeader(HttpHeader header, std::string value);
@@ -56,8 +56,8 @@ public:
     virtual void setBody(std::vector<char> body);
 
     // Set error response with appropriate status code
-    virtual void setErrorResponse(HttpStatusCode statusCode);
-    virtual void setErrorResponse(int statusCode);
+    virtual void setErrorResponse(HttpStatusCode status_code);
+    virtual void setErrorResponse(int status_code);
 
     // Set response fields from a complete response vector
     virtual void setResponse(std::vector<char> response);

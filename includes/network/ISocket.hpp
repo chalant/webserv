@@ -24,10 +24,10 @@ public:
     virtual int socket() const = 0;
 
     // Binds the socket to an IP address and port
-    virtual int bind(int socketDescriptor, int ip, int port) const = 0;
+    virtual int bind(int socket_descriptor, int ip, int port) const = 0;
 
     // Listens for incoming connections
-    virtual int listen(int fd, int maxConnections) const = 0;
+    virtual int listen(int fd, int max_connections) const = 0;
 
     // Performs file control operations on a socket
     virtual int fcntl(int fd, int cmd, int arg) const = 0;
@@ -40,15 +40,15 @@ public:
     accept(int fd) const = 0;
 
     // Sends data over the socket
-    virtual int send(int recipientSocketFd,
+    virtual int send(int recipient_socket_fd,
                      const std::vector<char> &data) const = 0;
 
     // Sends data over the socket blocking until all data is sent
-    virtual int sendAll(int recipientSocketFd,
+    virtual int sendAll(int recipient_socket_fd,
                         const std::vector<char> &data) const = 0;
 
     // Receives data from the socket
-    virtual ssize_t recv(int socketDescriptor, char *buffer,
+    virtual ssize_t recv(int socket_descriptor, char *buffer,
                          size_t len) const = 0;
 };
 

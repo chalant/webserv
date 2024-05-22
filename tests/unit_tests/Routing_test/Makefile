@@ -64,17 +64,12 @@ SRCS        =	main.cpp \
 				../../../srcs/pollfd/PollfdQueue.cpp \
 				../../../srcs/request/Request.cpp \
 				../../../srcs/request/RequestParser.cpp \
-				../../../srcs/response/AResponseGenerator.cpp \
 				../../../srcs/response/CgiResponseGenerator.cpp \
-				../../../srcs/response/DeleteMethodResponseGenerator.cpp \
-				../../../srcs/response/ErrorPageResponseGenerator.cpp \
-				../../../srcs/response/GetMethodResponseGenerator.cpp \
 				../../../srcs/response/PostMethodResponseGenerator.cpp \
 				../../../srcs/response/RegexMatcher.cpp \
 				../../../srcs/response/Response.cpp \
 				../../../srcs/response/Router.cpp \
 				../../../srcs/response/StaticFileResponseGenerator.cpp \
-				../../../srcs/response/UploadResponseGenerator.cpp \
 				../../mock_srcs/MockLogger.cpp
 				
 #-------------------OBJECTS----------------------

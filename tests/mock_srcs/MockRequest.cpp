@@ -26,22 +26,22 @@ MockRequest &MockRequest::operator=(const MockRequest &src)
 // Getters
 HttpMethod MockRequest::getMethod() const { return GET; };
 
-std::string MockRequest::getMethodString() const { return _testMethod; };
+std::string MockRequest::getMethodString() const { return m_test_method; };
 
-std::string MockRequest::getTestMethod() const { return _testMethod; };
+std::string MockRequest::getTestMethod() const { return m_test_method; };
 
-std::string MockRequest::getUri() const { return _testUri; };
+std::string MockRequest::getUri() const { return m_test_uri; };
 
 HttpVersion MockRequest::getHttpVersion() const { return HTTP_1_1; };
 
 std::string MockRequest::getTestHttpVersion() const
 {
-    return _testHttpVersion;
+    return m_test_http_version;
 };
 
 std::string MockRequest::getHttpVersionString() const
 {
-    return _testHttpVersion;
+    return m_test_http_version;
 };
 
 const std::map<HttpHeader, std::string> MockRequest::getHeaders() const
@@ -57,12 +57,12 @@ std::string MockRequest::getHeaderValue(HttpHeader header) const
 
 std::map<std::string, std::string> MockRequest::getHeadersStringMap() const
 {
-    return _testHeaders;
+    return m_test_headers;
 };
 
 std::map<std::string, std::string> MockRequest::getTestHeadersStringMap() const
 {
-    return _testHeaders;
+    return m_test_headers;
 };
 
 std::map<std::string, std::string> MockRequest::getQueryParameters() const
@@ -78,59 +78,59 @@ std::map<std::string, std::string> MockRequest::getCookies() const
 std::string MockRequest::getCookie(const std::string &key) const
 {
     static_cast<void>(key);
-    static const std::string emptyString;
-    return emptyString;
+    static const std::string empty_string;
+    return empty_string;
 };
 
-const std::vector<char> MockRequest::getBody() const { return _testBody; };
+const std::vector<char> MockRequest::getBody() const { return m_test_body; };
 
 std::string MockRequest::getBodyString() const
 {
-    return std::string(_testBody.begin(), _testBody.end());
+    return std::string(m_test_body.begin(), m_test_body.end());
 };
 
 std::string MockRequest::getQueryString() const
 {
     // Check if the URI contains a query string
-    size_t queryStart = _testUri.find("?");
-    if (queryStart == std::string::npos)
+    size_t query_start = m_test_uri.find("?");
+    if (query_start == std::string::npos)
         return "";
-    return _testUri.substr(queryStart + 1);
+    return m_test_uri.substr(query_start + 1);
 };
 
 std::string MockRequest::getContentLength() const
 {
     // Check if the content-length header is present
-    if (_testHeaders.find("content-length") == _testHeaders.end())
+    if (m_test_headers.find("content-length") == m_test_headers.end())
         return "";
-    return _testHeaders.at("content-length");
+    return m_test_headers.at("content-length");
 };
 
 std::string MockRequest::getContentType() const
 {
     // Check if the content-type header is present
-    if (_testHeaders.find("content-type") == _testHeaders.end())
+    if (m_test_headers.find("content-type") == m_test_headers.end())
         return "";
-    return _testHeaders.at("content-type");
+    return m_test_headers.at("content-type");
 };
 
-std::string MockRequest::getPathInfo(const std::string &scriptName) const
+std::string MockRequest::getPathInfo(const std::string &script_name) const
 {
     // Check if the URI contains the script name
-    size_t scriptNameStart = _testUri.find(scriptName);
-    if (scriptNameStart == std::string::npos)
+    size_t script_name_start = m_test_uri.find(script_name);
+    if (script_name_start == std::string::npos)
         return "";
 
     // Calculate the start of the path info
-    size_t pathInfoStart = scriptNameStart + scriptName.length();
+    size_t path_info_start = script_name_start + script_name.length();
 
     // Get the start of the query string
-    size_t queryStart = _testUri.find("?");
+    size_t query_start = m_test_uri.find("?");
 
     // Return the path info
-    if (queryStart == std::string::npos)
-        return _testUri.substr(pathInfoStart);
-    return _testUri.substr(pathInfoStart, queryStart - pathInfoStart);
+    if (query_start == std::string::npos)
+        return m_test_uri.substr(path_info_start);
+    return m_test_uri.substr(path_info_start, query_start - path_info_start);
 }
 
 std::string MockRequest::getClientIp() const { return ""; };
@@ -143,62 +143,62 @@ std::string MockRequest::getAuthority() const { return ""; };
 
 const std::vector<BodyParameter> &MockRequest::getBodyParameters() const
 {
-    return _testBodyParameters;
+    return m_test_body_parameters;
 };
 
-bool MockRequest::isUploadRequest() const { return _testUploadRequest; };
+bool MockRequest::isUploadRequest() const { return m_test_upload_request; };
 
 // Setters
 void MockRequest::setMethod(const std::string &method)
 {
-    _testMethod = method;
+    m_test_method = method;
 };
 
-void MockRequest::setUri(const std::string &uri) { _testUri = uri; };
+void MockRequest::setUri(const std::string &uri) { m_test_uri = uri; };
 
-void MockRequest::setHttpVersion(const std::string &httpVersion)
+void MockRequest::setHttpVersion(const std::string &http_version)
 {
-    _testHttpVersion = httpVersion;
+    m_test_http_version = http_version;
 };
 
 void MockRequest::addHeader(const std::string &key, const std::string &value)
 {
-    _testHeaders[ key ] = value;
+    m_test_headers[ key ] = value;
 };
 
-void MockRequest::setBody(const std::vector<char> &body) { _testBody = body; };
+void MockRequest::setBody(const std::vector<char> &body) { m_test_body = body; };
 
 void MockRequest::setBody(const std::string &body)
 {
-    _testBody.clear();
-    _testBody.insert(_testBody.end(), body.begin(), body.end());
+    m_test_body.clear();
+    m_test_body.insert(m_test_body.end(), body.begin(), body.end());
 };
 
 void MockRequest::addCookie(const std::string &key, const std::string &value)
 {
-    _testHeaders.insert(std::make_pair(key, value));
+    m_test_headers.insert(std::make_pair(key, value));
 };
 
 void MockRequest::setAuthority() {};
 
-void MockRequest::addBodyParameter(const BodyParameter &bodyParameter)
+void MockRequest::addBodyParameter(const BodyParameter &body_parameter)
 {
-    _testBodyParameters.push_back(bodyParameter);
+    m_test_body_parameters.push_back(body_parameter);
 };
 
-void MockRequest::setUploadRequest(bool uploadRequest)
+void MockRequest::setUploadRequest(bool upload_request)
 {
-    _testUploadRequest = uploadRequest;
+    m_test_upload_request = upload_request;
 };
 
 // Clear the contents of the MockRequest object
 void MockRequest::clear()
 {
-    _testMethod = "";
-    _testUri = "";
-    _testHttpVersion = "";
-    _testHeaders.clear();
-    _testBody.clear();
+    m_test_method = "";
+    m_test_uri = "";
+    m_test_http_version = "";
+    m_test_headers.clear();
+    m_test_body.clear();
 };
 
 // Path: tests/mock_srcs/MockRequest.cpp

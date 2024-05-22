@@ -21,105 +21,105 @@
 Server::Server(const ISocket &socket, IPollfdManager &pollfdManager,
                IConnectionManager &connectionManager,
                IConfiguration &configuration, ILogger &logger)
-    : _socket(socket), _pollfdManager(pollfdManager),
-      _connectionManager(connectionManager), _logger(logger)
+    : m_socket(socket), m_pollfd_manager(pollfdManager),
+      m_connection_manager(connectionManager), m_logger(logger)
 {
     // Log server initialization
-    this->_logger.log(VERBOSE, "Initializing Server...");
+    this->m_logger.log(VERBOSE, "Initializing Server...");
 
     // Get the maximum connections value
-    int maxConnections =
+    int max_connections =
         configuration.getBlocks("events")[ 0 ]->getInt("worker_connections");
 
     // Create a set to store unique IP:port combinations
-    std::set<std::pair<int, int> > processedEndpoints;
+    std::set<std::pair<int, int> > processed_endpoints;
 
     // Get the list of virtual servers
     std::vector<IConfiguration *> servers =
         configuration.getBlocks("http")[ 0 ]->getBlocks("server");
 
     // For each virtual server
-    for (std::vector<IConfiguration *>::iterator serverIterator =
+    for (std::vector<IConfiguration *>::iterator server_iterator =
              servers.begin();
-         serverIterator != servers.end(); serverIterator++)
+         server_iterator != servers.end(); server_iterator++)
     {
         // Get the list of listen directives
-        std::vector<std::string> listenVector =
-            (*serverIterator)->getStringVector("listen");
+        std::vector<std::string> listen_vector =
+            (*server_iterator)->getStringVector("listen");
 
         // For each listen directive
-        for (std::vector<std::string>::iterator listenIterator =
-                 listenVector.begin();
-             listenIterator != listenVector.end(); listenIterator++)
+        for (std::vector<std::string>::iterator listen_iterator =
+                 listen_vector.begin();
+             listen_iterator != listen_vector.end(); listen_iterator++)
         {
             int ip = 0; // Default IP to 0 (all network interfaces)
             int port;
 
             // Find the position of the colon (if present, ip was specified)
-            size_t colonPos = listenIterator->find(':');
-            if (colonPos != std::string::npos)
+            size_t colon_pos = listen_iterator->find(':');
+            if (colon_pos != std::string::npos)
             {
-                ip = Converter::toInt(listenIterator->substr(0, colonPos));
-                port = Converter::toInt(listenIterator->substr(colonPos + 1));
+                ip = Converter::toInt(listen_iterator->substr(0, colon_pos));
+                port = Converter::toInt(listen_iterator->substr(colon_pos + 1));
             }
             else // ip was not specified
             {
-                port = Converter::toInt(*listenIterator);
+                port = Converter::toInt(*listen_iterator);
             }
 
             // Check if the current IP:port combination has already been
             // processed
-            if (processedEndpoints.find(std::make_pair(ip, port)) ==
-                processedEndpoints.end())
+            if (processed_endpoints.find(std::make_pair(ip, port)) ==
+                processed_endpoints.end())
             {
                 // Add the current IP:port combination to the set of processed
                 // endpoints
-                processedEndpoints.insert(std::make_pair(ip, port));
+                processed_endpoints.insert(std::make_pair(ip, port));
 
                 // Initialize a new socket
-                this->_initializeServerSocket(ip, port, maxConnections);
+                this->m_initializeServerSocket(ip, port, max_connections);
             }
         }
     }
-    this->_logger.log(VERBOSE, "... finished Server initialization");
+    this->m_logger.log(VERBOSE, "... finished Server initialization");
 }
 
 /* Destructor to close file descriptors*/
 Server::~Server()
 {
     // Close all socket file descriptors
-    this->_pollfdManager.closeAllFileDescriptors();
+    this->m_pollfd_manager.closeAllFileDescriptors();
 }
 
 /* Initialize server socket*/
-void Server::_initializeServerSocket(int ip, int port, int maxConnections)
+void Server::m_initializeServerSocket(int ip, int port, int max_connections)
 {
     // Create server socket
-    int serverSocketDescriptor = this->_socket.socket();
-    if (serverSocketDescriptor < 0)
+    int server_socket_descriptor = this->m_socket.socket();
+    if (server_socket_descriptor < 0)
         throw SocketCreateError();
 
     // Bind server socket to port
-    if (this->_socket.bind(serverSocketDescriptor, ip, port) < 0)
+    if (this->m_socket.bind(server_socket_descriptor, ip, port) < 0)
         throw SocketBindError();
 
     // Listen for incoming connections
-    if (this->_socket.listen(serverSocketDescriptor, maxConnections) < 0)
+    if (this->m_socket.listen(server_socket_descriptor, max_connections) < 0)
         throw SocketListenError();
 
     // Set server socket to non-blocking mode
-    if (this->_socket.setNonBlocking(serverSocketDescriptor) < 0)
+    if (this->m_socket.setNonBlocking(server_socket_descriptor) < 0)
         throw SocketSetError();
 
     // Add server socket to polling list
     pollfd pollfd;
-    pollfd.fd = serverSocketDescriptor;
+    pollfd.fd = server_socket_descriptor;
     pollfd.events = POLLIN | POLLERR | POLLHUP | POLLNVAL;
     pollfd.revents = 0;
-    this->_pollfdManager.addServerSocketPollfd(pollfd);
+    this->m_pollfd_manager.addServerSocketPollfd(pollfd);
 
     // Log server socket initialization
-    this->_logger.log(INFO, "Server socket initialized. Listening on " +
+    this->m_logger.log(INFO, "Server socket initialized. Listening on " +
                                 (ip ? Converter::toString(ip) : "ALL") + ":" +
                                 Converter::toString(port));
 }
@@ -128,36 +128,36 @@ void Server::_initializeServerSocket(int ip, int port, int maxConnections)
 void Server::terminate(int exitCode) { exit(exitCode); }
 
 /* Accept a new client connection*/
-void Server::acceptConnection(int serverSocketDescriptor)
+void Server::acceptConnection(int server_socket_descriptor)
 {
     // Ensure maximum connections limit has not been reached
-    if (this->_pollfdManager.hasReachedCapacity())
+    if (this->m_pollfd_manager.hasReachedCapacity())
         throw MaximumConnectionsReachedError();
 
     // Accept incoming connection
-    std::pair<int, std::pair<std::string, std::string> > clientInfo =
-        this->_socket.accept(serverSocketDescriptor);
-    int clientSocketDescriptor = clientInfo.first;
-    std::string clientIP = clientInfo.second.first;
-    std::string clientPort = clientInfo.second.second;
+    std::pair<int, std::pair<std::string, std::string> > client_info =
+        this->m_socket.accept(server_socket_descriptor);
+    int client_socket_descriptor = client_info.first;
+    std::string client_ip = client_info.second.first;
+    std::string client_port = client_info.second.second;
 
     // Create a connection for the client
-    this->_connectionManager.addConnection(clientInfo);
+    this->m_connection_manager.addConnection(client_info);
 
     // Add client socket to polling list
-    if (clientSocketDescriptor < 0)
+    if (client_socket_descriptor < 0)
         throw ConnectionEstablishingError();
     pollfd pollfd;
-    pollfd.fd = clientSocketDescriptor;
+    pollfd.fd = client_socket_descriptor;
     pollfd.events = POLLIN | POLLERR | POLLHUP | POLLNVAL;
     pollfd.revents = 0;
-    this->_pollfdManager.addClientSocketPollfd(pollfd);
+    this->m_pollfd_manager.addClientSocketPollfd(pollfd);
 
     // Set socket to non-blocking mode
-    if (this->_socket.setNonBlocking(clientSocketDescriptor) < 0)
+    if (this->m_socket.setNonBlocking(client_socket_descriptor) < 0)
         throw SocketSetError();
 
     // Log accepted connection
-    this->_logger.log(VERBOSE, "Accepted new connection from " + clientIP +
-                                   ":" + clientPort + ".");
+    this->m_logger.log(VERBOSE, "Accepted new connection from " + client_ip +
+                                   ":" + client_port + ".");
 }

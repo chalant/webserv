@@ -15,8 +15,8 @@
 class SocketBuffer : public IBuffer
 {
 private:
-    std::vector<char> _buffer; // Buffer to hold data
-    ISocket &_socket;          // Socket object for sending data
+    std::vector<char> m_buffer; // Buffer to hold data
+    ISocket &m_socket;          // Socket object for sending data
 
 public:
     // Constructor
@@ -29,7 +29,7 @@ public:
     ssize_t push(const std::vector<char> &data);
 
     // Send the buffer to a socket descriptor
-    ssize_t flush(int socketDescriptor, bool all = false);
+    ssize_t flush(int socket_descriptor, bool all = false);
 
     // Peek at the buffer
     std::vector<char> peek() const;

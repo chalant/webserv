@@ -22,10 +22,10 @@
 class Session : public ISession
 {
 private:
-    const SessionId_t _id; // Unique session id
-    const time_t _timeout; // Time elapsed before session expires
-    time_t _lastAccess;    // Last time session was accessed
-    std::map<std::string, std::string> _data; // Session data
+    const SessionId_t m_id; // Unique session id
+    const time_t m_timeout; // Time elapsed before session expires
+    time_t m_last_access;    // Last time session was accessed
+    std::map<std::string, std::string> m_data; // Session data
 
 public:
     // Constructor

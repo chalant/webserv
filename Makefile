@@ -65,11 +65,7 @@ SRCS        =	main.cpp \
 				srcs/pollfd/PollfdQueue.cpp \
 				srcs/request/Request.cpp \
 				srcs/request/RequestParser.cpp \
-				srcs/response/AResponseGenerator.cpp \
 				srcs/response/CgiResponseGenerator.cpp \
-				srcs/response/DeleteMethodResponseGenerator.cpp \
-				srcs/response/ErrorPageResponseGenerator.cpp \
-				srcs/response/GetMethodResponseGenerator.cpp \
 				srcs/response/PostMethodResponseGenerator.cpp \
 				srcs/response/RegexMatcher.cpp \
 				srcs/response/Response.cpp \
@@ -77,7 +73,6 @@ SRCS        =	main.cpp \
 				srcs/response/TempRouter.cpp \
 				srcs/response/Route.cpp \
 				srcs/response/StaticFileResponseGenerator.cpp \
-				srcs/response/UploadResponseGenerator.cpp
 				
 #-------------------OBJECTS----------------------
 OBJS        =   $(SRCS:.cpp=.o)

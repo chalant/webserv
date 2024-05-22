@@ -14,9 +14,9 @@ MockClientHandler::MockClientHandler() : IClientHandler() {};
 MockClientHandler::~MockClientHandler() {};
 
 // Setter
-void MockClientHandler::setSocketDescriptor(int socketDescriptor)
+void MockClientHandler::setSocketDescriptor(int socket_descriptor)
 {
-    static_cast<void>(socketDescriptor);
+    static_cast<void>(socket_descriptor);
 };
 
 // Method to read and send requests and responses

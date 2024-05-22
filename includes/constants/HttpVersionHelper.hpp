@@ -53,18 +53,18 @@ class HttpVersionHelper
 private:
     // Member variables
     const std::vector<std::string>
-        _versionList; // List of string representations of HTTP versions
+        m_version_list; // List of string representations of HTTP versions
     const std::map<std::string, HttpVersion>
-        _stringHttpVersionMap; // Map of string representations to
+        m_string_http_version_map; // Map of string representations to
                                // HttpVersion enum values
     const std::map<HttpVersion, std::string>
-        _httpVersionStringMap; // Map of HttpVersion enum values to string
+        m_http_version_string_map; // Map of HttpVersion enum values to string
                                // representations
 
     // Private member functions for initialization
-    static std::vector<std::string> _setVersionList();
-    static std::map<std::string, HttpVersion> _setStringHttpVersionMap();
-    static std::map<HttpVersion, std::string> _setHttpVersionStringMap();
+    static std::vector<std::string> m_setVersionList();
+    static std::map<std::string, HttpVersion> m_setStringHttpVersionMap();
+    static std::map<HttpVersion, std::string> m_setHttpVersionStringMap();
 
 public:
     // Constructor

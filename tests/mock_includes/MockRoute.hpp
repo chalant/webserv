@@ -13,8 +13,8 @@
 class MockRoute : public IRoute
 {
 private:
-    std::string _root;
-    std::string _path;
+    std::string m_root;
+    std::string m_path;
 
 public:
     MockRoute();

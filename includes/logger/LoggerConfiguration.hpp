@@ -32,22 +32,22 @@
 class LoggerConfiguration : public ILoggerConfiguration
 {
 private:
-    std::string _errorLogFile;
-    std::string _accessLogFile;
-    IBufferManager &_bufferManager;
-    IPollfdManager &_pollfdManager;
-    size_t _bufferSize;
-    LogLevel _logLevel;
-    int _errorLogFileDescriptor;
-    int _accessLogFileDescriptor;
-    bool _errorLogEnabled;
-    bool _accessLogEnabled;
-    LogLevelHelper _logLevelHelper;
+    std::string m_error_log_file;
+    std::string m_access_log_file;
+    IBufferManager &m_buffer_manager;
+    IPollfdManager &m_pollfd_manager;
+    size_t m_buffer_size;
+    LogLevel m_log_level;
+    int m_error_log_file_descriptor;
+    int m_access_log_file_descriptor;
+    bool m_error_log_enabled;
+    bool m_access_log_enabled;
+    LogLevelHelper m_log_level_helper;
 
 public:
-    LoggerConfiguration(IBufferManager &BufferManager,
+    LoggerConfiguration(IBufferManager &buffer_manager,
                         IConfiguration &configuration,
-                        IPollfdManager &pollfdManager);
+                        IPollfdManager &pollfd_manager);
     ~LoggerConfiguration();
 
     virtual void setErrorLogEnabled(bool enabled);

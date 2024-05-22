@@ -15,19 +15,19 @@
 class MockLoggerConfiguration : public ILoggerConfiguration
 {
 private:
-    std::string _errorLogFile;
-    std::string _accessLogFile;
-    IBufferManager &_bufferManager;
-    size_t _bufferSize;
-    int _errorLogFileDescriptor;
-    int _accessLogFileDescriptor;
-    bool _errorLogEnabled;
-    bool _accessLogEnabled;
+    std::string m_error_log_file;
+    std::string m_access_log_file;
+    IBufferManager &m_buffer_manager;
+    size_t m_buffer_size;
+    int m_error_log_file_descriptor;
+    int m_access_log_file_descriptor;
+    bool m_error_log_enabled;
+    bool m_access_log_enabled;
 
 public:
-    MockLoggerConfiguration(IBufferManager &bufferManager,
+    MockLoggerConfiguration(IBufferManager &buffer_manager,
                             const IConfiguration &configuration,
-                            IPollfdManager &pollfdManager);
+                            IPollfdManager &pollfd_manager);
 
     virtual ~MockLoggerConfiguration();
     virtual void setErrorLogEnabled(bool);
@@ -43,9 +43,9 @@ public:
     virtual void requestFlush(int descriptor);
 
     // Testing purposes
-    virtual void setBufferSize(size_t bufferSize);
-    virtual void setFileDescriptor(int errorLogFileDescriptor,
-                                   int accessLogFileDescriptor = STDOUT_FILENO);
+    virtual void setBufferSize(size_t buffer_size);
+    virtual void setFileDescriptor(int error_log_file_descriptor,
+                                   int access_log_file_descriptor = STDOUT_FILENO);
 };
 
 #endif // MOCKLOGGERCONFIGURATION_HPP

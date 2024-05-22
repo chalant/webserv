@@ -23,22 +23,22 @@ class Connection : public IConnection
 {
 private:
     SocketDescriptor_t
-        _socketDescriptor;      // Socket descriptor for the connection
-    std::string _ip;            // Client's IP address
-    int _port;                  // Port number
-    std::string _remoteAddress; // Remote address
-    int _responseReadPipefd;    // Read pipe descriptor for the response
-    int _requestWritePipefd;    // Write pipe descriptor for the request
-    int _cgiPid;                // PID of the CGI process
-    ILogger &_logger;           // Reference to the logger
-    IRequest *_request;         // Pointer to the request object
-    IResponse *_response;       // Pointer to the response object
-    ISession *_session;         // Pointer to the session object
-    const time_t _timeout;      // Timeout for the connection
-    time_t _lastAccess;         // Last access time
+        m_socket_descriptor;      // Socket descriptor for the connection
+    std::string m_ip;            // Client's IP address
+    int m_port;                  // Port number
+    std::string m_remote_address; // Remote address
+    int m_response_read_pipe_fd;    // Read pipe descriptor for the response
+    int m_request_write_pipe_fd;    // Write pipe descriptor for the request
+    int m_cgi_pid;                // PID of the CGI process
+    ILogger &m_logger;           // Reference to the logger
+    IRequest *m_request;         // Pointer to the request object
+    IResponse *m_response;       // Pointer to the response object
+    ISession *m_session;         // Pointer to the session object
+    const time_t m_timeout;      // Timeout for the connection
+    time_t m_last_access;         // Last access time
 
 public:
-    Connection(std::pair<int, std::pair<std::string, std::string> > clientInfo,
+    Connection(std::pair<int, std::pair<std::string, std::string> > client_info,
                ILogger &logger, IRequest *request, IResponse *response,
                time_t timeout = DEFAULT_TIMEOUT);
     virtual ~Connection();
@@ -51,12 +51,12 @@ public:
     virtual std::string getIp() const;
     virtual int getPort() const;
     virtual std::string getRemoteAddress() const;
-    virtual int getResponseReadPipefd() const;
+    virtual int getResponseReadPipeFd() const;
     virtual IRequest &getRequest() const;
     virtual IResponse &getResponse() const;
     virtual ISession &getSession() const;
-    virtual void setCgiInfo(int pid, int responseReadPipefd,
-                            int requestWritePipefd);
+    virtual void setCgiInfo(int pid, int response_read_pipe_fd,
+                            int request_write_pipe_fd);
 
     // Connection management
     virtual void touch();            // Update the last access time

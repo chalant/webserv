@@ -17,17 +17,17 @@
  * - Use the appropriate log() override
  *
  * Example error log:
- * this->_logger.log(INFO, "listening on port 8080");
+ * this->m_logger.log(INFO, "listening on port 8080");
  * Output in error log: 2011-01-01T01:11:11 [INFO] "listening on port 8080"
  *
  * Example access log:
- * this->_logger.log(request, response);
+ * this->m_logger.log(request, response);
  * Output in access log: timestamp="2011-01-01T01:11:11" clientIP="127.0.0.1"
  * method="GET" requestURI="/index.php" httpVersion="HTTP/1.1" etc.
  */
 
-Logger::Logger(IBufferManager &bufferManager)
-    : _configuration(NULL), _bufferManager(bufferManager), _logLevelHelper()
+Logger::Logger(IBufferManager &buffer_manager)
+    : m_configuration(NULL), m_buffer_manager(buffer_manager), m_log_level_helper()
 {
     // Log the initialization of the Logger
     this->log(VERBOSE, "Logger initialized.");
@@ -38,13 +38,13 @@ Logger::Logger(IBufferManager &bufferManager)
 Logger::~Logger() {}
 
 // Method to get the current timestamp
-std::string Logger::_getCurrentTimestamp() const
+std::string Logger::m_getCurrentTimestamp() const
 {
     std::stringstream stream;
-    std::time_t currentTime = std::time(NULL);
+    std::time_t current_time = std::time(NULL);
     char buffer[ 80 ];
 
-    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
+    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&current_time));
     stream << buffer;
     return stream.str();
 }
@@ -53,19 +53,19 @@ std::string Logger::_getCurrentTimestamp() const
 int Logger::log(const std::string &message)
 {
     // If the Logger is disabled, return without logging
-    if (this->_configuration != NULL &&
-        this->_configuration->getErrorLogEnabled() == false)
+    if (this->m_configuration != NULL &&
+        this->m_configuration->getErrorLogEnabled() == false)
         return -1;
 
     // Construct the log message string
-    std::string logMessage =
-        this->_getCurrentTimestamp() + " " + message + "\n";
+    std::string log_message =
+        this->m_getCurrentTimestamp() + " " + message + "\n";
 
     // Push the log message to the log file buffer if configured, otherwise push
     // to stderr buffer
-    return this->_pushToBuffer(
-        logMessage, this->_configuration
-                        ? this->_configuration->getErrorLogFileDescriptor()
+    return this->m_pushToBuffer(
+        log_message, this->m_configuration
+                        ? this->m_configuration->getErrorLogFileDescriptor()
                         : STDERR_FILENO);
 }
 
@@ -74,21 +74,21 @@ int Logger::log(LogLevel logLevel, const std::string &message)
 {
     // If the Logger is disabled or the log level below threshold, return
     // without logging
-    if (this->_configuration != NULL &&
-        (this->_configuration->getErrorLogEnabled() == false ||
-         logLevel < this->_configuration->getLogLevel()))
+    if (this->m_configuration != NULL &&
+        (this->m_configuration->getErrorLogEnabled() == false ||
+         logLevel < this->m_configuration->getLogLevel()))
         return -1;
 
     // Construct the log message string
-    std::string logMessage = this->_getCurrentTimestamp() + " [" +
-                             this->_logLevelHelper.logLevelStringMap(logLevel) +
+    std::string log_message = this->m_getCurrentTimestamp() + " [" +
+                             this->m_log_level_helper.logLevelStringMap(logLevel) +
                              "] " + message + "\n";
 
     // Push the log message to the log file buffer if configured, otherwise push
     // to stderr buffer
-    return this->_pushToBuffer(
-        logMessage, this->_configuration
-                        ? this->_configuration->getErrorLogFileDescriptor()
+    return this->m_pushToBuffer(
+        log_message, this->m_configuration
+                        ? this->m_configuration->getErrorLogFileDescriptor()
                         : STDERR_FILENO);
 }
 
@@ -97,21 +97,21 @@ int Logger::log(const IConnection &connection)
 {
     // If the Logger is configured and confirmed disabled, return without
     // logging
-    if (this->_configuration != NULL &&
-        this->_configuration->getAccessLogEnabled() == false)
+    if (this->m_configuration != NULL &&
+        this->m_configuration->getAccessLogEnabled() == false)
         return -1;
 
     // Get a reference to the Request and Response objects
     const IRequest &request = connection.getRequest();
     const IResponse &response = connection.getResponse();
 
-    std::string logMessage;
+    std::string log_message;
     try // Will fail in case of incorrect request/response
     {
         // Create a temporary stringstream object to construct the log message
-        std::ostringstream logBufferStream;
-        logBufferStream << "{\n"
-                        << "\ttimestamp=\"" << this->_getCurrentTimestamp()
+        std::ostringstream log_buffer_stream;
+        log_buffer_stream << "{\n"
+                        << "\ttimestamp=\"" << this->m_getCurrentTimestamp()
                         << "\",\n"
                         << "\tclientIP=\"" << connection.getIp() << "\",\n"
                         << "\tclientPort=\"" << connection.getPort() << "\",\n"
@@ -128,20 +128,20 @@ int Logger::log(const IConnection &connection)
                         << "\"\n";
 
         // Add request headers to the log message
-        this->_appendMapToLog(logBufferStream, "requestHeaders",
+        this->m_appendMapToLog(log_buffer_stream, "requestHeaders",
                               request.getHeadersStringMap());
 
         // Add response headers to the log message
-        this->_appendMapToLog(logBufferStream, "responseHeaders",
+        this->m_appendMapToLog(log_buffer_stream, "responseHeaders",
                               response.getHeadersStringMap());
 
         // Add cookies to the log message
-        this->_appendMapToLog(logBufferStream, "Cookies", request.getCookies());
+        this->m_appendMapToLog(log_buffer_stream, "Cookies", request.getCookies());
 
-        logBufferStream << "}\n";
+        log_buffer_stream << "}\n";
 
         // Convert the log message string to a vector of chars
-        logMessage = logBufferStream.str();
+        log_message = log_buffer_stream.str();
     }
     catch (std::exception &e)
     {
@@ -151,65 +151,65 @@ int Logger::log(const IConnection &connection)
 
     // Push the log message to the access log file buffer if configured,
     // otherwise push to stderr buffer
-    return this->_pushToBuffer(
-        logMessage, this->_configuration
-                        ? this->_configuration->getAccessLogFileDescriptor()
+    return this->m_pushToBuffer(
+        log_message, this->m_configuration
+                        ? this->m_configuration->getAccessLogFileDescriptor()
                         : STDERR_FILENO);
 }
 
 // Method to append map to log message
-void Logger::_appendMapToLog(
-    std::ostringstream &logBufferStream, const std::string &fieldName,
+void Logger::m_appendMapToLog(
+    std::ostringstream &log_buffer_stream, const std::string &field_name,
     const std::map<std::string, std::string> &map) const
 {
-    std::ostringstream mapStream;
+    std::ostringstream map_stream;
 
-    mapStream << "\t" << fieldName << "=\n\t{\n";
+    map_stream << "\t" << field_name << "=\n\t{\n";
     for (std::map<std::string, std::string>::const_iterator it = map.begin();
          it != map.end(); ++it)
     {
-        mapStream << "\t\t" << it->first << ": " << it->second;
+        map_stream << "\t\t" << it->first << ": " << it->second;
         std::map<std::string, std::string>::const_iterator next = it;
         next++;
         if (next != map.end())
         {
-            mapStream << ",\n";
+            map_stream << ",\n";
         }
     }
-    mapStream << "\n\t}\n";
+    map_stream << "\n\t}\n";
 
-    logBufferStream << mapStream.str(); // Append the constructed string to the
-                                        // logBufferStream
+    log_buffer_stream << map_stream.str(); // Append the constructed string to the
+                                        // log_buffer_stream
 }
 
 // Configuration method
 void Logger::configure(ILoggerConfiguration &configuration)
 {
-    this->_configuration = &configuration;
+    this->m_configuration = &configuration;
 }
 
 // Method to push log messages to the buffer
 // returns 1 if a flush is requested, or 0 otherwise
-int Logger::_pushToBuffer(const std::string &logMessage,
-                          const int fileDescriptor)
+int Logger::m_pushToBuffer(const std::string &log_message,
+                          const int file_descriptor)
 {
     // Copy output to stderr
-    std::cerr << logMessage;
+    std::cerr << log_message;
 
     // Convert the log message string to a vector of chars
-    std::vector<char> logMessageVector(logMessage.begin(), logMessage.end());
+    std::vector<char> log_message_vector(log_message.begin(), log_message.end());
 
     // Push the log message to the buffer, returns 1 if a flush is requested
-    int returnValue =
-        this->_bufferManager.pushFileBuffer(fileDescriptor, logMessageVector);
-    if (returnValue == 1 && this->_configuration)
+    int return_value =
+        this->m_buffer_manager.pushFileBuffer(file_descriptor, log_message_vector);
+    if (return_value == 1 && this->m_configuration)
     {
         // If the buffer threshold is reached, request a flush
-        this->_configuration->requestFlush(fileDescriptor);
+        this->m_configuration->requestFlush(file_descriptor);
     }
 
     // Return the return value
-    return returnValue;
+    return return_value;
 }
 
 // Path: includes/WebservExceptions.hpp

@@ -17,7 +17,7 @@ public:
                                        const IRequest &request,
                                        IResponse &response,
                                        const IConfiguration &configuration,
-                                       const std::string &scriptName = "") = 0;
+                                       const std::string &script_name = "") = 0;
 };
 
 #endif // IRESPONSEGENERATOR_HPP

@@ -14,21 +14,21 @@ class MockRequest : public IRequest
 {
 private:
     // Request line components
-    std::string _testMethod;
-    std::string _testUri;
-    std::string _testHttpVersion;
+    std::string m_test_method;
+    std::string m_test_uri;
+    std::string m_test_http_version;
 
     // Request headers
-    std::map<std::string, std::string> _testHeaders;
+    std::map<std::string, std::string> m_test_headers;
 
     // Body parameters
-    std::vector<BodyParameter> _testBodyParameters;
+    std::vector<BodyParameter> m_test_body_parameters;
 
     // Upload request flag
-    bool _testUploadRequest;
+    bool m_test_upload_request;
 
     // Request body
-    std::vector<char> _testBody;
+    std::vector<char> m_test_body;
 
 public:
     // Constructor
@@ -68,7 +68,7 @@ public:
     virtual std::string getQueryString() const;
     virtual std::string getContentLength() const;
     virtual std::string getContentType() const;
-    virtual std::string getPathInfo(const std::string &scriptName) const;
+    virtual std::string getPathInfo(const std::string &script_name) const;
     virtual std::string getClientIp() const;
     virtual std::string getHostName() const;
     virtual std::string getHostPort() const;
@@ -79,14 +79,14 @@ public:
     // Setters
     virtual void setMethod(const std::string &method);
     virtual void setUri(const std::string &uri);
-    virtual void setHttpVersion(const std::string &httpVersion);
+    virtual void setHttpVersion(const std::string &http_version);
     virtual void addHeader(const std::string &key, const std::string &value);
     virtual void setBody(const std::vector<char> &body);
     virtual void setBody(const std::string &body);
     virtual void addCookie(const std::string &key, const std::string &value);
     virtual void setAuthority();
-    virtual void addBodyParameter(const BodyParameter &bodyParameter);
-    virtual void setUploadRequest(bool uploadRequest);
+    virtual void addBodyParameter(const BodyParameter &body_parameter);
+    virtual void setUploadRequest(bool upload_request);
 
     // Clear the contents of the MockRequest object
     void clear();

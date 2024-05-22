@@ -21,10 +21,10 @@ MockLogger::~MockLogger() {};
 int MockLogger::log(const std::string &message)
 {
     // Construct the log message string
-    std::string logMessageString =
-        this->_getCurrentTimestamp() + " " + message + "\n";
+    std::string log_message_string =
+        this->m_getCurrentTimestamp() + " " + message + "\n";
 
-    std::cout << logMessageString;
+    std::cout << log_message_string;
     return 0;
 };
 
@@ -33,13 +33,13 @@ int MockLogger::log(const LogLevel logLevel, const std::string &message)
 {
     static_cast<void>(logLevel);
     // Construct the log message string
-    // std::string logMessageString = this->_getCurrentTimestamp() + " [" +
-    // this->_logLevelHelper.logLevelStringMap(logLevel) + "] " + message +
+    // std::string log_message_string = this->m_getCurrentTimestamp() + " [" +
+    // this->m_log_level_helper.logLevelStringMap(logLevel) + "] " + message +
     // "\n";
-    std::string logMessageString =
-        this->_getCurrentTimestamp() + " [LOGLEVEL] " + message + "\n";
+    std::string log_message_string =
+        this->m_getCurrentTimestamp() + " [LOGLEVEL] " + message + "\n";
 
-    std::cout << logMessageString;
+    std::cout << log_message_string;
     return 0;
 };
 
@@ -57,13 +57,13 @@ void MockLogger::configure(ILoggerConfiguration &configuration)
 };
 
 // Helper method to get the current timestamp
-std::string MockLogger::_getCurrentTimestamp() const
+std::string MockLogger::m_getCurrentTimestamp() const
 {
     std::stringstream stream;
-    std::time_t currentTime = std::time(NULL);
+    std::time_t current_time = std::time(NULL);
     char buffer[ 80 ];
 
-    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&currentTime));
+    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&current_time));
     stream << buffer;
     return stream.str();
 }

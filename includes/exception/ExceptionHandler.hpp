@@ -38,13 +38,14 @@ class Server;
 class ExceptionHandler : public IExceptionHandler
 {
 private:
-    ILogger &_logger; // Reference to the logger instance
-    Server *_server;  // Pointer to the server instance
+    ILogger &m_logger; // Reference to the logger instance
+    Server *m_server;  // Pointer to the server instance
     const HttpStatusCodeHelper
-        _httpStatusCodeHelper; // Helper instance for HTTP status codes
-    int _handleWebservException(const WebservException &e,
+        m_http_status_code_helper; // Helper instance for HTTP status codes
+    
+    int m_handleWebservException(const WebservException &e,
                                 const std::string &context = "") const;
-    int _handleStandardException(const std::exception &e,
+    int m_handleStandardException(const std::exception &e,
                                  const std::string &context = "") const;
 
 public:

@@ -18,7 +18,7 @@ private:
     const std::vector<std::string> m_separators;
     const std::vector<std::string> m_reserved_symbols;
     std::vector<Token> m_tokens;
-    void makeTokens(const std::string &str);
+    void m_makeTokens(const std::string &str);
 
 public:
     Tokenizer(const std::vector<std::string> separators,

@@ -13,27 +13,27 @@ typedef std::pair<int, std::pair<int, int> > Triplet_t;
 class EventManager : public IEventManager
 {
 private:
-    IPollfdManager &_pollfdManager;
-    IBufferManager &_bufferManager;
-    IServer &_server;
-    IRequestHandler &_requestHandler;
-    ILogger &_logger;
+    IPollfdManager &m_pollfd_manager;
+    IBufferManager &m_buffer_manager;
+    IServer &m_server;
+    IRequestHandler &m_request_handler;
+    ILogger &m_logger;
 
     // Event handling functions for different types of files
-    void _handleRegularFileEvents(ssize_t &pollfdIndex, short events);
-    void _handleServerSocketEvents(ssize_t pollfdIndex, short events);
-    void _handleClientSocketEvents(ssize_t &pollfdIndex, short events);
-    void _handlePipeEvents(ssize_t &pollfdIndex, short events);
+    void m_handleRegularFileEvents(ssize_t &pollfd_index, short events);
+    void m_handleServerSocketEvents(ssize_t pollfd_index, short events);
+    void m_handleClientSocketEvents(ssize_t &pollfd_index, short events);
+    void m_handlePipeEvents(ssize_t &pollfd_index, short events);
 
     // helper functions
-    void _handleRequest(ssize_t &pollfdIndex);
-    void _handleClientException(ssize_t &pollfdIndex, short events);
-    void _flushBuffer(ssize_t &pollfdIndex, short options = 0);
-    void _cleanUp(ssize_t &pollfdIndex, int descriptor, short options = 0);
+    void m_handleRequest(ssize_t &pollfd_index);
+    void m_handleClientException(ssize_t &pollfd_index, short events);
+    void m_flushBuffer(ssize_t &pollfd_index, short options = 0);
+    void m_cleanUp(ssize_t &pollfd_index, int descriptor, short options = 0);
 
 public:
-    EventManager(IPollfdManager &pollfdManager, IBufferManager &bufferManager,
-                 IServer &server, IRequestHandler &requestHandler,
+    EventManager(IPollfdManager &pollfd_manager, IBufferManager &buffer_manager,
+                 IServer &server, IRequestHandler &request_handler,
                  ILogger &logger);
     ~EventManager();
 

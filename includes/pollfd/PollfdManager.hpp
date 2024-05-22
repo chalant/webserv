@@ -30,12 +30,12 @@ class IServer;
 class PollfdManager : public IPollfdManager
 {
 private:
-    PollfdQueue _pollfds; // Queue for storing polling file descriptors
+    PollfdQueue m_pollfds; // Queue for storing polling file descriptors
     std::map<int, DescriptorType>
-        _descriptorTypeMap; // Map for storing the type of descriptor
+        m_descriptor_type_map; // Map for storing the type of descriptor
 
     // Method to add a polling file descriptor
-    virtual void _addPollfd(pollfd pollFd);
+    virtual void m_addPollfd(pollfd pollFd);
 
 public:
     // Constructor for PollfdManager class

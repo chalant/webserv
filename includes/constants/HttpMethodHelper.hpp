@@ -56,21 +56,21 @@ class HttpMethodHelper
 private:
     // Member variables
     const std::vector<std::string>
-        _methodList; // List of string representations of HTTP methods
+        m_method_list; // List of string representations of HTTP methods
     const std::vector<std::string>
-        _supportedMethods; // Set of string representations of HTTP methods
+        m_supported_methods; // Set of string representations of HTTP methods
     const std::map<std::string, HttpMethod>
-        _stringHttpMethodMap; // Map of string representations to HttpMethod
+        m_string_http_method_map; // Map of string representations to HttpMethod
                               // enum values
     const std::map<HttpMethod, std::string>
-        _httpMethodStringMap; // Map of HttpMethod enum values to string
+        m_http_method_string_map; // Map of HttpMethod enum values to string
                               // representations
 
     // Private member functions for initialization
-    static std::vector<std::string> _setMethodList();
-    const std::vector<std::string> _setSupportedMethods();
-    static std::map<std::string, HttpMethod> _setStringHttpMethodMap();
-    static std::map<HttpMethod, std::string> _setHttpMethodStringMap();
+    static std::vector<std::string> m_setMethodList();
+    const std::vector<std::string> m_setSupportedMethods();
+    static std::map<std::string, HttpMethod> m_setStringHttpMethodMap();
+    static std::map<HttpMethod, std::string> m_setHttpMethodStringMap();
 
 public:
     // Constructor

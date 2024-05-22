@@ -37,8 +37,8 @@
  * Example:
  *
  * PollfdQueue pollfdQueue(10);
- * pollfd newPollfd = {fd, events, revents};
- * pollfdQueue.push(newPollfd);
+ * pollfd new_pollfd = {fd, events, revents};
+ * pollfdQueue.push(new_pollfd);
  * pollfdQueue.erase(index);
  * pollfdQueue.pollout(index);
  * if (pollfdQueue.hasReachedCapacity()){}
@@ -60,10 +60,10 @@
 class PollfdQueue
 {
 private:
-    std::vector<pollfd> _pollfdArray; // Internal storage for pollfd objects
-    size_t _size;                     // Current number of elements in the queue
-    size_t _capacity;                 // Maximum capacity of the queue
-    short _pollMask;                  // Poll mask for polling events;
+    std::vector<pollfd> m_pollfd_array; // Internal storage for pollfd objects
+    size_t m_size;                     // Current number of elements in the queue
+    size_t m_capacity;                 // Maximum capacity of the queue
+    short m_poll_mask;                  // Poll mask for polling events;
 
 public:
     // Constructor: Initializes a PollfdQueue object with the specified
@@ -79,7 +79,7 @@ public:
     pollfd &operator[](size_t index);
 
     // Push: Adds a new pollfd object to the PollfdQueue.
-    void push(const pollfd &newPollfd);
+    void push(const pollfd &new_pollfd);
 
     // Erase: Removes the pollfd object at the specified index from the
     // PollfdQueue.

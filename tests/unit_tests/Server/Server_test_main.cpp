@@ -14,26 +14,26 @@
 int main()
 {
     // Mock objects
-    MockLogger mockLogger;
-    MockSocket mockSocket;
-    MockPollfdManager mockPollfdManager;
-    MockConnectionManager mockConnectionManager;
-    MockConfigurationBlock mockConfiguration(mockLogger, "configuration");
-    MockConfigurationBlock mockEvents(mockLogger, "events");
-    MockConfigurationBlock mockHttp(mockLogger, "http");
-    MockConfigurationBlock mockServer_1(mockLogger, "server_1");
+    MockLogger mock_logger;
+    MockSocket mock_socket;
+    MockPollfdManager mock_pollfd_manager;
+    MockConnectionManager mock_connection_manager;
+    MockConfigurationBlock mock_configuration(mock_logger, "configuration");
+    MockConfigurationBlock mock_events(mock_logger, "events");
+    MockConfigurationBlock mock_http(mock_logger, "http");
+    MockConfigurationBlock mock_server_1(mock_logger, "server_1");
 
     // Set test Configuration listen directives
-    mockServer_1.setString("listen", "80");
-    mockHttp.setBlock("server", &mockServer_1);
-    mockHttp.setSize_t("worker_connections", 1024);
-    mockConfiguration.setBlock("http", &mockHttp);
-    mockEvents.setString("worker_connections", "1024");
-    mockConfiguration.setBlock("events", &mockEvents);
+    mock_server_1.setString("listen", "80");
+    mock_http.setBlock("server", &mock_server_1);
+    mock_http.setSize_t("worker_connections", 1024);
+    mock_configuration.setBlock("http", &mock_http);
+    mock_events.setString("worker_connections", "1024");
+    mock_configuration.setBlock("events", &mock_events);
 
     // Instantiate the Server instance
-    Server server(mockSocket, mockPollfdManager, mockConnectionManager,
-                  mockConfiguration, mockLogger);
+    Server server(mock_socket, mock_pollfd_manager, mock_connection_manager,
+                  mock_configuration, mock_logger);
 
     // Verify that sockets are up and listening
 }

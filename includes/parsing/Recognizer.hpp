@@ -12,12 +12,12 @@ class Recognizer
 private:
     int m_state_idx;
     AGrammarSymbol *m_symbol;
-    void scan(std::vector<std::vector<EarleyItem> > &sets, Token const &token,
+    void m_scan(std::vector<std::vector<EarleyItem> > &sets, Token const &token,
               EarleyItem const &item);
-    void complete(const Grammar &grammar,
+    void m_complete(const Grammar &grammar,
                   std::vector<std::vector<EarleyItem> > &sets,
                   std::vector<EarleyItem> &current_set, int item_index);
-    void predict(const Grammar &grammar, std::vector<EarleyItem> &current_set);
+    void m_predict(const Grammar &grammar, std::vector<EarleyItem> &current_set);
 
 public:
     Recognizer();

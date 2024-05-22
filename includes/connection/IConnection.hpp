@@ -33,7 +33,7 @@ public:
     virtual std::string getIp() const = 0;
     virtual int getPort() const = 0;
     virtual std::string getRemoteAddress() const = 0;
-    virtual int getResponseReadPipefd() const = 0;
+    virtual int getResponseReadPipeFd() const = 0;
     virtual IRequest &getRequest() const = 0;
     virtual IResponse &getResponse() const = 0;
     virtual ISession &getSession() const = 0;

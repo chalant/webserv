@@ -9,12 +9,12 @@
 class Factory : public IFactory
 {
 private:
-    const IConfiguration &_configuration;
-    ILogger &_logger;
-    const HttpHelper _httpHelper;
+    const IConfiguration &m_configuration;
+    ILogger &m_logger;
+    const HttpHelper m_http_helper;
 
 public:
-    Factory(const IConfiguration &configuration, ILogger &_logger);
+    Factory(const IConfiguration &configuration, ILogger &m_logger);
     virtual ~Factory();
 
     virtual IConnection *

@@ -15,8 +15,8 @@
  * HttpStatusCodeHelper helper;
  * HttpStatusCode code = 502;
  *
- * std::string meaning = helper.httpStatusCodeStringMap(statusCode);
- * std::string htmlPage = helper.getErrorResponse(statusCode);
+ * std::string meaning = helper.httpStatusCodeStringMap(status_code);
+ * std::string htmlPage = helper.getErrorResponse(status_code);
  *
  */
 
@@ -178,41 +178,41 @@ class HttpStatusCodeHelper
 private:
     // Member variables
     const std::vector<std::string>
-        _statusCodeList; // List of string representations of HTTP versions
+        m_status_code_list; // List of string representations of HTTP versions
     const std::map<std::string, HttpStatusCode>
-        _stringHttpStatusCodeMap; // Map of string representations to
+        m_string_http_status_code_map; // Map of string representations to
                                   // HttpStatusCode enum values
     const std::map<HttpStatusCode, std::string>
-        _httpStatusCodeStringMap; // Map of HttpStatusCode enum values to
+        m_http_status_code_string_map; // Map of HttpStatusCode enum values to
                                   // string representations
 
     // Private member functions for initialization
-    static std::vector<std::string> _setStatusCodeList();
-    static std::map<std::string, HttpStatusCode> _setStringHttpStatusCodeMap();
-    static std::map<HttpStatusCode, std::string> _setHttpStatusCodeStringMap();
+    static std::vector<std::string> m_setStatusCodeList();
+    static std::map<std::string, HttpStatusCode> m_setStringHttpStatusCodeMap();
+    static std::map<HttpStatusCode, std::string> m_setHttpStatusCodeStringMap();
 
 public:
     // Constructor
     HttpStatusCodeHelper();
 
     // Member functions to access data
-    const std::string &httpStatusCodeStringMap(HttpStatusCode statusCode)
+    const std::string &httpStatusCodeStringMap(HttpStatusCode status_code)
         const; // Get string representation of HttpStatusCode
-    HttpStatusCode stringHttpStatusCodeMap(const std::string &statusCode)
+    HttpStatusCode stringHttpStatusCodeMap(const std::string &status_code)
         const; // Get HttpStatusCode enum value from string representation
-    HttpStatusCode intHttpStatusCodeMap(const int &statusCode)
+    HttpStatusCode intHttpStatusCodeMap(const int &status_code)
         const; // Get HttpStatusCode enum value from integer representation
 
     // Member function to generate a status line
-    std::string getStatusLine(HttpStatusCode statusCode)
+    std::string getStatusLine(HttpStatusCode status_code)
         const; // Generate a status line with the specified HTTP status code
 
     // Member function to generate an HTML page
-    std::string getHtmlPage(HttpStatusCode statusCode)
+    std::string getHtmlPage(HttpStatusCode status_code)
         const; // Generate an HTML page with the specified HTTP status code
 
     // Member function to generate a complete response
-    std::string getErrorResponse(HttpStatusCode statusCode)
+    std::string getErrorResponse(HttpStatusCode status_code)
         const; // Generate an HTML page with the specified HTTP status code
 };
 

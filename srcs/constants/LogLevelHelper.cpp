@@ -12,18 +12,18 @@
 
 // Constructor initializes member variables using helper functions
 LogLevelHelper::LogLevelHelper()
-    : _logLevelList(_setLogLevelList()),
-      _stringLogLevelMap(_setStringLogLevelMap()),
-      _logLevelStringMap(_setLogLevelStringMap())
+    : m_log_level_list(m_setLogLevelList()),
+      m_string_log_level_map(m_setStringLogLevelMap()),
+      m_log_level_string_map(m_setLogLevelStringMap())
 {
 }
 
 // Get string representation of LogLevel enum value
 const std::string &LogLevelHelper::logLevelStringMap(LogLevel logLevel) const
 {
-    if (_logLevelStringMap.find(logLevel) != _logLevelStringMap.end())
+    if (m_log_level_string_map.find(logLevel) != m_log_level_string_map.end())
     {
-        return _logLevelStringMap.at(logLevel);
+        return m_log_level_string_map.at(logLevel);
     }
     else
     {
@@ -34,9 +34,9 @@ const std::string &LogLevelHelper::logLevelStringMap(LogLevel logLevel) const
 // Get LogLevel enum value from string representation
 LogLevel LogLevelHelper::stringLogLevelMap(const std::string &logLevel) const
 {
-    if (_stringLogLevelMap.find(logLevel) != _stringLogLevelMap.end())
+    if (m_string_log_level_map.find(logLevel) != m_string_log_level_map.end())
     {
-        return _stringLogLevelMap.at(logLevel);
+        return m_string_log_level_map.at(logLevel);
     }
     else
     {
@@ -44,58 +44,58 @@ LogLevel LogLevelHelper::stringLogLevelMap(const std::string &logLevel) const
     }
 }
 
-// Helper function to initialize LogLevelList with string representations of
+// Helper function to initialize m_log_level_list with string representations of
 // HTTP logLevels
-std::vector<std::string> LogLevelHelper::_setLogLevelList()
+std::vector<std::string> LogLevelHelper::m_setLogLevelList()
 {
-    std::vector<std::string> logLevelList;
+    std::vector<std::string> log_level_list;
 
     // Add string representations of HTTP logLevels to LogLevelList
-    logLevelList.push_back("verbose");
-    logLevelList.push_back("debug");
-    logLevelList.push_back("info");
-    logLevelList.push_back("warn");
-    logLevelList.push_back("error");
-    logLevelList.push_back("critical");
-    logLevelList.push_back("unknown");
+    log_level_list.push_back("verbose");
+    log_level_list.push_back("debug");
+    log_level_list.push_back("info");
+    log_level_list.push_back("warn");
+    log_level_list.push_back("error");
+    log_level_list.push_back("critical");
+    log_level_list.push_back("unknown");
 
-    return logLevelList;
+    return log_level_list;
 }
 
-// Helper function to initialize stringLogLevelMap with mappings from string
+// Helper function to initialize m_string_log_level_map with mappings from string
 // representations to LogLevel enum values
-std::map<std::string, LogLevel> LogLevelHelper::_setStringLogLevelMap()
+std::map<std::string, LogLevel> LogLevelHelper::m_setStringLogLevelMap()
 {
-    std::map<std::string, LogLevel> stringLogLevelMap;
+    std::map<std::string, LogLevel> string_log_level_map;
 
     // Add mappings from string representations to LogLevel enum values
-    stringLogLevelMap[ "verbose" ] = VERBOSE;
-    stringLogLevelMap[ "debug" ] = DEBUG;
-    stringLogLevelMap[ "info" ] = INFO;
-    stringLogLevelMap[ "warn" ] = WARN;
-    stringLogLevelMap[ "error" ] = ERROR;
-    stringLogLevelMap[ "critical" ] = CRITICAL;
-    stringLogLevelMap[ "unknown" ] = UNKNOWN;
+    string_log_level_map[ "verbose" ] = VERBOSE;
+    string_log_level_map[ "debug" ] = DEBUG;
+    string_log_level_map[ "info" ] = INFO;
+    string_log_level_map[ "warn" ] = WARN;
+    string_log_level_map[ "error" ] = ERROR;
+    string_log_level_map[ "critical" ] = CRITICAL;
+    string_log_level_map[ "unknown" ] = UNKNOWN;
 
-    return stringLogLevelMap;
+    return string_log_level_map;
 }
 
-// Helper function to initialize logLevelStringMap with mappings from LogLevel
+// Helper function to initialize m_log_level_string_map with mappings from LogLevel
 // enum values to string representations
-std::map<LogLevel, std::string> LogLevelHelper::_setLogLevelStringMap()
+std::map<LogLevel, std::string> LogLevelHelper::m_setLogLevelStringMap()
 {
-    std::map<LogLevel, std::string> logLevelStringMap;
+    std::map<LogLevel, std::string> log_level_string_map;
 
     // Add mappings from LogLevel enum values to string representations
-    logLevelStringMap[ VERBOSE ] = "verbose";
-    logLevelStringMap[ DEBUG ] = "debug";
-    logLevelStringMap[ INFO ] = "info";
-    logLevelStringMap[ WARN ] = "warn";
-    logLevelStringMap[ ERROR ] = "error";
-    logLevelStringMap[ CRITICAL ] = "critical";
-    logLevelStringMap[ UNKNOWN ] = "unknown";
+    log_level_string_map[ VERBOSE ] = "verbose";
+    log_level_string_map[ DEBUG ] = "debug";
+    log_level_string_map[ INFO ] = "info";
+    log_level_string_map[ WARN ] = "warn";
+    log_level_string_map[ ERROR ] = "error";
+    log_level_string_map[ CRITICAL ] = "critical";
+    log_level_string_map[ UNKNOWN ] = "unknown";
 
-    return logLevelStringMap;
+    return log_level_string_map;
 }
 
 // Path: includes/constants/LogLevelHelper.hpp

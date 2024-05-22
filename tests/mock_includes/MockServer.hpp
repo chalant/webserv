@@ -16,8 +16,8 @@ public:
     MockServer();
 
     virtual ~MockServer();
-    virtual void acceptConnection(int serverSocketDescriptor);
-    virtual void terminate(int exitCode);
+    virtual void acceptConnection(int server_socket_descriptor);
+    virtual void terminate(int exit_code);
 };
 
 #endif // MOCKSERVER_HPP

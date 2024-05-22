@@ -11,11 +11,11 @@ MockServer::MockServer() {}
 
 MockServer::~MockServer() {}
 
-void MockServer::acceptConnection(int serverSocketDescriptor)
+void MockServer::acceptConnection(int server_socket_descriptor)
 {
-    static_cast<void>(serverSocketDescriptor);
+    static_cast<void>(server_socket_descriptor);
 }
 
-void MockServer::terminate(int exitCode) { static_cast<void>(exitCode); }
+void MockServer::terminate(int exit_code) { static_cast<void>(exit_code); }
 
 // Path: tests/mock_srcs/MockServer.cpp

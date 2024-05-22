@@ -18,63 +18,63 @@
 class RequestParser
 {
 private:
-    ILogger &_logger; // Reference to the error logger
+    ILogger &m_logger; // Reference to the error logger
     const IConfiguration
-        &_configuration; // Reference to the server IConfiguration
+        &m_configuration; // Reference to the server IConfiguration
 
     // Function to parse the request line of an HTTP request
-    void _parseRequestLine(std::vector<char>::const_iterator &it,
-                           const std::vector<char> &rawRequest,
-                           IRequest &parsedRequest) const;
+    void m_parseRequestLine(std::vector<char>::const_iterator &it,
+                           const std::vector<char> &raw_request,
+                           IRequest &parsed_request) const;
 
     // Functions to parse the components of the request line
-    std::string _parseMethod(std::vector<char>::const_iterator &it,
-                             const std::vector<char> &rawRequest) const;
-    std::string _parseUri(std::vector<char>::const_iterator &it,
-                          const std::vector<char> &rawRequest) const;
-    std::string _parseHttpVersion(std::vector<char>::const_iterator &it,
-                                  const std::vector<char> &rawRequest) const;
+    std::string m_parseMethod(std::vector<char>::const_iterator &it,
+                             const std::vector<char> &raw_request) const;
+    std::string m_parseUri(std::vector<char>::const_iterator &it,
+                          const std::vector<char> &raw_request) const;
+    std::string m_parseHttpVersion(std::vector<char>::const_iterator &it,
+                                  const std::vector<char> &raw_request) const;
 
     // Function to parse the headers of an HTTP request
-    void _parseHeaders(std::vector<char>::const_iterator &it,
-                       const std::vector<char> &rawRequest,
-                       IRequest &parsedRequest) const;
+    void m_parseHeaders(std::vector<char>::const_iterator &it,
+                       const std::vector<char> &raw_request,
+                       IRequest &parsed_request) const;
 
     // Function to parse an individual header
-    void _parseHeader(std::vector<char>::const_iterator &it,
-                      const std::vector<char> &rawRequest,
-                      IRequest &parsedRequest) const;
+    void m_parseHeader(std::vector<char>::const_iterator &it,
+                      const std::vector<char> &raw_request,
+                      IRequest &parsed_request) const;
 
     // Function to parse the body of an HTTP request
-    void _parseBody(std::vector<char>::const_iterator &it,
-                    const std::vector<char> &rawRequest,
-                    IRequest &parsedRequest) const;
+    void m_parseBody(std::vector<char>::const_iterator &it,
+                    const std::vector<char> &raw_request,
+                    IRequest &parsed_request) const;
 
     // Function to unchunk the body of an HTTP request
-    std::vector<char> _unchunkBody(std::vector<char>::const_iterator &it,
-                                   const std::vector<char> &rawRequest) const;
+    std::vector<char> m_unchunkBody(std::vector<char>::const_iterator &it,
+                                   const std::vector<char> &raw_request) const;
 
     // Function to parse the Upload Chunked Body
-    void _parseBodyParameters(IRequest &parseRequest) const;
+    void m_parseBodyParameters(IRequest &parsed_request) const;
 
     // Function to parse a Cookie header
-    void _parseCookie(std::string &cookieHeaderValue,
-                      IRequest &parsedRequest) const;
+    void m_parseCookie(std::string &cookie_header_value,
+                      IRequest &parsed_request) const;
 
     // Function to check if a character is whitespace
-    bool _isWhitespace(char c) const;
+    bool m_isWhitespace(char c) const;
 
     // Function to check if an iterator points to CRLF (carriage return + line
     // feed)
-    bool _isCRLF(std::vector<char>::const_iterator it) const;
+    bool m_isCRLF(std::vector<char>::const_iterator it) const;
 
     // Function to check if an iterator points to a character that is in a given
     // set
-    bool _isCharInSet(std::vector<char>::const_iterator it,
+    bool m_isCharInSet(std::vector<char>::const_iterator it,
                       const std::string &set) const;
 
     // Function to trim leading and trailing whitespace from a string
-    std::string _trimWhitespace(const std::string &string) const;
+    std::string m_trimWhitespace(const std::string &string) const;
 
 public:
     // Constructor to initialize the RequestParser with required references
@@ -82,8 +82,8 @@ public:
 
     // Function to parse a raw HTTP request and convert it into a IRequest
     // object
-    void parseRequest(const std::vector<char> &rawRequest,
-                      IRequest &parsedRequest) const;
+    void parseRequest(const std::vector<char> &raw_request,
+                      IRequest &parsed_request) const;
 };
 
 #endif // REQUESTPARSER_HPP

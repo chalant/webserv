@@ -8,16 +8,16 @@
 class Route : public IRoute
 {
 private:
-    const std::string _path; // The path of the route (prefix)
+    const std::string m_path; // The path of the route (prefix)
     const std::string
-        _root; // The root directory of the route (where the files are stored)
+        m_root; // The root directory of the route (where the files are stored)
     const std::string
-        _index; // The file to serve if the request uri is a directory
-    IResponseGenerator &_responseGenerator;
+        m_index; // The file to serve if the request uri is a directory
+    IResponseGenerator &m_response_generator;
 
 public:
     Route(const std::string path, const std::string root,
-          const std::string index, IResponseGenerator &responseGenerator);
+          const std::string index, IResponseGenerator &response_generator);
     ~Route();
     std::string getPath() const;
     std::string getRoot() const;

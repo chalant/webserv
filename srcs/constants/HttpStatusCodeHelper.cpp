@@ -14,20 +14,20 @@
 
 // Constructor initializes member variables using helper functions
 HttpStatusCodeHelper::HttpStatusCodeHelper()
-    : _statusCodeList(_setStatusCodeList()),
-      _stringHttpStatusCodeMap(_setStringHttpStatusCodeMap()),
-      _httpStatusCodeStringMap(_setHttpStatusCodeStringMap())
+    : m_status_code_list(m_setStatusCodeList()),
+      m_string_http_status_code_map(m_setStringHttpStatusCodeMap()),
+      m_http_status_code_string_map(m_setHttpStatusCodeStringMap())
 {
 }
 
 // Get string representation of HttpStatusCode enum value
 const std::string &
-HttpStatusCodeHelper::httpStatusCodeStringMap(HttpStatusCode statusCode) const
+HttpStatusCodeHelper::httpStatusCodeStringMap(HttpStatusCode status_code) const
 {
-    if (_httpStatusCodeStringMap.find(statusCode) !=
-        _httpStatusCodeStringMap.end())
+    if (m_http_status_code_string_map.find(status_code) !=
+        m_http_status_code_string_map.end())
     {
-        return _httpStatusCodeStringMap.at(statusCode);
+        return m_http_status_code_string_map.at(status_code);
     }
     else
     {
@@ -37,60 +37,60 @@ HttpStatusCodeHelper::httpStatusCodeStringMap(HttpStatusCode statusCode) const
 
 // Get HttpStatusCode enum value from string representation
 HttpStatusCode HttpStatusCodeHelper::stringHttpStatusCodeMap(
-    const std::string &statusCode) const
+    const std::string &status_code) const
 {
-    if (_stringHttpStatusCodeMap.find(statusCode) !=
-        _stringHttpStatusCodeMap.end())
+    if (m_string_http_status_code_map.find(status_code) !=
+        m_string_http_status_code_map.end())
     {
-        return _stringHttpStatusCodeMap.at(statusCode);
+        return m_string_http_status_code_map.at(status_code);
     }
     else
     {
-        throw UnknownHttpStatusCodeError(statusCode);
+        throw UnknownHttpStatusCodeError(status_code);
     }
 }
 
 // Get HttpStatusCode enum value from string representation
 HttpStatusCode
-HttpStatusCodeHelper::intHttpStatusCodeMap(const int &statusCode) const
+HttpStatusCodeHelper::intHttpStatusCodeMap(const int &status_code) const
 {
-    if (statusCode >= 100 && statusCode <= 511)
+    if (status_code >= 100 && status_code <= 511)
     {
-        return static_cast<HttpStatusCode>(statusCode);
+        return static_cast<HttpStatusCode>(status_code);
     }
     else
     {
-        throw UnknownHttpStatusCodeError(Converter::toString(statusCode));
+        throw UnknownHttpStatusCodeError(Converter::toString(status_code));
     }
 }
 
 // Generate a status line string for an HTTP response
-std::string HttpStatusCodeHelper::getStatusLine(HttpStatusCode statusCode) const
+std::string HttpStatusCodeHelper::getStatusLine(HttpStatusCode status_code) const
 {
-    return "HTTP/1.1 " + Converter::toString(static_cast<size_t>(statusCode)) +
-           " " + this->httpStatusCodeStringMap(statusCode) + "\r\n";
+    return "HTTP/1.1 " + Converter::toString(static_cast<size_t>(status_code)) +
+           " " + this->httpStatusCodeStringMap(status_code) + "\r\n";
 }
 
 // Generate a complete error response for an HTTP status code
 std::string
-HttpStatusCodeHelper::getErrorResponse(HttpStatusCode statusCode) const
+HttpStatusCodeHelper::getErrorResponse(HttpStatusCode status_code) const
 {
-    std::string body = this->getHtmlPage(statusCode);
+    std::string body = this->getHtmlPage(status_code);
 
-    return this->getStatusLine(statusCode) + "\n" +
+    return this->getStatusLine(status_code) + "\n" +
            "content-type: text/html\r\n" +
            "content-length: " + Converter::toString(body.length()) + "\r\n" +
            "Connection: close\r\n" + "Server: webserv/1.0\r\n" + "\r\n" + body;
 }
 
 // Generate an HTML page with the specified HTTP status code
-std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode statusCode) const
+std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode status_code) const
 {
     // Create a string stream to build the HTML page.
-    std::stringstream htmlPage;
+    std::stringstream html_page;
 
     // Write the HTML page
-    htmlPage
+    html_page
         << "<!DOCTYPE html>\n"
            "<html lang=\"en\">\n"
            "<head>\n"
@@ -99,7 +99,7 @@ std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode statusCode) const
            "    <meta name=\"viewport\" content=\"width=device-width, "
            "initial-scale=1.0\">\n"
            "    <title>Webserv | "
-        << static_cast<size_t>(statusCode)
+        << static_cast<size_t>(status_code)
         << "</title>\n"
            "    <style>\n"
            "        body {\n"
@@ -145,10 +145,10 @@ std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode statusCode) const
            "    <div class=\"container\">\n"
            "        <div class=\"error\">\n"
            "            <h1>Error <span style=\"color: #f90;\">"
-        << static_cast<size_t>(statusCode)
+        << static_cast<size_t>(status_code)
         << "</span></h1>\n"
            "            <p> "
-        << this->_httpStatusCodeStringMap.at(statusCode)
+        << this->m_http_status_code_string_map.at(status_code)
         << "</p>\n"
            "            <div class=\"version\">webserv/1.0</div>\n"
            "        </div>\n"
@@ -157,252 +157,252 @@ std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode statusCode) const
            "</html>\n";
 
     // Return the generated HTML page.
-    return htmlPage.str();
+    return html_page.str();
 }
 
-// Helper function to initialize StatusCodeList with string representations of
+// Helper function to initialize m_status_code_list with string representations of
 // HTTP status codes
-std::vector<std::string> HttpStatusCodeHelper::_setStatusCodeList()
+std::vector<std::string> HttpStatusCodeHelper::m_setStatusCodeList()
 {
-    std::vector<std::string> StatusCodeList;
+    std::vector<std::string> status_code_list;
 
-    // Add string representations of HTTP status codes to StatusCodeList
-    StatusCodeList.push_back("100 Continue");
-    StatusCodeList.push_back("101 Switching Protocols");
-    StatusCodeList.push_back("102 Processing");
-    StatusCodeList.push_back("103 Early Hints");
-    StatusCodeList.push_back("200 OK");
-    StatusCodeList.push_back("201 Created");
-    StatusCodeList.push_back("202 Accepted");
-    StatusCodeList.push_back("203 Non-Authoritative Information");
-    StatusCodeList.push_back("204 No Content");
-    StatusCodeList.push_back("205 Reset Content");
-    StatusCodeList.push_back("206 Partial Content");
-    StatusCodeList.push_back("207 Multi-Status");
-    StatusCodeList.push_back("208 Already Reported");
-    StatusCodeList.push_back("226 IM Used");
-    StatusCodeList.push_back("300 Multiple Choices");
-    StatusCodeList.push_back("301 Moved Permanently");
-    StatusCodeList.push_back("302 Found");
-    StatusCodeList.push_back("303 See Other");
-    StatusCodeList.push_back("304 Not Modified");
-    StatusCodeList.push_back("305 Use Proxy");
-    StatusCodeList.push_back("306 Switch Proxy");
-    StatusCodeList.push_back("307 Temporary Redirect");
-    StatusCodeList.push_back("308 Permanent Redirect");
-    StatusCodeList.push_back("400 Bad Request");
-    StatusCodeList.push_back("401 Unauthorized");
-    StatusCodeList.push_back("402 Payment Required");
-    StatusCodeList.push_back("403 Forbidden");
-    StatusCodeList.push_back("404 Not Found");
-    StatusCodeList.push_back("405 Method Not Allowed");
-    StatusCodeList.push_back("406 Not Acceptable");
-    StatusCodeList.push_back("407 Proxy Authentication Required");
-    StatusCodeList.push_back("408 Request Timeout");
-    StatusCodeList.push_back("409 Conflict");
-    StatusCodeList.push_back("410 Gone");
-    StatusCodeList.push_back("411 Length Required");
-    StatusCodeList.push_back("412 Precondition Failed");
-    StatusCodeList.push_back("413 Payload Too Large");
-    StatusCodeList.push_back("414 URI Too Long");
-    StatusCodeList.push_back("415 Unsupported Media Type");
-    StatusCodeList.push_back("416 Range Not Satisfiable");
-    StatusCodeList.push_back("417 Expectation Failed");
-    StatusCodeList.push_back("418 I'm a teapot");
-    StatusCodeList.push_back("421 Misdirected Request");
-    StatusCodeList.push_back("422 Unprocessable Entity");
-    StatusCodeList.push_back("423 Locked");
-    StatusCodeList.push_back("424 Failed Dependency");
-    StatusCodeList.push_back("425 Too Early");
-    StatusCodeList.push_back("426 Upgrade Required");
-    StatusCodeList.push_back("428 Precondition Required");
-    StatusCodeList.push_back("429 Too Many Requests");
-    StatusCodeList.push_back("431 Request Header Fields Too Large");
-    StatusCodeList.push_back("451 Unavailable For Legal Reasons");
-    StatusCodeList.push_back("500 Internal Server Error");
-    StatusCodeList.push_back("501 Not Implemented");
-    StatusCodeList.push_back("502 Bad Gateway");
-    StatusCodeList.push_back("503 Service Unavailable");
-    StatusCodeList.push_back("504 Gateway Timeout");
-    StatusCodeList.push_back("505 HTTP Version Not Supported");
-    StatusCodeList.push_back("506 Variant Also Negotiates");
-    StatusCodeList.push_back("507 Insufficient Storage");
-    StatusCodeList.push_back("508 Loop Detected");
-    StatusCodeList.push_back("510 Not Extended");
-    StatusCodeList.push_back("511 Network Authentication Required");
+    // Add string representations of HTTP status codes to status_code_list
+    status_code_list.push_back("100 Continue");
+    status_code_list.push_back("101 Switching Protocols");
+    status_code_list.push_back("102 Processing");
+    status_code_list.push_back("103 Early Hints");
+    status_code_list.push_back("200 OK");
+    status_code_list.push_back("201 Created");
+    status_code_list.push_back("202 Accepted");
+    status_code_list.push_back("203 Non-Authoritative Information");
+    status_code_list.push_back("204 No Content");
+    status_code_list.push_back("205 Reset Content");
+    status_code_list.push_back("206 Partial Content");
+    status_code_list.push_back("207 Multi-Status");
+    status_code_list.push_back("208 Already Reported");
+    status_code_list.push_back("226 IM Used");
+    status_code_list.push_back("300 Multiple Choices");
+    status_code_list.push_back("301 Moved Permanently");
+    status_code_list.push_back("302 Found");
+    status_code_list.push_back("303 See Other");
+    status_code_list.push_back("304 Not Modified");
+    status_code_list.push_back("305 Use Proxy");
+    status_code_list.push_back("306 Switch Proxy");
+    status_code_list.push_back("307 Temporary Redirect");
+    status_code_list.push_back("308 Permanent Redirect");
+    status_code_list.push_back("400 Bad Request");
+    status_code_list.push_back("401 Unauthorized");
+    status_code_list.push_back("402 Payment Required");
+    status_code_list.push_back("403 Forbidden");
+    status_code_list.push_back("404 Not Found");
+    status_code_list.push_back("405 Method Not Allowed");
+    status_code_list.push_back("406 Not Acceptable");
+    status_code_list.push_back("407 Proxy Authentication Required");
+    status_code_list.push_back("408 Request Timeout");
+    status_code_list.push_back("409 Conflict");
+    status_code_list.push_back("410 Gone");
+    status_code_list.push_back("411 Length Required");
+    status_code_list.push_back("412 Precondition Failed");
+    status_code_list.push_back("413 Payload Too Large");
+    status_code_list.push_back("414 URI Too Long");
+    status_code_list.push_back("415 Unsupported Media Type");
+    status_code_list.push_back("416 Range Not Satisfiable");
+    status_code_list.push_back("417 Expectation Failed");
+    status_code_list.push_back("418 I'm a teapot");
+    status_code_list.push_back("421 Misdirected Request");
+    status_code_list.push_back("422 Unprocessable Entity");
+    status_code_list.push_back("423 Locked");
+    status_code_list.push_back("424 Failed Dependency");
+    status_code_list.push_back("425 Too Early");
+    status_code_list.push_back("426 Upgrade Required");
+    status_code_list.push_back("428 Precondition Required");
+    status_code_list.push_back("429 Too Many Requests");
+    status_code_list.push_back("431 Request Header Fields Too Large");
+    status_code_list.push_back("451 Unavailable For Legal Reasons");
+    status_code_list.push_back("500 Internal Server Error");
+    status_code_list.push_back("501 Not Implemented");
+    status_code_list.push_back("502 Bad Gateway");
+    status_code_list.push_back("503 Service Unavailable");
+    status_code_list.push_back("504 Gateway Timeout");
+    status_code_list.push_back("505 HTTP Version Not Supported");
+    status_code_list.push_back("506 Variant Also Negotiates");
+    status_code_list.push_back("507 Insufficient Storage");
+    status_code_list.push_back("508 Loop Detected");
+    status_code_list.push_back("510 Not Extended");
+    status_code_list.push_back("511 Network Authentication Required");
 
-    return StatusCodeList;
+    return status_code_list;
 }
 
-// Helper function to initialize stringHttpStatusCodeMap with mappings from
+// Helper function to initialize m_string_http_status_code_map with mappings from
 // string representations to HttpStatusCode enum values
 std::map<std::string, HttpStatusCode>
-HttpStatusCodeHelper::_setStringHttpStatusCodeMap()
+HttpStatusCodeHelper::m_setStringHttpStatusCodeMap()
 {
-    std::map<std::string, HttpStatusCode> stringHttpStatusCodeMap;
+    std::map<std::string, HttpStatusCode> string_http_status_code_map;
 
     // Add mappings from string representations to HttpStatusCode enum values
-    stringHttpStatusCodeMap[ "100 Continue" ] = CONTINUE;
-    stringHttpStatusCodeMap[ "101 Switching Protocols" ] = SWITCHING_PROTOCOLS;
-    stringHttpStatusCodeMap[ "102 Processing" ] = PROCESSING;
-    stringHttpStatusCodeMap[ "103 Early Hints" ] = EARLY_HINTS;
-    stringHttpStatusCodeMap[ "200 OK" ] = OK;
-    stringHttpStatusCodeMap[ "201 Created" ] = CREATED;
-    stringHttpStatusCodeMap[ "202 Accepted" ] = ACCEPTED;
-    stringHttpStatusCodeMap[ "203 Non-Authoritative Information" ] =
+    string_http_status_code_map[ "100 Continue" ] = CONTINUE;
+    string_http_status_code_map[ "101 Switching Protocols" ] = SWITCHING_PROTOCOLS;
+    string_http_status_code_map[ "102 Processing" ] = PROCESSING;
+    string_http_status_code_map[ "103 Early Hints" ] = EARLY_HINTS;
+    string_http_status_code_map[ "200 OK" ] = OK;
+    string_http_status_code_map[ "201 Created" ] = CREATED;
+    string_http_status_code_map[ "202 Accepted" ] = ACCEPTED;
+    string_http_status_code_map[ "203 Non-Authoritative Information" ] =
         NON_AUTHORITATIVE_INFORMATION;
-    stringHttpStatusCodeMap[ "204 No Content" ] = NO_CONTENT;
-    stringHttpStatusCodeMap[ "205 Reset Content" ] = RESET_CONTENT;
-    stringHttpStatusCodeMap[ "206 Partial Content" ] = PARTIAL_CONTENT;
-    stringHttpStatusCodeMap[ "207 Multi-Status" ] = MULTI_STATUS;
-    stringHttpStatusCodeMap[ "208 Already Reported" ] = ALREADY_REPORTED;
-    stringHttpStatusCodeMap[ "226 IM Used" ] = IM_USED;
-    stringHttpStatusCodeMap[ "300 Multiple Choices" ] = MULTIPLE_CHOICES;
-    stringHttpStatusCodeMap[ "301 Moved Permanently" ] = MOVED_PERMANENTLY;
-    stringHttpStatusCodeMap[ "302 Found" ] = FOUND;
-    stringHttpStatusCodeMap[ "303 See Other" ] = SEE_OTHER;
-    stringHttpStatusCodeMap[ "304 Not Modified" ] = NOT_MODIFIED;
-    stringHttpStatusCodeMap[ "305 Use Proxy" ] = USE_PROXY;
-    stringHttpStatusCodeMap[ "306 Switch Proxy" ] = SWITCH_PROXY;
-    stringHttpStatusCodeMap[ "307 Temporary Redirect" ] = TEMPORARY_REDIRECT;
-    stringHttpStatusCodeMap[ "308 Permanent Redirect" ] = PERMANENT_REDIRECT;
-    stringHttpStatusCodeMap[ "400 Bad Request" ] = BAD_REQUEST;
-    stringHttpStatusCodeMap[ "401 Unauthorized" ] = UNAUTHORIZED;
-    stringHttpStatusCodeMap[ "402 Payment Required" ] = PAYMENT_REQUIRED;
-    stringHttpStatusCodeMap[ "403 Forbidden" ] = FORBIDDEN;
-    stringHttpStatusCodeMap[ "404 Not Found" ] = NOT_FOUND;
-    stringHttpStatusCodeMap[ "405 Method Not Allowed" ] = METHOD_NOT_ALLOWED;
-    stringHttpStatusCodeMap[ "406 Not Acceptable" ] = NOT_ACCEPTABLE;
-    stringHttpStatusCodeMap[ "407 Proxy Authentication Required" ] =
+    string_http_status_code_map[ "204 No Content" ] = NO_CONTENT;
+    string_http_status_code_map[ "205 Reset Content" ] = RESET_CONTENT;
+    string_http_status_code_map[ "206 Partial Content" ] = PARTIAL_CONTENT;
+    string_http_status_code_map[ "207 Multi-Status" ] = MULTI_STATUS;
+    string_http_status_code_map[ "208 Already Reported" ] = ALREADY_REPORTED;
+    string_http_status_code_map[ "226 IM Used" ] = IM_USED;
+    string_http_status_code_map[ "300 Multiple Choices" ] = MULTIPLE_CHOICES;
+    string_http_status_code_map[ "301 Moved Permanently" ] = MOVED_PERMANENTLY;
+    string_http_status_code_map[ "302 Found" ] = FOUND;
+    string_http_status_code_map[ "303 See Other" ] = SEE_OTHER;
+    string_http_status_code_map[ "304 Not Modified" ] = NOT_MODIFIED;
+    string_http_status_code_map[ "305 Use Proxy" ] = USE_PROXY;
+    string_http_status_code_map[ "306 Switch Proxy" ] = SWITCH_PROXY;
+    string_http_status_code_map[ "307 Temporary Redirect" ] = TEMPORARY_REDIRECT;
+    string_http_status_code_map[ "308 Permanent Redirect" ] = PERMANENT_REDIRECT;
+    string_http_status_code_map[ "400 Bad Request" ] = BAD_REQUEST;
+    string_http_status_code_map[ "401 Unauthorized" ] = UNAUTHORIZED;
+    string_http_status_code_map[ "402 Payment Required" ] = PAYMENT_REQUIRED;
+    string_http_status_code_map[ "403 Forbidden" ] = FORBIDDEN;
+    string_http_status_code_map[ "404 Not Found" ] = NOT_FOUND;
+    string_http_status_code_map[ "405 Method Not Allowed" ] = METHOD_NOT_ALLOWED;
+    string_http_status_code_map[ "406 Not Acceptable" ] = NOT_ACCEPTABLE;
+    string_http_status_code_map[ "407 Proxy Authentication Required" ] =
         PROXY_AUTHENTICATION_REQUIRED;
-    stringHttpStatusCodeMap[ "408 Request Timeout" ] = REQUEST_TIMEOUT;
-    stringHttpStatusCodeMap[ "409 Conflict" ] = CONFLICT;
-    stringHttpStatusCodeMap[ "410 Gone" ] = GONE;
-    stringHttpStatusCodeMap[ "411 Length Required" ] = LENGTH_REQUIRED;
-    stringHttpStatusCodeMap[ "412 Precondition Failed" ] = PRECONDITION_FAILED;
-    stringHttpStatusCodeMap[ "413 Payload Too Large" ] = PAYLOAD_TOO_LARGE;
-    stringHttpStatusCodeMap[ "414 URI Too Long" ] = URI_TOO_LONG;
-    stringHttpStatusCodeMap[ "415 Unsupported Media Type" ] =
+    string_http_status_code_map[ "408 Request Timeout" ] = REQUEST_TIMEOUT;
+    string_http_status_code_map[ "409 Conflict" ] = CONFLICT;
+    string_http_status_code_map[ "410 Gone" ] = GONE;
+    string_http_status_code_map[ "411 Length Required" ] = LENGTH_REQUIRED;
+    string_http_status_code_map[ "412 Precondition Failed" ] = PRECONDITION_FAILED;
+    string_http_status_code_map[ "413 Payload Too Large" ] = PAYLOAD_TOO_LARGE;
+    string_http_status_code_map[ "414 URI Too Long" ] = URI_TOO_LONG;
+    string_http_status_code_map[ "415 Unsupported Media Type" ] =
         UNSUPPORTED_MEDIA_TYPE;
-    stringHttpStatusCodeMap[ "416 Range Not Satisfiable" ] =
+    string_http_status_code_map[ "416 Range Not Satisfiable" ] =
         RANGE_NOT_SATISFIABLE;
-    stringHttpStatusCodeMap[ "417 Expectation Failed" ] = EXPECTATION_FAILED;
-    stringHttpStatusCodeMap[ "418 I'm a teapot" ] = IM_A_TEAPOT;
-    stringHttpStatusCodeMap[ "421 Misdirected Request" ] = MISDIRECTED_REQUEST;
-    stringHttpStatusCodeMap[ "422 Unprocessable Entity" ] =
+    string_http_status_code_map[ "417 Expectation Failed" ] = EXPECTATION_FAILED;
+    string_http_status_code_map[ "418 I'm a teapot" ] = IM_A_TEAPOT;
+    string_http_status_code_map[ "421 Misdirected Request" ] = MISDIRECTED_REQUEST;
+    string_http_status_code_map[ "422 Unprocessable Entity" ] =
         UNPROCESSABLE_ENTITY;
-    stringHttpStatusCodeMap[ "423 Locked" ] = LOCKED;
-    stringHttpStatusCodeMap[ "424 Failed Dependency" ] = FAILED_DEPENDENCY;
-    stringHttpStatusCodeMap[ "425 Too Early" ] = TOO_EARLY;
-    stringHttpStatusCodeMap[ "426 Upgrade Required" ] = UPGRADE_REQUIRED;
-    stringHttpStatusCodeMap[ "428 Precondition Required" ] =
+    string_http_status_code_map[ "423 Locked" ] = LOCKED;
+    string_http_status_code_map[ "424 Failed Dependency" ] = FAILED_DEPENDENCY;
+    string_http_status_code_map[ "425 Too Early" ] = TOO_EARLY;
+    string_http_status_code_map[ "426 Upgrade Required" ] = UPGRADE_REQUIRED;
+    string_http_status_code_map[ "428 Precondition Required" ] =
         PRECONDITION_REQUIRED;
-    stringHttpStatusCodeMap[ "429 Too Many Requests" ] = TOO_MANY_REQUESTS;
-    stringHttpStatusCodeMap[ "431 Request Header Fields Too Large" ] =
+    string_http_status_code_map[ "429 Too Many Requests" ] = TOO_MANY_REQUESTS;
+    string_http_status_code_map[ "431 Request Header Fields Too Large" ] =
         REQUEST_HEADER_FIELDS_TOO_LARGE;
-    stringHttpStatusCodeMap[ "451 Unavailable For Legal Reasons" ] =
+    string_http_status_code_map[ "451 Unavailable For Legal Reasons" ] =
         UNAVAILABLE_FOR_LEGAL_REASONS;
-    stringHttpStatusCodeMap[ "500 Internal Server Error" ] =
+    string_http_status_code_map[ "500 Internal Server Error" ] =
         INTERNAL_SERVER_ERROR;
-    stringHttpStatusCodeMap[ "501 Not Implemented" ] = NOT_IMPLEMENTED;
-    stringHttpStatusCodeMap[ "502 Bad Gateway" ] = BAD_GATEWAY;
-    stringHttpStatusCodeMap[ "503 Service Unavailable" ] = SERVICE_UNAVAILABLE;
-    stringHttpStatusCodeMap[ "504 Gateway Timeout" ] = GATEWAY_TIMEOUT;
-    stringHttpStatusCodeMap[ "505 HTTP Version Not Supported" ] =
+    string_http_status_code_map[ "501 Not Implemented" ] = NOT_IMPLEMENTED;
+    string_http_status_code_map[ "502 Bad Gateway" ] = BAD_GATEWAY;
+    string_http_status_code_map[ "503 Service Unavailable" ] = SERVICE_UNAVAILABLE;
+    string_http_status_code_map[ "504 Gateway Timeout" ] = GATEWAY_TIMEOUT;
+    string_http_status_code_map[ "505 HTTP Version Not Supported" ] =
         HTTP_VERSION_NOT_SUPPORTED;
-    stringHttpStatusCodeMap[ "506 Variant Also Negotiates" ] =
+    string_http_status_code_map[ "506 Variant Also Negotiates" ] =
         VARIANT_ALSO_NEGOTIATES;
-    stringHttpStatusCodeMap[ "507 Insufficient Storage" ] =
+    string_http_status_code_map[ "507 Insufficient Storage" ] =
         INSUFFICIENT_STORAGE;
-    stringHttpStatusCodeMap[ "508 Loop Detected" ] = LOOP_DETECTED;
-    stringHttpStatusCodeMap[ "510 Not Extended" ] = NOT_EXTENDED;
-    stringHttpStatusCodeMap[ "511 Network Authentication Required" ] =
+    string_http_status_code_map[ "508 Loop Detected" ] = LOOP_DETECTED;
+    string_http_status_code_map[ "510 Not Extended" ] = NOT_EXTENDED;
+    string_http_status_code_map[ "511 Network Authentication Required" ] =
         NETWORK_AUTHENTICATION_REQUIRED;
 
-    return stringHttpStatusCodeMap;
+    return string_http_status_code_map;
 }
 
-// Helper function to initialize httpStatusCodeStringMap with mappings from
+// Helper function to initialize m_http_status_code_string_map with mappings from
 // HttpStatusCode enum values to string representations
 std::map<HttpStatusCode, std::string>
-HttpStatusCodeHelper::_setHttpStatusCodeStringMap()
+HttpStatusCodeHelper::m_setHttpStatusCodeStringMap()
 {
-    std::map<HttpStatusCode, std::string> httpStatusCodeStringMap;
+    std::map<HttpStatusCode, std::string> http_status_code_string_map;
 
     // Add mappings from HttpStatusCode enum values to string representations
-    httpStatusCodeStringMap[ CONTINUE ] = "Continue";
-    httpStatusCodeStringMap[ SWITCHING_PROTOCOLS ] = "Switching Protocols";
-    httpStatusCodeStringMap[ PROCESSING ] = "Processing";
-    httpStatusCodeStringMap[ EARLY_HINTS ] = "Early Hints";
-    httpStatusCodeStringMap[ OK ] = "OK";
-    httpStatusCodeStringMap[ CREATED ] = "Created";
-    httpStatusCodeStringMap[ ACCEPTED ] = "Accepted";
-    httpStatusCodeStringMap[ NON_AUTHORITATIVE_INFORMATION ] =
+    http_status_code_string_map[ CONTINUE ] = "Continue";
+    http_status_code_string_map[ SWITCHING_PROTOCOLS ] = "Switching Protocols";
+    http_status_code_string_map[ PROCESSING ] = "Processing";
+    http_status_code_string_map[ EARLY_HINTS ] = "Early Hints";
+    http_status_code_string_map[ OK ] = "OK";
+    http_status_code_string_map[ CREATED ] = "Created";
+    http_status_code_string_map[ ACCEPTED ] = "Accepted";
+    http_status_code_string_map[ NON_AUTHORITATIVE_INFORMATION ] =
         "Non-Authoritative Information";
-    httpStatusCodeStringMap[ NO_CONTENT ] = "No Content";
-    httpStatusCodeStringMap[ RESET_CONTENT ] = "Reset Content";
-    httpStatusCodeStringMap[ PARTIAL_CONTENT ] = "Partial Content";
-    httpStatusCodeStringMap[ MULTI_STATUS ] = "Multi-Status";
-    httpStatusCodeStringMap[ ALREADY_REPORTED ] = "Already Reported";
-    httpStatusCodeStringMap[ IM_USED ] = "IM Used";
-    httpStatusCodeStringMap[ MULTIPLE_CHOICES ] = "Multiple Choices";
-    httpStatusCodeStringMap[ MOVED_PERMANENTLY ] = "Moved Permanently";
-    httpStatusCodeStringMap[ FOUND ] = "Found";
-    httpStatusCodeStringMap[ SEE_OTHER ] = "See Other";
-    httpStatusCodeStringMap[ NOT_MODIFIED ] = "Not Modified";
-    httpStatusCodeStringMap[ USE_PROXY ] = "Use Proxy";
-    httpStatusCodeStringMap[ SWITCH_PROXY ] = "Switch Proxy";
-    httpStatusCodeStringMap[ TEMPORARY_REDIRECT ] = "Temporary Redirect";
-    httpStatusCodeStringMap[ PERMANENT_REDIRECT ] = "Permanent Redirect";
-    httpStatusCodeStringMap[ BAD_REQUEST ] = "Bad Request";
-    httpStatusCodeStringMap[ UNAUTHORIZED ] = "Unauthorized";
-    httpStatusCodeStringMap[ PAYMENT_REQUIRED ] = "Payment Required";
-    httpStatusCodeStringMap[ FORBIDDEN ] = "Forbidden";
-    httpStatusCodeStringMap[ NOT_FOUND ] = "Not Found";
-    httpStatusCodeStringMap[ METHOD_NOT_ALLOWED ] = "Method Not Allowed";
-    httpStatusCodeStringMap[ NOT_ACCEPTABLE ] = "Not Acceptable";
-    httpStatusCodeStringMap[ PROXY_AUTHENTICATION_REQUIRED ] =
+    http_status_code_string_map[ NO_CONTENT ] = "No Content";
+    http_status_code_string_map[ RESET_CONTENT ] = "Reset Content";
+    http_status_code_string_map[ PARTIAL_CONTENT ] = "Partial Content";
+    http_status_code_string_map[ MULTI_STATUS ] = "Multi-Status";
+    http_status_code_string_map[ ALREADY_REPORTED ] = "Already Reported";
+    http_status_code_string_map[ IM_USED ] = "IM Used";
+    http_status_code_string_map[ MULTIPLE_CHOICES ] = "Multiple Choices";
+    http_status_code_string_map[ MOVED_PERMANENTLY ] = "Moved Permanently";
+    http_status_code_string_map[ FOUND ] = "Found";
+    http_status_code_string_map[ SEE_OTHER ] = "See Other";
+    http_status_code_string_map[ NOT_MODIFIED ] = "Not Modified";
+    http_status_code_string_map[ USE_PROXY ] = "Use Proxy";
+    http_status_code_string_map[ SWITCH_PROXY ] = "Switch Proxy";
+    http_status_code_string_map[ TEMPORARY_REDIRECT ] = "Temporary Redirect";
+    http_status_code_string_map[ PERMANENT_REDIRECT ] = "Permanent Redirect";
+    http_status_code_string_map[ BAD_REQUEST ] = "Bad Request";
+    http_status_code_string_map[ UNAUTHORIZED ] = "Unauthorized";
+    http_status_code_string_map[ PAYMENT_REQUIRED ] = "Payment Required";
+    http_status_code_string_map[ FORBIDDEN ] = "Forbidden";
+    http_status_code_string_map[ NOT_FOUND ] = "Not Found";
+    http_status_code_string_map[ METHOD_NOT_ALLOWED ] = "Method Not Allowed";
+    http_status_code_string_map[ NOT_ACCEPTABLE ] = "Not Acceptable";
+    http_status_code_string_map[ PROXY_AUTHENTICATION_REQUIRED ] =
         "Proxy Authentication Required";
-    httpStatusCodeStringMap[ REQUEST_TIMEOUT ] = "Request Timeout";
-    httpStatusCodeStringMap[ CONFLICT ] = "Conflict";
-    httpStatusCodeStringMap[ GONE ] = "Gone";
-    httpStatusCodeStringMap[ LENGTH_REQUIRED ] = "Length Required";
-    httpStatusCodeStringMap[ PRECONDITION_FAILED ] = "Precondition Failed";
-    httpStatusCodeStringMap[ PAYLOAD_TOO_LARGE ] = "Payload Too Large";
-    httpStatusCodeStringMap[ URI_TOO_LONG ] = "URI Too Long";
-    httpStatusCodeStringMap[ UNSUPPORTED_MEDIA_TYPE ] =
+    http_status_code_string_map[ REQUEST_TIMEOUT ] = "Request Timeout";
+    http_status_code_string_map[ CONFLICT ] = "Conflict";
+    http_status_code_string_map[ GONE ] = "Gone";
+    http_status_code_string_map[ LENGTH_REQUIRED ] = "Length Required";
+    http_status_code_string_map[ PRECONDITION_FAILED ] = "Precondition Failed";
+    http_status_code_string_map[ PAYLOAD_TOO_LARGE ] = "Payload Too Large";
+    http_status_code_string_map[ URI_TOO_LONG ] = "URI Too Long";
+    http_status_code_string_map[ UNSUPPORTED_MEDIA_TYPE ] =
         "Unsupported Media Type";
-    httpStatusCodeStringMap[ RANGE_NOT_SATISFIABLE ] = "Range Not Satisfiable";
-    httpStatusCodeStringMap[ EXPECTATION_FAILED ] = "Expectation Failed";
-    httpStatusCodeStringMap[ IM_A_TEAPOT ] = "I'm a teapot";
-    httpStatusCodeStringMap[ MISDIRECTED_REQUEST ] = "Misdirected Request";
-    httpStatusCodeStringMap[ UNPROCESSABLE_ENTITY ] = "Unprocessable Entity";
-    httpStatusCodeStringMap[ LOCKED ] = "Locked";
-    httpStatusCodeStringMap[ FAILED_DEPENDENCY ] = "Failed Dependency";
-    httpStatusCodeStringMap[ TOO_EARLY ] = "Too Early";
-    httpStatusCodeStringMap[ UPGRADE_REQUIRED ] = "Upgrade Required";
-    httpStatusCodeStringMap[ PRECONDITION_REQUIRED ] = "Precondition Required";
-    httpStatusCodeStringMap[ TOO_MANY_REQUESTS ] = "Too Many Requests";
-    httpStatusCodeStringMap[ REQUEST_HEADER_FIELDS_TOO_LARGE ] =
+    http_status_code_string_map[ RANGE_NOT_SATISFIABLE ] = "Range Not Satisfiable";
+    http_status_code_string_map[ EXPECTATION_FAILED ] = "Expectation Failed";
+    http_status_code_string_map[ IM_A_TEAPOT ] = "I'm a teapot";
+    http_status_code_string_map[ MISDIRECTED_REQUEST ] = "Misdirected Request";
+    http_status_code_string_map[ UNPROCESSABLE_ENTITY ] = "Unprocessable Entity";
+    http_status_code_string_map[ LOCKED ] = "Locked";
+    http_status_code_string_map[ FAILED_DEPENDENCY ] = "Failed Dependency";
+    http_status_code_string_map[ TOO_EARLY ] = "Too Early";
+    http_status_code_string_map[ UPGRADE_REQUIRED ] = "Upgrade Required";
+    http_status_code_string_map[ PRECONDITION_REQUIRED ] = "Precondition Required";
+    http_status_code_string_map[ TOO_MANY_REQUESTS ] = "Too Many Requests";
+    http_status_code_string_map[ REQUEST_HEADER_FIELDS_TOO_LARGE ] =
         "Request Header Fields Too Large";
-    httpStatusCodeStringMap[ UNAVAILABLE_FOR_LEGAL_REASONS ] =
+    http_status_code_string_map[ UNAVAILABLE_FOR_LEGAL_REASONS ] =
         "Unavailable For Legal Reasons";
-    httpStatusCodeStringMap[ INTERNAL_SERVER_ERROR ] = "Internal Server Error";
-    httpStatusCodeStringMap[ NOT_IMPLEMENTED ] = "Not Implemented";
-    httpStatusCodeStringMap[ BAD_GATEWAY ] = "Bad Gateway";
-    httpStatusCodeStringMap[ SERVICE_UNAVAILABLE ] = "Service Unavailable";
-    httpStatusCodeStringMap[ GATEWAY_TIMEOUT ] = "Gateway Timeout";
-    httpStatusCodeStringMap[ HTTP_VERSION_NOT_SUPPORTED ] =
+    http_status_code_string_map[ INTERNAL_SERVER_ERROR ] = "Internal Server Error";
+    http_status_code_string_map[ NOT_IMPLEMENTED ] = "Not Implemented";
+    http_status_code_string_map[ BAD_GATEWAY ] = "Bad Gateway";
+    http_status_code_string_map[ SERVICE_UNAVAILABLE ] = "Service Unavailable";
+    http_status_code_string_map[ GATEWAY_TIMEOUT ] = "Gateway Timeout";
+    http_status_code_string_map[ HTTP_VERSION_NOT_SUPPORTED ] =
         "HTTP Version Not Supported";
-    httpStatusCodeStringMap[ VARIANT_ALSO_NEGOTIATES ] =
+    http_status_code_string_map[ VARIANT_ALSO_NEGOTIATES ] =
         "Variant Also Negotiates";
-    httpStatusCodeStringMap[ INSUFFICIENT_STORAGE ] = "Insufficient Storage";
-    httpStatusCodeStringMap[ LOOP_DETECTED ] = "Loop Detected";
-    httpStatusCodeStringMap[ NOT_EXTENDED ] = "Not Extended";
-    httpStatusCodeStringMap[ NETWORK_AUTHENTICATION_REQUIRED ] =
+    http_status_code_string_map[ INSUFFICIENT_STORAGE ] = "Insufficient Storage";
+    http_status_code_string_map[ LOOP_DETECTED ] = "Loop Detected";
+    http_status_code_string_map[ NOT_EXTENDED ] = "Not Extended";
+    http_status_code_string_map[ NETWORK_AUTHENTICATION_REQUIRED ] =
         "Network Authentication Required";
 
-    return httpStatusCodeStringMap;
+    return http_status_code_string_map;
 }
 
 // Path: includes/constants/HttpStatusCodeHelper.hpp

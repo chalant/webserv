@@ -14,23 +14,23 @@
 class CgiResponseGenerator : public IResponseGenerator
 {
 private:
-    ILogger &_logger;
-    HttpStatusCodeHelper _httpStatusCodeHelper;
+    ILogger &m_logger;
+    HttpStatusCodeHelper m_http_status_code_helper;
 
-    void _setCgiArguments(const std::string &scriptName, const IRoute &route,
+    void m_setCgiArguments(const std::string &script_name, const IRoute &route,
                           const IConfiguration &configuration,
-                          std::vector<char *> &cgiArgs);
-    void _setCgiEnvironment(const std::string &scriptName, const IRoute &route,
+                          std::vector<char *> &cgi_args);
+    void m_setCgiEnvironment(const std::string &script_name, const IRoute &route,
                             const IRequest &request,
-                            std::vector<char *> &cgiEnv);
-    char *_getCgiInterpreterPath(const std::string &scriptName,
+                            std::vector<char *> &cgi_env);
+    char *m_getCgiInterpreterPath(const std::string &script_name,
                                  const IConfiguration &configuration) const;
-    char *_getScriptPath(const std::string &scriptName,
+    char *m_getScriptPath(const std::string &script_name,
                          const IRoute &route) const;
-    std::string _getPathTranslated(std::string &scriptName,
+    std::string m_getPathTranslated(std::string &script_name,
                                    const IRoute &route) const;
-    void _cleanUp(char *cgiArgs[], char *cgiEnv[] = NULL,
-                  int responsePipefd[ 2 ] = NULL, int bodyPipefd[ 2 ] = NULL,
+    void m_cleanUp(char *cgi_args[], char *cgi_env[] = NULL,
+                  int response_pipe_fd[ 2 ] = NULL, int body_pipe_fd[ 2 ] = NULL,
                   short option = 0x0) const;
 
 public:
@@ -41,7 +41,7 @@ public:
                                        const IRequest &request,
                                        IResponse &response,
                                        const IConfiguration &configuration,
-                                       const std::string &scriptName = "");
+                                       const std::string &script_name = "");
 };
 
 #endif // CGIRESPONSEGENERATOR_HPP

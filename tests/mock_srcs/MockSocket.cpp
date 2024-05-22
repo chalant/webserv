@@ -33,12 +33,12 @@ int MockSocket::bind(int fd, int ip, int port) const
 }
 
 // Listens for incoming connections
-int MockSocket::listen(int fd, int maxConnections) const
+int MockSocket::listen(int fd, int max_connections) const
 {
     // Mock implementation for listening for incoming connections
     // Returns 0 on success
     static_cast<void>(fd);
-    static_cast<void>(maxConnections);
+    static_cast<void>(max_connections);
     return 0;
 }
 
@@ -75,33 +75,33 @@ MockSocket::accept(int fd) const
 }
 
 // Sends data over the socket
-int MockSocket::send(int socketDescriptor, const std::vector<char> &data) const
+int MockSocket::send(int socket_descriptor, const std::vector<char> &data) const
 {
     // Mock implementation for sending data over the socket
     // Returns the number of bytes sent
-    this->_socketData[ socketDescriptor ] = data;
+    this->m_socket_data[ socket_descriptor ] = data;
     return data.size();
 }
 
 // Sends data over the socket blocking until all data is sent
-int MockSocket::sendAll(int socketDescriptor,
+int MockSocket::sendAll(int socket_descriptor,
                         const std::vector<char> &data) const
 {
     // Mock implementation for sending data over the socket blocking until all
     // data is sent Returns the number of bytes sent
-    this->_socketData[ socketDescriptor ] = data;
+    this->m_socket_data[ socket_descriptor ] = data;
     return data.size();
 }
 
 // Receives data from the socket
-ssize_t MockSocket::recv(int socketDescriptor, char *buffer, size_t len) const
+ssize_t MockSocket::recv(int socket_descriptor, char *buffer, size_t len) const
 {
     // Mock implementation for receiving data from the socket
     // Returns the number of bytes received
-    if (this->_socketData.find(socketDescriptor) != this->_socketData.end())
+    if (this->m_socket_data.find(socket_descriptor) != this->m_socket_data.end())
     {
         std::vector<char> &data =
-            this->_socketData[ socketDescriptor ]; // Get reference to data
+            this->m_socket_data[ socket_descriptor ]; // Get reference to data
         size_t i;
         for (i = 0; i < len && i < data.size(); i++)
         {
@@ -112,10 +112,10 @@ ssize_t MockSocket::recv(int socketDescriptor, char *buffer, size_t len) const
         data.erase(data.begin(), data.begin() + i);
 
         // If there are no characters left in data, erase the entry from
-        // _socketData
+        // m_socket_data
         if (data.empty())
         {
-            this->_socketData.erase(socketDescriptor);
+            this->m_socket_data.erase(socket_descriptor);
         }
 
         return i;

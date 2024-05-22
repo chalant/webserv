@@ -26,8 +26,8 @@ public:
     virtual std::vector<char> getBody() const = 0;
 
     // Setters for status line, headers, and body
-    virtual void setStatusLine(std::string statusLine) = 0;
-    virtual void setStatusLine(HttpStatusCode statusCode) = 0;
+    virtual void setStatusLine(std::string status_line) = 0;
+    virtual void setStatusLine(HttpStatusCode status_code) = 0;
     virtual void setHeaders(std::vector<std::string> headers) = 0;
     virtual void setHeaders(std::string headers) = 0;
     virtual void addHeader(HttpHeader header, std::string value) = 0;
@@ -38,8 +38,8 @@ public:
     virtual void setBody(std::vector<char> body) = 0;
 
     // Set error response with appropriate status code
-    virtual void setErrorResponse(HttpStatusCode statusCode) = 0;
-    virtual void setErrorResponse(int statusCode) = 0;
+    virtual void setErrorResponse(HttpStatusCode status_code) = 0;
+    virtual void setErrorResponse(int status_code) = 0;
 
     // Set response fields from a complete response vector
     virtual void setResponse(std::vector<char> response) = 0;

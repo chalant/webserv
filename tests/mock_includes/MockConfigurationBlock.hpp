@@ -17,11 +17,11 @@ class BlockList;
 class MockConfigurationBlock : public IConfiguration
 {
 private:
-    std::map<std::string, BlockList> _blocks;
-    std::map<std::string, std::vector<std::string> *> _directives;
-    std::vector<std::string> _parameters;
-    ILogger &_logger;
-    const std::string _name;
+    std::map<std::string, BlockList> m_blocks;
+    std::map<std::string, std::vector<std::string> *> m_directives;
+    std::vector<std::string> m_parameters;
+    ILogger &m_logger;
+    const std::string m_name;
 
 public:
     // Constructor

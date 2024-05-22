@@ -17,34 +17,34 @@ MockConnectionManager::~MockConnectionManager() {}
 
 // Methods related to connections
 void MockConnectionManager::addConnection(
-    std::pair<int, std::pair<std::string, std::string> > clientInfo)
+    std::pair<int, std::pair<std::string, std::string> > client_info)
 {
-    (void)clientInfo;
+    (void)client_info;
 }
 
 void MockConnectionManager::removeConnection(
-    SocketDescriptor_t socketDescriptor)
+    SocketDescriptor_t socket_descriptor)
 {
-    (void)socketDescriptor;
+    (void)socket_descriptor;
 }
 
 IConnection &
-MockConnectionManager::getConnection(SocketDescriptor_t socketDescriptor)
+MockConnectionManager::getConnection(SocketDescriptor_t socket_descriptor)
 {
-    (void)socketDescriptor;
+    (void)socket_descriptor;
     return *new MockConnection();
 }
 
-IRequest &MockConnectionManager::getRequest(SocketDescriptor_t socketDescriptor)
+IRequest &MockConnectionManager::getRequest(SocketDescriptor_t socket_descriptor)
 {
-    (void)socketDescriptor;
+    (void)socket_descriptor;
     return *new MockRequest();
 }
 
 IResponse &
-MockConnectionManager::getResponse(SocketDescriptor_t socketDescriptor)
+MockConnectionManager::getResponse(SocketDescriptor_t socket_descriptor)
 {
-    (void)socketDescriptor;
+    (void)socket_descriptor;
     return *new MockResponse();
 }
 

@@ -23,7 +23,7 @@ public:
     virtual ~IClientHandler() {};
 
     // Setter
-    virtual void setSocketDescriptor(int socketDescriptor) = 0;
+    virtual void setSocketDescriptor(int socket_descriptor) = 0;
 
     // Methods to read and send requests and responses
     virtual const std::vector<char> readRequest() const = 0;

@@ -13,10 +13,10 @@
 
 // Constructor initializes member variables using helper functions
 HttpMethodHelper::HttpMethodHelper()
-    : _methodList(_setMethodList()),
-      _supportedMethods(this->_setSupportedMethods()),
-      _stringHttpMethodMap(_setStringHttpMethodMap()),
-      _httpMethodStringMap(_setHttpMethodStringMap())
+    : m_method_list(m_setMethodList()),
+      m_supported_methods(this->m_setSupportedMethods()),
+      m_string_http_method_map(m_setStringHttpMethodMap()),
+      m_http_method_string_map(m_setHttpMethodStringMap())
 {
 }
 
@@ -27,9 +27,9 @@ HttpMethodHelper::~HttpMethodHelper() {}
 const std::string &
 HttpMethodHelper::httpMethodStringMap(HttpMethod method) const
 {
-    if (_httpMethodStringMap.find(method) != _httpMethodStringMap.end())
+    if (m_http_method_string_map.find(method) != m_http_method_string_map.end())
     {
-        return _httpMethodStringMap.at(method);
+        return m_http_method_string_map.at(method);
     }
     else
     {
@@ -41,9 +41,9 @@ HttpMethodHelper::httpMethodStringMap(HttpMethod method) const
 HttpMethod
 HttpMethodHelper::stringHttpMethodMap(const std::string &method) const
 {
-    if (_stringHttpMethodMap.find(method) != _stringHttpMethodMap.end())
+    if (m_string_http_method_map.find(method) != m_string_http_method_map.end())
     {
-        return _stringHttpMethodMap.at(method);
+        return m_string_http_method_map.at(method);
     }
     else
     {
@@ -54,7 +54,7 @@ HttpMethodHelper::stringHttpMethodMap(const std::string &method) const
 // Member function to check if a string is a valid HTTP method
 bool HttpMethodHelper::isMethod(const std::string &method) const
 {
-    return _stringHttpMethodMap.find(method) != _stringHttpMethodMap.end();
+    return m_string_http_method_map.find(method) != m_string_http_method_map.end();
 }
 
 // Member function to check if a string is a supported HTTP method
@@ -62,8 +62,8 @@ bool HttpMethodHelper::isSupportedMethod(const std::string &method) const
 {
     // Iterate through the vector to find the method
     for (std::vector<std::string>::const_iterator it =
-             this->_supportedMethods.begin();
-         it != this->_supportedMethods.end(); ++it)
+             this->m_supported_methods.begin();
+         it != this->m_supported_methods.end(); ++it)
     {
         // Compare the current method with the target method
         if (*it == method)
@@ -76,77 +76,77 @@ bool HttpMethodHelper::isSupportedMethod(const std::string &method) const
     return false;
 }
 
-// Helper function to initialize MethodList with string representations of HTTP
+// Helper function to initialize m_method_list with string representations of HTTP
 // methods
-std::vector<std::string> HttpMethodHelper::_setMethodList()
+std::vector<std::string> HttpMethodHelper::m_setMethodList()
 {
-    std::vector<std::string> MethodList;
+    std::vector<std::string> method_list;
 
-    // Add string representations of HTTP methods to MethodList
-    MethodList.push_back("GET");
-    MethodList.push_back("POST");
-    MethodList.push_back("PUT");
-    MethodList.push_back("DELETE");
-    MethodList.push_back("HEAD");
-    MethodList.push_back("OPTIONS");
-    MethodList.push_back("PATCH");
-    MethodList.push_back("TRACE");
-    MethodList.push_back("CONNECT");
+    // Add string representations of HTTP methods to method_list
+    method_list.push_back("GET");
+    method_list.push_back("POST");
+    method_list.push_back("PUT");
+    method_list.push_back("DELETE");
+    method_list.push_back("HEAD");
+    method_list.push_back("OPTIONS");
+    method_list.push_back("PATCH");
+    method_list.push_back("TRACE");
+    method_list.push_back("CONNECT");
 
-    return MethodList;
+    return method_list;
 }
 
-// Helper function to initialize supportedMethods with string representations of
+// Helper function to initialize m_supported_methods with string representations of
 // supported HTTP methods
-const std::vector<std::string> HttpMethodHelper::_setSupportedMethods()
+const std::vector<std::string> HttpMethodHelper::m_setSupportedMethods()
 {
-    std::vector<std::string> supportedMethods;
+    std::vector<std::string> supported_methods;
 
-    supportedMethods.push_back("GET");
-    supportedMethods.push_back("POST");
-    supportedMethods.push_back("DELETE");
+    supported_methods.push_back("GET");
+    supported_methods.push_back("POST");
+    supported_methods.push_back("DELETE");
 
-    return supportedMethods;
+    return supported_methods;
 }
 
-// Helper function to initialize stringHttpMethodMap with mappings from string
+// Helper function to initialize m_string_http_method_map with mappings from string
 // representations to HttpMethod enum values
-std::map<std::string, HttpMethod> HttpMethodHelper::_setStringHttpMethodMap()
+std::map<std::string, HttpMethod> HttpMethodHelper::m_setStringHttpMethodMap()
 {
-    std::map<std::string, HttpMethod> stringHttpMethodMap;
+    std::map<std::string, HttpMethod> string_http_method_map;
 
     // Add mappings from string representations to HttpMethod enum values
-    stringHttpMethodMap[ "GET" ] = GET;
-    stringHttpMethodMap[ "POST" ] = POST;
-    stringHttpMethodMap[ "PUT" ] = PUT;
-    stringHttpMethodMap[ "DELETE" ] = DELETE;
-    stringHttpMethodMap[ "HEAD" ] = HEAD;
-    stringHttpMethodMap[ "OPTIONS" ] = OPTIONS;
-    stringHttpMethodMap[ "PATCH" ] = PATCH;
-    stringHttpMethodMap[ "TRACE" ] = TRACE;
-    stringHttpMethodMap[ "CONNECT" ] = CONNECT;
+    string_http_method_map[ "GET" ] = GET;
+    string_http_method_map[ "POST" ] = POST;
+    string_http_method_map[ "PUT" ] = PUT;
+    string_http_method_map[ "DELETE" ] = DELETE;
+    string_http_method_map[ "HEAD" ] = HEAD;
+    string_http_method_map[ "OPTIONS" ] = OPTIONS;
+    string_http_method_map[ "PATCH" ] = PATCH;
+    string_http_method_map[ "TRACE" ] = TRACE;
+    string_http_method_map[ "CONNECT" ] = CONNECT;
 
-    return stringHttpMethodMap;
+    return string_http_method_map;
 }
 
-// Helper function to initialize httpMethodStringMap with mappings from
+// Helper function to initialize m_http_method_string_map with mappings from
 // HttpMethod enum values to string representations
-std::map<HttpMethod, std::string> HttpMethodHelper::_setHttpMethodStringMap()
+std::map<HttpMethod, std::string> HttpMethodHelper::m_setHttpMethodStringMap()
 {
-    std::map<HttpMethod, std::string> httpMethodStringMap;
+    std::map<HttpMethod, std::string> http_method_string_map;
 
     // Add mappings from HttpMethod enum values to string representations
-    httpMethodStringMap[ GET ] = "GET";
-    httpMethodStringMap[ POST ] = "POST";
-    httpMethodStringMap[ PUT ] = "PUT";
-    httpMethodStringMap[ DELETE ] = "DELETE";
-    httpMethodStringMap[ HEAD ] = "HEAD";
-    httpMethodStringMap[ OPTIONS ] = "OPTIONS";
-    httpMethodStringMap[ PATCH ] = "PATCH";
-    httpMethodStringMap[ TRACE ] = "TRACE";
-    httpMethodStringMap[ CONNECT ] = "CONNECT";
+    http_method_string_map[ GET ] = "GET";
+    http_method_string_map[ POST ] = "POST";
+    http_method_string_map[ PUT ] = "PUT";
+    http_method_string_map[ DELETE ] = "DELETE";
+    http_method_string_map[ HEAD ] = "HEAD";
+    http_method_string_map[ OPTIONS ] = "OPTIONS";
+    http_method_string_map[ PATCH ] = "PATCH";
+    http_method_string_map[ TRACE ] = "TRACE";
+    http_method_string_map[ CONNECT ] = "CONNECT";
 
-    return httpMethodStringMap;
+    return http_method_string_map;
 }
 
 // Path: includes/constants/HttpMethodHelper.hpp

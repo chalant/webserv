@@ -15,16 +15,16 @@ class MockPollfdManager : public IPollfdManager
 {
 private:
     // Mock pollfd queue
-    std::vector<pollfd> _pollfdQueue; // for testing purposes
+    std::vector<pollfd> m_pollfd_queue; // for testing purposes
 
 public:
     // Constructor
     MockPollfdManager();
     virtual ~MockPollfdManager();
-    virtual void addRegularFilePollfd(pollfd pollFd);
-    virtual void addServerSocketPollfd(pollfd pollFd);
-    virtual void addClientSocketPollfd(pollfd pollFd);
-    virtual void addPipePollfd(pollfd pollFd);
+    virtual void addRegularFilePollfd(pollfd pollfd);
+    virtual void addServerSocketPollfd(pollfd pollfd);
+    virtual void addClientSocketPollfd(pollfd pollfd);
+    virtual void addPipePollfd(pollfd pollfd);
     virtual void removePollfd(int position);
     virtual void addPollOut(int position);
     virtual void closeAllFileDescriptors();

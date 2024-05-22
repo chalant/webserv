@@ -2,9 +2,9 @@
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
 
-PollingService::PollingService(IPollfdManager &pollfdManager, ILogger &logger,
+PollingService::PollingService(IPollfdManager &pollfd_manager, ILogger &logger,
                                int timeout)
-    : _pollfdManager(pollfdManager), _logger(logger), _timeout(timeout)
+    : m_pollfd_manager(pollfd_manager), m_logger(logger), m_timeout(timeout)
 {
 }
 
@@ -13,27 +13,27 @@ PollingService::~PollingService() {}
 void PollingService::pollEvents()
 {
     // Get the pollfd array
-    pollfd *pollfdArray = this->_pollfdManager.getPollfdArray();
+    pollfd *pollfd_array = this->m_pollfd_manager.getPollfdArray();
 
     // Get pollfd queue size
-    size_t pollfdQueueSize = this->_pollfdManager.getPollfdQueueSize();
+    size_t pollfd_queue_size = this->m_pollfd_manager.getPollfdQueueSize();
 
     // Poll registered file descriptors for events
-    int pollResult = ::poll(pollfdArray, pollfdQueueSize, this->_timeout);
-    if (pollResult < 0)
+    int poll_result = ::poll(pollfd_array, pollfd_queue_size, this->m_timeout);
+    if (poll_result < 0)
         throw PollError();
 
     // Log poll result
-    if (pollResult == 0) // Timeout occurred
-        this->_logger.log(
+    if (poll_result == 0) // Timeout occurred
+        this->m_logger.log(
             VERBOSE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
     else // Events occurred
-        this->_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " +
-                                       Converter::toString(pollResult) +
+        this->m_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " +
+                                       Converter::toString(poll_result) +
                                        " events.");
 }
 
 void PollingService::setPollingTimeout(int timeout)
 {
-    this->_timeout = timeout;
+    this->m_timeout = timeout;
 }

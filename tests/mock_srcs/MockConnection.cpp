@@ -27,7 +27,7 @@ int MockConnection::getPort() const { return 0; }
 
 std::string MockConnection::getRemoteAddress() const { return std::string(); }
 
-int MockConnection::getResponseReadPipefd() const { return 0; }
+int MockConnection::getResponseReadPipeFd() const { return 0; }
 
 IRequest &MockConnection::getRequest() const { return *this->_m_request; }
 
@@ -35,12 +35,12 @@ IResponse &MockConnection::getResponse() const { return *this->_m_response; }
 
 ISession &MockConnection::getSession() const { return *this->_m_session; }
 
-void MockConnection::setCgiInfo(int cgiPid, int responseReadPipefd,
-                                int requestWritePipefd)
+void MockConnection::setCgiInfo(int cgi_pid, int response_read_pipe_fd,
+                                int request_write_pipe_fd)
 {
-    static_cast<void>(cgiPid);
-    static_cast<void>(responseReadPipefd);
-    static_cast<void>(requestWritePipefd);
+    static_cast<void>(cgi_pid);
+    static_cast<void>(response_read_pipe_fd);
+    static_cast<void>(request_write_pipe_fd);
 }
 
 // Connection management

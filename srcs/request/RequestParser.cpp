@@ -16,23 +16,23 @@
 // Constructor to initialize the RequestParser with required references
 RequestParser::RequestParser(const IConfiguration &configuration,
                              ILogger &logger)
-    : _logger(logger), _configuration(configuration)
+    : m_logger(logger), m_configuration(configuration)
 {
 }
 
 // Function to parse a raw HTTP request and convert it into a Request object
-void RequestParser::parseRequest(const std::vector<char> &rawRequest,
-                                 IRequest &parsedRequest) const
+void RequestParser::parseRequest(const std::vector<char> &raw_request,
+                                 IRequest &parsed_request) const
 {
-    this->_logger.log(DEBUG, "[REQUESTPARSER] Parsing request...");
+    this->m_logger.log(DEBUG, "[REQUESTPARSER] Parsing request...");
     // Iterator to traverse the raw request
-    std::vector<char>::const_iterator it = rawRequest.begin();
+    std::vector<char>::const_iterator it = raw_request.begin();
 
     // Parse the request line
-    this->_parseRequestLine(it, rawRequest, parsedRequest);
+    this->m_parseRequestLine(it, raw_request, parsed_request);
 
     // Check for whitespace between request-line and first header field
-    if (this->_isWhitespace(*it))
+    if (this->m_isWhitespace(*it))
     {
         // throw '400' status error
         throw HttpStatusCodeException(
@@ -41,60 +41,60 @@ void RequestParser::parseRequest(const std::vector<char> &rawRequest,
     }
 
     // Parse the headers
-    this->_parseHeaders(it, rawRequest, parsedRequest);
+    this->m_parseHeaders(it, raw_request, parsed_request);
 
     // Parse the body
-    this->_parseBody(it, rawRequest, parsedRequest);
+    this->m_parseBody(it, raw_request, parsed_request);
 
     // Parse the Upload BodyParameters
-    if (parsedRequest.getHeaderValue(CONTENT_TYPE)
+    if (parsed_request.getHeaderValue(CONTENT_TYPE)
             .find("multipart/form-data") != std::string::npos)
     {
-        this->_parseBodyParameters(parsedRequest);
+        this->m_parseBodyParameters(parsed_request);
     }
 
-    this->_logger.log(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
+    this->m_logger.log(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
 }
 
 // Function to parse the request line of an HTTP request
-void RequestParser::_parseRequestLine(
-    std::vector<char>::const_iterator &requestIterator,
-    const std::vector<char> &rawRequest, IRequest &parsedRequest) const
+void RequestParser::m_parseRequestLine(
+    std::vector<char>::const_iterator &request_iterator,
+    const std::vector<char> &raw_request, IRequest &parsed_request) const
 {
     // Parse method, URI, and HTTP version
-    std::string method = this->_parseMethod(requestIterator, rawRequest);
-    std::string uri = this->_parseUri(requestIterator, rawRequest);
-    std::string httpVersion =
-        this->_parseHttpVersion(requestIterator, rawRequest);
+    std::string method = this->m_parseMethod(request_iterator, raw_request);
+    std::string uri = this->m_parseUri(request_iterator, raw_request);
+    std::string http_version =
+        this->m_parseHttpVersion(request_iterator, raw_request);
 
     // Set method, URI, and HTTP version in the parsed request
-    parsedRequest.setMethod(method);
-    parsedRequest.setUri(uri);
-    parsedRequest.setHttpVersion(httpVersion);
+    parsed_request.setMethod(method);
+    parsed_request.setUri(uri);
+    parsed_request.setHttpVersion(http_version);
 }
 
 // Function to parse the HTTP method from the request line
 std::string
-RequestParser::_parseMethod(std::vector<char>::const_iterator &requestIterator,
-                            const std::vector<char> &rawRequest) const
+RequestParser::m_parseMethod(std::vector<char>::const_iterator &request_iterator,
+                            const std::vector<char> &raw_request) const
 {
     std::string method;
 
     // Skip leading CRLF
-    while (this->_isCRLF(requestIterator))
+    while (this->m_isCRLF(request_iterator))
     {
-        requestIterator += 2;
+        request_iterator += 2;
     }
 
     // Build 'method' string until space is found
-    while (requestIterator != rawRequest.end() && *requestIterator != ' ')
+    while (request_iterator != raw_request.end() && *request_iterator != ' ')
     {
-        method += *requestIterator;
-        ++requestIterator;
+        method += *request_iterator;
+        ++request_iterator;
     }
 
     // Check for unexpected end of request
-    if (requestIterator == rawRequest.end())
+    if (request_iterator == raw_request.end())
     {
         throw HttpStatusCodeException(
             BAD_REQUEST,
@@ -102,10 +102,10 @@ RequestParser::_parseMethod(std::vector<char>::const_iterator &requestIterator,
     }
 
     // Move marker to next character
-    ++requestIterator;
+    ++request_iterator;
 
     // Log 'method'
-    this->_logger.log(VERBOSE, "[REQUESTPARSER] Method: \"" + method + "\"");
+    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Method: \"" + method + "\"");
 
     // Return 'method' string
     return method;
@@ -113,20 +113,20 @@ RequestParser::_parseMethod(std::vector<char>::const_iterator &requestIterator,
 
 // Function to parse the URI from the request line
 std::string
-RequestParser::_parseUri(std::vector<char>::const_iterator &requestIterator,
-                         const std::vector<char> &rawRequest) const
+RequestParser::m_parseUri(std::vector<char>::const_iterator &request_iterator,
+                         const std::vector<char> &raw_request) const
 {
     std::string uri;
 
     // Build 'uri' string until space is found
-    while (requestIterator != rawRequest.end() && *requestIterator != ' ')
+    while (request_iterator != raw_request.end() && *request_iterator != ' ')
     {
-        uri += *requestIterator;
-        ++requestIterator;
+        uri += *request_iterator;
+        ++request_iterator;
     }
 
     // Check for unexpected end of request
-    if (requestIterator == rawRequest.end())
+    if (request_iterator == raw_request.end())
     {
         throw HttpStatusCodeException(
             BAD_REQUEST,
@@ -134,31 +134,31 @@ RequestParser::_parseUri(std::vector<char>::const_iterator &requestIterator,
     }
 
     // Move marker to next character
-    ++requestIterator;
+    ++request_iterator;
 
     // Log 'uri'
-    this->_logger.log(VERBOSE, "[REQUESTPARSER] URI: \"" + uri + "\"");
+    this->m_logger.log(VERBOSE, "[REQUESTPARSER] URI: \"" + uri + "\"");
 
     // Return 'uri' string
     return uri;
 }
 
 // Function to parse the HTTP version from the request line
-std::string RequestParser::_parseHttpVersion(
-    std::vector<char>::const_iterator &requestIterator,
-    const std::vector<char> &rawRequest) const
+std::string RequestParser::m_parseHttpVersion(
+    std::vector<char>::const_iterator &request_iterator,
+    const std::vector<char> &raw_request) const
 {
-    std::string httpVersion;
+    std::string http_version;
 
-    // Build 'httpVersion' string
-    while (requestIterator != rawRequest.end())
+    // Build 'http_version' string
+    while (request_iterator != raw_request.end())
     {
-        // End of 'httpVersion' string, break loop
-        if (this->_isCRLF(requestIterator))
+        // End of 'http_version' string, break loop
+        if (this->m_isCRLF(request_iterator))
             break;
 
         // Check for invalid characters
-        if (this->_isCharInSet(requestIterator, "\r\n"))
+        if (this->m_isCharInSet(request_iterator, "\r\n"))
         {
             throw HttpStatusCodeException(
                 BAD_REQUEST,
@@ -166,13 +166,13 @@ std::string RequestParser::_parseHttpVersion(
                                                        // error
         }
 
-        // Append character to 'httpVersion' string
-        httpVersion += *requestIterator;
-        ++requestIterator;
+        // Append character to 'http_version' string
+        http_version += *request_iterator;
+        ++request_iterator;
     }
 
     // Check for unexpected end of request
-    if (requestIterator == rawRequest.end())
+    if (request_iterator == raw_request.end())
     {
         throw HttpStatusCodeException(
             BAD_REQUEST,
@@ -180,99 +180,99 @@ std::string RequestParser::_parseHttpVersion(
     }
 
     // Move marker passed CRLF
-    requestIterator += 2;
+    request_iterator += 2;
 
-    // Log 'httpVersion'
-    this->_logger.log(VERBOSE,
-                      "[REQUESTPARSER] HTTP Version: \"" + httpVersion + "\"");
+    // Log 'http_version'
+    this->m_logger.log(VERBOSE,
+                      "[REQUESTPARSER] HTTP Version: \"" + http_version + "\"");
 
-    // Return 'httpVersion' string
-    return httpVersion;
+    // Return 'http_version' string
+    return http_version;
 }
 
 // Function to parse the headers of an HTTP request
-void RequestParser::_parseHeaders(
-    std::vector<char>::const_iterator &requestIterator,
-    const std::vector<char> &rawRequest, IRequest &parsedRequest) const
+void RequestParser::m_parseHeaders(
+    std::vector<char>::const_iterator &request_iterator,
+    const std::vector<char> &raw_request, IRequest &parsed_request) const
 {
     // Parse headers
-    while (requestIterator != rawRequest.end())
+    while (request_iterator != raw_request.end())
     {
         // End of headers, break loop
-        if (this->_isCRLF(requestIterator))
+        if (this->m_isCRLF(request_iterator))
             break;
 
         // Check for invalid characters
-        if (this->_isCharInSet(requestIterator, "\r\n"))
+        if (this->m_isCharInSet(request_iterator, "\r\n"))
         {
             throw HttpStatusCodeException(BAD_REQUEST,
                                           "Invalid characters in header");
         }
 
         // Parse individual header
-        this->_parseHeader(requestIterator, rawRequest, parsedRequest);
+        this->m_parseHeader(request_iterator, raw_request, parsed_request);
     }
 
     // Check for unexpected end of request
-    if (requestIterator == rawRequest.end())
+    if (request_iterator == raw_request.end())
     {
         throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
     }
 
     // Set authority in parsed request
-    parsedRequest.setAuthority();
+    parsed_request.setAuthority();
 
     // Move marker passed CRLF
-    requestIterator += 2;
+    request_iterator += 2;
 }
 
 // Function to parse an individual header
-void RequestParser::_parseHeader(
-    std::vector<char>::const_iterator &requestIterator,
-    const std::vector<char> &rawRequest, IRequest &parsedRequest) const
+void RequestParser::m_parseHeader(
+    std::vector<char>::const_iterator &request_iterator,
+    const std::vector<char> &raw_request, IRequest &parsed_request) const
 {
     // Parse header name and value
-    std::string headerName;
-    std::string headerValue;
+    std::string header_name;
+    std::string header_value;
 
     // Set start value for client header buffer size
     int client_header_buffer_size =
-        this->_configuration.getInt("client_header_buffer_size");
+        this->m_configuration.getInt("client_header_buffer_size");
 
     // Find colon to separate header name and value
-    while (requestIterator != rawRequest.end() && *requestIterator != ':')
+    while (request_iterator != raw_request.end() && *request_iterator != ':')
     {
-        headerName += std::tolower(*requestIterator); // Convert to lowercase
+        header_name += std::tolower(*request_iterator); // Convert to lowercase
         client_header_buffer_size--;
-        ++requestIterator;
+        ++request_iterator;
     }
 
     // Check if colon was found
-    if (requestIterator == rawRequest.end())
+    if (request_iterator == raw_request.end())
     {
         throw HttpStatusCodeException(BAD_REQUEST, "Colon not found in header");
     }
 
     // Skip colon
-    ++requestIterator;
+    ++request_iterator;
 
     // Skip optional space
-    if (requestIterator != rawRequest.end() && *requestIterator == ' ')
+    if (request_iterator != raw_request.end() && *request_iterator == ' ')
     {
-        ++requestIterator;
+        ++request_iterator;
     }
 
     // Find end of header value
-    while (requestIterator != rawRequest.end() &&
-           !this->_isCRLF(requestIterator))
+    while (request_iterator != raw_request.end() &&
+           !this->m_isCRLF(request_iterator))
     {
-        headerValue += std::tolower(*requestIterator); // Convert to lowercase
+        header_value += std::tolower(*request_iterator); // Convert to lowercase
         client_header_buffer_size--;
-        ++requestIterator;
+        ++request_iterator;
     }
 
     // Check for unexpected end of request
-    if (requestIterator == rawRequest.end())
+    if (request_iterator == raw_request.end())
     {
         throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
     }
@@ -284,58 +284,58 @@ void RequestParser::_parseHeader(
     }
 
     // Move marker passed CRLF
-    requestIterator += 2;
+    request_iterator += 2;
 
     // Log header
-    this->_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + headerName +
-                                   ": " + headerValue + "\"");
+    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + header_name +
+                                   ": " + header_value + "\"");
 
     // Add header to parsed request
     try
     {
-        parsedRequest.addHeader(headerName, headerValue);
+        parsed_request.addHeader(header_name, header_value);
     }
     catch (const UnknownHeaderError &e)
     {
         // Log and continue
-        this->_logger.log(WARN, e.what());
+        this->m_logger.log(WARN, e.what());
     }
 
     // Parse cookies
-    if (headerName == "cookie")
+    if (header_name == "cookie")
     {
-        this->_parseCookie(headerValue, parsedRequest);
+        this->m_parseCookie(header_value, parsed_request);
     }
 }
 // Function to parse the body of an HTTP request
-void RequestParser::_parseBody(
-    std::vector<char>::const_iterator &requestIterator,
-    const std::vector<char> &rawRequest, IRequest &parsedRequest) const
+void RequestParser::m_parseBody(
+    std::vector<char>::const_iterator &request_iterator,
+    const std::vector<char> &raw_request, IRequest &parsed_request) const
 {
     // If method is not POST or PUT, no need to parse body
-    if (parsedRequest.getMethod() != POST && parsedRequest.getMethod() != PUT)
+    if (parsed_request.getMethod() != POST && parsed_request.getMethod() != PUT)
         return; // No need to parse body for other methods
 
     // Check if 'Transfer-Encoding' is chunked
-    std::string transferEncoding =
-        parsedRequest.getHeaderValue(TRANSFER_ENCODING);
-    if (transferEncoding == "chunked")
+    std::string transfer_encoding =
+        parsed_request.getHeaderValue(TRANSFER_ENCODING);
+    if (transfer_encoding == "chunked")
     {
         // Handle chunked encoding
         std::vector<char> body =
-            this->_unchunkBody(requestIterator, rawRequest);
+            this->m_unchunkBody(request_iterator, raw_request);
 
         // Set unchunked body in parsed request
-        parsedRequest.setBody(body);
+        parsed_request.setBody(body);
 
         return;
     }
 
     // Check if 'content-length' header is missing
     // Get body size
-    std::string contentLengthString =
-        parsedRequest.getHeaderValue(CONTENT_LENGTH);
-    if (contentLengthString.empty())
+    std::string content_length_string =
+        parsed_request.getHeaderValue(CONTENT_LENGTH);
+    if (content_length_string.empty())
     {
         // throw '411' status error
         throw HttpStatusCodeException(LENGTH_REQUIRED,
@@ -344,25 +344,25 @@ void RequestParser::_parseBody(
 
     // Check if conversion was successful
     // Get 'content-length' value
-    size_t bodySize = atoi(contentLengthString.c_str());
-    if (bodySize <= 0)
+    size_t body_size = atoi(content_length_string.c_str());
+    if (body_size <= 0)
     {
         // throw '400' status error
         throw HttpStatusCodeException(
             BAD_REQUEST, "content-length header conversion failed (" +
-                             contentLengthString + ")");
+                             content_length_string + ")");
     }
 
     // Check if body size exceeds client body buffer size
-    if (bodySize > this->_configuration.getSize_t("client_body_buffer_size"))
+    if (body_size > this->m_configuration.getSize_t("client_body_buffer_size"))
     {
         // throw '413' status error
         throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
     }
 
     // Check if body size exceeds remaining request size
-    size_t remainingRequestSize = rawRequest.end() - requestIterator;
-    if (remainingRequestSize < bodySize)
+    size_t remaining_request_size = raw_request.end() - request_iterator;
+    if (remaining_request_size < body_size)
     {
         // throw '400' status error
         throw HttpStatusCodeException(
@@ -370,49 +370,49 @@ void RequestParser::_parseBody(
     }
 
     // Extract body
-    std::vector<char> body(requestIterator, requestIterator + bodySize);
+    std::vector<char> body(request_iterator, request_iterator + body_size);
 
     // Log body
-    this->_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" +
+    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" +
                                    std::string(body.begin(), body.end()) +
                                    "\"");
 
     // Set body in parsed request
-    parsedRequest.setBody(body);
+    parsed_request.setBody(body);
 }
 
 // Function to unchunk the body of an HTTP request
 std::vector<char>
-RequestParser::_unchunkBody(std::vector<char>::const_iterator &requestIterator,
-                            const std::vector<char> &rawRequest) const
+RequestParser::m_unchunkBody(std::vector<char>::const_iterator &request_iterator,
+                            const std::vector<char> &raw_request) const
 {
     // Initialize body vector
     std::vector<char> body;
 
     // Set Max Size
-    size_t remainingRequestSize =
-        this->_configuration.getSize_t("client_body_buffer_size");
+    size_t remaining_request_size =
+        this->m_configuration.getSize_t("client_body_buffer_size");
 
     // Parse chunks
-    while (requestIterator != rawRequest.end())
+    while (request_iterator != raw_request.end())
     {
         // Get chunk size
-        std::string chunkSizeString;
-        while (*requestIterator != '\r')
+        std::string chunk_size_string;
+        while (*request_iterator != '\r')
         {
-            chunkSizeString += *requestIterator;
-            ++requestIterator;
+            chunk_size_string += *request_iterator;
+            ++request_iterator;
         }
 
         // Check for last chunk
-        if (chunkSizeString == "0")
+        if (chunk_size_string == "0")
             break;
 
         // Move marker passed CRLF
-        requestIterator += 2;
+        request_iterator += 2;
 
         // Check for unexpected end of request
-        if (requestIterator == rawRequest.end())
+        if (request_iterator == raw_request.end())
         {
             // throw '400' status error
             throw HttpStatusCodeException(BAD_REQUEST,
@@ -420,34 +420,36 @@ RequestParser::_unchunkBody(std::vector<char>::const_iterator &requestIterator,
         }
 
         // Get chunk size
-        size_t chunkSize = strtol(chunkSizeString.c_str(), NULL, 16);
+        size_t chunk_size = strtol(chunk_size_string.c_str(), NULL, 16);
 
         // Check if chunk size is valid
-        if (chunkSize <= 0)
+        if (chunk_size <= 0)
         {
             // throw '400' status error
             throw HttpStatusCodeException(BAD_REQUEST,
                                           "chunk size conversion failed (" +
-                                              chunkSizeString + ")");
+                                              chunk_size_string + ")");
         }
 
         // Check if body size exceeds maximum client body buffer size
-        // remainingRequestSize -= chunkSize;
-        if (remainingRequestSize < chunkSize)
+        if (remaining_request_size < chunk_size)
         {
             // throw '413' status error
             throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
         }
-        remainingRequestSize -= chunkSize;
+
+        // Decrement remaining request size
+        remaining_request_size -= chunk_size;
+
         // Append chunk to body
-        body.insert(body.end(), requestIterator, requestIterator + chunkSize);
+        body.insert(body.end(), request_iterator, request_iterator + chunk_size);
 
         // Move marker passed CRLF
-        requestIterator += 2;
+        request_iterator += 2;
     }
 
     // Log body
-    this->_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" +
+    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" +
                                    std::string(body.begin(), body.end()) +
                                    "\"");
 
@@ -456,46 +458,46 @@ RequestParser::_unchunkBody(std::vector<char>::const_iterator &requestIterator,
 }
 
 // Function to parse cookies from the request
-void RequestParser::_parseCookie(std::string &cookieHeaderValue,
-                                 IRequest &parsedRequest) const
+void RequestParser::m_parseCookie(std::string &cookie_header_value,
+                                 IRequest &parsed_request) const
 {
     // Parse cookies
-    std::string cookieName;
-    std::string cookieValue;
+    std::string cookie_name;
+    std::string cookie_value;
 
     // Create a stream from the cookie header value
-    std::istringstream cookieStream(cookieHeaderValue);
+    std::istringstream cookie_stream(cookie_header_value);
 
     // Parse cookie name and value
-    while (std::getline(cookieStream, cookieName, '=') &&
-           std::getline(cookieStream, cookieValue, ';'))
+    while (std::getline(cookie_stream, cookie_name, '=') &&
+           std::getline(cookie_stream, cookie_value, ';'))
     {
         // Trim surrounding whitespace
-        cookieName = this->_trimWhitespace(cookieName);
-        cookieValue = this->_trimWhitespace(cookieValue);
+        cookie_name = this->m_trimWhitespace(cookie_name);
+        cookie_value = this->m_trimWhitespace(cookie_value);
 
         // Add cookie to parsed request
-        parsedRequest.addCookie(cookieName, cookieValue);
+        parsed_request.addCookie(cookie_name, cookie_value);
     }
 }
 
-void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
+void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
 {
     // Get the boundary string
-    std::string contentType = parsedRequest.getHeaderValue(CONTENT_TYPE);
+    std::string content_type = parsed_request.getHeaderValue(CONTENT_TYPE);
     std::string boundary =
-        "--" + contentType.substr(contentType.find("boundary=") + 9);
+        "--" + content_type.substr(content_type.find("boundary=") + 9);
 
     // Get body stream
-    std::vector<char> body = parsedRequest.getBody();
-    std::string bodyString(body.begin(), body.end());
-    std::istringstream bodyStream(bodyString);
+    std::vector<char> body = parsed_request.getBody();
+    std::string body_string(body.begin(), body.end());
+    std::istringstream body_stream(body_string);
 
     // Declare a line string
     std::string line;
 
     // Parse BodyParameters
-    while (std::getline(bodyStream, line))
+    while (std::getline(body_stream, line))
     {
         // Skip leading newline
         if (line.empty())
@@ -505,7 +507,7 @@ void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
         if (line.find(boundary) != std::string::npos)
             continue;
 
-        BodyParameter bodyParameter;
+        BodyParameter body_parameter;
 
         // Parse BodyParameter headers
         do
@@ -515,15 +517,15 @@ void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
             {
                 std::string key = line.substr(0, pos);
                 std::string value = line.substr(pos + 1);
-                key = this->_trimWhitespace(key);
-                value = this->_trimWhitespace(value);
+                key = this->m_trimWhitespace(key);
+                value = this->m_trimWhitespace(value);
                 // lower cases the key
                 std::transform(key.begin(), key.end(), key.begin(),
                                static_cast<int (*)(int)>(std::tolower));
 
-                bodyParameter.headers[ key ] = value;
+                body_parameter.headers[ key ] = value;
 
-                // Parse dispositionType, contentType, and fieldName
+                // Parse disposition_type, content_type, and field_name
                 if (key == "content-disposition")
                 {
                     std::istringstream iss(value);
@@ -534,62 +536,62 @@ void RequestParser::_parseBodyParameters(IRequest &parsedRequest) const
                         if (pos != std::string::npos)
                         {
                             std::string param = token.substr(0, pos);
-                            std::string paramValue = token.substr(pos + 1);
-                            param = this->_trimWhitespace(param);
-                            paramValue = this->_trimWhitespace(paramValue);
+                            std::string param_value = token.substr(pos + 1);
+                            param = this->m_trimWhitespace(param);
+                            param_value = this->m_trimWhitespace(param_value);
 
                             if (param == "form-data")
-                                bodyParameter.dispositionType = paramValue;
+                                body_parameter.disposition_type = param_value;
                             else if (param == "name")
-                                bodyParameter.fieldName = paramValue;
+                                body_parameter.field_name = param_value;
                         }
                     }
                 }
                 else if (key == "content-type")
-                    bodyParameter.contentType = value;
+                    body_parameter.content_type = value;
             }
-        } while (std::getline(bodyStream, line) && !line.empty());
+        } while (std::getline(body_stream, line) && !line.empty());
 
         // Parse BodyParameter data
-        while (std::getline(bodyStream, line) && line != boundary)
+        while (std::getline(body_stream, line) && line != boundary)
         {
-            bodyParameter.data +=
+            body_parameter.data +=
                 line + '\n'; // Append the line to the BodyParameter data
         }
 
         // Trim whitespace after loop
-        bodyParameter.data = this->_trimWhitespace(bodyParameter.data);
+        body_parameter.data = this->m_trimWhitespace(body_parameter.data);
 
         // Add BodyParameter to vector
-        parsedRequest.addBodyParameter(bodyParameter);
+        parsed_request.addBodyParameter(body_parameter);
     }
 
     // Mark the request as an upload request
-    parsedRequest.setUploadRequest(true);
+    parsed_request.setUploadRequest(true);
 }
 
 // Function to check if a character is whitespace
-bool RequestParser::_isWhitespace(char c) const
+bool RequestParser::m_isWhitespace(char c) const
 {
     return c == ' ' || c == '\t' || c == '\v' || c == '\f' || c == '\r' ||
            c == '\n';
 }
 
 // Function to check if an iterator points to CRLF (carriage return + line feed)
-bool RequestParser::_isCRLF(std::vector<char>::const_iterator it) const
+bool RequestParser::m_isCRLF(std::vector<char>::const_iterator it) const
 {
     return *it == '\r' && *(it + 1) == '\n';
 }
 
 // Function to check if an iterator points to a character that is in a given set
-bool RequestParser::_isCharInSet(std::vector<char>::const_iterator it,
+bool RequestParser::m_isCharInSet(std::vector<char>::const_iterator it,
                                  const std::string &set) const
 {
     return set.find(*it) != std::string::npos;
 }
 
 // Function to trim whitespace
-std::string RequestParser::_trimWhitespace(const std::string &string) const
+std::string RequestParser::m_trimWhitespace(const std::string &string) const
 {
     std::string result = string;
 

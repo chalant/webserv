@@ -33,18 +33,18 @@ class LogLevelHelper
 private:
     // Member variables
     const std::vector<std::string>
-        _logLevelList; // List of string representations of log levels
+        m_log_level_list; // List of string representations of log levels
     const std::map<std::string, LogLevel>
-        _stringLogLevelMap; // Map of string representations to LogLevel
+        m_string_log_level_map; // Map of string representations to LogLevel
                             // enum values
     const std::map<LogLevel, std::string>
-        _logLevelStringMap; // Map of LogLevel enum values to string
+        m_log_level_string_map; // Map of LogLevel enum values to string
                             // representations
 
     // Private member functions for initialization
-    static std::vector<std::string> _setLogLevelList();
-    static std::map<std::string, LogLevel> _setStringLogLevelMap();
-    static std::map<LogLevel, std::string> _setLogLevelStringMap();
+    static std::vector<std::string> m_setLogLevelList();
+    static std::map<std::string, LogLevel> m_setStringLogLevelMap();
+    static std::map<LogLevel, std::string> m_setLogLevelStringMap();
 
 public:
     // Constructor
@@ -52,8 +52,8 @@ public:
 
     // Member functions to access data
     const std::string &logLevelStringMap(
-        LogLevel logLevel) const; // Get string representation of LogLevel
-    LogLevel stringLogLevelMap(const std::string &logLevel)
+        LogLevel log_level) const; // Get string representation of LogLevel
+    LogLevel stringLogLevelMap(const std::string &log_level)
         const; // Get LogLevel enum value from string representation
 };
 

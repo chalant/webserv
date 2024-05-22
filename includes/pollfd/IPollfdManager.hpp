@@ -29,16 +29,16 @@ public:
     virtual ~IPollfdManager() {}
 
     // Method to add a regular file pollfd to the pollfdQueue
-    virtual void addRegularFilePollfd(pollfd pollFd) = 0;
+    virtual void addRegularFilePollfd(pollfd pollfd) = 0;
 
     // Method to add a server socket pollfd to the pollfdQueue
-    virtual void addServerSocketPollfd(pollfd pollFd) = 0;
+    virtual void addServerSocketPollfd(pollfd pollfd) = 0;
 
     // Method to add a client socket pollfd to the pollfdQueue
-    virtual void addClientSocketPollfd(pollfd pollFd) = 0;
+    virtual void addClientSocketPollfd(pollfd pollfd) = 0;
 
     // Method to add a pipe pollfd to the pollfdQueue
-    virtual void addPipePollfd(pollfd pollFd) = 0;
+    virtual void addPipePollfd(pollfd pollfd) = 0;
 
     // Method to remove a file descriptor from the pollfdQueue
     virtual void removePollfd(int position) = 0;

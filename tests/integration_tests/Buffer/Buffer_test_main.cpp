@@ -37,98 +37,97 @@
 int main()
 {
     // Mock objects
-    MockPollfdManager mockPollfdManager;
-    MockSocket mockSocket;
-    MockServer mockServer;
-    MockRequestHandler mockRequestHandler;
-    // MockConfigurationBlock mockConfigurationBlock;
+    MockPollfdManager mock_pollfd_manager;
+    MockSocket mock_socket;
+    MockServer mock_server;
+    MockRequestHandler mock_request_handler;
 
     // Instantiate the object under test
-    BufferManager bufferManager(mockSocket);
-    Logger logger(bufferManager);
-    EventManager eventManager(mockPollfdManager, bufferManager, mockServer,
-                              mockRequestHandler, logger);
-    ConfigurationLoader confLoader(logger);
+    BufferManager buffer_manager(mock_socket);
+    Logger logger(buffer_manager);
+    EventManager eventManager(mock_pollfd_manager, buffer_manager, mock_server,
+                              mock_request_handler, logger);
+    ConfigurationLoader conf_loader(logger);
 
-    const IConfiguration &mockConfigurationBlock =
-        confLoader.loadConfiguration("test_configuration.conf");
+    const IConfiguration &mock_configuration_block =
+        conf_loader.loadConfiguration("test_configuration.conf");
     // Open a test file, set flush threshold at 50 and mock add the fd to
     // pollfd.
     int fd = open("temp.txt", O_CREAT | O_RDWR | O_TRUNC, 0666);
-    MockLoggerConfiguration mockLoggerConfiguration(
-        bufferManager, mockConfigurationBlock, mockPollfdManager);
+    MockLoggerConfiguration mock_logger_configuration(
+        buffer_manager, mock_configuration_block, mock_pollfd_manager);
 
-    mockLoggerConfiguration.setFileDescriptor(fd);
-    mockLoggerConfiguration.setBufferSize(50);
-    logger.configure(mockLoggerConfiguration);
+    mock_logger_configuration.setFileDescriptor(fd);
+    mock_logger_configuration.setBufferSize(50);
+    logger.configure(mock_logger_configuration);
     pollfd pollfd;
     pollfd.fd = fd;
     pollfd.events = POLLOUT;
     pollfd.revents = POLLOUT;
-    mockPollfdManager.addRegularFilePollfd(pollfd);
+    mock_pollfd_manager.addRegularFilePollfd(pollfd);
 
     // Test case 1: FileBuffer: Pushing data to the buffer by the logger
     //******************************************************************
     // Push data to the buffer
-    std::string testString = "This is a test message";
-    int returnValue = logger.log(testString);
+    std::string test_string = "This is a test message";
+    int return_value = logger.log(test_string);
 
     // Check the buffer
-    std::vector<char> bufferVector = bufferManager.peekBuffer(fd);
-    std::string buffer(bufferVector.begin(), bufferVector.end());
+    std::vector<char> buffer_vector = buffer_manager.peekBuffer(fd);
+    std::string buffer(buffer_vector.begin(), buffer_vector.end());
 
     // Verify the data is in the buffer, and the return value is 0
-    assert(buffer.find(testString) != buffer.npos);
+    assert(buffer.find(test_string) != buffer.npos);
     // Verify the return value is 0 - no flush is requested
-    assert(returnValue == 0);
+    assert(return_value == 0);
     // Verify that the file is empty
     assert(lseek(fd, 0, SEEK_END) == 0);
 
     // Test case 2: FileBuffer: Push more data and verify a flush is requested
     //************************************************************************
     // Push data to the buffer
-    std::string testString2 = "This is another test message";
-    returnValue = logger.log(testString2);
+    std::string test_string2 = "This is another test message";
+    return_value = logger.log(test_string2);
 
     // Check the buffer
-    bufferVector = bufferManager.peekBuffer(fd);
-    buffer = std::string(bufferVector.begin(), bufferVector.end());
+    buffer_vector = buffer_manager.peekBuffer(fd);
+    buffer = std::string(buffer_vector.begin(), buffer_vector.end());
 
     // Verify the data is in the buffer
-    assert(buffer.find(testString2) != buffer.npos);
+    assert(buffer.find(test_string2) != buffer.npos);
     // Verify the previous data is in the buffer
-    assert(buffer.find(testString) != buffer.npos);
+    assert(buffer.find(test_string) != buffer.npos);
     // Verify that a flush is requested
-    assert(returnValue == 1);
+    assert(return_value == 1);
     // Verify that the file is still empty
     assert(lseek(fd, 0, SEEK_END) == 0);
 
     // Test case 3: SocketBuffer: Pushing data to the buffer
     //******************************************************
     // Push data to the buffer
-    std::string testString3 = "This is a socket msg";
-    std::vector<char> testString3Vector(testString3.begin(), testString3.end());
-    ssize_t returnVal = bufferManager.pushSocketBuffer(0, testString3Vector);
+    std::string test_string3 = "This is a socket msg";
+    std::vector<char> test_string3Vector(test_string3.begin(), test_string3.end());
+    ssize_t returnVal = buffer_manager.pushSocketBuffer(0, test_string3Vector);
 
     // Check the filebuffer buffer
-    bufferVector = bufferManager.peekBuffer(fd);
-    buffer = std::string(bufferVector.begin(), bufferVector.end());
+    buffer_vector = buffer_manager.peekBuffer(fd);
+    buffer = std::string(buffer_vector.begin(), buffer_vector.end());
 
     // Check the socket buffer
-    bufferVector = bufferManager.peekBuffer(0);
-    std::string buffer2(bufferVector.begin(), bufferVector.end());
+    buffer_vector = buffer_manager.peekBuffer(0);
+    std::string buffer2(buffer_vector.begin(), buffer_vector.end());
 
     // Verify the data is in the buffer
-    assert(buffer2.find(testString3) != buffer2.npos);
+    assert(buffer2.find(test_string3) != buffer2.npos);
     // Verify the previous data is in the buffer
-    assert(buffer.find(testString2) != buffer.npos);
+    assert(buffer.find(test_string2) != buffer.npos);
     // Verify the previous data is in the buffer
-    assert(buffer.find(testString) != buffer.npos);
+    assert(buffer.find(test_string) != buffer.npos);
     // Verify that the file is still empty
     assert(lseek(fd, 0, SEEK_END) == 0);
     // Verify the return value is the number of bytes pushed
     assert(returnVal != -1 &&
-           returnVal == static_cast<ssize_t>(testString3Vector.size()));
+           returnVal == static_cast<ssize_t>(test_string3Vector.size()));
 
     // Test case 4: FileBuffer: Flushing the buffer by the event manager
     //******************************************************************
@@ -136,19 +135,19 @@ int main()
     eventManager.handleEvents();
 
     // Check the buffer
-    bufferVector = bufferManager.peekBuffer(fd);
-    buffer = std::string(bufferVector.begin(), bufferVector.end());
+    buffer_vector = buffer_manager.peekBuffer(fd);
+    buffer = std::string(buffer_vector.begin(), buffer_vector.end());
 
     // Verify the FileBuffer data is not in the buffer
-    assert(buffer.find(testString) == buffer.npos);
-    assert(buffer.find(testString2) == buffer.npos);
+    assert(buffer.find(test_string) == buffer.npos);
+    assert(buffer.find(test_string2) == buffer.npos);
     // Verify the SocketBuffer data is still in the buffer
-    assert(buffer2.find(testString3) != buffer2.npos);
+    assert(buffer2.find(test_string3) != buffer2.npos);
     // Verify that the file has now been written to
     assert(lseek(fd, 0, SEEK_END) != 0);
 
     // Clean up
-    bufferManager.destroyBuffer(fd);
+    buffer_manager.destroyBuffer(fd);
     close(fd);
     unlink("temp.txt");
 }

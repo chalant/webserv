@@ -25,7 +25,7 @@
 
 // Constructor
 BufferManager::BufferManager(ISocket &socket)
-    : _flushThreshold(DEFAULT_FLUSH_THRESHOLD), _socket(socket)
+    : m_flush_threshold(DEFAULT_FLUSH_THRESHOLD), m_socket(socket)
 {
 }
 
@@ -33,8 +33,8 @@ BufferManager::BufferManager(ISocket &socket)
 BufferManager::~BufferManager()
 {
     // Clean up all buffers
-    std::map<int, IBuffer *>::iterator it = this->_buffers.begin();
-    while (it != this->_buffers.end())
+    std::map<int, IBuffer *>::iterator it = this->m_buffers.begin();
+    while (it != this->m_buffers.end())
     {
         // Flush remaining data in each buffer and then destroy it
         while (it->second->flush(it->first, true) >
@@ -53,31 +53,31 @@ BufferManager::~BufferManager()
 }
 
 // Push a file buffer into the manager
-ssize_t BufferManager::pushFileBuffer(int fileDescriptor,
+ssize_t BufferManager::pushFileBuffer(int file_descriptor,
                                       const std::vector<char> &data)
 {
     // If the buffer for this file descriptor doesn't exist, create it
-    if (this->_buffers.find(fileDescriptor) == this->_buffers.end())
+    if (this->m_buffers.find(file_descriptor) == this->m_buffers.end())
     {
-        this->_buffers[ fileDescriptor ] =
-            new FileBuffer(this->_flushThreshold);
+        this->m_buffers[ file_descriptor ] =
+            new FileBuffer(this->m_flush_threshold);
     }
     // Push data into the file buffer
-    return this->_buffers[ fileDescriptor ]->push(
+    return this->m_buffers[ file_descriptor ]->push(
         data); // returns 1 if a flush is requested
 }
 
 // Push a socket buffer into the manager
-ssize_t BufferManager::pushSocketBuffer(int socketDescriptor,
+ssize_t BufferManager::pushSocketBuffer(int socket_descriptor,
                                         const std::vector<char> &data)
 {
     // If the buffer for this socket descriptor doesn't exist, create it
-    if (this->_buffers.find(socketDescriptor) == this->_buffers.end())
+    if (this->m_buffers.find(socket_descriptor) == this->m_buffers.end())
     {
-        this->_buffers[ socketDescriptor ] = new SocketBuffer(this->_socket);
+        this->m_buffers[ socket_descriptor ] = new SocketBuffer(this->m_socket);
     }
     // Push data into the socket buffer
-    return this->_buffers[ socketDescriptor ]->push(
+    return this->m_buffers[ socket_descriptor ]->push(
         data); // returns the number of bytes pushed
 }
 
@@ -85,9 +85,9 @@ ssize_t BufferManager::pushSocketBuffer(int socketDescriptor,
 ssize_t BufferManager::flushBuffer(int descriptor)
 {
     // Returns bytes remaining in buffer, or -1 in case of error
-    if (this->_buffers.find(descriptor) != this->_buffers.end())
+    if (this->m_buffers.find(descriptor) != this->m_buffers.end())
     {
-        return (this->_buffers[ descriptor ]->flush(descriptor));
+        return (this->m_buffers[ descriptor ]->flush(descriptor));
     }
     return -1;
 }
@@ -96,7 +96,7 @@ ssize_t BufferManager::flushBuffer(int descriptor)
 void BufferManager::flushBuffers()
 {
     std::map<int, IBuffer *>::iterator it;
-    for (it = this->_buffers.begin(); it != this->_buffers.end(); it++)
+    for (it = this->m_buffers.begin(); it != this->m_buffers.end(); it++)
     {
         // Flush each buffer
         this->flushBuffer(it->first);
@@ -106,20 +106,20 @@ void BufferManager::flushBuffers()
 // Destroy the buffer for a specific descriptor
 void BufferManager::destroyBuffer(int descriptor)
 {
-    if (this->_buffers.find(descriptor) != this->_buffers.end())
+    if (this->m_buffers.find(descriptor) != this->m_buffers.end())
     {
         // Delete the buffer and remove it from the map
-        delete this->_buffers[ descriptor ];
-        this->_buffers.erase(descriptor);
+        delete this->m_buffers[ descriptor ];
+        this->m_buffers.erase(descriptor);
     }
 }
 
 // Peek at the buffer for a specific descriptor
 std::vector<char> BufferManager::peekBuffer(int descriptor) const
 {
-    if (this->_buffers.find(descriptor) != this->_buffers.end())
+    if (this->m_buffers.find(descriptor) != this->m_buffers.end())
     {
-        return this->_buffers.at(descriptor)->peek();
+        return this->m_buffers.at(descriptor)->peek();
     }
     return std::vector<char>();
 }
@@ -127,7 +127,7 @@ std::vector<char> BufferManager::peekBuffer(int descriptor) const
 // Set the flush threshold
 void BufferManager::setFlushThreshold(size_t threshold)
 {
-    this->_flushThreshold = threshold;
+    this->m_flush_threshold = threshold;
 }
 
 // Path: srcs/FileBuffer.cpp

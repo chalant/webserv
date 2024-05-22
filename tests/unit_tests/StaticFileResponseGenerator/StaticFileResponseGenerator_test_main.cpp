@@ -16,55 +16,55 @@
 int main()
 {
     // Mock objects
-    MockRoute mockRoute;
-    MockRequest mockRequest;
-    MockResponse mockResponse;
-    MockLogger mockLogger;
-    ConfigurationLoader conf_loader(mockLogger);
+    MockRoute mock_route;
+    MockRequest mock_request;
+    MockResponse mock_response;
+    MockLogger mock_logger;
+    ConfigurationLoader conf_loader(mock_logger);
 
     // Set Mock Route Variables
     std::string root = "../../mock_files";
     std::string prefix = "/";
-    mockRoute.setRoot(root);
-    mockRoute.setPath(prefix);
+    mock_route.setRoot(root);
+    mock_route.setPath(prefix);
 
-    const IConfiguration &mockConfigurationBlock =
+    const IConfiguration &mock_configuration_block =
         conf_loader.loadConfiguration("test_configuration.conf");
 
-    // Instantiate the staticFileResponseGenerator object
-    StaticFileResponseGenerator staticFileResponseGenerator(mockLogger);
+    // Instantiate the static_file_response_generator object
+    StaticFileResponseGenerator static_file_response_generator(mock_logger);
 
     // Test case 1: Request a non-existent file
     //***************************************************
     // Set the request variables
-    mockRequest.setMethod("GET");
-    mockRequest.setUri("non_existant_file");
+    mock_request.setMethod("GET");
+    mock_request.setUri("non_existant_file");
 
     // Generate static file response
-    Triplet_t response = staticFileResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockResponse, mockConfigurationBlock);
+    Triplet_t response = static_file_response_generator.generateResponse(
+        mock_route, mock_request, mock_response, mock_configuration_block);
 
     // Check the response status code
     assert(response.first == -1);
 
     // Check the response body
-    assert(mockResponse.getStatusLine() == "HTTP/1.1 404 Not Found\r\n");
+    assert(mock_response.getStatusLine() == "HTTP/1.1 404 Not Found\r\n");
 
     // Test case 2: Request the mock file MockFile1.txt
     //******************************************************************
     // Set the request variables
-    mockRequest.setMethod("GET");
-    mockRequest.setUri("MockFile1.txt");
+    mock_request.setMethod("GET");
+    mock_request.setUri("MockFile1.txt");
 
     // Generate static file response
-    response = staticFileResponseGenerator.generateResponse(
-        mockRoute, mockRequest, mockResponse, mockConfigurationBlock);
+    response = static_file_response_generator.generateResponse(
+        mock_route, mock_request, mock_response, mock_configuration_block);
 
     // Check the response status code
     assert(response.first == -1);
 
     // Verify that the content of the file was added to the response body
-    assert(mockResponse.getBodyString() ==
+    assert(mock_response.getBodyString() ==
            "This is the content of MockFile1.txt");
 
     return 0;

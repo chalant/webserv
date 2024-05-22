@@ -14,7 +14,7 @@ class MockLogger : public ILogger
 {
 private:
     // Helper method to get the current timestamp
-    std::string _getCurrentTimestamp() const;
+    std::string m_getCurrentTimestamp() const;
 
 public:
     // Constructor

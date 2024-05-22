@@ -15,14 +15,14 @@ int main()
     ConfigurationLoader loader(logger);
     IConfiguration &block =
         loader.loadConfiguration("test_configuration_router.conf");
-    HttpHelper httpHelper;
-    Router router(block, logger, httpHelper);
+    HttpHelper http_helper;
+    Router router(block, logger, http_helper);
     size_t i = 0;
     while (i < router.getRouteCount())
     {
         std::cout << "Route :" << router.getRoutes()[ i ].getUri() << std::endl;
         std::cout << "Method: "
-                  << httpHelper.httpMethodStringMap(
+                  << http_helper.httpMethodStringMap(
                          router.getRoutes()[ i ].getMethod())
                   << std::endl
                   << std::endl;
