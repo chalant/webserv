@@ -22,9 +22,10 @@ Triplet_t	UploadResponseGenerator::generateResponse(const IRoute &route,
 	struct stat	buffer;
 	std::string	file_path = route.getRoot() + route.getPath();
 	bool		created = false;
-
 	const std::vector<std::string> &extensions = configuration.getBlocks("types")[0]->getStringVector(request.getContentType());
 	file_path += extensions[0];
+
+	m_logger.log(DEBUG, "Received upload request for: " + file_path);
 	// check if file exists.
 	if (stat(file_path.c_str(), &buffer) == 0)
 	{

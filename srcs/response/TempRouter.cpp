@@ -47,6 +47,7 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
     // temp skip routing and select the only route available
 	if (request->getMethod() == POST)
 	{
+		m_logger.log(DEBUG, "POST REQUEST");
 		 route = m_upload_route;
 	}
 	else

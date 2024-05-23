@@ -88,7 +88,7 @@ int main(int argc, char **argv)
                       logger);
 
         // Instantiate the Router.
-        // Router router(configuration, logger, HttpHelper());
+        //Router router(configuration, logger, HttpHelper());
         TempRouter router(configuration, logger);
 
         // Instantiate the RequestHandler.
