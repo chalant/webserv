@@ -22,7 +22,8 @@ private:
     IConfiguration &m_configuration;
     ILogger &m_logger;
     HttpHelper m_http_helper;
-    IRoute *m_route;
+    IRoute *m_static_route;
+	IRoute	*m_upload_route;
 
 public:
     TempRouter(IConfiguration &Configuration, ILogger &logger);

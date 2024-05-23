@@ -28,7 +28,7 @@ int main()
     mock_route.setRoot(root);
     mock_route.setPath(prefix);
 
-    const IConfiguration &mock_configuration_block =
+    IConfiguration &mock_configuration_block =
         conf_loader.loadConfiguration("test_configuration.conf");
 
     // Instantiate the static_file_response_generator object

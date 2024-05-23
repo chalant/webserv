@@ -66,7 +66,7 @@ SRCS        =	main.cpp \
 				srcs/request/Request.cpp \
 				srcs/request/RequestParser.cpp \
 				srcs/response/CgiResponseGenerator.cpp \
-				srcs/response/PostMethodResponseGenerator.cpp \
+				srcs/response/UploadResponseGenerator.cpp \
 				srcs/response/RegexMatcher.cpp \
 				srcs/response/Response.cpp \
 				srcs/response/Router.cpp \

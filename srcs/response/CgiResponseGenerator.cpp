@@ -21,7 +21,7 @@ CgiResponseGenerator::~CgiResponseGenerator() {}
 // of the body pipe) Throws an exception if an error occurs
 Triplet_t CgiResponseGenerator::generateResponse(
     const IRoute &route, const IRequest &request, IResponse &response,
-    const IConfiguration &configuration, const std::string &script_name)
+    IConfiguration &configuration, const std::string &script_name)
 {
     // void the unused IResponse &response
     (void)response;

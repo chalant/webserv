@@ -14,7 +14,7 @@ StaticFileResponseGenerator::~StaticFileResponseGenerator() {}
 // Generate response
 Triplet_t StaticFileResponseGenerator::generateResponse(
     const IRoute &route, const IRequest &request, IResponse &response,
-    const IConfiguration &configuration, const std::string &script_name)
+    IConfiguration &configuration, const std::string &script_name)
 {
     // void the unused parameters
     (void)configuration;
@@ -78,7 +78,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
         {
             // close the file
             file.close();
-
+			
             // set the response
             response.setBody(body);
             response.setStatusLine(OK);
