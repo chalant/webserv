@@ -18,7 +18,7 @@ CPPFLAGS        = -Wall -Wextra -Werror
 # Optional flags - uncomment to enable
 CPPFLAGS += -std=c++98
 CPPFLAGS += -g
-CPPFLAGS += -fsanitize=address
+#CPPFLAGS += -fsanitize=address
 #CPPFLAGS += -O3
 
 all: $(NAME)

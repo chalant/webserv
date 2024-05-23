@@ -17,7 +17,7 @@ int main()
     MockLogger mock_logger;
     MockSocket mock_socket;
     MockPollfdManager mock_pollfd_manager;
-    MockConnectionManager mock_connecption_manager;
+    MockConnectionManager mock_connection_manager;
     MockConfigurationBlock mock_configuration(mock_logger, "configuration");
     MockConfigurationBlock mock_events(mock_logger, "events");
     MockConfigurationBlock mock_http(mock_logger, "http");
