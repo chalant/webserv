@@ -6,7 +6,7 @@ Defaults::Defaults()
     m_directive_parameters[ "client_max_uri_size" ].push_back("1024");
     m_directive_parameters[ "client_body_buffer_size" ].push_back("1024");
     m_directive_parameters[ "client_max_body_size" ].push_back("1024");
-    m_directive_parameters[ "listen" ].push_back("127.0.0.1:8080");
+    m_directive_parameters[ "listen" ].push_back("8080");
     m_directive_parameters[ "server_name" ].push_back("default");
     m_directive_parameters[ "error_log" ].push_back("/logs/error.log");
     m_directive_parameters[ "error_log" ].push_back("debug");

@@ -97,7 +97,7 @@ void	ConfigurationLoader::m_add_directive(const Grammar &grammar,
 		std::ifstream conf_stream(params[0].c_str());
 		if (!conf_stream.is_open())
 		{
-			m_logger.log(ERROR, "ConfigurationLoader: file " + params[0] + " does not exist");
+			m_logger.log(ERROR, "ConfigurationLoader: file " + params[0] + " not found");
 			return ;
 		}
 		const std::vector<Token> &new_tokens = tokenizer.tokenize(conf_stream);
@@ -137,6 +137,8 @@ void	ConfigurationLoader::m_build_config(const Grammar &grammar,
     }
 }
 
+#include <iostream>
+
 IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
 {
     // std::ifstream conf_stream(path.c_str());
@@ -163,7 +165,7 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     NonTerminalSymbol comment("comment", 6);
     NonTerminalSymbol value("value", 7);
     NonTerminalSymbol directive_name("directive-name", 8);
-    NonTerminalSymbol identifier("identifier", 9);
+    // NonTerminalSymbol identifier("identifier", 9);
     NonTerminalSymbol text("text", 10);
 
     TerminalSymbol curl_open("{", 11);
@@ -177,14 +179,13 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     bools.push_back("off");
     std::vector<std::string> empty;
     TerminalSymbolSet boolean("boolean", 17, bools, substring_matching);
-    TerminalSymbol underscore("_", 18);
     TerminalSymbolSet letters("letters", 19, empty, alpha_matching);
     TerminalSymbolSet digits("digits", 20, empty, digit_matching);
     TerminalSymbolSet string_("string", 21, empty, printable_ascii_matching);
 
     // configuration
     GrammarRule *rule = grammar.addRule(configuration);
-    rule->addSymbol(&block_element);
+	rule->addSymbol(&block_element);
     rule = grammar.addRule(configuration);
     rule->addSymbol(&block_element);
     rule->addSymbol(&configuration);
@@ -235,6 +236,18 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     rule = grammar.addRule(comment);
     rule->addSymbol(&hashtag);
     rule->addSymbol(&text);
+	rule->addSymbol(&semicolon);
+	rule = grammar.addRule(comment);
+    rule->addSymbol(&hashtag);
+    rule->addSymbol(&text);
+	rule = grammar.addRule(comment);
+    rule->addSymbol(&hashtag);
+    rule->addSymbol(&text);
+	rule->addSymbol(&curl_open);
+	rule = grammar.addRule(comment);
+    rule->addSymbol(&hashtag);
+    rule->addSymbol(&text);
+	rule->addSymbol(&curl_close);
     rule = grammar.addRule(comment);
     rule->addSymbol(&hashtag);
 
@@ -255,14 +268,14 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     rule = grammar.addRule(directive_name);
     rule->addSymbol(&string_);
 
-    // identifier
-    rule = grammar.addRule(identifier);
-    rule->addSymbol(&letters);
-    rule = grammar.addRule(identifier);
-    rule->addSymbol(&underscore);
-    rule = grammar.addRule(identifier);
-    rule->addSymbol(&letters);
-    rule->addSymbol(&identifier);
+    // // identifier
+    // rule = grammar.addRule(identifier);
+    // rule->addSymbol(&letters);
+    // rule = grammar.addRule(identifier);
+    // rule->addSymbol(&underscore);
+    // rule = grammar.addRule(identifier);
+    // rule->addSymbol(&letters);
+    // rule->addSymbol(&identifier);
 
     // text
     rule = grammar.addRule(text);

@@ -8,7 +8,7 @@ int Converter::toInt(const std::string &str)
     unsigned long number = strtol(str.c_str(), &end, 10);
     if (*end != '\0') // If conversion stopped before the end of the string
     {
-        throw std::invalid_argument("");
+        throw std::invalid_argument(str);
     }
     return number;
 }
@@ -19,7 +19,7 @@ unsigned int Converter::toUInt(const std::string &str)
     unsigned long number = strtoul(str.c_str(), &end, 10);
     if (*end != '\0') // If conversion stopped before the end of the string
     {
-        throw std::invalid_argument("");
+        throw std::invalid_argument(str);
     }
     return number;
 }
