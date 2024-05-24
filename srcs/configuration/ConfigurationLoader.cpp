@@ -83,9 +83,7 @@ void	ConfigurationLoader::m_addDirective(const Grammar &grammar,
 	const std::string &directive = tokens[ (*parse_tree[ 0 ])[ 0 ]->tokenIndex() ].value;
 	if (directive == "include")
 	{
-        std::cout << "Including into " << block.getName() << std::endl;
-    
-		//include new file and add it to the block;
+		//include configuration from the provided path.
 		std::vector<std::string> params;
 		get_values(tokens, *parse_tree[ 1 ], params);
     
@@ -98,11 +96,18 @@ void	ConfigurationLoader::m_addDirective(const Grammar &grammar,
 			m_logger.log(ERROR, "ConfigurationLoader: file " + params[0] + " not found");
 			return ;
 		}
-		const std::vector<Token> &new_tokens = tokenizer.tokenize(conf_stream);
-		conf_stream.close();
-		ParseTree&	new_parse_tree = parser.parse(new_tokens);
-        // recursively build configuration and add it to the parent of the current block.
-		m_buildConfig(grammar, new_tokens, new_parse_tree, *block.getParent());
+		try
+		{
+			const std::vector<Token> &new_tokens = tokenizer.tokenize(conf_stream);
+			conf_stream.close();
+			ParseTree&	new_parse_tree = parser.parse(new_tokens);
+			// recursively build configuration and add it to the parent of the current block.
+			m_buildConfig(grammar, new_tokens, new_parse_tree, *block.getParent());
+		}
+		catch(const std::exception& e)
+		{
+			m_logger.log(ERROR, "Couldn't include " + params[0] + " " + e.what());
+		}
 		return ;
 	}
     // the first sub-child is the directive name and the second is the

@@ -24,7 +24,7 @@ Triplet_t	UploadResponseGenerator::generateResponse(const IRoute &route,
 	for (std::vector<BodyParameter>::const_iterator itr = body_params.begin(); itr != body_params.end(); itr++)
 	{
 		std::string	file_path = route.getRoot() + itr->headers.at("filename");
-		file_path += configuration.getBlocks("types")[0]->getStringVector(request.getContentType())[0];
+		file_path += configuration.getBlocks("types")[0]->getStringVector(itr->content_type)[0];
 
 		m_logger.log(DEBUG, "Received upload request for: " + file_path);
 		// check if file exists.
