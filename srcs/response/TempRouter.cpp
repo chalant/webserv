@@ -48,7 +48,7 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
 	if (request->getMethod() == POST)
 	{
 		m_logger.log(DEBUG, "POST REQUEST");
-		 route = m_upload_route;
+		route = m_upload_route;
 	}
 	else
 	{

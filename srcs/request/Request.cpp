@@ -345,7 +345,7 @@ void Request::setBody(const std::vector<char> &body)
         return; // If empty, do nothing (no body to set)
 
     // Check if the body size exceeds the maximum allowed body size
-    if (body.size() > this->m_configuration.getSize_t("ClientMaxBodySize"))
+    if (body.size() > this->m_configuration.getSize_t("client_max_body_size"))
         throw HttpStatusCodeException(
             PAYLOAD_TOO_LARGE); // Throw '413' status error
 

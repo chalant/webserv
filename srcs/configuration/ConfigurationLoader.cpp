@@ -8,9 +8,6 @@
 #include <fstream>
 #include <iostream>
 
-static void get_values(const std::vector<Token> &tokens, ParseTree &parse_tree,
-                       std::vector<std::string> &result);
-
 // retrieves the list of strings from the parse tree.
 static void get_values(const std::vector<Token> &tokens, ParseTree &parse_tree,
                        std::vector<std::string> &result)
@@ -45,22 +42,22 @@ ConfigurationLoader::ConfigurationLoader(ILogger &logger) : m_logger(logger)
 // todo: delete all the blocks.
 ConfigurationLoader::~ConfigurationLoader() { delete m_config; }
 
-void	ConfigurationLoader::m_add_block(const Grammar &grammar, 
+void	ConfigurationLoader::m_addBlock(const Grammar &grammar, 
 								const std::vector<Token> &tokens,
 								ParseTree &parse_tree, ConfigurationBlock &block)
 {
-	ConfigurationBlock *new_block;
+	ConfigurationBlock  *new_block;
     const std::string rule_name =
         grammar.getRule(parse_tree[ 1 ]->ruleIndex())->getName();
 
     // check if it is a block with at block_parameters and retreive the
     // block_parameters.
+    new_block = new ConfigurationBlock(
+            &block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, m_defaults);
     if (rule_name == "block-parameters")
     {
         int start = 0;
         // NOTE: the ConfigurationBlock could have a regex mode...
-        new_block = new ConfigurationBlock(
-            block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, m_defaults);
         if (tokens[ (*parse_tree[ 1 ])[ 0 ]->tokenIndex() ].value == "~")
         {
             start = 1;
@@ -68,30 +65,31 @@ void	ConfigurationLoader::m_add_block(const Grammar &grammar,
         }
         std::vector<std::string> &params = new_block->setParameters();
         get_values(tokens, *(*parse_tree[ 1 ])[ start ], params);
-        m_build_config(grammar, tokens, *parse_tree[ 3 ], *new_block);
+        m_buildConfig(grammar, tokens, *parse_tree[ 3 ], *new_block);
     }
     else
     {
-        new_block = new ConfigurationBlock(
-            block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, m_defaults);
         // recursively add blocks or directives on the current block. (skipping
         // the open brace.)
-        m_build_config(grammar, tokens, *parse_tree[ 2 ], *new_block);
+        m_buildConfig(grammar, tokens, *parse_tree[ 2 ], *new_block);
     }
     block.addBlock(tokens[ parse_tree[ 0 ]->tokenIndex() ].value, new_block);
 }
 
-void	ConfigurationLoader::m_add_directive(const Grammar &grammar,
+void	ConfigurationLoader::m_addDirective(const Grammar &grammar,
 								const std::vector<Token> &tokens, 
 								ParseTree &parse_tree, ConfigurationBlock &block)
 {
 	const std::string &directive = tokens[ (*parse_tree[ 0 ])[ 0 ]->tokenIndex() ].value;
 	if (directive == "include")
 	{
+        std::cout << "Including into " << block.getName() << std::endl;
+    
 		//include new file and add it to the block;
 		std::vector<std::string> params;
 		get_values(tokens, *parse_tree[ 1 ], params);
-		// open file provided in params and load it and pass it to the parser
+    
+        // open file provided in params, load it and parse it
 		Tokenizer tokenizer(m_separators, m_reserved_symbols);
 		Parser parser(grammar);
 		std::ifstream conf_stream(params[0].c_str());
@@ -103,7 +101,8 @@ void	ConfigurationLoader::m_add_directive(const Grammar &grammar,
 		const std::vector<Token> &new_tokens = tokenizer.tokenize(conf_stream);
 		conf_stream.close();
 		ParseTree&	new_parse_tree = parser.parse(new_tokens);
-		m_build_config(grammar, new_tokens, new_parse_tree, block);
+        // recursively build configuration and add it to the parent of the current block.
+		m_buildConfig(grammar, new_tokens, new_parse_tree, *block.getParent());
 		return ;
 	}
     // the first sub-child is the directive name and the second is the
@@ -114,7 +113,7 @@ void	ConfigurationLoader::m_add_directive(const Grammar &grammar,
     get_values(tokens, *parse_tree[ 1 ], params);
 }
 
-void	ConfigurationLoader::m_build_config(const Grammar &grammar, 
+void	ConfigurationLoader::m_buildConfig(const Grammar &grammar, 
 								const std::vector<Token> &tokens,
 								ParseTree &parse_tree, ConfigurationBlock &block)
 {
@@ -122,18 +121,18 @@ void	ConfigurationLoader::m_build_config(const Grammar &grammar,
     const std::string rule_name = rule->getName();
     if (rule_name == "block")
     {
-        m_add_block(grammar, tokens, parse_tree, block);
+        m_addBlock(grammar, tokens, parse_tree, block);
         return;
     }
     else if (rule_name == "directive")
     {
-        m_add_directive(grammar, tokens, parse_tree, block);
+        m_addDirective(grammar, tokens, parse_tree, block);
         return;
     }
     // go down the parse tree and build sub-blocks.
     for (size_t i = 0; i < parse_tree.size(); i++)
     {
-        m_build_config(grammar, tokens, *parse_tree[ i ], block);
+        m_buildConfig(grammar, tokens, *parse_tree[ i ], block);
     }
 }
 
@@ -300,7 +299,7 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
 
     for (size_t i = 0; i < parse_tree.size(); i++)
     {
-        m_build_config(grammar, tokens, *parse_tree[ i ], *m_config);
+        m_buildConfig(grammar, tokens, *parse_tree[ i ], *m_config);
     }
     conf_stream.close();
 

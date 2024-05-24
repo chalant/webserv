@@ -28,5 +28,6 @@ int main()
     std::vector<std::string> blk =
         block.getBlocks("limit_except")[ 0 ]->getParameters();
     assert(blk[ 0 ] == "GET");
+    block.getBlocks("types")[0];
     return 0;
 }
