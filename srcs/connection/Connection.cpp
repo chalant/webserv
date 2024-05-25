@@ -24,48 +24,48 @@ Connection::Connection(
       m_remote_address(m_ip + ":" + client_info.second.second), m_logger(logger),
       m_request(request), m_response(response), m_timeout(timeout)
 {
-    this->m_last_access = time(NULL);
+    m_last_access = time(NULL);
 }
 
 // Destructor
 Connection::~Connection()
 {
-    delete this->m_request;
-    delete this->m_response;
+    delete m_request;
+    delete m_response;
 }
 
 // Set session
-void Connection::setSession(ISession *session) { this->m_session = session; }
+void Connection::setSession(ISession *session) { m_session = session; }
 
 // Getters
-int Connection::getSocketDescriptor() const { return this->m_socket_descriptor; }
+int Connection::getSocketDescriptor() const { return m_socket_descriptor; }
 
-std::string Connection::getIp() const { return this->m_ip; }
+std::string Connection::getIp() const { return m_ip; }
 
-int Connection::getPort() const { return this->m_port; }
+int Connection::getPort() const { return m_port; }
 
 std::string Connection::getRemoteAddress() const
 {
-    return this->m_remote_address;
+    return m_remote_address;
 }
 
 int Connection::getResponseReadPipeFd() const
 {
-    return this->m_response_read_pipe_fd;
+    return m_response_read_pipe_fd;
 }
 
-IRequest &Connection::getRequest() const { return *this->m_request; }
+IRequest &Connection::getRequest() const { return *m_request; }
 
-IResponse &Connection::getResponse() const { return *this->m_response; }
+IResponse &Connection::getResponse() const { return *m_response; }
 
-ISession &Connection::getSession() const { return *this->m_session; }
+ISession &Connection::getSession() const { return *m_session; }
 
 void Connection::setCgiInfo(int cgi_pid, int response_read_pipe_fd,
                             int request_write_pipe_fd)
 {
-    this->m_cgi_pid = cgi_pid;
-    this->m_response_read_pipe_fd = response_read_pipe_fd;
-    this->m_request_write_pipe_fd = request_write_pipe_fd;
+    m_cgi_pid = cgi_pid;
+    m_response_read_pipe_fd = response_read_pipe_fd;
+    m_request_write_pipe_fd = request_write_pipe_fd;
 }
 
 // Connection management
@@ -75,7 +75,7 @@ void Connection::touch()
     time_t now = time(NULL);
 
     // Set time strings for logging
-    std::string last_access_string = ctime(&this->m_last_access);
+    std::string last_access_string = ctime(&m_last_access);
     std::string now_string = ctime(&now);
 
     // Remove the newline characters from the strings; introduced by ctime
@@ -83,18 +83,18 @@ void Connection::touch()
     now_string.erase(now_string.length() - 1);
 
     // Log the last access update
-    this->m_logger.log(
+    m_logger.log(
         VERBOSE,
-        "Updating last access for connection with: " + this->m_remote_address +
+        "Updating last access for connection with: " + m_remote_address +
             " from " + last_access_string + " to " + now_string);
 
     // Update the last access time
-    this->m_last_access = now;
+    m_last_access = now;
 }
 
 bool Connection::hasExpired() const
 {
-    return time(NULL) - this->m_last_access > this->m_timeout;
+    return time(NULL) - m_last_access > m_timeout;
 }
 
 // Path: srcs/Connection.cpp

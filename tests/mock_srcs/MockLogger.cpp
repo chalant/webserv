@@ -22,7 +22,7 @@ int MockLogger::log(const std::string &message)
 {
     // Construct the log message string
     std::string log_message_string =
-        this->m_getCurrentTimestamp() + " " + message + "\n";
+        m_getCurrentTimestamp() + " " + message + "\n";
 
     std::cout << log_message_string;
     return 0;
@@ -33,11 +33,11 @@ int MockLogger::log(const LogLevel logLevel, const std::string &message)
 {
     static_cast<void>(logLevel);
     // Construct the log message string
-    // std::string log_message_string = this->m_getCurrentTimestamp() + " [" +
-    // this->m_log_level_helper.logLevelStringMap(logLevel) + "] " + message +
+    // std::string log_message_string = m_getCurrentTimestamp() + " [" +
+    // m_log_level_helper.logLevelStringMap(logLevel) + "] " + message +
     // "\n";
     std::string log_message_string =
-        this->m_getCurrentTimestamp() + " [LOGLEVEL] " + message + "\n";
+        m_getCurrentTimestamp() + " [LOGLEVEL] " + message + "\n";
 
     std::cout << log_message_string;
     return 0;

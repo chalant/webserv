@@ -14,20 +14,20 @@ ClientHandler::ClientHandler(const ISocket &socket, ILogger &logger)
     : m_socket(socket), m_logger(logger)
 {
     // Log the creation of the ClientHandler
-    this->m_logger.log(VERBOSE, "Clienthandler created.");
+    m_logger.log(VERBOSE, "Clienthandler created.");
 }
 
 // Destructor
 ClientHandler::~ClientHandler()
 {
     // Log the destruction of the ClientHandler
-    this->m_logger.log(VERBOSE, "Clienthandler destroyed.");
+    m_logger.log(VERBOSE, "Clienthandler destroyed.");
 }
 
 // Setter method to set the socket descriptor
 void ClientHandler::setSocketDescriptor(int socket_descriptor)
 {
-    this->m_socket_descriptor = socket_descriptor;
+    m_socket_descriptor = socket_descriptor;
 }
 
 // Method to read a request from the client
@@ -41,7 +41,7 @@ const std::vector<char> ClientHandler::readRequest() const
 
     // Read data from the client socket
     // Double the buffer as long as necessary
-    while ((bytes_read = this->m_socket.recv(this->m_socket_descriptor,
+    while ((bytes_read = m_socket.recv(m_socket_descriptor,
                                            &buffer[ offset ], max_read_size)) ==
            max_read_size)
     {
@@ -64,7 +64,7 @@ const std::vector<char> ClientHandler::readRequest() const
         buffer.clear();
         throw WebservException(ERROR,
                                "Error reading request from client on socket: " +
-                                   Converter::toString(this->m_socket_descriptor),
+                                   Converter::toString(m_socket_descriptor),
                                1);
     }
 
@@ -72,9 +72,9 @@ const std::vector<char> ClientHandler::readRequest() const
     buffer.resize(offset + bytes_read);
 
     // Log the request read from the client
-    this->m_logger.log(
+    m_logger.log(
         VERBOSE, "[CLIENTHANDLER] Request on socket: " +
-                     Converter::toString(this->m_socket_descriptor) + ": \"" +
+                     Converter::toString(m_socket_descriptor) + ": \"" +
                      std::string(buffer.begin(), buffer.end()) + "\"");
 
     // Return the buffer containing the request
@@ -84,16 +84,16 @@ const std::vector<char> ClientHandler::readRequest() const
 // Method to send a response to the client as a vector of characters
 ssize_t ClientHandler::sendResponse(const std::vector<char> &response) const
 {
-    ssize_t bytesSent = this->m_socket.send(this->m_socket_descriptor, response);
+    ssize_t bytesSent = m_socket.send(m_socket_descriptor, response);
     if (bytesSent == -1)
-        this->m_logger.log(ERROR,
+        m_logger.log(ERROR,
                           "Error sending response to client on socket: " +
-                              Converter::toString(this->m_socket_descriptor));
+                              Converter::toString(m_socket_descriptor));
 
     // Log the response sent to the client
-    this->m_logger.log(
+    m_logger.log(
         VERBOSE, "[CLIENTHANDLER] Responded on socket: " +
-                     Converter::toString(this->m_socket_descriptor) + ": \"" +
+                     Converter::toString(m_socket_descriptor) + ": \"" +
                      std::string(response.begin(), response.end()) + "\"");
 
     // Return the number of bytes sent

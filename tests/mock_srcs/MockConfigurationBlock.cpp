@@ -30,17 +30,17 @@ MockConfigurationBlock::~MockConfigurationBlock()
 void MockConfigurationBlock::setBlock(const std::string &parameter,
                                       IConfiguration *block)
 {
-    this->m_logger.log(DEBUG, "Setting Block '" + parameter + "' to '" +
+    m_logger.log(DEBUG, "Setting Block '" + parameter + "' to '" +
                                  block->getName() + "'");
 
     // Add the block to the BlockList
-    this->m_blocks[ parameter ].push_back(block);
+    m_blocks[ parameter ].push_back(block);
 }
 
 void MockConfigurationBlock::setString(const std::string &parameter,
                                        const std::string &value)
 {
-    this->m_logger.log(DEBUG, "Setting Directive '" + parameter + "' to " +
+    m_logger.log(DEBUG, "Setting Directive '" + parameter + "' to " +
                                  value + "'");
 
     // Check if the parameter already exists
@@ -82,7 +82,7 @@ void MockConfigurationBlock::setInt(const std::string &parameter, int value)
 // Getters
 const BlockList &MockConfigurationBlock::getBlocks(const std::string &parameter)
 {
-    this->m_logger.log(DEBUG, "Getting Block '" + parameter + "'");
+    m_logger.log(DEBUG, "Getting Block '" + parameter + "'");
     try
     {
         return (m_blocks.at(parameter));
@@ -109,7 +109,7 @@ MockConfigurationBlock::getStringVector(const std::string &parameter) const
 const std::string &MockConfigurationBlock::getString(const std::string &key,
                                                      size_t index) const
 {
-    this->m_logger.log(DEBUG, "Getting Directive '" + key + "' at index " +
+    m_logger.log(DEBUG, "Getting Directive '" + key + "' at index " +
                                  std::to_string(index) + "'");
     return m_directives.at(key)->at(index);
 }
@@ -177,7 +177,7 @@ bool MockConfigurationBlock::isRegex(void) const { return false; }
 
 std::vector<std::string> &MockConfigurationBlock::getParameters(void)
 {
-    return this->m_parameters;
+    return m_parameters;
 }
 
 // Path: tests/mock_headers/MockLogger.hpp

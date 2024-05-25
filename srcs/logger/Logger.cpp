@@ -17,11 +17,11 @@
  * - Use the appropriate log() override
  *
  * Example error log:
- * this->m_logger.log(INFO, "listening on port 8080");
+ * m_logger.log(INFO, "listening on port 8080");
  * Output in error log: 2011-01-01T01:11:11 [INFO] "listening on port 8080"
  *
  * Example access log:
- * this->m_logger.log(request, response);
+ * m_logger.log(request, response);
  * Output in access log: timestamp="2011-01-01T01:11:11" clientIP="127.0.0.1"
  * method="GET" requestURI="/index.php" httpVersion="HTTP/1.1" etc.
  */
@@ -54,19 +54,19 @@ std::string Logger::m_getCurrentTimestamp() const
 int Logger::log(const std::string &message)
 {
     // If the Logger is disabled, return without logging
-    if (this->m_configuration != NULL &&
-        this->m_configuration->getErrorLogEnabled() == false)
+    if (m_configuration != NULL &&
+        m_configuration->getErrorLogEnabled() == false)
         return -1;
 
     // Construct the log message string
     std::string log_message =
-        this->m_getCurrentTimestamp() + " " + message + "\n";
+        m_getCurrentTimestamp() + " " + message + "\n";
 
     // Push the log message to the log file buffer if configured, otherwise push
     // to stderr buffer
-    return this->m_pushToBuffer(
-        log_message, this->m_configuration
-                         ? this->m_configuration->getErrorLogFileDescriptor()
+    return m_pushToBuffer(
+        log_message, m_configuration
+                         ? m_configuration->getErrorLogFileDescriptor()
                          : STDERR_FILENO);
 }
 
@@ -75,24 +75,24 @@ int Logger::log(LogLevel logLevel, const std::string &message)
 {
     // If the Logger is disabled or the log level below threshold, return
     // without logging
-    if (this->m_configuration != NULL &&
-        (this->m_configuration->getErrorLogEnabled() == false ||
-         logLevel < this->m_configuration->getLogLevel()))
+    if (m_configuration != NULL &&
+        (m_configuration->getErrorLogEnabled() == false ||
+         logLevel < m_configuration->getLogLevel()))
         return -1;
 
     // Construct the log message string
     std::string log_level_string =
-        "[" + this->m_log_level_helper.logLevelStringMap(logLevel) + "]";
+        "[" + m_log_level_helper.logLevelStringMap(logLevel) + "]";
     log_level_string.append(12 - log_level_string.length(),
                             ' '); // Fix width of log level string
-    std::string log_message = this->m_getCurrentTimestamp() + " " +
+    std::string log_message = m_getCurrentTimestamp() + " " +
                               log_level_string + " " + message + "\n";
 
     // Push the log message to the log file buffer if configured, otherwise push
     // to stderr buffer
-    return this->m_pushToBuffer(
-        log_message, this->m_configuration
-                         ? this->m_configuration->getErrorLogFileDescriptor()
+    return m_pushToBuffer(
+        log_message, m_configuration
+                         ? m_configuration->getErrorLogFileDescriptor()
                          : STDERR_FILENO);
 }
 
@@ -101,8 +101,8 @@ int Logger::log(const IConnection &connection)
 {
     // If the Logger is configured and confirmed disabled, return without
     // logging
-    if (this->m_configuration != NULL &&
-        this->m_configuration->getAccessLogEnabled() == false)
+    if (m_configuration != NULL &&
+        m_configuration->getAccessLogEnabled() == false)
         return -1;
 
     // Get a reference to the Request and Response objects
@@ -115,7 +115,7 @@ int Logger::log(const IConnection &connection)
         // Create a temporary stringstream object to construct the log message
         std::ostringstream log_buffer_stream;
         log_buffer_stream << "{\n"
-                          << "\ttimestamp=\"" << this->m_getCurrentTimestamp()
+                          << "\ttimestamp=\"" << m_getCurrentTimestamp()
                           << "\",\n"
                           << "\tclient_ip=\"" << connection.getIp() << "\",\n"
                           << "\tclient_port=\"" << connection.getPort()
@@ -134,15 +134,15 @@ int Logger::log(const IConnection &connection)
                           << "\"\n";
 
         // Add request headers to the log message
-        this->m_appendMapToLog(log_buffer_stream, "request_headers",
+        m_appendMapToLog(log_buffer_stream, "request_headers",
                                request.getHeadersStringMap());
 
         // Add response headers to the log message
-        this->m_appendMapToLog(log_buffer_stream, "response_headers",
+        m_appendMapToLog(log_buffer_stream, "response_headers",
                                response.getHeadersStringMap());
 
         // Add cookies to the log message
-        this->m_appendMapToLog(log_buffer_stream, "response_cookies",
+        m_appendMapToLog(log_buffer_stream, "response_cookies",
                                request.getCookies());
 
         log_buffer_stream << "}\n";
@@ -158,9 +158,9 @@ int Logger::log(const IConnection &connection)
 
     // Push the log message to the access log file buffer if configured,
     // otherwise push to stderr buffer
-    return this->m_pushToBuffer(
-        log_message, this->m_configuration
-                         ? this->m_configuration->getAccessLogFileDescriptor()
+    return m_pushToBuffer(
+        log_message, m_configuration
+                         ? m_configuration->getAccessLogFileDescriptor()
                          : STDERR_FILENO);
 }
 
@@ -192,7 +192,7 @@ void Logger::m_appendMapToLog(
 // Configuration method
 void Logger::configure(ILoggerConfiguration &configuration)
 {
-    this->m_configuration = &configuration;
+    m_configuration = &configuration;
 }
 
 // Method to push log messages to the buffer
@@ -208,12 +208,12 @@ int Logger::m_pushToBuffer(const std::string &log_message,
                                          log_message.end());
 
     // Push the log message to the buffer, returns 1 if a flush is requested
-    int return_value = this->m_buffer_manager.pushFileBuffer(
+    int return_value = m_buffer_manager.pushFileBuffer(
         file_descriptor, log_message_vector);
-    if (return_value == 1 && this->m_configuration)
+    if (return_value == 1 && m_configuration)
     {
         // If the buffer threshold is reached, request a flush
-        this->m_configuration->requestFlush(file_descriptor);
+        m_configuration->requestFlush(file_descriptor);
     }
 
     // Return the return value

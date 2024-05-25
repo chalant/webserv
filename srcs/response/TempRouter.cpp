@@ -13,31 +13,31 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
     : m_configuration(configuration), m_logger(logger), m_http_helper(HttpHelper())
 {
     // Log the creation of the TempRouter
-    this->m_logger.log(VERBOSE, "Initializing TempRouter...");
+    m_logger.log(VERBOSE, "Initializing TempRouter...");
 
     // temp set a single route
     std::string path = configuration.getString("path");
     std::string root = configuration.getString("root");
     std::string index = configuration.getString("index");
     IResponseGenerator *response_generator =
-        new StaticFileResponseGenerator(this->m_logger);
-    this->m_static_route = new Route(path, root, index, *response_generator);
+        new StaticFileResponseGenerator(m_logger);
+    m_static_route = new Route(path, root, index, *response_generator);
 	response_generator =
-        new UploadResponseGenerator(this->m_logger);
-    this->m_upload_route = new Route(path, root, index, *response_generator);
+        new UploadResponseGenerator(m_logger);
+    m_upload_route = new Route(path, root, index, *response_generator);
 }
 
 // Destructor
 TempRouter::~TempRouter()
 {
     // Log the destruction of the TempRouter
-    this->m_logger.log(VERBOSE, "TempRouter destroyed.");
+    m_logger.log(VERBOSE, "TempRouter destroyed.");
 
     // Delete the ResponseGenerator
-    delete this->m_static_route->getResponseGenerator();
+    delete m_static_route->getResponseGenerator();
 
     // Delete the Route
-    delete this->m_static_route;
+    delete m_static_route;
 }
 
 // Execute the route
@@ -54,5 +54,5 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
 	{
 		route = m_static_route;
 	}
-	return route->getResponseGenerator()->generateResponse(*route, *request, *response, this->m_configuration);
+	return route->getResponseGenerator()->generateResponse(*route, *request, *response, m_configuration);
 }

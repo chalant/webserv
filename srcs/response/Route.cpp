@@ -12,16 +12,16 @@ Route::Route(const std::string path, const std::string root,
 Route::~Route() {}
 
 // Get the path
-std::string Route::getPath() const { return this->m_path; }
+std::string Route::getPath() const { return m_path; }
 
 // Get the root
-std::string Route::getRoot() const { return this->m_root; }
+std::string Route::getRoot() const { return m_root; }
 
 // Get the index
-std::string Route::getIndex() const { return this->m_index; }
+std::string Route::getIndex() const { return m_index; }
 
 // Get the response generator
 IResponseGenerator *Route::getResponseGenerator() const
 {
-    return &this->m_response_generator;
+    return &m_response_generator;
 }

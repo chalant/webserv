@@ -66,11 +66,11 @@ public:
     virtual ~WebservException() throw() {}
 
     // Override what() method
-    virtual const char *what() const throw() { return this->m_message.c_str(); }
+    virtual const char *what() const throw() { return m_message.c_str(); }
 
     // Getter methods
-    LogLevel getLogLevel() const { return this->m_log_level; }
-    int getErrorCode() const { return this->m_error_code; }
+    LogLevel getLogLevel() const { return m_log_level; }
+    int getErrorCode() const { return m_error_code; }
 };
 
 // Derived error classes
@@ -248,7 +248,7 @@ public:
 class HttpStatusCodeException : public WebservException
 {
 private:
-    const std::string _getStatusCodeString(int status_code) const
+    const std::string m_getStatusCodeString(int status_code) const
     {
         std::ostringstream oss;
         oss << status_code;
@@ -259,12 +259,12 @@ public:
     HttpStatusCodeException(int status_code)
         : WebservException(INFO,
                            ("Http Status Code: \"" +
-                            this->_getStatusCodeString(status_code) + "\""),
+                            m_getStatusCodeString(status_code) + "\""),
                            status_code) {};
     HttpStatusCodeException(int status_code, const std::string &message)
         : WebservException(INFO,
                            ("Http Status Code " +
-                            this->_getStatusCodeString(status_code) + ": " +
+                            m_getStatusCodeString(status_code) + ": " +
                             message),
                            status_code)
     {

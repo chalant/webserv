@@ -17,7 +17,7 @@ Router::Router(IConfiguration &configuration, ILogger &logger,
     : m_configuration(configuration), m_logger(logger), m_http_helper(m_http_helper)
 {
     // Log the creation of the Router
-    this->m_logger.log(VERBOSE, "Initializing Router...");
+    m_logger.log(VERBOSE, "Initializing Router...");
 
     // For every server block in the configuration, insert a routeMapEntry into
     // the m_routes map const std::vector<IConfiguration *> servers =
@@ -29,19 +29,19 @@ Router::Router(IConfiguration &configuration, ILogger &logger,
              servers.begin();
          serverIt != servers.end(); serverIt++)
     {
-        this->m_createServerRoutes(*serverIt);
+        m_createServerRoutes(*serverIt);
     }
 }
 
 Router::~Router()
 {
     // Log the destruction of the Router
-    this->m_logger.log(VERBOSE, "Router destroyed.");
+    m_logger.log(VERBOSE, "Router destroyed.");
 }
 
 void Router::m_createServerRoutes(IConfiguration *server_block)
 {
-    this->m_createRoutes(server_block);
+    m_createRoutes(server_block);
 }
 
 void Router::m_createRoutes(IConfiguration *server_block)
@@ -96,7 +96,7 @@ void Router::m_createRoutes(IConfiguration *server_block)
                 m_routes[ i ].appendUri(*port_it);
                 m_routes[ i ].appendUri(prefix);
                 m_routes[ i ].setMethod(methods[ methods.size() - 1 ],
-                                       this->m_http_helper);
+                                       m_http_helper);
                 i++;
             }
         }
@@ -157,34 +157,34 @@ void Router::execRoute(IRequest *req, IResponse *res)
     }
 }
 
-std::string Route::getUri() const { return (this->m_uri); }
+std::string Route::getUri() const { return (m_uri); }
 
-void Route::setUri(std::string newUri) { this->m_uri = newUri; }
+void Route::setUri(std::string newUri) { m_uri = newUri; }
 
-HttpMethod Route::getMethod() const { return (this->m_method); }
+HttpMethod Route::getMethod() const { return (m_method); }
 
 void Route::setMethod(const std::string newMethod, HttpHelper &httpHelper)
 {
-    /*if (this->m_http_helper.isMethod(newMethod) == false)
+    /*if (m_http_helper.isMethod(newMethod) == false)
             throw HttpStatusCodeException(METHOD_NOT_ALLOWED, // Throw '405'
     status error "unknown method: \"" + newMethod + "\""); else if
-    (this->m_http_helper.isSupportedMethod(newMethod) == false) throw
+    (m_http_helper.isSupportedMethod(newMethod) == false) throw
     HttpStatusCodeException(NOT_IMPLEMENTED, // Throw '501' status error
                                                                       "unsupported
     method: \"" + newMethod + "\"");*/
 
     // Set the method of the request
-    this->m_method = httpHelper.stringHttpMethodMap(newMethod);
+    m_method = httpHelper.stringHttpMethodMap(newMethod);
 }
 
 bool Route::operator<(const Route &other) const
 {
-    return (this->m_uri.length() > other.m_uri.length());
+    return (m_uri.length() > other.m_uri.length());
 }
 
 void Route::appendUri(const std::string &newString)
 {
-    this->m_uri.append(newString);
+    m_uri.append(newString);
 }
 
 // placeholder for adding a route
@@ -195,16 +195,16 @@ void Router::addRoute(const IRequest &request,
     (void)newHandler;
 }
 
-size_t Router::getRouteCount(void) const { return (this->m_routes.size()); }
+size_t Router::getRouteCount(void) const { return (m_routes.size()); }
 
-std::vector<Route> Router::getRoutes(void) const { return (this->m_routes); }
+std::vector<Route> Router::getRoutes(void) const { return (m_routes); }
 
 Route &Route::operator=(const Route &other)
 {
     if (this != &other)
     {
-        this->m_uri = other.m_uri;
-        this->m_method = other.m_method;
+        m_uri = other.m_uri;
+        m_method = other.m_method;
     }
     return *this;
 }

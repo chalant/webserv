@@ -25,7 +25,7 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager,
       m_connection_manager(connectionManager), m_logger(logger)
 {
     // Log server initialization
-    this->m_logger.log(VERBOSE, "Initializing Server...");
+    m_logger.log(VERBOSE, "Initializing Server...");
 
     // Get the maximum connections value
     int max_connections =
@@ -77,38 +77,38 @@ Server::Server(const ISocket &socket, IPollfdManager &pollfdManager,
                 processed_endpoints.insert(std::make_pair(ip, port));
 
                 // Initialize a new socket
-                this->m_initializeServerSocket(ip, port, max_connections);
+                m_initializeServerSocket(ip, port, max_connections);
             }
         }
     }
-    this->m_logger.log(VERBOSE, "... finished Server initialization");
+    m_logger.log(VERBOSE, "... finished Server initialization");
 }
 
 /* Destructor to close file descriptors*/
 Server::~Server()
 {
     // Close all socket file descriptors
-    this->m_pollfd_manager.closeAllFileDescriptors();
+    m_pollfd_manager.closeAllFileDescriptors();
 }
 
 /* Initialize server socket*/
 void Server::m_initializeServerSocket(int ip, int port, int max_connections)
 {
     // Create server socket
-    int server_socket_descriptor = this->m_socket.socket();
+    int server_socket_descriptor = m_socket.socket();
     if (server_socket_descriptor < 0)
         throw SocketCreateError();
 
     // Bind server socket to port
-    if (this->m_socket.bind(server_socket_descriptor, ip, port) < 0)
+    if (m_socket.bind(server_socket_descriptor, ip, port) < 0)
         throw SocketBindError();
 
     // Listen for incoming connections
-    if (this->m_socket.listen(server_socket_descriptor, max_connections) < 0)
+    if (m_socket.listen(server_socket_descriptor, max_connections) < 0)
         throw SocketListenError();
 
     // Set server socket to non-blocking mode
-    if (this->m_socket.setNonBlocking(server_socket_descriptor) < 0)
+    if (m_socket.setNonBlocking(server_socket_descriptor) < 0)
         throw SocketSetError();
 
     // Add server socket to polling list
@@ -116,10 +116,10 @@ void Server::m_initializeServerSocket(int ip, int port, int max_connections)
     pollfd.fd = server_socket_descriptor;
     pollfd.events = POLLIN | POLLERR | POLLHUP | POLLNVAL;
     pollfd.revents = 0;
-    this->m_pollfd_manager.addServerSocketPollfd(pollfd);
+    m_pollfd_manager.addServerSocketPollfd(pollfd);
 
     // Log server socket initialization
-    this->m_logger.log(INFO, "Server socket initialized. Listening on " +
+    m_logger.log(INFO, "Server socket initialized. Listening on " +
                                 (ip ? Converter::toString(ip) : "ALL") + ":" +
                                 Converter::toString(port));
 }
@@ -131,18 +131,18 @@ void Server::terminate(int exitCode) { exit(exitCode); }
 void Server::acceptConnection(int server_socket_descriptor)
 {
     // Ensure maximum connections limit has not been reached
-    if (this->m_pollfd_manager.hasReachedCapacity())
+    if (m_pollfd_manager.hasReachedCapacity())
         throw MaximumConnectionsReachedError();
 
     // Accept incoming connection
     std::pair<int, std::pair<std::string, std::string> > client_info =
-        this->m_socket.accept(server_socket_descriptor);
+        m_socket.accept(server_socket_descriptor);
     int client_socket_descriptor = client_info.first;
     std::string client_ip = client_info.second.first;
     std::string client_port = client_info.second.second;
 
     // Create a connection for the client
-    this->m_connection_manager.addConnection(client_info);
+    m_connection_manager.addConnection(client_info);
 
     // Add client socket to polling list
     if (client_socket_descriptor < 0)
@@ -151,13 +151,13 @@ void Server::acceptConnection(int server_socket_descriptor)
     pollfd.fd = client_socket_descriptor;
     pollfd.events = POLLIN | POLLERR | POLLHUP | POLLNVAL;
     pollfd.revents = 0;
-    this->m_pollfd_manager.addClientSocketPollfd(pollfd);
+    m_pollfd_manager.addClientSocketPollfd(pollfd);
 
     // Set socket to non-blocking mode
-    if (this->m_socket.setNonBlocking(client_socket_descriptor) < 0)
+    if (m_socket.setNonBlocking(client_socket_descriptor) < 0)
         throw SocketSetError();
 
     // Log accepted connection
-    this->m_logger.log(VERBOSE, "Accepted new connection from " + client_ip +
+    m_logger.log(VERBOSE, "Accepted new connection from " + client_ip +
                                    ":" + client_port + ".");
 }

@@ -35,12 +35,12 @@
  * using the log() method.
  *
  * Example error log:
- * this->m_logger.log(INFO, "listening on port 8080");
+ * m_logger.log(INFO, "listening on port 8080");
  * Output in error log: timestamp="2011-01-01T01:11:11" level="[info]"
  * message="listening on port 8080"
  *
  * Example access log:
- * this->m_logger.log(request, response);
+ * m_logger.log(request, response);
  * Output in access log: timestamp="2011-01-01T01:11:11" clientIP="127.0.0.1"
  * method="GET" requestURI="/index.php" httpVersion="HTTP/1.1" etc.
  */

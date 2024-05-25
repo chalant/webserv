@@ -8,6 +8,6 @@ DefaultMatcher::~DefaultMatcher() {}
 bool DefaultMatcher::match(const std::string &uri)
 {
     (void)uri;
-    (void)this->m_path; // remove this line when implementing the method.
+    (void)m_path; // remove this line when implementing the method.
     return false;
 }

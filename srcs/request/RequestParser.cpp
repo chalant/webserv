@@ -27,15 +27,15 @@ RequestParser::RequestParser(const IConfiguration &configuration,
 void RequestParser::parseRequest(const std::vector<char> &raw_request,
                                  IRequest &parsed_request) const
 {
-    this->m_logger.log(DEBUG, "[REQUESTPARSER] Parsing request...");
+    m_logger.log(DEBUG, "[REQUESTPARSER] Parsing request...");
     // Iterator to traverse the raw request
     std::vector<char>::const_iterator it = raw_request.begin();
 
     // Parse the request line
-    this->m_parseRequestLine(it, raw_request, parsed_request);
+    m_parseRequestLine(it, raw_request, parsed_request);
 
     // Check for whitespace between request-line and first header field
-    if (this->m_isWhitespace(*it))
+    if (m_isWhitespace(*it))
     {
         // throw '400' status error
         throw HttpStatusCodeException(
@@ -44,19 +44,19 @@ void RequestParser::parseRequest(const std::vector<char> &raw_request,
     }
 
     // Parse the headers
-    this->m_parseHeaders(it, raw_request, parsed_request);
+    m_parseHeaders(it, raw_request, parsed_request);
 
     // Parse the body
-    this->m_parseBody(it, raw_request, parsed_request);
+    m_parseBody(it, raw_request, parsed_request);
 
     // Parse the Upload BodyParameters
     if (parsed_request.getHeaderValue(CONTENT_TYPE)
             .find("multipart/form-data") != std::string::npos)
     {
-        this->m_parseBodyParameters(parsed_request);
+        m_parseBodyParameters(parsed_request);
     }
 
-    this->m_logger.log(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
+    m_logger.log(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
 }
 
 // Function to parse the request line of an HTTP request
@@ -65,10 +65,10 @@ void RequestParser::m_parseRequestLine(
     const std::vector<char> &raw_request, IRequest &parsed_request) const
 {
     // Parse method, URI, and HTTP version
-    std::string method = this->m_parseMethod(request_iterator, raw_request);
-    std::string uri = this->m_parseUri(request_iterator, raw_request);
+    std::string method = m_parseMethod(request_iterator, raw_request);
+    std::string uri = m_parseUri(request_iterator, raw_request);
     std::string http_version =
-        this->m_parseHttpVersion(request_iterator, raw_request);
+        m_parseHttpVersion(request_iterator, raw_request);
 
     // Set method, URI, and HTTP version in the parsed request
     parsed_request.setMethod(method);
@@ -84,7 +84,7 @@ std::string RequestParser::m_parseMethod(
     std::string method;
 
     // Skip leading CRLF
-    while (this->m_isCRLF(request_iterator))
+    while (m_isCRLF(request_iterator))
     {
         request_iterator += 2;
     }
@@ -108,7 +108,7 @@ std::string RequestParser::m_parseMethod(
     ++request_iterator;
 
     // Log 'method'
-    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Method: \"" + method + "\"");
+    m_logger.log(VERBOSE, "[REQUESTPARSER] Method: \"" + method + "\"");
 
     // Return 'method' string
     return method;
@@ -140,7 +140,7 @@ RequestParser::m_parseUri(std::vector<char>::const_iterator &request_iterator,
     ++request_iterator;
 
     // Log 'uri'
-    this->m_logger.log(VERBOSE, "[REQUESTPARSER] URI: \"" + uri + "\"");
+    m_logger.log(VERBOSE, "[REQUESTPARSER] URI: \"" + uri + "\"");
 
     // Return 'uri' string
     return uri;
@@ -157,11 +157,11 @@ std::string RequestParser::m_parseHttpVersion(
     while (request_iterator != raw_request.end())
     {
         // End of 'http_version' string, break loop
-        if (this->m_isCRLF(request_iterator))
+        if (m_isCRLF(request_iterator))
             break;
 
         // Check for invalid characters
-        if (this->m_isCharInSet(request_iterator, "\r\n"))
+        if (m_isCharInSet(request_iterator, "\r\n"))
         {
             throw HttpStatusCodeException(
                 BAD_REQUEST,
@@ -186,7 +186,7 @@ std::string RequestParser::m_parseHttpVersion(
     request_iterator += 2;
 
     // Log 'http_version'
-    this->m_logger.log(VERBOSE, "[REQUESTPARSER] HTTP Version: \"" +
+    m_logger.log(VERBOSE, "[REQUESTPARSER] HTTP Version: \"" +
                                     http_version + "\"");
 
     // Return 'http_version' string
@@ -202,18 +202,18 @@ void RequestParser::m_parseHeaders(
     while (request_iterator != raw_request.end())
     {
         // End of headers, break loop
-        if (this->m_isCRLF(request_iterator))
+        if (m_isCRLF(request_iterator))
             break;
 
         // Check for invalid characters
-        if (this->m_isCharInSet(request_iterator, "\r\n"))
+        if (m_isCharInSet(request_iterator, "\r\n"))
         {
             throw HttpStatusCodeException(BAD_REQUEST,
                                           "Invalid characters in header");
         }
 
         // Parse individual header
-        this->m_parseHeader(request_iterator, raw_request, parsed_request);
+        m_parseHeader(request_iterator, raw_request, parsed_request);
     }
 
     // Check for unexpected end of request
@@ -240,7 +240,7 @@ void RequestParser::m_parseHeader(
 
     // Set start value for client header buffer size
     int client_header_buffer_size =
-        this->m_configuration.getInt("client_header_buffer_size");
+        m_configuration.getInt("client_header_buffer_size");
 
     // Find colon to separate header name and value
     while (request_iterator != raw_request.end() && *request_iterator != ':')
@@ -267,7 +267,7 @@ void RequestParser::m_parseHeader(
 
     // Find end of header value
     while (request_iterator != raw_request.end() &&
-           !this->m_isCRLF(request_iterator))
+           !m_isCRLF(request_iterator))
     {
         header_value += *request_iterator;
         client_header_buffer_size--;
@@ -290,7 +290,7 @@ void RequestParser::m_parseHeader(
     request_iterator += 2;
 
     // Log header
-    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + header_name +
+    m_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + header_name +
                                     ": " + header_value + "\"");
 
     // Add header to parsed request
@@ -301,13 +301,13 @@ void RequestParser::m_parseHeader(
     catch (const UnknownHeaderError &e)
     {
         // Log and continue
-        this->m_logger.log(WARN, e.what());
+        m_logger.log(WARN, e.what());
     }
 
     // Parse cookies
     if (header_name == "cookie")
     {
-        this->m_parseCookie(header_value, parsed_request);
+        m_parseCookie(header_value, parsed_request);
     }
 }
 // Function to parse the body of an HTTP request
@@ -329,7 +329,7 @@ void RequestParser::m_parseBody(
     {
         // Handle chunked encoding
         std::vector<char> body =
-            this->m_unchunkBody(request_iterator, raw_request);
+            m_unchunkBody(request_iterator, raw_request);
 
         // Set unchunked body in parsed request
         parsed_request.setBody(body);
@@ -343,7 +343,7 @@ void RequestParser::m_parseBody(
     if (content_length_string.empty() &&
         parsed_request.getHeaderValue(TRANSFER_ENCODING) != "chunked")
     {
-        this->m_logger.log(DEBUG, "\t\t[REQUESTPARSER] Content-Length is empty");
+        m_logger.log(DEBUG, "\t\t[REQUESTPARSER] Content-Length is empty");
         // throw '411' status error
         throw HttpStatusCodeException(LENGTH_REQUIRED,
                                       "no content-length header found");
@@ -361,7 +361,7 @@ void RequestParser::m_parseBody(
     }
 
     // Check if body size exceeds client body buffer size
-    if (body_size > this->m_configuration.getSize_t("client_body_buffer_size"))
+    if (body_size > m_configuration.getSize_t("client_body_buffer_size"))
     {
         // throw '413' status error
         throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
@@ -393,7 +393,7 @@ std::vector<char> RequestParser::m_unchunkBody(
 
     // Set Max Size
     size_t remaining_request_size =
-        this->m_configuration.getSize_t("client_body_buffer_size");
+        m_configuration.getSize_t("client_body_buffer_size");
 
     // Parse chunks
     while (request_iterator != raw_request.end())
@@ -471,8 +471,8 @@ void RequestParser::m_parseCookie(std::string &cookie_header_value,
            std::getline(cookie_stream, cookie_value, ';'))
     {
         // Trim surrounding whitespace
-        cookie_name = this->m_trimWhitespace(cookie_name);
-        cookie_value = this->m_trimWhitespace(cookie_value);
+        cookie_name = m_trimWhitespace(cookie_name);
+        cookie_value = m_trimWhitespace(cookie_value);
 
         // Add cookie to parsed request
         parsed_request.addCookie(cookie_name, cookie_value);
@@ -482,7 +482,7 @@ void RequestParser::m_parseCookie(std::string &cookie_header_value,
 void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
 {
     // Log the start of the body parameter parsing
-    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Parsing multipart request...");
+    m_logger.log(VERBOSE, "[REQUESTPARSER] Parsing multipart request...");
 
     // Get the boundary string
     std::string content_type = parsed_request.getHeaderValue(CONTENT_TYPE);
@@ -498,7 +498,7 @@ void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
     std::string line;
 
     // Parse BodyParameters
-    while (this->m_getlineNoCr(body_stream, line))
+    while (m_getlineNoCr(body_stream, line))
     {
         // Skip leading newline
         if (line.empty())
@@ -527,8 +527,8 @@ void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
                 // Extract and trim key and value
                 key = line.substr(0, pos);
                 value = line.substr(pos + 1);
-                key = this->m_trimWhitespace(key);
-                value = this->m_trimWhitespace(value);
+                key = m_trimWhitespace(key);
+                value = m_trimWhitespace(value);
 
                 // lower cases the key
                 std::transform(key.begin(), key.end(), key.begin(),
@@ -563,11 +563,11 @@ void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
                             // extract and trim the parameter and its value
                             std::string param = token.substr(0, pos);
                             std::string param_value = token.substr(pos + 1);
-                            param = this->m_trimWhitespace(param);
-                            param_value = this->m_trimWhitespace(param_value);
+                            param = m_trimWhitespace(param);
+                            param_value = m_trimWhitespace(param_value);
 
                             // Remove surrounding quotes if they exist
-                            this->m_removeQuotes(param_value);
+                            m_removeQuotes(param_value);
 
                             // Store the parameter
                             if (param == "filename")
@@ -581,12 +581,12 @@ void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
                     body_parameter.content_type = value;
             }
             // Log the header
-            this->m_logger.log(VERBOSE, "[REQUESTPARSER]  Header: " + key +
+            m_logger.log(VERBOSE, "[REQUESTPARSER]  Header: " + key +
                                             ": \"" + value + "\"");
-        } while (this->m_getlineNoCr(body_stream, line) && !line.empty());
+        } while (m_getlineNoCr(body_stream, line) && !line.empty());
 
         // Parse BodyParameter data
-        while (this->m_getlineNoCr(body_stream, line))
+        while (m_getlineNoCr(body_stream, line))
         {
             // Stop parsing if the boundary is found
             if (line.find(boundary) != std::string::npos)
@@ -601,10 +601,10 @@ void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
             body_parameter.data.erase(body_parameter.data.end() - 1);
 
         // Trim whitespace after loop
-        body_parameter.data = this->m_trimWhitespace(body_parameter.data);
+        body_parameter.data = m_trimWhitespace(body_parameter.data);
 
         // Log the first 3 characters of the BodyParameter data
-        this->m_logger.log(
+        m_logger.log(
             VERBOSE,
             "[REQUESTPARSER]   Data: \"" + body_parameter.data.substr(0, 3) +
                 (body_parameter.data.length() > 3 ? "... (etc.)" : "") + "\"");
@@ -614,7 +614,7 @@ void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
     }
 
     // Log the end of the BodyParameter
-    this->m_logger.log(VERBOSE,
+    m_logger.log(VERBOSE,
                        "[REQUESTPARSER] ...done parsing multipart request");
 
     // Mark the request as an upload request

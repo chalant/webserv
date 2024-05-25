@@ -148,7 +148,7 @@ std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode status_code) const
         << static_cast<size_t>(status_code)
         << "</span></h1>\n"
            "            <p> "
-        << this->m_http_status_code_string_map.at(status_code)
+        << m_http_status_code_string_map.at(status_code)
         << "</p>\n"
            "            <div class=\"version\">webserv/1.0</div>\n"
            "        </div>\n"

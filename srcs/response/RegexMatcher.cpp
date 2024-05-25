@@ -8,6 +8,6 @@ RegexMatcher::~RegexMatcher() {}
 bool RegexMatcher::match(const std::string &uri)
 {
     (void)uri;
-    (void)this->m_pattern; // remove this line when implementing this method
+    (void)m_pattern; // remove this line when implementing this method
     return false;
 }

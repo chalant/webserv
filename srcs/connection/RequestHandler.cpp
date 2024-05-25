@@ -31,14 +31,14 @@ RequestHandler::RequestHandler(IBufferManager &buffer_manager,
       m_exception_handler(exception_handler)
 {
     // Log the creation of the RequestHandler instance.
-    this->m_logger.log(VERBOSE, "RequestHandler instance created.");
+    m_logger.log(VERBOSE, "RequestHandler instance created.");
 }
 
 // Destructor
 RequestHandler::~RequestHandler()
 {
     // Log the destruction of the RequestHandler instance.
-    this->m_logger.log(VERBOSE, "RequestHandler instance destroyed.");
+    m_logger.log(VERBOSE, "RequestHandler instance destroyed.");
 }
 
 // Handles a client request
@@ -47,11 +47,11 @@ RequestHandler::~RequestHandler()
 Triplet_t RequestHandler::handleRequest(int socket_descriptor)
 {
     // Give the 'ClientHandler' the current socket descriptor
-    this->m_client_handler.setSocketDescriptor(socket_descriptor);
+    m_client_handler.setSocketDescriptor(socket_descriptor);
 
     // Get a reference to the Connection
     IConnection &connection =
-        this->m_connection_manager.getConnection(socket_descriptor);
+        m_connection_manager.getConnection(socket_descriptor);
 
     // Update the connection's last activity time
     connection.touch();
@@ -65,24 +65,24 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
     try
     {
         // Read the raw request from the client
-        std::vector<char> raw_request = this->m_client_handler.readRequest();
+        std::vector<char> raw_request = m_client_handler.readRequest();
 
         // Parse the raw request into a Request object
-        this->m_request_parser.parseRequest(raw_request, request);
+        m_request_parser.parseRequest(raw_request, request);
 
         // Assign session to connection
-        this->m_connection_manager.assignSessionToConnection(connection, request,
+        m_connection_manager.assignSessionToConnection(connection, request,
                                                            response);
 
         // Delete these 3 lines once router is implemented
-        //(void)this->m_router;
+        //(void)m_router;
         // Triplet_t cgi_info(-1, std::pair<int, int>(-1, -1));
         // throw HttpStatusCodeException(
         //   NOT_IMPLEMENTED,
         //   "RequestHandler::handleRequest: Router not implemented yet.");
 
         // todo: Route the request, return the CGI info
-        Triplet_t cgi_info = this->m_router.execRoute(&request, &response);
+        Triplet_t cgi_info = m_router.execRoute(&request, &response);
 
         // If dynamic content is being created, return the info
         if (cgi_info.first != -1)
@@ -96,11 +96,11 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             connection.setCgiInfo(cgi_pid, response_read_pipe, request_write_pipe);
 
             // Record the pipes to connection socket mappings
-            this->m_pipe_routes[ response_read_pipe ] = socket_descriptor;
-            this->m_pipe_routes[ request_write_pipe ] = socket_descriptor;
+            m_pipe_routes[ response_read_pipe ] = socket_descriptor;
+            m_pipe_routes[ request_write_pipe ] = socket_descriptor;
 
             // Push the request body to the request pipe
-            this->m_buffer_manager.pushSocketBuffer(request_write_pipe,
+            m_buffer_manager.pushSocketBuffer(request_write_pipe,
                                                   request.getBody());
 
             return cgi_info; // cgi content
@@ -108,7 +108,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         else // static content
         {
             // Push the response to the buffer
-            this->m_sendResponse(socket_descriptor);
+            m_sendResponse(socket_descriptor);
             // return -1
             return Triplet_t(-1, std::pair<int, int>(-1, -1));
         }
@@ -126,7 +126,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
                               // other exceptions
 
         // Log the exception
-        this->m_exception_handler.handleException(
+        m_exception_handler.handleException(
             e, "RequestHandler::processRequest socket=\"" +
                    Converter::toString(socket_descriptor) + "\"");
 
@@ -143,10 +143,10 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
 int RequestHandler::handlePipeException(int pipe_descriptor)
 {
     // Get the client socket descriptor linked to the pipe
-    int client_socket = this->m_pipe_routes[ pipe_descriptor ];
+    int client_socket = m_pipe_routes[ pipe_descriptor ];
 
     // Remove the pipe descriptor from the map
-    this->m_pipe_routes.erase(pipe_descriptor);
+    m_pipe_routes.erase(pipe_descriptor);
 
     // Handle error response
     this->handleErrorResponse(client_socket, INTERNAL_SERVER_ERROR);
@@ -160,19 +160,19 @@ int RequestHandler::handlePipeException(int pipe_descriptor)
 int RequestHandler::handlePipeRead(int pipe_descriptor)
 {
     // Get the client socket descriptor linked to the pipe
-    int client_socket = this->m_pipe_routes[ pipe_descriptor ];
+    int client_socket = m_pipe_routes[ pipe_descriptor ];
 
     // Remove the pipe descriptor from the map
-    this->m_pipe_routes.erase(pipe_descriptor);
+    m_pipe_routes.erase(pipe_descriptor);
 
     // Give the ClientHandler the current socket descriptor
-    this->m_client_handler.setSocketDescriptor(client_socket);
+    m_client_handler.setSocketDescriptor(client_socket);
 
     // Read the response from the pipe
-    std::vector<char> raw_response = this->m_client_handler.readRequest();
+    std::vector<char> raw_response = m_client_handler.readRequest();
 
     // Get a reference to the Response
-    IResponse &response = this->m_connection_manager.getResponse(client_socket);
+    IResponse &response = m_connection_manager.getResponse(client_socket);
 
     // Set the response
     if (raw_response.empty()) // Check if the response is empty
@@ -181,7 +181,7 @@ int RequestHandler::handlePipeRead(int pipe_descriptor)
         response.setResponse(raw_response); // Good response
 
     // Push the response to the buffer
-    this->m_sendResponse(client_socket);
+    m_sendResponse(client_socket);
 
     // Return the client socket descriptor
     return client_socket;
@@ -192,21 +192,21 @@ int RequestHandler::m_sendResponse(int socket_descriptor)
 {
     // Get a reference to the Response
     IResponse &response =
-        this->m_connection_manager.getResponse(socket_descriptor);
+        m_connection_manager.getResponse(socket_descriptor);
     // Get a reference to the Request
     IRequest &request =
-        this->m_connection_manager.getConnection(socket_descriptor).getRequest();
+        m_connection_manager.getConnection(socket_descriptor).getRequest();
     // Serialise the response
     std::vector<char> serialised_response = response.serialise();
     // Push the response to the buffer
-    this->m_buffer_manager.pushSocketBuffer(socket_descriptor, serialised_response);
+    m_buffer_manager.pushSocketBuffer(socket_descriptor, serialised_response);
 
     // create an access log entry
-    this->m_logger.log(this->m_connection_manager.getConnection(socket_descriptor));
+    m_logger.log(m_connection_manager.getConnection(socket_descriptor));
 
     // Remove the connection if the 'Connection' header is set to 'close'
     if (request.getHeaderValue(CONNECTION) == "close")
-        this->m_connection_manager.removeConnection(socket_descriptor);
+        m_connection_manager.removeConnection(socket_descriptor);
 
     // return 0
     return (0);
@@ -217,13 +217,13 @@ void RequestHandler::handleErrorResponse(int socket_descriptor, int status_code)
 {
     // Get a reference to the Response
     IResponse &response =
-        this->m_connection_manager.getResponse(socket_descriptor);
+        m_connection_manager.getResponse(socket_descriptor);
 
     // Set the response to the error status code
     response.setErrorResponse(status_code);
 
     // Push the response to the buffer
-    this->m_sendResponse(socket_descriptor);
+    m_sendResponse(socket_descriptor);
 }
 
 // Handle error responses - HttpStatusCode input
@@ -232,13 +232,13 @@ void RequestHandler::handleErrorResponse(int socket_descriptor,
 {
     // Get a reference to the Response
     IResponse &response =
-        this->m_connection_manager.getResponse(socket_descriptor);
+        m_connection_manager.getResponse(socket_descriptor);
 
     // Set the response to the error status code
     response.setErrorResponse(status_code);
 
     // Push the response to the buffer
-    this->m_sendResponse(socket_descriptor);
+    m_sendResponse(socket_descriptor);
 }
 
 // path: srcs/RequestHandler.cpp

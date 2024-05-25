@@ -14,7 +14,7 @@
 // Constructor initializes member variables using helper functions
 HttpMethodHelper::HttpMethodHelper()
     : m_method_list(m_setMethodList()),
-      m_supported_methods(this->m_setSupportedMethods()),
+      m_supported_methods(m_setSupportedMethods()),
       m_string_http_method_map(m_setStringHttpMethodMap()),
       m_http_method_string_map(m_setHttpMethodStringMap())
 {
@@ -62,8 +62,8 @@ bool HttpMethodHelper::isSupportedMethod(const std::string &method) const
 {
     // Iterate through the vector to find the method
     for (std::vector<std::string>::const_iterator it =
-             this->m_supported_methods.begin();
-         it != this->m_supported_methods.end(); ++it)
+             m_supported_methods.begin();
+         it != m_supported_methods.end(); ++it)
     {
         // Compare the current method with the target method
         if (*it == method)

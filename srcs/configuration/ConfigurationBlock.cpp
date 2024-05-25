@@ -208,7 +208,7 @@ std::vector<std::string> &ConfigurationBlock::getParameters(void)
 {
 	if (m_parameters.size() == 0)
 	{
-		return m_defaults.getBlockParameters(this->m_name);
+		return m_defaults.getBlockParameters(m_name);
 	}
 	return m_parameters;
 }

@@ -82,7 +82,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
             // set the response
             response.setBody(body);
             response.setStatusLine(OK);
-            response.addHeader(CONTENT_TYPE, this->m_getMimeType(file_path));
+            response.addHeader(CONTENT_TYPE, m_getMimeType(file_path));
             response.addHeader(CONTENT_LENGTH, Converter::toString(body.size()));
         }
     }
@@ -108,7 +108,7 @@ StaticFileResponseGenerator::m_getMimeType(const std::string &file_path) const
         extension = file_path.substr(dot_position + 1);
 
     // Return the mime type
-    return this->m_mime_types.at(extension);
+    return m_mime_types.at(extension);
 }
 
 // Set the mime types

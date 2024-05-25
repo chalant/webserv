@@ -20,22 +20,22 @@ MockLoggerConfiguration::~MockLoggerConfiguration() {}
 
 void MockLoggerConfiguration::setErrorLogEnabled(bool enabled)
 {
-    this->m_error_log_enabled = enabled;
+    m_error_log_enabled = enabled;
 }
 
 void MockLoggerConfiguration::setAccessLogEnabled(bool enabled)
 {
-    this->m_access_log_enabled = enabled;
+    m_access_log_enabled = enabled;
 }
 
 int MockLoggerConfiguration::getErrorLogFileDescriptor() const
 {
-    return this->m_error_log_file_descriptor;
+    return m_error_log_file_descriptor;
 }
 
 int MockLoggerConfiguration::getAccessLogFileDescriptor() const
 {
-    return this->m_access_log_file_descriptor;
+    return m_access_log_file_descriptor;
 }
 
 IBufferManager &MockLoggerConfiguration::getBufferManager() const
@@ -52,12 +52,12 @@ LogLevel MockLoggerConfiguration::getLogLevel() const { return DEBUG; }
 
 bool MockLoggerConfiguration::getErrorLogEnabled() const
 {
-    return this->m_error_log_enabled;
+    return m_error_log_enabled;
 }
 
 bool MockLoggerConfiguration::getAccessLogEnabled() const
 {
-    return this->m_access_log_enabled;
+    return m_access_log_enabled;
 }
 
 void MockLoggerConfiguration::requestFlush(int descriptor)
@@ -68,15 +68,15 @@ void MockLoggerConfiguration::requestFlush(int descriptor)
 // Test specific methods
 void MockLoggerConfiguration::setBufferSize(size_t size)
 {
-    this->m_buffer_size = size;
-    this->m_buffer_manager.setFlushThreshold(size);
+    m_buffer_size = size;
+    m_buffer_manager.setFlushThreshold(size);
 }
 
 void MockLoggerConfiguration::setFileDescriptor(int error_log_file_descriptor,
                                                 int access_log_file_descriptor)
 {
-    this->m_error_log_file_descriptor = error_log_file_descriptor;
-    this->m_access_log_file_descriptor = access_log_file_descriptor;
+    m_error_log_file_descriptor = error_log_file_descriptor;
+    m_access_log_file_descriptor = access_log_file_descriptor;
 }
 
 // Path: tests/mock_srcs/MockLoggerConfiguration.cpp

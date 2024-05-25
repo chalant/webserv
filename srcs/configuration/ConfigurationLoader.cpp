@@ -36,7 +36,7 @@ ConfigurationLoader::ConfigurationLoader(ILogger &logger) : m_logger(logger)
 
     m_config = NULL;
     // Log the creation of the configuration loader.
-    this->m_logger.log(VERBOSE, "ConfigurationLoader created.");
+    m_logger.log(VERBOSE, "ConfigurationLoader created.");
 }
 
 // todo: delete all the blocks.
@@ -150,7 +150,7 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     //     throw InvalidConfigFileError();
 
     // Log the loading of the configuration file.
-    this->m_logger.log(INFO, "Loading configuration file: '" + path + "'.");
+    m_logger.log(INFO, "Loading configuration file: '" + path + "'.");
 	Grammar	grammar;
 	SubsetSymbolMatching subset_matching;
     EqualSymbolMatching equal_matching;
@@ -309,6 +309,6 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     conf_stream.close();
 
     // Log the end of loading of the configuration file.
-    this->m_logger.log(VERBOSE, "Configuration file loaded successfully.");
+    m_logger.log(VERBOSE, "Configuration file loaded successfully.");
     return *m_config;
 }

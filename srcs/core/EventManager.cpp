@@ -18,14 +18,14 @@ EventManager::~EventManager() {}
 
 void EventManager::handleEvents()
 {
-    this->m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling events");
+    m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling events");
 
     for (ssize_t pollfd_index = 0;
          pollfd_index <
-         static_cast<ssize_t>(this->m_pollfd_manager.getPollfdQueueSize());
+         static_cast<ssize_t>(m_pollfd_manager.getPollfdQueueSize());
          pollfd_index++)
     {
-        short events = this->m_pollfd_manager.getEvents(pollfd_index);
+        short events = m_pollfd_manager.getEvents(pollfd_index);
 
         if (events == NO_EVENTS)
             continue;
@@ -33,51 +33,51 @@ void EventManager::handleEvents()
         short fileType = events & NO_EVENTS;
         if (fileType == SERVER_SOCKET)
         {
-            this->m_handleServerSocketEvents(pollfd_index, events);
+            m_handleServerSocketEvents(pollfd_index, events);
         }
         else if (fileType == CLIENT_SOCKET)
         {
-            this->m_handleClientSocketEvents(pollfd_index, events);
+            m_handleClientSocketEvents(pollfd_index, events);
         }
         else if (fileType == PIPE)
         {
-            this->m_handlePipeEvents(pollfd_index, events);
+            m_handlePipeEvents(pollfd_index, events);
         }
         else if (fileType == REGULAR_FILE)
         {
-            this->m_handleRegularFileEvents(pollfd_index, events);
+            m_handleRegularFileEvents(pollfd_index, events);
         }
     }
 }
 
 void EventManager::m_handleRegularFileEvents(ssize_t &pollfd_index, short events)
 {
-    this->m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling regular file events");
+    m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling regular file events");
 
     // Check if file is ready for writing
     if (events & POLLOUT)
     {
-        this->m_flushBuffer(pollfd_index, KEEP_DESCRIPTOR);
+        m_flushBuffer(pollfd_index, KEEP_DESCRIPTOR);
     }
 
     // Check for error on the file
     if (events & POLLNVAL)
     {
         // Get the file descriptor
-        int file_descriptor = this->m_pollfd_manager.getDescriptor(pollfd_index);
+        int file_descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
 
         // Log the error
-        this->m_logger.log(ERROR, "Error on file: " +
+        m_logger.log(ERROR, "Error on file: " +
                                      Converter::toString(file_descriptor));
 
         // Clear buffer, remove from polling and close file
-        this->m_cleanUp(pollfd_index, file_descriptor);
+        m_cleanUp(pollfd_index, file_descriptor);
     }
 }
 
 void EventManager::m_handleServerSocketEvents(ssize_t pollfd_index, short events)
 {
-    this->m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling server socket events");
+    m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling server socket events");
     // Check for errors on server socket
     if (events & POLLERR)
         throw ServerSocketError();
@@ -95,50 +95,50 @@ void EventManager::m_handleServerSocketEvents(ssize_t pollfd_index, short events
     {
         // Accept incoming connection
         int server_socket_descriptor =
-            this->m_pollfd_manager.getDescriptor(pollfd_index);
-        this->m_server.acceptConnection(server_socket_descriptor);
+            m_pollfd_manager.getDescriptor(pollfd_index);
+        m_server.acceptConnection(server_socket_descriptor);
     }
 }
 
 void EventManager::m_handleClientSocketEvents(ssize_t &pollfd_index, short events)
 {
-    this->m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling client socket events");
+    m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling client socket events");
     // Check for exceptions
     if (events & (POLLHUP | POLLERR | POLLNVAL))
     {
-        this->m_handleClientException(pollfd_index, events);
+        m_handleClientException(pollfd_index, events);
     }
 
     // Read and process a new request if ready
     else if (events & POLLIN)
     {
-        this->m_handleRequest(pollfd_index);
+        m_handleRequest(pollfd_index);
     }
 
     // Send response
     else if (events & POLLOUT)
     {
-        this->m_flushBuffer(pollfd_index);
+        m_flushBuffer(pollfd_index);
     }
 }
 
 void EventManager::m_handleRequest(ssize_t &pollfd_index)
 {
     int client_socket_descriptor =
-        this->m_pollfd_manager.getDescriptor(pollfd_index);
+        m_pollfd_manager.getDescriptor(pollfd_index);
 
     Triplet_t info =
-        this->m_request_handler.handleRequest(client_socket_descriptor);
+        m_request_handler.handleRequest(client_socket_descriptor);
 
     if (info.first == -1) // served static files or bad request
     {
         // Log the static serving
-        this->m_logger.log(VERBOSE,
+        m_logger.log(VERBOSE,
                           "[EVENTMANAGER] Statically served client socket: " +
                               Converter::toString(client_socket_descriptor));
 
         // Add the POLLOUT event for the socket
-        this->m_pollfd_manager.addPollOut(pollfd_index);
+        m_pollfd_manager.addPollOut(pollfd_index);
     }
     else // read pipe returned
     {
@@ -148,7 +148,7 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
         int request_write_pipe = info.second.second;
 
         // Log the dynamic serving
-        this->m_logger.log(
+        m_logger.log(
             VERBOSE, "[EVENTMANAGER] Dynamically serving client socket: " +
                          Converter::toString(client_socket_descriptor) +
                          " waiting for process " + Converter::toString(cgi_pid) +
@@ -162,45 +162,45 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
         pollfd.fd = response_read_pipe;
         pollfd.events = POLLIN;
         pollfd.revents = 0;
-        this->m_pollfd_manager.addPipePollfd(pollfd);
+        m_pollfd_manager.addPipePollfd(pollfd);
 
         // Add the request write pipe to the poll set
         pollfd.fd = request_write_pipe;
         pollfd.events = POLLOUT;
         pollfd.revents = 0;
-        this->m_pollfd_manager.addPipePollfd(pollfd);
+        m_pollfd_manager.addPipePollfd(pollfd);
     }
 }
 
 void EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
 {
     // Get the socket descriptor
-    int descriptor = this->m_pollfd_manager.getDescriptor(pollfd_index);
+    int descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
 
     // Flush the buffer
-    ssize_t return_value = this->m_buffer_manager.flushBuffer(descriptor);
+    ssize_t return_value = m_buffer_manager.flushBuffer(descriptor);
     if (return_value == -1) // check for errors
     {
         // Log the error
-        this->m_logger.log(ERROR, "Error flushing buffer for descriptor: " +
+        m_logger.log(ERROR, "Error flushing buffer for descriptor: " +
                                      Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket
-        this->m_cleanUp(pollfd_index, descriptor);
+        m_cleanUp(pollfd_index, descriptor);
     }
     else if (return_value == 0) // check if all bytes were sent
     {
         // Log the flush
-        this->m_logger.log(VERBOSE, "Flushed buffer for descriptor: " +
+        m_logger.log(VERBOSE, "Flushed buffer for descriptor: " +
                                        Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket
-        this->m_cleanUp(pollfd_index, descriptor, options);
+        m_cleanUp(pollfd_index, descriptor, options);
     }
     else
     {
         // Log the flush
-        this->m_logger.log(
+        m_logger.log(
             VERBOSE, "Partially Flushed buffer for descriptor: " +
                          Converter::toString(descriptor) + " with " +
                          Converter::toString(return_value) + " bytes remaining");
@@ -209,80 +209,80 @@ void EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
 
 void EventManager::m_handleClientException(ssize_t &pollfd_index, short events)
 {
-    int descriptor = this->m_pollfd_manager.getDescriptor(pollfd_index);
+    int descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
 
     // Check for disconnection on the socket
     if (events & POLLHUP)
     {
         // Log the disconnection
-        this->m_logger.log(INFO, "Client disconnected socket: " +
+        m_logger.log(INFO, "Client disconnected socket: " +
                                     Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket
-        this->m_cleanUp(pollfd_index, descriptor);
+        m_cleanUp(pollfd_index, descriptor);
     }
 
     // Check for invalid request on the socket
     if (events & POLLNVAL)
     {
         // Log the error
-        this->m_logger.log(ERROR, "Invalid request on socket: " +
+        m_logger.log(ERROR, "Invalid request on socket: " +
                                      Converter::toString(descriptor));
 
         // Destroy the buffer associated with the descriptor
-        this->m_buffer_manager.destroyBuffer(descriptor);
+        m_buffer_manager.destroyBuffer(descriptor);
 
         // Let the request handler handle the error
-        this->m_request_handler.handleErrorResponse(descriptor,
+        m_request_handler.handleErrorResponse(descriptor,
                                                   BAD_REQUEST); // 400
 
         // Add the POLLOUT event for the socket
-        this->m_pollfd_manager.addPollOut(pollfd_index);
+        m_pollfd_manager.addPollOut(pollfd_index);
     }
 
     // Check for errors on the socket
     if (events & POLLERR)
     {
         // Log the error
-        this->m_logger.log(ERROR, "Error on socket: " +
+        m_logger.log(ERROR, "Error on socket: " +
                                      Converter::toString(descriptor));
 
         // Destroy the buffer associated with the descriptor
-        this->m_buffer_manager.destroyBuffer(descriptor);
+        m_buffer_manager.destroyBuffer(descriptor);
 
         // Let the request handler handle the error
-        this->m_request_handler.handleErrorResponse(descriptor,
+        m_request_handler.handleErrorResponse(descriptor,
                                                   INTERNAL_SERVER_ERROR); // 500
 
         // Add the POLLOUT event for the socket
-        this->m_pollfd_manager.addPollOut(pollfd_index);
+        m_pollfd_manager.addPollOut(pollfd_index);
     }
 }
 
 void EventManager::m_cleanUp(ssize_t &pollfd_index, int descriptor, short options)
 {
     // Destroy the buffer associated with the descriptor
-    this->m_buffer_manager.destroyBuffer(descriptor);
+    m_buffer_manager.destroyBuffer(descriptor);
 
     // Close the descriptor
     if (options != KEEP_DESCRIPTOR)
         close(descriptor);
 
     // Remove the descriptor from the poll set
-    this->m_pollfd_manager.removePollfd(pollfd_index);
+    m_pollfd_manager.removePollfd(pollfd_index);
 
     // Decrement i to compensate for the removal
     pollfd_index--;
 
     // Log the cleanup
-    this->m_logger.log(VERBOSE, "Cleaned up descriptor: " +
+    m_logger.log(VERBOSE, "Cleaned up descriptor: " +
                                 Converter::toString(descriptor));
 }
 
 void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
 {
     // Get the pipe descriptor
-    int pipe_descriptor = this->m_pollfd_manager.getDescriptor(pollfd_index);
+    int pipe_descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
 
     // Declare the client socket descriptor linked to the pipe
     int client_socket;
@@ -291,43 +291,43 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
     if (events & (POLLHUP | POLLERR | POLLNVAL))
     {
         // Log the error
-        this->m_logger.log(ERROR, "Error on pipe: " +
+        m_logger.log(ERROR, "Error on pipe: " +
                                      Converter::toString(pipe_descriptor));
 
         // Let the request handler handle the exception, returns the client
         // socket descriptor linked to the pipe
         client_socket =
-            this->m_request_handler.handlePipeException(pipe_descriptor);
+            m_request_handler.handlePipeException(pipe_descriptor);
     }
 
     // Read the response from the Response pipe if ready
     else if (events & POLLIN)
     {
         // Log the pipe read
-        this->m_logger.log(VERBOSE, "Pipe read event on pipe: " +
+        m_logger.log(VERBOSE, "Pipe read event on pipe: " +
                                        Converter::toString(pipe_descriptor));
 
         // Let the request handler handle the pipe read, returns the client
         // socket descriptor linked to the pipe
-        client_socket = this->m_request_handler.handlePipeRead(pipe_descriptor);
+        client_socket = m_request_handler.handlePipeRead(pipe_descriptor);
 
         // Add the POLLOUT event for the client socket since the response is
         // ready
-        this->m_pollfd_manager.addPollOut(client_socket);
+        m_pollfd_manager.addPollOut(client_socket);
 
         // Clear buffer, remove from polling and close pipe
-        this->m_cleanUp(pollfd_index, pipe_descriptor);
+        m_cleanUp(pollfd_index, pipe_descriptor);
     }
 
     // Write the request body to the Request pipe to the cgi process if ready
     else if (events & POLLOUT)
     {
         // Log the pipe write
-        this->m_logger.log(VERBOSE, "Pipe write event on pipe: " +
+        m_logger.log(VERBOSE, "Pipe write event on pipe: " +
                                        Converter::toString(pipe_descriptor));
 
         // Flush the buffer
-        this->m_flushBuffer(pollfd_index);
+        m_flushBuffer(pollfd_index);
     }
 }
 

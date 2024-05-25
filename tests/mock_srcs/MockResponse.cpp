@@ -20,27 +20,27 @@ MockResponse::MockResponse() : m_http_helper(HttpHelper()) {}
 MockResponse::~MockResponse() {}
 
 // Getters for status line, headers, and body
-std::string MockResponse::getStatusLine() const { return this->m_status_line; }
+std::string MockResponse::getStatusLine() const { return m_status_line; }
 
 std::string MockResponse::getHeaders() const { return ""; }
 
 std::string MockResponse::getBodyString() const
 {
-    return std::string(this->m_body.begin(), this->m_body.end());
+    return std::string(m_body.begin(), m_body.end());
 }
 
-std::vector<char> MockResponse::getBody() const { return this->m_body; }
+std::vector<char> MockResponse::getBody() const { return m_body; }
 
 // Setters for status line, headers, and body
 void MockResponse::setStatusLine(std::string status_line)
 {
-    this->m_status_line = status_line;
+    m_status_line = status_line;
 }
 
 void MockResponse::setStatusLine(HttpStatusCode status_code)
 {
     // Set status line based on the status code
-    this->m_status_line = this->m_http_helper.getStatusLine(status_code);
+    m_status_line = m_http_helper.getStatusLine(status_code);
 }
 
 void MockResponse::setHeaders(std::vector<std::string> headers)
@@ -52,9 +52,9 @@ void MockResponse::setHeaders(std::vector<std::string> headers)
         std::string header_name = header.substr(0, header.find(":"));
         std::string header_value = header.substr(header.find(":") + 1);
         HttpHeader header_enum =
-            this->m_http_helper.stringHttpHeaderMap(header_name);
+            m_http_helper.stringHttpHeaderMap(header_name);
         // Add header to the map
-        this->m_headers[ header_enum ] = header_value;
+        m_headers[ header_enum ] = header_value;
     }
 }
 
@@ -68,9 +68,9 @@ void MockResponse::setHeaders(std::string headers)
         std::string header_name = header.substr(0, header.find(":"));
         std::string header_value = header.substr(header.find(":") + 1);
         HttpHeader header_enum =
-            this->m_http_helper.stringHttpHeaderMap(header_name);
+            m_http_helper.stringHttpHeaderMap(header_name);
         // Add header to the map
-        this->m_headers[ header_enum ] = header_value;
+        m_headers[ header_enum ] = header_value;
     }
 }
 
@@ -99,13 +99,13 @@ void MockResponse::setBody(std::string body)
     this->setBody(std::vector<char>(body.begin(), body.end()));
 }
 
-void MockResponse::setBody(std::vector<char> body) { this->m_body = body; }
+void MockResponse::setBody(std::vector<char> body) { m_body = body; }
 
 // Set error response with appropriate status code
 void MockResponse::setErrorResponse(HttpStatusCode status_code)
 {
     this->setStatusLine(status_code);
-    std::string body = this->m_http_helper.getHtmlPage(status_code);
+    std::string body = m_http_helper.getHtmlPage(status_code);
     this->setHeaders("content-type: text/html\r\n"
                      "content-length: " +
                      Converter::toString(body.length()) +

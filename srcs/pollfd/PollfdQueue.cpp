@@ -62,20 +62,20 @@ PollfdQueue::PollfdQueue(size_t capacity)
 // Operator []: Provides access to pollfd objects in the PollfdQueue by index.
 pollfd &PollfdQueue::operator[](size_t index)
 {
-    return this->m_pollfd_array[ index ];
+    return m_pollfd_array[ index ];
 }
 
 // Destructor: Clears the internal array of pollfd objects when the PollfdQueue
 // object is destroyed.
-PollfdQueue::~PollfdQueue() { this->m_pollfd_array.clear(); }
+PollfdQueue::~PollfdQueue() { m_pollfd_array.clear(); }
 
 // Push: Adds a new pollfd object to the PollfdQueue.
 // The new pollfd object is inserted at the current size position, and the size
 // is incremented.
 void PollfdQueue::push(const pollfd &new_pollfd)
 {
-    this->m_pollfd_array[ m_size ] = new_pollfd;
-    this->m_size++;
+    m_pollfd_array[ m_size ] = new_pollfd;
+    m_size++;
 }
 
 // Erase: Removes the pollfd object at the specified index from the PollfdQueue.
@@ -84,15 +84,15 @@ void PollfdQueue::push(const pollfd &new_pollfd)
 // is closed.
 void PollfdQueue::erase(size_t index)
 {
-    this->m_pollfd_array[ index ] = this->m_pollfd_array[ m_size - 1 ];
-    this->m_size--;
+    m_pollfd_array[ index ] = m_pollfd_array[ m_size - 1 ];
+    m_size--;
 }
 
 // Pollout: Adds POLLOUT to the events field of the pollfd object at the
 // specified index.
 void PollfdQueue::pollout(size_t index)
 {
-    this->m_pollfd_array[ index ].events |= this->m_poll_mask;
+    m_pollfd_array[ index ].events |= m_poll_mask;
 }
 
 // HasReachedCapacity: Checks if the PollfdQueue has reached its maximum
@@ -100,17 +100,17 @@ void PollfdQueue::pollout(size_t index)
 // more pollfd objects can be added.
 bool PollfdQueue::hasReachedCapacity() const
 {
-    return this->m_size == this->m_capacity;
+    return m_size == m_capacity;
 }
 
 // Size: Returns the current number of pollfd objects stored in the PollfdQueue.
-size_t PollfdQueue::size() const { return this->m_size; }
+size_t PollfdQueue::size() const { return m_size; }
 
 // Capacity: Returns the maximum number of pollfd objects that can be stored in
 // the PollfdQueue.
-size_t PollfdQueue::capacity() const { return this->m_capacity; }
+size_t PollfdQueue::capacity() const { return m_capacity; }
 
 // data: Returns a pointer to the internal array of pollfd objects.
-pollfd *PollfdQueue::data() { return this->m_pollfd_array.data(); }
+pollfd *PollfdQueue::data() { return m_pollfd_array.data(); }
 
 // Path: srcs/PollfdQueue.cpp
