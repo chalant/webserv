@@ -13,6 +13,9 @@
  *
  */
 
+#include "../../includes/constants/HttpHeaderHelper.hpp"
+#include "../../includes/utils/Converter.hpp"
+
 // Constructor to initialize the RequestParser with required references
 RequestParser::RequestParser(const IConfiguration &configuration,
                              ILogger &logger)
@@ -74,9 +77,9 @@ void RequestParser::m_parseRequestLine(
 }
 
 // Function to parse the HTTP method from the request line
-std::string
-RequestParser::m_parseMethod(std::vector<char>::const_iterator &request_iterator,
-                            const std::vector<char> &raw_request) const
+std::string RequestParser::m_parseMethod(
+    std::vector<char>::const_iterator &request_iterator,
+    const std::vector<char> &raw_request) const
 {
     std::string method;
 
@@ -114,7 +117,7 @@ RequestParser::m_parseMethod(std::vector<char>::const_iterator &request_iterator
 // Function to parse the URI from the request line
 std::string
 RequestParser::m_parseUri(std::vector<char>::const_iterator &request_iterator,
-                         const std::vector<char> &raw_request) const
+                          const std::vector<char> &raw_request) const
 {
     std::string uri;
 
@@ -183,8 +186,8 @@ std::string RequestParser::m_parseHttpVersion(
     request_iterator += 2;
 
     // Log 'http_version'
-    this->m_logger.log(VERBOSE,
-                      "[REQUESTPARSER] HTTP Version: \"" + http_version + "\"");
+    this->m_logger.log(VERBOSE, "[REQUESTPARSER] HTTP Version: \"" +
+                                    http_version + "\"");
 
     // Return 'http_version' string
     return http_version;
@@ -266,7 +269,7 @@ void RequestParser::m_parseHeader(
     while (request_iterator != raw_request.end() &&
            !this->m_isCRLF(request_iterator))
     {
-        header_value += std::tolower(*request_iterator); // Convert to lowercase
+        header_value += *request_iterator;
         client_header_buffer_size--;
         ++request_iterator;
     }
@@ -288,7 +291,7 @@ void RequestParser::m_parseHeader(
 
     // Log header
     this->m_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + header_name +
-                                   ": " + header_value + "\"");
+                                    ": " + header_value + "\"");
 
     // Add header to parsed request
     try
@@ -313,8 +316,11 @@ void RequestParser::m_parseBody(
     const std::vector<char> &raw_request, IRequest &parsed_request) const
 {
     // If method is not POST or PUT, no need to parse body
-    if (parsed_request.getMethod() != POST && parsed_request.getMethod() != PUT)
+    if (parsed_request.getMethodString() != "POST" &&
+        parsed_request.getMethod() != PUT)
+    {
         return; // No need to parse body for other methods
+    }
 
     // Check if 'Transfer-Encoding' is chunked
     std::string transfer_encoding =
@@ -331,12 +337,13 @@ void RequestParser::m_parseBody(
         return;
     }
 
-    // Check if 'content-length' header is missing
-    // Get body size
+    // Check if 'content-length' header is required and missing
     std::string content_length_string =
         parsed_request.getHeaderValue(CONTENT_LENGTH);
-    if (content_length_string.empty())
+    if (content_length_string.empty() &&
+        parsed_request.getHeaderValue(TRANSFER_ENCODING) != "chunked")
     {
+        this->m_logger.log(DEBUG, "\t\t[REQUESTPARSER] Content-Length is empty");
         // throw '411' status error
         throw HttpStatusCodeException(LENGTH_REQUIRED,
                                       "no content-length header found");
@@ -372,19 +379,14 @@ void RequestParser::m_parseBody(
     // Extract body
     std::vector<char> body(request_iterator, request_iterator + body_size);
 
-    // Log body
-    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" +
-                                   std::string(body.begin(), body.end()) +
-                                   "\"");
-
     // Set body in parsed request
     parsed_request.setBody(body);
 }
 
 // Function to unchunk the body of an HTTP request
-std::vector<char>
-RequestParser::m_unchunkBody(std::vector<char>::const_iterator &request_iterator,
-                            const std::vector<char> &raw_request) const
+std::vector<char> RequestParser::m_unchunkBody(
+    std::vector<char>::const_iterator &request_iterator,
+    const std::vector<char> &raw_request) const
 {
     // Initialize body vector
     std::vector<char> body;
@@ -442,16 +444,12 @@ RequestParser::m_unchunkBody(std::vector<char>::const_iterator &request_iterator
         remaining_request_size -= chunk_size;
 
         // Append chunk to body
-        body.insert(body.end(), request_iterator, request_iterator + chunk_size);
+        body.insert(body.end(), request_iterator,
+                    request_iterator + chunk_size);
 
         // Move marker passed CRLF
         request_iterator += 2;
     }
-
-    // Log body
-    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Body: \"" +
-                                   std::string(body.begin(), body.end()) +
-                                   "\"");
 
     // Return body
     return body;
@@ -459,7 +457,7 @@ RequestParser::m_unchunkBody(std::vector<char>::const_iterator &request_iterator
 
 // Function to parse cookies from the request
 void RequestParser::m_parseCookie(std::string &cookie_header_value,
-                                 IRequest &parsed_request) const
+                                  IRequest &parsed_request) const
 {
     // Parse cookies
     std::string cookie_name;
@@ -483,6 +481,9 @@ void RequestParser::m_parseCookie(std::string &cookie_header_value,
 
 void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
 {
+    // Log the start of the body parameter parsing
+    this->m_logger.log(VERBOSE, "[REQUESTPARSER] Parsing multipart request...");
+
     // Get the boundary string
     std::string content_type = parsed_request.getHeaderValue(CONTENT_TYPE);
     std::string boundary =
@@ -497,51 +498,80 @@ void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
     std::string line;
 
     // Parse BodyParameters
-    while (std::getline(body_stream, line))
+    while (this->m_getlineNoCr(body_stream, line))
     {
         // Skip leading newline
         if (line.empty())
+        {
+            // Move to next line
             continue;
+        }
 
         // Skip boundary
         if (line.find(boundary) != std::string::npos)
+        {
+            // Move to next line
             continue;
+        }
 
         BodyParameter body_parameter;
 
-        // Parse BodyParameter headers
+        // Process each header line
+        std::string key;
+        std::string value;
         do
         {
             std::string::size_type pos = line.find(':');
             if (pos != std::string::npos)
             {
-                std::string key = line.substr(0, pos);
-                std::string value = line.substr(pos + 1);
+                // Extract and trim key and value
+                key = line.substr(0, pos);
+                value = line.substr(pos + 1);
                 key = this->m_trimWhitespace(key);
                 value = this->m_trimWhitespace(value);
+
                 // lower cases the key
                 std::transform(key.begin(), key.end(), key.begin(),
                                static_cast<int (*)(int)>(std::tolower));
 
+                // Store the header in the map
                 body_parameter.headers[ key ] = value;
 
                 // Parse disposition_type, content_type, and field_name
                 if (key == "content-disposition")
                 {
-                    std::istringstream iss(value);
+                    // extract the disposition_type
+                    size_t pos = value.find(';');
+
+                    // declare remaining value
+                    std::string remaining_value;
+
+                    if (pos != std::string::npos)
+                    {
+                        body_parameter.disposition_type = value.substr(0, pos);
+                        remaining_value = value.substr(pos + 1);
+                    }
+
+                    // extract the filename and field_name
+                    std::istringstream iss(remaining_value);
                     std::string token;
                     while (std::getline(iss, token, ';'))
                     {
                         size_t pos = token.find('=');
                         if (pos != std::string::npos)
                         {
+                            // extract and trim the parameter and its value
                             std::string param = token.substr(0, pos);
                             std::string param_value = token.substr(pos + 1);
                             param = this->m_trimWhitespace(param);
                             param_value = this->m_trimWhitespace(param_value);
 
-                            if (param == "form-data")
-                                body_parameter.disposition_type = param_value;
+                            // Remove surrounding quotes if they exist
+                            this->m_removeQuotes(param_value);
+
+                            // Store the parameter
+                            if (param == "filename")
+                                body_parameter.filename = param_value;
                             else if (param == "name")
                                 body_parameter.field_name = param_value;
                         }
@@ -550,21 +580,42 @@ void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
                 else if (key == "content-type")
                     body_parameter.content_type = value;
             }
-        } while (std::getline(body_stream, line) && !line.empty());
+            // Log the header
+            this->m_logger.log(VERBOSE, "[REQUESTPARSER]  Header: " + key +
+                                            ": \"" + value + "\"");
+        } while (this->m_getlineNoCr(body_stream, line) && !line.empty());
 
         // Parse BodyParameter data
-        while (std::getline(body_stream, line) && line != boundary)
+        while (this->m_getlineNoCr(body_stream, line))
         {
-            body_parameter.data +=
-                line + '\n'; // Append the line to the BodyParameter data
+            // Stop parsing if the boundary is found
+            if (line.find(boundary) != std::string::npos)
+                break;
+
+            // Append the line to the BodyParameter data
+            body_parameter.data += line + '\n';
         }
+
+        // Remove the final newline
+        if (!body_parameter.data.empty())
+            body_parameter.data.erase(body_parameter.data.end() - 1);
 
         // Trim whitespace after loop
         body_parameter.data = this->m_trimWhitespace(body_parameter.data);
 
+        // Log the first 3 characters of the BodyParameter data
+        this->m_logger.log(
+            VERBOSE,
+            "[REQUESTPARSER]   Data: \"" + body_parameter.data.substr(0, 3) +
+                (body_parameter.data.length() > 3 ? "... (etc.)" : "") + "\"");
+
         // Add BodyParameter to vector
         parsed_request.addBodyParameter(body_parameter);
     }
+
+    // Log the end of the BodyParameter
+    this->m_logger.log(VERBOSE,
+                       "[REQUESTPARSER] ...done parsing multipart request");
 
     // Mark the request as an upload request
     parsed_request.setUploadRequest(true);
@@ -585,7 +636,7 @@ bool RequestParser::m_isCRLF(std::vector<char>::const_iterator it) const
 
 // Function to check if an iterator points to a character that is in a given set
 bool RequestParser::m_isCharInSet(std::vector<char>::const_iterator it,
-                                 const std::string &set) const
+                                  const std::string &set) const
 {
     return set.find(*it) != std::string::npos;
 }
@@ -611,6 +662,28 @@ std::string RequestParser::m_trimWhitespace(const std::string &string) const
 
     // Return trimmed string
     return result;
+}
+
+// Function to remove quotes from a string
+void RequestParser::m_removeQuotes(std::string &string) const
+{
+    if (string.length() >= 2 && string.at(0) == '"' &&
+        string.at(string.length() - 1) == '"')
+        string = string.substr(1, string.length() - 2);
+}
+
+// Custom getline function to remove carriage return
+std::istream &RequestParser::m_getlineNoCr(std::istream &is,
+                                           std::string &line) const
+{
+    if (std::getline(is, line))
+    {
+        if (!line.empty() && line[ line.size() - 1 ] == '\r')
+        {
+            line.erase(line.size() - 1);
+        }
+    }
+    return is;
 }
 
 // path: srcs/RequestHandler.cpp

@@ -19,7 +19,13 @@ SOURCES         = RequestParser_test_main.cpp \
 				  ../../../srcs/configuration/ConfigurationBlock.cpp \
 				  ../../../srcs/configuration/Defaults.cpp \
 				  ../../../srcs/configuration/BlockList.cpp \
-				  ../../../srcs/utils/Converter.cpp
+				  ../../../srcs/utils/Converter.cpp \
+				  ../../../srcs/constants/HttpHeaderHelper.cpp \
+				  ../../../srcs/constants/HttpHelper.cpp \
+				  ../../../srcs/constants/HttpMethodHelper.cpp \
+				  ../../../srcs/constants/HttpStatusCodeHelper.cpp \
+				  ../../../srcs/constants/HttpVersionHelper.cpp \
+				  ../../../srcs/constants/LogLevelHelper.cpp
 
 MOCK_SOURCES    = ../../mock_srcs/MockLogger.cpp \
                   ../../mock_srcs/MockRequest.cpp \
@@ -35,7 +41,7 @@ CPPFLAGS        = -Wall -Wextra -Werror
 # Optional flags - uncomment to enable
 CPPFLAGS += -std=c++98
 CPPFLAGS += -g
-#CPPFLAGS += -fsanitize=address
+CPPFLAGS += -fsanitize=address
 #CPPFLAGS += -O3
 
 all: $(NAME)

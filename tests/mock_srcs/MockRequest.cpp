@@ -1,4 +1,5 @@
 #include "../mock_includes/MockRequest.hpp"
+#include "../../includes/constants/HttpHelper.hpp"
 
 /*
  * MockRequest class is a mock implementation of the IRequest interface
@@ -51,8 +52,13 @@ const std::map<HttpHeader, std::string> MockRequest::getHeaders() const
 
 std::string MockRequest::getHeaderValue(HttpHeader header) const
 {
-    static_cast<void>(header);
-    return "";
+    HttpHelper helper;
+    std::string header_enum = helper.httpHeaderStringMap(header);
+    // Check if the header is present
+    if (m_test_headers.find(header_enum) != m_test_headers.end())
+        return m_test_headers.at(header_enum);
+    else
+        return "";
 };
 
 std::map<std::string, std::string> MockRequest::getHeadersStringMap() const

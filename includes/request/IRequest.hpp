@@ -19,19 +19,28 @@
 #include <string>
 #include <vector>
 
+// BodyParameter represents a single part of a multipart/form-data request.
+// This can be a file (for upload) or a form field (for regular form data).
 struct BodyParameter
 {
-    std::string disposition_type;
-    std::string content_type;
-    std::string field_name;
-    std::map<std::string, std::string> headers;
-    std::string data;
+    std::string filename;     // Name of the file; applicable for file uploads
+    std::string content_type; // MIME type of the content; applicable for file
+                              // uploads
+    std::string data;         // Data of the file or field; contains the content
+                              // of the part
+    std::string disposition_type; // Disposition type (e.g., "form-data",
+                                  // "attachment", "inline")
+    std::string field_name;       // Name of the form field; applicable for form
+                                  // fields
+    std::map<std::string, std::string>
+        headers; // All headers of the part; useful
+                 // for both files and form fields
 };
 
 class IRequest
 {
 public:
-    virtual ~IRequest() {};
+    virtual ~IRequest(){};
 
     // Getters
     virtual HttpMethod getMethod() const = 0;

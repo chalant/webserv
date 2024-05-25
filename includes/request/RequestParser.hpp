@@ -24,42 +24,42 @@ private:
 
     // Function to parse the request line of an HTTP request
     void m_parseRequestLine(std::vector<char>::const_iterator &it,
-                           const std::vector<char> &raw_request,
-                           IRequest &parsed_request) const;
+                            const std::vector<char> &raw_request,
+                            IRequest &parsed_request) const;
 
     // Functions to parse the components of the request line
     std::string m_parseMethod(std::vector<char>::const_iterator &it,
-                             const std::vector<char> &raw_request) const;
+                              const std::vector<char> &raw_request) const;
     std::string m_parseUri(std::vector<char>::const_iterator &it,
-                          const std::vector<char> &raw_request) const;
+                           const std::vector<char> &raw_request) const;
     std::string m_parseHttpVersion(std::vector<char>::const_iterator &it,
-                                  const std::vector<char> &raw_request) const;
+                                   const std::vector<char> &raw_request) const;
 
     // Function to parse the headers of an HTTP request
     void m_parseHeaders(std::vector<char>::const_iterator &it,
-                       const std::vector<char> &raw_request,
-                       IRequest &parsed_request) const;
+                        const std::vector<char> &raw_request,
+                        IRequest &parsed_request) const;
 
     // Function to parse an individual header
     void m_parseHeader(std::vector<char>::const_iterator &it,
-                      const std::vector<char> &raw_request,
-                      IRequest &parsed_request) const;
+                       const std::vector<char> &raw_request,
+                       IRequest &parsed_request) const;
 
     // Function to parse the body of an HTTP request
     void m_parseBody(std::vector<char>::const_iterator &it,
-                    const std::vector<char> &raw_request,
-                    IRequest &parsed_request) const;
+                     const std::vector<char> &raw_request,
+                     IRequest &parsed_request) const;
 
     // Function to unchunk the body of an HTTP request
     std::vector<char> m_unchunkBody(std::vector<char>::const_iterator &it,
-                                   const std::vector<char> &raw_request) const;
+                                    const std::vector<char> &raw_request) const;
 
     // Function to parse the Upload Chunked Body
     void m_parseBodyParameters(IRequest &parsed_request) const;
 
     // Function to parse a Cookie header
     void m_parseCookie(std::string &cookie_header_value,
-                      IRequest &parsed_request) const;
+                       IRequest &parsed_request) const;
 
     // Function to check if a character is whitespace
     bool m_isWhitespace(char c) const;
@@ -71,10 +71,17 @@ private:
     // Function to check if an iterator points to a character that is in a given
     // set
     bool m_isCharInSet(std::vector<char>::const_iterator it,
-                      const std::string &set) const;
+                       const std::string &set) const;
 
     // Function to trim leading and trailing whitespace from a string
     std::string m_trimWhitespace(const std::string &string) const;
+
+    // Function to remove quotes from a string
+    void m_removeQuotes(std::string &string) const;
+
+    // Custom getline function to remove carriage returns
+    std::istream& m_getlineNoCr(std::istream& is, std::string& line) const;
+
 
 public:
     // Constructor to initialize the RequestParser with required references
