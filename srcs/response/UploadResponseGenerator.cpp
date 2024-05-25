@@ -23,7 +23,11 @@ Triplet_t	UploadResponseGenerator::generateResponse(const IRoute &route,
 	bool	created = false;
 	for (std::vector<BodyParameter>::const_iterator itr = body_params.begin(); itr != body_params.end(); itr++)
 	{
-		std::string	file_path = route.getRoot() + itr->headers.at("filename");
+		// temp fix to ignore form fields that are not files.
+		if (itr->filename.empty())
+			continue;
+
+		std::string	file_path = route.getRoot() + itr->filename;
 		file_path += configuration.getBlocks("types")[0]->getStringVector(itr->content_type)[0];
 
 		m_logger.log(DEBUG, "Received upload request for: " + file_path);

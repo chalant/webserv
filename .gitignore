@@ -18,3 +18,5 @@ StaticFileResponseGenerator_test
 UploadResponseGenerator_test
 logs/*
 !logs/.gitkeep
+upload/*
+!upload/.gitkeep
