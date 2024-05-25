@@ -26,7 +26,7 @@ void PollingService::pollEvents()
     // Log poll result
     if (poll_result == 0) // Timeout occurred
         this->m_logger.log(
-            VERBOSE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
+            EXHAUSTIVE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
     else // Events occurred
         this->m_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " +
                                        Converter::toString(poll_result) +

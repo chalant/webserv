@@ -19,13 +19,14 @@ class WebservExceptions;
 
 enum LogLevel
 {
-    VERBOSE = 0,  // VERBOSE messages
-    DEBUG = 1,    // Debugging information
-    INFO = 2,     // Informational messages
-    WARN = 3,     // Warnings
-    ERROR = 4,    // Errors
-    CRITICAL = 5, // Critical errors
-    UNKNOWN = 6   // Unknown log level
+    EXHAUSTIVE = 0,    // TRACE messages
+    VERBOSE = 1,  // VERBOSE messages
+    DEBUG = 2,    // Debugging information
+    INFO = 3,     // Informational messages
+    WARN = 4,     // Warnings
+    ERROR = 5,    // Errors
+    CRITICAL = 6, // Critical errors
+    UNKNOWN = 7   // Unknown log level
 };
 
 class LogLevelHelper

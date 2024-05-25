@@ -51,6 +51,7 @@ std::vector<std::string> LogLevelHelper::m_setLogLevelList()
     std::vector<std::string> log_level_list;
 
     // Add string representations of HTTP logLevels to LogLevelList
+    log_level_list.push_back("exhaustive");
     log_level_list.push_back("verbose");
     log_level_list.push_back("debug");
     log_level_list.push_back("info");
@@ -69,6 +70,7 @@ std::map<std::string, LogLevel> LogLevelHelper::m_setStringLogLevelMap()
     std::map<std::string, LogLevel> string_log_level_map;
 
     // Add mappings from string representations to LogLevel enum values
+    string_log_level_map[ "exhaustive" ] = EXHAUSTIVE;
     string_log_level_map[ "verbose" ] = VERBOSE;
     string_log_level_map[ "debug" ] = DEBUG;
     string_log_level_map[ "info" ] = INFO;
@@ -87,6 +89,7 @@ std::map<LogLevel, std::string> LogLevelHelper::m_setLogLevelStringMap()
     std::map<LogLevel, std::string> log_level_string_map;
 
     // Add mappings from LogLevel enum values to string representations
+    log_level_string_map[ EXHAUSTIVE ] = "exhaustive";
     log_level_string_map[ VERBOSE ] = "verbose";
     log_level_string_map[ DEBUG ] = "debug";
     log_level_string_map[ INFO ] = "info";

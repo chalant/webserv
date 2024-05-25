@@ -74,19 +74,19 @@ void Connection::touch()
     // Get the current time
     time_t now = time(NULL);
 
-    // Set time strings
-    // char *nowString = ctime(&now);
-    // char *thenString = ctime(&this->m_last_access);
+    // Set time strings for logging
+    std::string last_access_string = ctime(&this->m_last_access);
+    std::string now_string = ctime(&now);
 
-    // this->m_logger.log(VERBOSE, "Updating last access for session: " +
-    // Converter::toString(this->m_session->getId()) + " from " + thenString + "
-    // to " + nowString);
+    // Remove the newline characters from the strings; introduced by ctime
+    last_access_string.erase(last_access_string.length() - 1);
+    now_string.erase(now_string.length() - 1);
 
     // Log the last access update
     this->m_logger.log(
         VERBOSE,
         "Updating last access for connection with: " + this->m_remote_address +
-            " from " + ctime(&this->m_last_access) + " to " + ctime(&now));
+            " from " + last_access_string + " to " + now_string);
 
     // Update the last access time
     this->m_last_access = now;

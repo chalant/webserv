@@ -18,7 +18,7 @@ EventManager::~EventManager() {}
 
 void EventManager::handleEvents()
 {
-    this->m_logger.log(VERBOSE, "[EVENTMANAGER] Handling events");
+    this->m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling events");
 
     for (ssize_t pollfd_index = 0;
          pollfd_index <
@@ -52,7 +52,7 @@ void EventManager::handleEvents()
 
 void EventManager::m_handleRegularFileEvents(ssize_t &pollfd_index, short events)
 {
-    this->m_logger.log(VERBOSE, "[EVENTMANAGER] Handling regular file events");
+    this->m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling regular file events");
 
     // Check if file is ready for writing
     if (events & POLLOUT)
@@ -77,7 +77,7 @@ void EventManager::m_handleRegularFileEvents(ssize_t &pollfd_index, short events
 
 void EventManager::m_handleServerSocketEvents(ssize_t pollfd_index, short events)
 {
-    this->m_logger.log(VERBOSE, "[EVENTMANAGER] Handling server socket events");
+    this->m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling server socket events");
     // Check for errors on server socket
     if (events & POLLERR)
         throw ServerSocketError();
@@ -102,7 +102,7 @@ void EventManager::m_handleServerSocketEvents(ssize_t pollfd_index, short events
 
 void EventManager::m_handleClientSocketEvents(ssize_t &pollfd_index, short events)
 {
-    this->m_logger.log(VERBOSE, "[EVENTMANAGER] Handling client socket events");
+    this->m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling client socket events");
     // Check for exceptions
     if (events & (POLLHUP | POLLERR | POLLNVAL))
     {
@@ -275,7 +275,7 @@ void EventManager::m_cleanUp(ssize_t &pollfd_index, int descriptor, short option
     pollfd_index--;
 
     // Log the cleanup
-    this->m_logger.log(INFO, "Cleaned up descriptor: " +
+    this->m_logger.log(VERBOSE, "Cleaned up descriptor: " +
                                 Converter::toString(descriptor));
 }
 
