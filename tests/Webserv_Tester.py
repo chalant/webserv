@@ -1,7 +1,10 @@
 '''
-This script will build and run all tests in any subfolder
-and will output either <test_name> OK! or <test_name> ERROR
+This script will build and run all tests in any subfolder of 'unit_tests', 
+'integration_tests' and 'system_tests' and will output either 
+<test_name> OK! or <test_name> ERROR
 It assumes the test will return 0 in case of success
+It will run python files, or if there aren't any, 
+it will try to build and run the executable in the folder
 '''
 
 import os
@@ -13,13 +16,6 @@ GREEN = '\033[92m'
 RED = '\033[91m'
 YELLOW = '\033[93m'
 RESET = '\033[0m'
-
-def findMakefileDirs(path):
-    makefile_dirs = []
-    for root, dirs, files in os.walk(path):
-        if 'Makefile' in files:
-            makefile_dirs.append(root)
-    return makefile_dirs
 
 def getExecutableName(directory):
     makefile_path = os.path.join(directory, 'Makefile')
@@ -50,35 +46,38 @@ def runExecutable(directory, executable_name):
         else:
             print(f"\t{executable_name.ljust(33)}{RED}ERROR{RESET}")
 
-def runPythonFiles(directory):
-    for file in os.listdir(directory):
-        script_path = os.path.join(directory, file)
-        try:
-            subprocess.check_call(['python3', script_path], stderr=subprocess.DEVNULL)
-        except subprocess.CalledProcessError as e:
-            print(f"\t{file.ljust(33)}{RED}ERROR{RESET}")
+def runPythonFile(file):
+    file_name = os.path.basename(file)
+    try:
+        subprocess.check_call(['python3', file], stderr=subprocess.DEVNULL)
+        print(f"\t{file_name.ljust(33)}{GREEN}OK!{RESET}")
+    except subprocess.CalledProcessError as e:
+        print(f"\t{file_name.ljust(33)}{RED}ERROR{RESET}")
 
+def run_tests(test_folder):
+    if (test_folder == 'system_tests'):
+        python_files = [f for f in os.listdir(test_folder) if f.endswith('.py')]
+        for python_file in python_files:
+            runPythonFile(os.path.join(test_folder, python_file))
+
+    for folder in os.listdir(test_folder):
+        folder_path = os.path.join(test_folder, folder)
+        if os.path.isdir(folder_path):
+            python_files = [f for f in os.listdir(folder_path) if f.endswith('.py')]
+            if python_files:
+                for python_file in python_files:
+                    runPythonFile(os.path.join(folder_path, python_file))
+            else:
+                runMakeRe(folder_path, getExecutableName(folder_path))
+                runExecutable(folder_path, getExecutableName(folder_path))
 
 def main():
-    print(f"{YELLOW}Running Webserv Test Suite...\n{RESET}")
+    print(f"{YELLOW}Running Webserv Test Suite...{RESET}")
 
-    print(f"{YELLOW}\tUnit tests:{RESET}")
-    unit_test_dirs = findMakefileDirs("unit_tests")
-    for directory in unit_test_dirs:
-        executable_name = getExecutableName(directory)
-        if runMakeRe(directory, executable_name):
-            runExecutable(directory, executable_name)
-    
-    print(f"\n{YELLOW}\tIntegration tests:{RESET}")
-    integration_test_dirs = findMakefileDirs("integration_tests")
-    for directory in integration_test_dirs:
-        executable_name = getExecutableName(directory)
-        if runMakeRe(directory, executable_name):
-            runExecutable(directory, executable_name)
+    for folder in ('unit_tests', 'integration_tests', 'system_tests'):
+        print(f"{YELLOW}\n\t{folder}:{RESET}")
+        run_tests(folder)
 
-    print(f"\n{YELLOW}\tSystem tests:{RESET}")
-    runPythonFiles("system_tests")
-    
     print(f"\n{YELLOW}...done{RESET}")
 
 if __name__ == "__main__":
