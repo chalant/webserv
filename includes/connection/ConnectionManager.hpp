@@ -35,8 +35,8 @@ private:
     ILogger &m_logger;   // logger object
 
     // Generate a unique session ID
-    SessionId_t _generateSessionId() const;
-    SessionId_t _stringToSessionId(const std::string &string) const;
+    SessionId_t m_generateSessionId() const;
+    SessionId_t m_stringToSessionId(const std::string &string) const;
 
 public:
     // Constructor

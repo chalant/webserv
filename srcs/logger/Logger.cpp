@@ -31,7 +31,7 @@ Logger::Logger(IBufferManager &buffer_manager)
       m_log_level_helper()
 {
     // Log the initialization of the Logger
-    this->log(VERBOSE, "Logger initialized.");
+    this->log(EXHAUSTIVE, "Logger initialized.");
 }
 
 // Destructor: Handles cleanup tasks like flushing buffer and closing log file

@@ -94,7 +94,7 @@ IResponse &ConnectionManager::getResponse(SocketDescriptor_t socket_descriptor)
 SessionId_t ConnectionManager::addSession()
 {
     // Generate a new session id
-    SessionId_t session_id = this->_generateSessionId();
+    SessionId_t session_id = m_generateSessionId();
 
     // Create a new session
     ISession *session = m_factory.createSession(session_id);
@@ -164,7 +164,7 @@ void ConnectionManager::assignSessionToConnection(IConnection &connection,
     }
     else
     {
-        session_id = this->_stringToSessionId(session_id_string);
+        session_id = m_stringToSessionId(session_id_string);
         if (m_sessions.find(session_id) == m_sessions.end())
         {
             session_id = this->addSession(); // Session not found, generate a new
@@ -275,7 +275,7 @@ void ConnectionManager::collectGarbage()
 }
 
 // Generate a unique session ID
-SessionId_t ConnectionManager::_generateSessionId() const
+SessionId_t ConnectionManager::m_generateSessionId() const
 {
     // Random id between 1 and size_t max
     SessionId_t session_id = std::rand() % static_cast<SessionId_t>(-1) + 1;
@@ -290,7 +290,7 @@ SessionId_t ConnectionManager::_generateSessionId() const
 
 // Convert a string to a session id
 SessionId_t
-ConnectionManager::_stringToSessionId(const std::string &string) const
+ConnectionManager::m_stringToSessionId(const std::string &string) const
 {
     std::istringstream iss(string);
     SessionId_t session_id = 0;
