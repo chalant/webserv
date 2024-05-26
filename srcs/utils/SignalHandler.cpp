@@ -1,5 +1,6 @@
 #include "../../includes/utils/SignalHandler.hpp"
 #include <csignal>
+#include <iostream>
 #include "../../includes/exception/WebservExceptions.hpp"
 
 SignalHandler::SignalHandler()
@@ -16,6 +17,8 @@ void SignalHandler::m_sigintHandler(int param, siginfo_t*info, void *context)
 	static_cast<void>(param);
 	static_cast<void>(info);
 	SignalHandler *handler = static_cast<SignalHandler *>(context);
+	if (!handler)		
+		exit (1); // Should not happen
 	handler->m_sigint_received = true;
 }
 
