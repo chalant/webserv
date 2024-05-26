@@ -2,8 +2,6 @@
 #include <csignal>
 #include "../../includes/exception/WebservExceptions.hpp"
 
-bool SignalHandler::m_sigint_received = false;
-
 SignalHandler::SignalHandler()
 {
 	m_sigint_received = false;
@@ -13,16 +11,22 @@ SignalHandler::~SignalHandler()
 {
 }
 
-void SignalHandler::m_sigintHandler(int param)
+void SignalHandler::m_sigintHandler(int param, siginfo_t*info, void *context)
 {
 	static_cast<void>(param);
-	m_sigint_received = true;
+	static_cast<void>(info);
+	SignalHandler *handler = static_cast<SignalHandler *>(context);
+	handler->m_sigint_received = true;
 }
 
 
 void SignalHandler::sigint()
 {
-	std::signal(SIGINT, m_sigintHandler);
+	struct sigaction sa;
+	sa.sa_flags = SA_SIGINFO;
+	sa.sa_sigaction = m_sigintHandler;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGINT, &sa, NULL);
 }
 
 void SignalHandler::checkState()
