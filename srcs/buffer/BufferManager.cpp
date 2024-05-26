@@ -82,12 +82,20 @@ ssize_t BufferManager::pushSocketBuffer(int socket_descriptor,
 }
 
 // Flush the buffer for a specific descriptor
-ssize_t BufferManager::flushBuffer(int descriptor)
+// Returns bytes remaining in buffer, or -1 in case of error
+ssize_t BufferManager::flushBuffer(int descriptor, bool blocking)
 {
-    // Returns bytes remaining in buffer, or -1 in case of error
     if (m_buffers.find(descriptor) != m_buffers.end())
     {
-        return (m_buffers[ descriptor ]->flush(descriptor));
+        // Flush the buffer and get the number of remaining bytes
+        ssize_t remaining_bytes = m_buffers[ descriptor ]->flush(descriptor, blocking);
+
+        // If the buffer is completely flushed, destroy it
+        if (remaining_bytes == 0)
+            this->destroyBuffer(descriptor);
+
+        // Return the number of remaining bytes
+        return remaining_bytes;
     }
     return -1;
 }
@@ -128,6 +136,17 @@ std::vector<char> BufferManager::peekBuffer(int descriptor) const
 void BufferManager::setFlushThreshold(size_t threshold)
 {
     m_flush_threshold = threshold;
+}
+
+// Transfer the buffer from one descriptor to another
+void BufferManager::transferBuffer(int from_descriptor, int to_descriptor)
+{
+    if (m_buffers.find(from_descriptor) != m_buffers.end())
+    {
+        // Transfer the buffer to the new descriptor
+        m_buffers[ to_descriptor ] = m_buffers[ from_descriptor ];
+        m_buffers.erase(from_descriptor);
+    }
 }
 
 // Path: srcs/FileBuffer.cpp

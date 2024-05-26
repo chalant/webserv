@@ -271,5 +271,11 @@ public:
     }
 };
 
+class SigintException : public WebservException
+{
+public:
+    SigintException() : WebservException(CRITICAL, "SIGINT received.", 0) {};
+};
+
 #endif // WEBSERVEXCEPTIONS_HPP
        // Path: includes/exeption/WebservExceptions.hpp

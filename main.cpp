@@ -36,7 +36,12 @@
 
 int main(int argc, char **argv)
 {
-	SignalHandler::sigint();
+    // Instantiate the SignalHandler.
+	SignalHandler signalHandler;
+
+    // Catch SIGINT signal.
+    signalHandler.sigint();
+
     // Get the configuration file path.
     std::string config_path;
     if (argc == 1)
@@ -116,11 +121,15 @@ int main(int argc, char **argv)
 
                 // Collect garbage.
                 connection_manager.collectGarbage();
+
+                // Check for signals.
+                signalHandler.checkState();
             }
             catch (WebservException &e)
             {
                 // Handle exceptions.
                 exception_handler.handleException(e, "webserv core cycle: ");
+                break ;
             }
         }
     }
@@ -133,6 +142,10 @@ int main(int argc, char **argv)
         // Handle setup exceptions.
         exception_handler.handleException(e, "webserv setup: ");
     }
+    
+    // Configure the logger with a null configuration.
+    //LoggerConfiguration *null = NULL;
+    //logger.configure(*null);
 }
 
 // Path: main.cpp

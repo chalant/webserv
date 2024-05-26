@@ -1,20 +1,32 @@
 #include "../../includes/utils/SignalHandler.hpp"
-#include <stdio.h>
-#include <stdlib.h>
 #include <csignal>
-#include <iostream>
+#include "../../includes/exception/WebservExceptions.hpp"
 
-void siginthandler(int param)
+bool SignalHandler::m_sigint_received = false;
+
+SignalHandler::SignalHandler()
+{
+	m_sigint_received = false;
+}
+
+SignalHandler::~SignalHandler()
+{
+}
+
+void SignalHandler::m_sigintHandler(int param)
 {
 	static_cast<void>(param);
-	std::cout << "Exiting Webserv.. " << std::endl;
-	std::exit(1);
+	m_sigint_received = true;
 }
 
 
 void SignalHandler::sigint()
 {
-	std::signal(SIGINT, siginthandler);
+	std::signal(SIGINT, m_sigintHandler);
 }
 
-
+void SignalHandler::checkState()
+{
+	if (m_sigint_received)
+		throw SigintException();
+}

@@ -55,7 +55,7 @@ public:
                              const std::vector<char> &data);
 
     // Flush the buffer for a specific descriptor
-    ssize_t flushBuffer(int descriptor);
+    ssize_t flushBuffer(int descriptor, bool blocking = false);
 
     // Flush all buffers
     void flushBuffers();
@@ -68,6 +68,9 @@ public:
 
     // Set the flush threshold
     void setFlushThreshold(size_t threshold);
+
+    // Transfer the buffer from one descriptor to another
+    void transferBuffer(int source_descriptor, int target_descriptor);
 };
 
 #endif // BUFFERMANAGER_HPP

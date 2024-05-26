@@ -1,6 +1,5 @@
 #include "../mock_includes/MockLogger.hpp"
 #include <ctime>
-#include <iomanip>
 #include <iostream>
 #include <sstream>
 

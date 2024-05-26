@@ -36,7 +36,8 @@ Logger::Logger(IBufferManager &buffer_manager)
 
 // Destructor: Handles cleanup tasks like flushing buffer and closing log file
 // descriptor
-Logger::~Logger() {}
+Logger::~Logger() {
+}
 
 // Method to get the current timestamp
 std::string Logger::m_getCurrentTimestamp() const

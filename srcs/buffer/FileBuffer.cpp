@@ -57,7 +57,7 @@ ssize_t FileBuffer::flush(int file_descriptor, bool regardless_of_threshold)
     // Write the buffer to the file descriptor
     ssize_t bytes_written =
         ::write(file_descriptor, m_buffer.data(), m_buffer.size());
-
+    
     if (bytes_written == -1)
     {
         return -1; // Error writing to file descriptor

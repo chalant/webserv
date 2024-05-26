@@ -9,7 +9,6 @@
 
 #include "../network/ISocket.hpp"
 #include "IBuffer.hpp"
-#include <cstring>
 #include <vector>
 
 class SocketBuffer : public IBuffer
@@ -29,7 +28,7 @@ public:
     ssize_t push(const std::vector<char> &data);
 
     // Send the buffer to a socket descriptor
-    ssize_t flush(int socket_descriptor, bool all = false);
+    ssize_t flush(int socket_descriptor, bool blocking = false);
 
     // Peek at the buffer
     std::vector<char> peek() const;

@@ -33,11 +33,11 @@ ssize_t SocketBuffer::push(const std::vector<char> &data)
 
 // Send the buffer to the socket descriptor
 // Returns its remaining size (or -1 in case of error)
-ssize_t SocketBuffer::flush(int socket_descriptor, bool all)
+ssize_t SocketBuffer::flush(int socket_descriptor, bool blocking)
 {
     // Attempt to send the buffer to the socket
     ssize_t bytes_sent = 0;
-    if (all == true) // will block until all data is sent
+    if (blocking == true) // will block until all data is sent
         bytes_sent = m_socket.sendAll(socket_descriptor, m_buffer);
     else // will send as much data as possible without blocking
         bytes_sent = m_socket.send(socket_descriptor, m_buffer);

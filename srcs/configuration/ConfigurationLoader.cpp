@@ -1,12 +1,10 @@
 #include "../../includes/configuration/ConfigurationLoader.hpp"
-#include "../../includes/configuration/Defaults.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/parsing/Grammar.hpp"
 #include "../../includes/parsing/NonTerminalSymbol.hpp"
 #include "../../includes/parsing/Parser.hpp"
 #include "../../includes/parsing/TerminalSymbol.hpp"
 #include <fstream>
-#include <iostream>
 
 // retrieves the list of strings from the parse tree.
 static void get_values(const std::vector<Token> &tokens, ParseTree &parse_tree,
@@ -140,8 +138,6 @@ void	ConfigurationLoader::m_buildConfig(const Grammar &grammar,
         m_buildConfig(grammar, tokens, *parse_tree[ i ], block);
     }
 }
-
-#include <iostream>
 
 IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
 {

@@ -1,6 +1,5 @@
 #include "../../includes/configuration/BlockList.hpp"
 #include "../../includes/configuration/ConfigurationBlock.hpp"
-#include <iostream>
 
 BlockList::BlockList() {}
 

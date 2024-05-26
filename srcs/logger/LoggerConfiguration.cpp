@@ -53,12 +53,16 @@ LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager,
 
     // Set the buffer size
     m_buffer_manager.setFlushThreshold(m_buffer_size);
+
+    // transfer STDERR buffer to the error log file buffer
+    if (m_error_log_enabled)
+        m_buffer_manager.transferBuffer(STDERR_FILENO, m_error_log_file_descriptor);
 }
 
 LoggerConfiguration::~LoggerConfiguration()
 {
-    m_buffer_manager.flushBuffer(m_error_log_file_descriptor);
-    m_buffer_manager.flushBuffer(m_access_log_file_descriptor);
+    m_buffer_manager.flushBuffer(m_error_log_file_descriptor, true);
+    m_buffer_manager.flushBuffer(m_access_log_file_descriptor, true);
     if (m_error_log_file_descriptor != -1)
         close(m_error_log_file_descriptor);
     if (m_access_log_file_descriptor != -1)

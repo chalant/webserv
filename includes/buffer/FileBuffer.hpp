@@ -40,6 +40,9 @@ public:
 
     // Peek at the buffer
     std::vector<char> peek() const;
+
+    // Set a (new) descriptor for the buffer
+    void setDescriptor(int descriptor);
 };
 
 #endif // FILEBUFFER_HPP
