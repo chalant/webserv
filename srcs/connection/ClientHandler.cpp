@@ -73,7 +73,7 @@ const std::vector<char> ClientHandler::readRequest() const
 
     // Log the request read from the client
     m_logger.log(
-        VERBOSE, "[CLIENTHANDLER] Request on socket: " +
+        EXHAUSTIVE, "[CLIENTHANDLER] Request on socket: " +
                      Converter::toString(m_socket_descriptor) + ": \"" +
                      std::string(buffer.begin(), buffer.end()) + "\"");
 

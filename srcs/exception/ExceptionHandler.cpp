@@ -69,7 +69,7 @@ int ExceptionHandler::m_handleWebservException(const WebservException &e,
     if (e.getLogLevel() == CRITICAL)
     {
         // If critical, log termination message and terminate the server.
-        m_logger.log(CRITICAL, "webserv will now terminate.");
+        m_logger.log(CRITICAL, "!! webserv will now terminate.");
         if (m_server)
             m_server->terminate(e.getErrorCode());
     }
