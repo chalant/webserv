@@ -10,7 +10,7 @@ locationblock)*/
 
 // Constructor
 TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
-    : m_configuration(configuration), m_logger(logger), m_http_helper(HttpHelper())
+    : m_configuration(configuration), m_logger(logger), m_http_helper(HttpHelper(configuration))
 {
     // Log the creation of the TempRouter
     m_logger.log(VERBOSE, "Initializing TempRouter...");

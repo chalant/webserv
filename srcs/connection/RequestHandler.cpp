@@ -27,7 +27,7 @@ RequestHandler::RequestHandler(IBufferManager &buffer_manager,
                                IClientHandler &client_handler)
     : m_buffer_manager(buffer_manager), m_connection_manager(connection_manager),
       m_client_handler(client_handler), m_request_parser(configuration, logger),
-      m_router(router), m_http_helper(), m_logger(logger),
+      m_router(router), m_http_helper(configuration), m_logger(logger),
       m_exception_handler(exception_handler)
 {
     // Log the creation of the RequestHandler instance.

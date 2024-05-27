@@ -1,6 +1,10 @@
 #include "../../includes/constants/HttpStatusCodeHelper.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <sys/fcntl.h>
+#include <unistd.h>
+#include <vector>
+#include <fstream>
 
 /*
  * HttpStatusCodeHelper.hpp
@@ -13,10 +17,11 @@
  */
 
 // Constructor initializes member variables using helper functions
-HttpStatusCodeHelper::HttpStatusCodeHelper()
+HttpStatusCodeHelper::HttpStatusCodeHelper(std::vector<std::string> error_page)
     : m_status_code_list(m_setStatusCodeList()),
       m_string_http_status_code_map(m_setStringHttpStatusCodeMap()),
-      m_http_status_code_string_map(m_setHttpStatusCodeStringMap())
+      m_http_status_code_string_map(m_setHttpStatusCodeStringMap()),
+      m_status_code_html_page_map(m_setStatusCodeHtmlPageMap(error_page))
 {
 }
 
@@ -65,7 +70,8 @@ HttpStatusCodeHelper::intHttpStatusCodeMap(const int &status_code) const
 }
 
 // Generate a status line string for an HTTP response
-std::string HttpStatusCodeHelper::getStatusLine(HttpStatusCode status_code) const
+std::string
+HttpStatusCodeHelper::getStatusLine(HttpStatusCode status_code) const
 {
     return "HTTP/1.1 " + Converter::toString(static_cast<size_t>(status_code)) +
            " " + this->httpStatusCodeStringMap(status_code) + "\r\n";
@@ -82,10 +88,20 @@ HttpStatusCodeHelper::getErrorResponse(HttpStatusCode status_code) const
            "content-length: " + Converter::toString(body.length()) + "\r\n" +
            "Connection: close\r\n" + "Server: webserv/1.0\r\n" + "\r\n" + body;
 }
-
+#include <iostream>
 // Generate an HTML page with the specified HTTP status code
 std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode status_code) const
 {
+    // If a custom HTML page is available for the status code, return it
+    if (m_status_code_html_page_map.find(status_code) !=
+        m_status_code_html_page_map.end())
+    {
+        std::cout << "Custom HTML page found for status code "
+                  << static_cast<size_t>(status_code) << std::endl;
+        return m_status_code_html_page_map.at(status_code);
+    }
+
+    // Otherwise, generate a default HTML page for the status code
     // Create a string stream to build the HTML page.
     std::stringstream html_page;
 
@@ -160,8 +176,8 @@ std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode status_code) const
     return html_page.str();
 }
 
-// Helper function to initialize m_status_code_list with string representations of
-// HTTP status codes
+// Helper function to initialize m_status_code_list with string representations
+// of HTTP status codes
 std::vector<std::string> HttpStatusCodeHelper::m_setStatusCodeList()
 {
     std::vector<std::string> status_code_list;
@@ -234,96 +250,83 @@ std::vector<std::string> HttpStatusCodeHelper::m_setStatusCodeList()
     return status_code_list;
 }
 
-// Helper function to initialize m_string_http_status_code_map with mappings from
-// string representations to HttpStatusCode enum values
+// Helper function to initialize m_string_http_status_code_map with mappings
+// from string representations to HttpStatusCode enum values
 std::map<std::string, HttpStatusCode>
 HttpStatusCodeHelper::m_setStringHttpStatusCodeMap()
 {
     std::map<std::string, HttpStatusCode> string_http_status_code_map;
 
     // Add mappings from string representations to HttpStatusCode enum values
-    string_http_status_code_map[ "100 Continue" ] = CONTINUE;
-    string_http_status_code_map[ "101 Switching Protocols" ] = SWITCHING_PROTOCOLS;
-    string_http_status_code_map[ "102 Processing" ] = PROCESSING;
-    string_http_status_code_map[ "103 Early Hints" ] = EARLY_HINTS;
-    string_http_status_code_map[ "200 OK" ] = OK;
-    string_http_status_code_map[ "201 Created" ] = CREATED;
-    string_http_status_code_map[ "202 Accepted" ] = ACCEPTED;
-    string_http_status_code_map[ "203 Non-Authoritative Information" ] =
-        NON_AUTHORITATIVE_INFORMATION;
-    string_http_status_code_map[ "204 No Content" ] = NO_CONTENT;
-    string_http_status_code_map[ "205 Reset Content" ] = RESET_CONTENT;
-    string_http_status_code_map[ "206 Partial Content" ] = PARTIAL_CONTENT;
-    string_http_status_code_map[ "207 Multi-Status" ] = MULTI_STATUS;
-    string_http_status_code_map[ "208 Already Reported" ] = ALREADY_REPORTED;
-    string_http_status_code_map[ "226 IM Used" ] = IM_USED;
-    string_http_status_code_map[ "300 Multiple Choices" ] = MULTIPLE_CHOICES;
-    string_http_status_code_map[ "301 Moved Permanently" ] = MOVED_PERMANENTLY;
-    string_http_status_code_map[ "302 Found" ] = FOUND;
-    string_http_status_code_map[ "303 See Other" ] = SEE_OTHER;
-    string_http_status_code_map[ "304 Not Modified" ] = NOT_MODIFIED;
-    string_http_status_code_map[ "305 Use Proxy" ] = USE_PROXY;
-    string_http_status_code_map[ "306 Switch Proxy" ] = SWITCH_PROXY;
-    string_http_status_code_map[ "307 Temporary Redirect" ] = TEMPORARY_REDIRECT;
-    string_http_status_code_map[ "308 Permanent Redirect" ] = PERMANENT_REDIRECT;
-    string_http_status_code_map[ "400 Bad Request" ] = BAD_REQUEST;
-    string_http_status_code_map[ "401 Unauthorized" ] = UNAUTHORIZED;
-    string_http_status_code_map[ "402 Payment Required" ] = PAYMENT_REQUIRED;
-    string_http_status_code_map[ "403 Forbidden" ] = FORBIDDEN;
-    string_http_status_code_map[ "404 Not Found" ] = NOT_FOUND;
-    string_http_status_code_map[ "405 Method Not Allowed" ] = METHOD_NOT_ALLOWED;
-    string_http_status_code_map[ "406 Not Acceptable" ] = NOT_ACCEPTABLE;
-    string_http_status_code_map[ "407 Proxy Authentication Required" ] =
-        PROXY_AUTHENTICATION_REQUIRED;
-    string_http_status_code_map[ "408 Request Timeout" ] = REQUEST_TIMEOUT;
-    string_http_status_code_map[ "409 Conflict" ] = CONFLICT;
-    string_http_status_code_map[ "410 Gone" ] = GONE;
-    string_http_status_code_map[ "411 Length Required" ] = LENGTH_REQUIRED;
-    string_http_status_code_map[ "412 Precondition Failed" ] = PRECONDITION_FAILED;
-    string_http_status_code_map[ "413 Payload Too Large" ] = PAYLOAD_TOO_LARGE;
-    string_http_status_code_map[ "414 URI Too Long" ] = URI_TOO_LONG;
-    string_http_status_code_map[ "415 Unsupported Media Type" ] =
-        UNSUPPORTED_MEDIA_TYPE;
-    string_http_status_code_map[ "416 Range Not Satisfiable" ] =
-        RANGE_NOT_SATISFIABLE;
-    string_http_status_code_map[ "417 Expectation Failed" ] = EXPECTATION_FAILED;
-    string_http_status_code_map[ "418 I'm a teapot" ] = IM_A_TEAPOT;
-    string_http_status_code_map[ "421 Misdirected Request" ] = MISDIRECTED_REQUEST;
-    string_http_status_code_map[ "422 Unprocessable Entity" ] =
-        UNPROCESSABLE_ENTITY;
-    string_http_status_code_map[ "423 Locked" ] = LOCKED;
-    string_http_status_code_map[ "424 Failed Dependency" ] = FAILED_DEPENDENCY;
-    string_http_status_code_map[ "425 Too Early" ] = TOO_EARLY;
-    string_http_status_code_map[ "426 Upgrade Required" ] = UPGRADE_REQUIRED;
-    string_http_status_code_map[ "428 Precondition Required" ] =
-        PRECONDITION_REQUIRED;
-    string_http_status_code_map[ "429 Too Many Requests" ] = TOO_MANY_REQUESTS;
-    string_http_status_code_map[ "431 Request Header Fields Too Large" ] =
-        REQUEST_HEADER_FIELDS_TOO_LARGE;
-    string_http_status_code_map[ "451 Unavailable For Legal Reasons" ] =
-        UNAVAILABLE_FOR_LEGAL_REASONS;
-    string_http_status_code_map[ "500 Internal Server Error" ] =
-        INTERNAL_SERVER_ERROR;
-    string_http_status_code_map[ "501 Not Implemented" ] = NOT_IMPLEMENTED;
-    string_http_status_code_map[ "502 Bad Gateway" ] = BAD_GATEWAY;
-    string_http_status_code_map[ "503 Service Unavailable" ] = SERVICE_UNAVAILABLE;
-    string_http_status_code_map[ "504 Gateway Timeout" ] = GATEWAY_TIMEOUT;
-    string_http_status_code_map[ "505 HTTP Version Not Supported" ] =
-        HTTP_VERSION_NOT_SUPPORTED;
-    string_http_status_code_map[ "506 Variant Also Negotiates" ] =
-        VARIANT_ALSO_NEGOTIATES;
-    string_http_status_code_map[ "507 Insufficient Storage" ] =
-        INSUFFICIENT_STORAGE;
-    string_http_status_code_map[ "508 Loop Detected" ] = LOOP_DETECTED;
-    string_http_status_code_map[ "510 Not Extended" ] = NOT_EXTENDED;
-    string_http_status_code_map[ "511 Network Authentication Required" ] =
-        NETWORK_AUTHENTICATION_REQUIRED;
+    string_http_status_code_map["100"] = CONTINUE;
+    string_http_status_code_map["101"] = SWITCHING_PROTOCOLS;
+    string_http_status_code_map["102"] = PROCESSING;
+    string_http_status_code_map["103"] = EARLY_HINTS;
+    string_http_status_code_map["200"] = OK;
+    string_http_status_code_map["201"] = CREATED;
+    string_http_status_code_map["202"] = ACCEPTED;
+    string_http_status_code_map["203"] = NON_AUTHORITATIVE_INFORMATION;
+    string_http_status_code_map["204"] = NO_CONTENT;
+    string_http_status_code_map["205"] = RESET_CONTENT;
+    string_http_status_code_map["206"] = PARTIAL_CONTENT;
+    string_http_status_code_map["207"] = MULTI_STATUS;
+    string_http_status_code_map["208"] = ALREADY_REPORTED;
+    string_http_status_code_map["226"] = IM_USED;
+    string_http_status_code_map["300"] = MULTIPLE_CHOICES;
+    string_http_status_code_map["301"] = MOVED_PERMANENTLY;
+    string_http_status_code_map["302"] = FOUND;
+    string_http_status_code_map["303"] = SEE_OTHER;
+    string_http_status_code_map["304"] = NOT_MODIFIED;
+    string_http_status_code_map["305"] = USE_PROXY;
+    string_http_status_code_map["306"] = SWITCH_PROXY;
+    string_http_status_code_map["307"] = TEMPORARY_REDIRECT;
+    string_http_status_code_map["308"] = PERMANENT_REDIRECT;
+    string_http_status_code_map["400"] = BAD_REQUEST;
+    string_http_status_code_map["401"] = UNAUTHORIZED;
+    string_http_status_code_map["402"] = PAYMENT_REQUIRED;
+    string_http_status_code_map["403"] = FORBIDDEN;
+    string_http_status_code_map["404"] = NOT_FOUND;
+    string_http_status_code_map["405"] = METHOD_NOT_ALLOWED;
+    string_http_status_code_map["406"] = NOT_ACCEPTABLE;
+    string_http_status_code_map["407"] = PROXY_AUTHENTICATION_REQUIRED;
+    string_http_status_code_map["408"] = REQUEST_TIMEOUT;
+    string_http_status_code_map["409"] = CONFLICT;
+    string_http_status_code_map["410"] = GONE;
+    string_http_status_code_map["411"] = LENGTH_REQUIRED;
+    string_http_status_code_map["412"] = PRECONDITION_FAILED;
+    string_http_status_code_map["413"] = PAYLOAD_TOO_LARGE;
+    string_http_status_code_map["414"] = URI_TOO_LONG;
+    string_http_status_code_map["415"] = UNSUPPORTED_MEDIA_TYPE;
+    string_http_status_code_map["416"] = RANGE_NOT_SATISFIABLE;
+    string_http_status_code_map["417"] = EXPECTATION_FAILED;
+    string_http_status_code_map["418"] = IM_A_TEAPOT;
+    string_http_status_code_map["421"] = MISDIRECTED_REQUEST;
+    string_http_status_code_map["422"] = UNPROCESSABLE_ENTITY;
+    string_http_status_code_map["423"] = LOCKED;
+    string_http_status_code_map["424"] = FAILED_DEPENDENCY;
+    string_http_status_code_map["425"] = TOO_EARLY;
+    string_http_status_code_map["426"] = UPGRADE_REQUIRED;
+    string_http_status_code_map["428"] = PRECONDITION_REQUIRED; 
+    string_http_status_code_map["429"] = TOO_MANY_REQUESTS;
+    string_http_status_code_map["431"] = REQUEST_HEADER_FIELDS_TOO_LARGE;
+    string_http_status_code_map["451"] = UNAVAILABLE_FOR_LEGAL_REASONS;
+    string_http_status_code_map["500"] = INTERNAL_SERVER_ERROR;
+    string_http_status_code_map["501"] = NOT_IMPLEMENTED;
+    string_http_status_code_map["502"] = BAD_GATEWAY;
+    string_http_status_code_map["503"] = SERVICE_UNAVAILABLE;
+    string_http_status_code_map["504"] = GATEWAY_TIMEOUT;
+    string_http_status_code_map["505"] = HTTP_VERSION_NOT_SUPPORTED;
+    string_http_status_code_map["506"] = VARIANT_ALSO_NEGOTIATES;
+    string_http_status_code_map["507"] = INSUFFICIENT_STORAGE;
+    string_http_status_code_map["508"] = LOOP_DETECTED;
+    string_http_status_code_map["510"] = NOT_EXTENDED;
+    string_http_status_code_map["511"] = NETWORK_AUTHENTICATION_REQUIRED;
 
     return string_http_status_code_map;
 }
 
-// Helper function to initialize m_http_status_code_string_map with mappings from
-// HttpStatusCode enum values to string representations
+// Helper function to initialize m_http_status_code_string_map with mappings
+// from HttpStatusCode enum values to string representations
 std::map<HttpStatusCode, std::string>
 HttpStatusCodeHelper::m_setHttpStatusCodeStringMap()
 {
@@ -372,22 +375,26 @@ HttpStatusCodeHelper::m_setHttpStatusCodeStringMap()
     http_status_code_string_map[ URI_TOO_LONG ] = "URI Too Long";
     http_status_code_string_map[ UNSUPPORTED_MEDIA_TYPE ] =
         "Unsupported Media Type";
-    http_status_code_string_map[ RANGE_NOT_SATISFIABLE ] = "Range Not Satisfiable";
+    http_status_code_string_map[ RANGE_NOT_SATISFIABLE ] =
+        "Range Not Satisfiable";
     http_status_code_string_map[ EXPECTATION_FAILED ] = "Expectation Failed";
     http_status_code_string_map[ IM_A_TEAPOT ] = "I'm a teapot";
     http_status_code_string_map[ MISDIRECTED_REQUEST ] = "Misdirected Request";
-    http_status_code_string_map[ UNPROCESSABLE_ENTITY ] = "Unprocessable Entity";
+    http_status_code_string_map[ UNPROCESSABLE_ENTITY ] =
+        "Unprocessable Entity";
     http_status_code_string_map[ LOCKED ] = "Locked";
     http_status_code_string_map[ FAILED_DEPENDENCY ] = "Failed Dependency";
     http_status_code_string_map[ TOO_EARLY ] = "Too Early";
     http_status_code_string_map[ UPGRADE_REQUIRED ] = "Upgrade Required";
-    http_status_code_string_map[ PRECONDITION_REQUIRED ] = "Precondition Required";
+    http_status_code_string_map[ PRECONDITION_REQUIRED ] =
+        "Precondition Required";
     http_status_code_string_map[ TOO_MANY_REQUESTS ] = "Too Many Requests";
     http_status_code_string_map[ REQUEST_HEADER_FIELDS_TOO_LARGE ] =
         "Request Header Fields Too Large";
     http_status_code_string_map[ UNAVAILABLE_FOR_LEGAL_REASONS ] =
         "Unavailable For Legal Reasons";
-    http_status_code_string_map[ INTERNAL_SERVER_ERROR ] = "Internal Server Error";
+    http_status_code_string_map[ INTERNAL_SERVER_ERROR ] =
+        "Internal Server Error";
     http_status_code_string_map[ NOT_IMPLEMENTED ] = "Not Implemented";
     http_status_code_string_map[ BAD_GATEWAY ] = "Bad Gateway";
     http_status_code_string_map[ SERVICE_UNAVAILABLE ] = "Service Unavailable";
@@ -396,13 +403,64 @@ HttpStatusCodeHelper::m_setHttpStatusCodeStringMap()
         "HTTP Version Not Supported";
     http_status_code_string_map[ VARIANT_ALSO_NEGOTIATES ] =
         "Variant Also Negotiates";
-    http_status_code_string_map[ INSUFFICIENT_STORAGE ] = "Insufficient Storage";
+    http_status_code_string_map[ INSUFFICIENT_STORAGE ] =
+        "Insufficient Storage";
     http_status_code_string_map[ LOOP_DETECTED ] = "Loop Detected";
     http_status_code_string_map[ NOT_EXTENDED ] = "Not Extended";
     http_status_code_string_map[ NETWORK_AUTHENTICATION_REQUIRED ] =
         "Network Authentication Required";
 
     return http_status_code_string_map;
+}
+
+// Sets the status code to html page mapping
+std::map<HttpStatusCode, std::string> HttpStatusCodeHelper::m_setStatusCodeHtmlPageMap(std::vector<std::string> error_page)
+{
+    //e.g. error_page = {"500", "502", "503", "504", "/50x.html", "404", "/404.html"};
+    std::vector<std::string>::iterator it = error_page.begin();
+    std::map<HttpStatusCode, std::string> status_code_html_page_map;
+
+    // Iterate through the error_page restarting the loop after each html page path
+    while (it != error_page.end())
+    {
+        // Stack the error codes until we reach the html page path
+        std::vector<std::string> stack;
+        while (it->data()[0] != '/')
+        {
+            stack.push_back(it->data());
+            it++;
+        }
+
+        // open the file
+        std::string path = it->data();
+        path.insert(0, ".");
+        std::ifstream file_stream(path);
+
+        // check if the file is open
+        if (!file_stream.is_open())
+            throw ErrorPageOpenError();
+
+        // read the file contents
+        std::string line;
+        std::string html_page;
+        while (std::getline(file_stream, line))
+            html_page += line;
+
+        // close the file
+        file_stream.close();
+
+        // pop the error codes from the stack and map them to the html page
+        while (!stack.empty())
+        {
+            std::string status_code_string = stack.back();
+            HttpStatusCode http_status_code = stringHttpStatusCodeMap(stack.back());
+            status_code_html_page_map[http_status_code] = html_page;
+            stack.pop_back();
+        }
+        it++;
+    }
+
+    return status_code_html_page_map;
 }
 
 // Path: includes/constants/HttpStatusCodeHelper.hpp

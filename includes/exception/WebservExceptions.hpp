@@ -173,6 +173,13 @@ public:
         : WebservException(CRITICAL, "Failed to open log file.", 1) {};
 };
 
+class ErrorPageOpenError : public WebservException
+{
+public:
+    ErrorPageOpenError()
+        : WebservException(CRITICAL, "Failed to open custom error page.", 1) {};
+};
+
 class LogFileWriteError : public WebservException
 {
 public:

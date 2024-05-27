@@ -16,6 +16,7 @@
 #include "HttpMethodHelper.hpp"
 #include "HttpStatusCodeHelper.hpp"
 #include "HttpVersionHelper.hpp"
+#include "../configuration/IConfiguration.hpp"
 #include <string>
 
 class HttpHelper
@@ -28,8 +29,9 @@ private:
     HttpStatusCodeHelper m_status_code_helper; // Helper for HTTP status codes
 
 public:
-    // Constructor to initialize helper classes
-    HttpHelper();
+    // Constructors to initialize helper classes
+    HttpHelper(); // Default constructor
+    HttpHelper(const IConfiguration &configuration);
 
     // Http Method Helper Functions
     const std::string &httpMethodStringMap(
