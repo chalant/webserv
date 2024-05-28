@@ -28,7 +28,6 @@ Triplet_t	UploadResponseGenerator::generateResponse(const IRoute &route,
 			continue;
 
 		std::string	file_path = route.getRoot() + itr->filename;
-		size_t	ext_pos = file_path.find(".");
 		if (file_path.find(".") == std::string::npos)
 		{
 			try

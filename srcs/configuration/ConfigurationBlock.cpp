@@ -82,7 +82,7 @@ const std::string &ConfigurationBlock::getString(const std::string &key,
         const std::string &res =
             m_defaults.getDirectiveParameters(key)[ index ];
         m_logger.log(DEBUG, "ConfigurationBlock::getString: " + key + "[" +
-                                std::to_string(index) +
+                                Converter::toString(index) +
                                 "] not found defaulting to " + res);
         return res;
     }
