@@ -5,6 +5,7 @@ This script will build and run all tests in any subfolder of 'unit_tests',
 It assumes the test will return 0 in case of success
 It will run python files, or if there aren't any, 
 it will try to build and run the executable in the folder
+System tests will test on localhost:8080
 '''
 
 import os
