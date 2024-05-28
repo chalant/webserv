@@ -66,11 +66,13 @@ ssize_t BufferManager::pushFileBuffer(int file_descriptor,
     return m_buffers[ file_descriptor ]->push(
         data); // returns 1 if a flush is requested
 }
-
+#include <iostream>
 // Push a socket buffer into the manager
 ssize_t BufferManager::pushSocketBuffer(int socket_descriptor,
                                         const std::vector<char> &data)
 {
+    std::cout << "Pushing data into buffer for socket descriptor: "
+              << socket_descriptor << std::endl;
     // If the buffer for this socket descriptor doesn't exist, create it
     if (m_buffers.find(socket_descriptor) == m_buffers.end())
     {

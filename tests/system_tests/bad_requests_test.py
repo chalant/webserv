@@ -58,3 +58,6 @@ print("\tPayload too large(413) test".ljust(34) + f"{GREEN}OK!{RESET}")
 
 # Terminate the server
 webserv.kill()
+
+# Clean up
+subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

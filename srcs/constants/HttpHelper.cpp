@@ -11,9 +11,14 @@
  * Path: includes/constants/HttpHelper.hpp
  */
 
-// Constructor to initialize helper classes
+// Constructors to initialize helper classes
 HttpHelper::HttpHelper()
     : m_method_helper(), m_version_helper(), m_header_helper(), m_status_code_helper()
+{
+}
+
+HttpHelper::HttpHelper(const IConfiguration &configuration)
+    : m_method_helper(), m_version_helper(), m_header_helper(), m_status_code_helper(configuration.getStringVector("error_page"))
 {
 }
 

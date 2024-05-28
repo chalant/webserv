@@ -32,6 +32,7 @@ public:
     virtual void setHeaders(std::string headers) = 0;
     virtual void addHeader(HttpHeader header, std::string value) = 0;
     virtual void addHeader(std::string header, std::string value) = 0;
+    virtual void addHeader(std::string header) = 0;
     virtual void addCookie(std::string key, std::string value) = 0;
     virtual void addCookieHeaders() = 0;
     virtual void setBody(std::string body) = 0;
@@ -42,7 +43,7 @@ public:
     virtual void setErrorResponse(int status_code) = 0;
 
     // Set response fields from a complete response vector
-    virtual void setResponse(std::vector<char> response) = 0;
+    virtual void setCgiResponse(std::vector<char> response) = 0;
 
     // Getters for specific parts of the response
     virtual std::string getStatusCodeString() const = 0;

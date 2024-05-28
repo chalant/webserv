@@ -173,6 +173,13 @@ public:
         : WebservException(CRITICAL, "Failed to open log file.", 1) {};
 };
 
+class ErrorPageOpenError : public WebservException
+{
+public:
+    ErrorPageOpenError()
+        : WebservException(CRITICAL, "Failed to open custom error page.", 1) {};
+};
+
 class LogFileWriteError : public WebservException
 {
 public:
@@ -275,6 +282,12 @@ class SigintException : public WebservException
 {
 public:
     SigintException() : WebservException(CRITICAL, "SIGINT received.", 0) {};
+};
+
+class SigsegvException : public WebservException
+{
+public:
+    SigsegvException() : WebservException(CRITICAL, "SIGSEGV received.", 0) {};
 };
 
 #endif // WEBSERVEXCEPTIONS_HPP

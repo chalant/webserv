@@ -5,7 +5,7 @@
 #include "../../includes/response/Response.hpp"
 
 Factory::Factory(const IConfiguration &configuration, ILogger &logger)
-    : m_configuration(configuration), m_logger(logger), m_http_helper()
+    : m_configuration(configuration), m_logger(logger), m_http_helper(configuration)
 {
     // Log the creation of the Factory
     m_logger.log(VERBOSE, "Factory created.");

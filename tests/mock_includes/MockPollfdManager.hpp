@@ -33,6 +33,7 @@ public:
     virtual int getDescriptor(int position);
     virtual bool hasReachedCapacity() const;
     virtual pollfd *getPollfdArray();
+    virtual int getPollfdQueueIndex(int fd);
 };
 
 #endif // MOCKPOLLFDMANAGER_HPP

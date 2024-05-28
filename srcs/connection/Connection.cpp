@@ -49,10 +49,9 @@ std::string Connection::getRemoteAddress() const
     return m_remote_address;
 }
 
-int Connection::getResponseReadPipeFd() const
-{
-    return m_response_read_pipe_fd;
-}
+int Connection::getCgiOutputPipeReadEnd() const { return m_cgi_output_pipe_read_end; }
+
+int Connection::getCgiInputPipeWriteEnd() const { return m_cgi_input_pipe_write_end; }
 
 IRequest &Connection::getRequest() const { return *m_request; }
 
@@ -60,12 +59,12 @@ IResponse &Connection::getResponse() const { return *m_response; }
 
 ISession &Connection::getSession() const { return *m_session; }
 
-void Connection::setCgiInfo(int cgi_pid, int response_read_pipe_fd,
-                            int request_write_pipe_fd)
+void Connection::setCgiInfo(int cgi_pid, int cgi_output_pipe_read_end,
+                            int cgi_input_pipe_write_end)
 {
     m_cgi_pid = cgi_pid;
-    m_response_read_pipe_fd = response_read_pipe_fd;
-    m_request_write_pipe_fd = request_write_pipe_fd;
+    m_cgi_output_pipe_read_end = cgi_output_pipe_read_end;
+    m_cgi_input_pipe_write_end = cgi_input_pipe_write_end;
 }
 
 // Connection management

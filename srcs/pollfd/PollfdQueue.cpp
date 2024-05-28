@@ -87,12 +87,16 @@ void PollfdQueue::erase(size_t index)
     m_pollfd_array[ index ] = m_pollfd_array[ m_size - 1 ];
     m_size--;
 }
-
+#include <iostream>
 // Pollout: Adds POLLOUT to the events field of the pollfd object at the
 // specified index.
 void PollfdQueue::pollout(size_t index)
 {
+    // print current events
+    std::cout << "events: " << m_pollfd_array[ index ].events << std::endl;
     m_pollfd_array[ index ].events |= m_poll_mask;
+    // print new events
+    std::cout << "events: " << m_pollfd_array[ index ].events << std::endl;
 }
 
 // HasReachedCapacity: Checks if the PollfdQueue has reached its maximum

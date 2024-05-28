@@ -5,9 +5,11 @@
 #include <cstdlib>
 
 #define NO_THROW 0x1 // Do not throw an exception
-#define KEEP_RESPONSE_READ_PIPE                                                \
-    0x2 // Do no close the read end of the response pipe
-#define KEEP_BODY_WRITE_PIPE 0x4 // Do not close the write end of the body pipe
+#define KEEP_CGI_OUTPUT_PIPE_READ_END                                                \
+    0x2 // Do no close the read end of the CGI Output pipe
+#define KEEP_CGI_INPUT_PIPE_WRITE_END 0x4 // Do not close the write end of the CGI Input pipe
+#define READ_END 0 // Read end of a pipe
+#define WRITE_END 1 // Write end of a pipe
 
 CgiResponseGenerator::CgiResponseGenerator(ILogger &logger)
     : m_logger(logger), m_http_status_code_helper(HttpStatusCodeHelper())
@@ -17,11 +19,13 @@ CgiResponseGenerator::CgiResponseGenerator(ILogger &logger)
 CgiResponseGenerator::~CgiResponseGenerator() {}
 
 // calls execve to execute the CGI script
-// returns the cgi process Info (pid, read end of the response pipe, write end
-// of the body pipe) Throws an exception if an error occurs
-Triplet_t CgiResponseGenerator::generateResponse(
-    const IRoute &route, const IRequest &request, IResponse &response,
-    IConfiguration &configuration, const std::string &script_name)
+// returns the cgi process Info (pid, read end of the CGI Output pipe, write end
+// of the CGI Input pipe) Throws an exception if an error occurs
+Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
+                                                 const IRequest &request,
+                                                 IResponse &response,
+                                                 IConfiguration &configuration,
+                                                 const std::string &script_name)
 {
     // void the unused IResponse &response
     (void)response;
@@ -35,113 +39,109 @@ Triplet_t CgiResponseGenerator::generateResponse(
     m_setCgiEnvironment(script_name, route, request, cgi_env);
 
     // Create a pipe to send the response from the CGI script to the server
-    int response_pipe_fd[ 2 ];
-    if (pipe(response_pipe_fd) == -1)
+    int cgi_output_pipe_fd[ 2 ];
+    if (pipe(cgi_output_pipe_fd) == -1)
         // pipe failed
         m_cleanUp(cgi_args.data(),
-                       cgi_env.data()); // Free memory and throw exception 500
+                  cgi_env.data()); // Free memory and throw exception 500
 
     // Create a pipe to send the request body from the server to the CGI script
-    int body_pipe_fd[ 2 ];
-    if (pipe(body_pipe_fd) == -1)
+    int cgi_input_pipe_fd[ 2 ];
+    if (pipe(cgi_input_pipe_fd) == -1)
         // pipe failed
         m_cleanUp(cgi_args.data(), cgi_env.data(),
-                       response_pipe_fd); // Free memory and throw exception 500
+                  cgi_output_pipe_fd); // Free memory and throw exception 500
 
     // Fork a child process
     pid_t pid = fork();
     if (pid == -1)
         // fork failed
-        m_cleanUp(cgi_args.data(), cgi_env.data(), response_pipe_fd,
-                       body_pipe_fd); // Free memory and throw exception 500
+        m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd,
+                  cgi_input_pipe_fd); // Free memory and throw exception 500
 
     else if (pid == 0) // child process
     {
-        m_logger.log(
-            DEBUG, "Forked a child process to execute the CGI script PID: " +
-                       Converter::toString(getpid()) +
-                       " Parent PID: " + Converter::toString(getppid()));
-        // stdin should read from body pipe
-        close(body_pipe_fd[ 1 ]);              // close write end
-        dup2(body_pipe_fd[ 0 ], STDIN_FILENO); // redirect stdin to pipe
-        close(body_pipe_fd[ 0 ]);              // close read end
+        m_logger.log(DEBUG,
+                     "Forked a child process to execute the CGI script PID: " +
+                         Converter::toString(getpid()) +
+                         " Parent PID: " + Converter::toString(getppid()));
+        // stdin should read from CGI Input pipe
+        close(cgi_input_pipe_fd[ WRITE_END ]);              // close write end
+        dup2(cgi_input_pipe_fd[ READ_END ], STDIN_FILENO); // redirect stdin to pipe
+        close(cgi_input_pipe_fd[ READ_END ]);              // close read end
 
-        // stdout should write to response pipe
-        close(response_pipe_fd[ 0 ]);               // close read end
-        dup2(response_pipe_fd[ 1 ], STDOUT_FILENO); // redirect stdout to pipe
-        close(response_pipe_fd[ 1 ]);               // close write end
+        // stdout should write to CGI Output pipe
+        close(cgi_output_pipe_fd[ READ_END ]);               // close read end
+        dup2(cgi_output_pipe_fd[ WRITE_END ], STDOUT_FILENO); // redirect stdout to pipe
+        close(cgi_output_pipe_fd[ WRITE_END ]);               // close write end
 
         // Call execve
         execve(cgi_args[ 0 ], cgi_args.data(), cgi_env.data());
-        m_logger.log(DEBUG,
-                          "Execve failed: " + std::string(strerror(errno)));
+        m_logger.log(DEBUG, "Execve failed: " + std::string(strerror(errno)));
         // If execve returns, an error occurred; free memory and exit
-        m_cleanUp(cgi_args.data(), cgi_env.data(), response_pipe_fd,
-                       body_pipe_fd, NO_THROW);
+        m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd,
+                  cgi_input_pipe_fd, NO_THROW);
         exit(EXIT_FAILURE);
     }
 
     else // parent process
     {
         // Log the new CGI process ID
-        m_logger.log(DEBUG,
-                          "New CGI process ID: " + Converter::toString(pid));
+        m_logger.log(DEBUG, "New CGI process ID: " + Converter::toString(pid));
 
-        // Set the read end of the response pipe to non-blocking
-        fcntl(response_pipe_fd[ 0 ], F_SETFL, O_NONBLOCK);
+        // Set the read end of the Cgi Output Pipe to non-blocking
+        fcntl(cgi_output_pipe_fd[ 0 ], F_SETFL, O_NONBLOCK);
 
-        // Set the write end of the body pipe to non-blocking
-        fcntl(body_pipe_fd[ 1 ], F_SETFL, O_NONBLOCK);
+        // Set the write end of the CGI Input pipe to non-blocking
+        fcntl(cgi_input_pipe_fd[ 1 ], F_SETFL, O_NONBLOCK);
 
-        // Free memory and keep the write end of the body pipe open and the read
-        // end of the response pipe open
-        m_cleanUp(
-            cgi_args.data(), cgi_env.data(), response_pipe_fd, body_pipe_fd,
-            NO_THROW | KEEP_RESPONSE_READ_PIPE | KEEP_BODY_WRITE_PIPE);
+        // Free memory and keep the write end of the CGI Input pipe open and the read
+        // end of the CGI Output pipe open
+        m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd,
+                  cgi_input_pipe_fd,
+                  NO_THROW | KEEP_CGI_OUTPUT_PIPE_READ_END | KEEP_CGI_INPUT_PIPE_WRITE_END);
 
         // Log the Cgi info
-        m_logger.log(
-            VERBOSE, "Returning CGI info tuple; PID: " +
-                         Converter::toString(pid) + "Response Pipe read end: " +
-                         Converter::toString(response_pipe_fd[ 0 ]) +
-                         "Request Pipe write end: " +
-                         Converter::toString(response_pipe_fd[ 1 ]));
+        m_logger.log(VERBOSE, "Returning CGI info tuple; PID: " +
+                                  Converter::toString(pid) +
+                                  " CGI output pipe Read end: " +
+                                  Converter::toString(cgi_output_pipe_fd[ 0 ]) +
+                                  " CGI input pipe Write end: " +
+                                  Converter::toString(cgi_input_pipe_fd[ 1 ]));
 
         // Return the read end of the pipe to read the response later without
         // blocking
         return std::make_pair(
-            pid, std::make_pair(response_pipe_fd[ 0 ], body_pipe_fd[ 1 ]));
+            pid, std::make_pair(cgi_output_pipe_fd[ READ_END ], cgi_input_pipe_fd[ WRITE_END ]));
     }
 
     return std::make_pair(-1, std::make_pair(-1, -1)); // unreachable code
 }
 
-void CgiResponseGenerator::m_setCgiArguments(const std::string &script_name,
-                                            const IRoute &route,
-                                            const IConfiguration &configuration,
-                                            std::vector<char *> &cgi_args)
+void CgiResponseGenerator::m_setCgiArguments(
+    const std::string &script_name, const IRoute &route,
+    const IConfiguration &configuration, std::vector<char *> &cgi_args)
 {
     cgi_args.push_back(m_getCgiInterpreterPath(
         script_name, configuration)); // Interpreter absolute path
     cgi_args.push_back(m_getScriptPath(
         script_name, route)); // script path: location block root path +
-                             // URI(excl. query string)
+                              // URI(excl. query string)
     cgi_args.push_back(NULL);
 
     // Check for strdup failures
     for (size_t i = 0; i < cgi_args.size() - 1; ++i)
         if (cgi_args[ i ] == NULL)
-            m_cleanUp(
-                cgi_args.data()); // Free memory and throw exception 500
+            m_cleanUp(cgi_args.data()); // Free memory and throw exception 500
 
     m_logger.log(DEBUG, "CGI interpreter: " + std::string(cgi_args[ 0 ]));
     m_logger.log(DEBUG, "CGI script: " + std::string(cgi_args[ 1 ]));
 }
 
 void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script_name,
-                                              const IRoute &route,
-                                              const IRequest &request,
-                                              std::vector<char *> &cgi_env)
+                                               const IRoute &route,
+                                               const IRequest &request,
+                                               std::vector<char *> &cgi_env)
 {
     cgi_env.push_back(
         strdup(("REQUEST_METHOD=" + request.getMethodString()).c_str()));
@@ -152,33 +152,32 @@ void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script_name,
     cgi_env.push_back(
         strdup(("CONTENT_TYPE=" + request.getContentType()).c_str()));
     cgi_env.push_back(strdup(("SCRIPT_FILENAME=" + route.getRoot() +
-                             route.getPath() + "/" + script_name)
-                                .c_str()));
+                              route.getPath() + script_name)
+                                 .c_str()));
     cgi_env.push_back(
-        strdup(("SCRIPT_NAME=" + route.getPath() + "/" + script_name).c_str()));
+        strdup(("SCRIPT_NAME=" + script_name).c_str()));
     std::string path_info = request.getPathInfo(script_name);
     cgi_env.push_back(strdup(("PATH_INFO=" + path_info).c_str()));
-    cgi_env.push_back(
-        strdup(("PATH_TRANSLATED=" + m_getPathTranslated(path_info, route))
-                   .c_str()));
+    cgi_env.push_back(strdup(
+        ("PATH_TRANSLATED=" + m_getPathTranslated(path_info, route)).c_str()));
     cgi_env.push_back(strdup(("REQUEST_URI=" + request.getUri()).c_str()));
     cgi_env.push_back(NULL);
 
     // Check for strdup failures
     for (size_t i = 0; i < cgi_env.size() - 1; ++i)
         if (cgi_env[ i ] == NULL)
-            m_cleanUp(
-                NULL, cgi_env.data()); // Free memory and throw exception 500
+            m_cleanUp(NULL,
+                      cgi_env.data()); // Free memory and throw exception 500
 
     // Log the environment variables
     for (size_t i = 0; i < cgi_env.size() - 1; ++i)
-        m_logger.log(DEBUG,
-                          "CGI Environment: " + std::string(cgi_env[ i ]));
+        m_logger.log(DEBUG, "CGI Environment: " + std::string(cgi_env[ i ]));
 }
-
+#include <iostream>
 char *CgiResponseGenerator::m_getCgiInterpreterPath(
     const std::string &script_name, const IConfiguration &configuration) const
 {
+    std::cout << "script_name: " << script_name << std::endl;
     // Extract file extension
     std::string file_extension;
     size_t dot_pos = script_name.find_last_of('.');
@@ -193,12 +192,12 @@ char *CgiResponseGenerator::m_getCgiInterpreterPath(
     if (file_extension == "php") // *.php
     {
         interpreter_path =
-            configuration.getString("PhpCgiPath"); // e.g. /bin/php-cgi
+            configuration.getString("php_cgi_path"); // e.g. /bin/php-cgi
     }
     else if (file_extension == "py") // *.py
     {
         interpreter_path =
-            configuration.getString("PythonCgiPath"); // e.g. /usr/bin/python3
+            configuration.getString("python_cgi_path"); // e.g. /usr/bin/python3
     }
     else // Unsupported file extension
     {
@@ -210,7 +209,7 @@ char *CgiResponseGenerator::m_getCgiInterpreterPath(
 }
 
 char *CgiResponseGenerator::m_getScriptPath(const std::string &script_name,
-                                           const IRoute &route) const
+                                            const IRoute &route) const
 {
     // Get the root path
     std::string root_path = route.getRoot();
@@ -218,13 +217,17 @@ char *CgiResponseGenerator::m_getScriptPath(const std::string &script_name,
     // Get the prefix
     std::string prefix = route.getPath();
 
+    // Append a slash if the prefix does not end with a slash
+    if (prefix.back() != '/')
+        prefix += '/';
+
     // Return the script path without the query string
-    return strdup((root_path + prefix + "/" + script_name)
+    return strdup((root_path + prefix + script_name)
                       .c_str()); //  e.g. /path/to/script.php
 }
 
 std::string CgiResponseGenerator::m_getPathTranslated(std::string &path_info,
-                                                     const IRoute &route) const
+                                                      const IRoute &route) const
 {
     // PATH_TRANSLATED = location root + location prefix + PATH_INFO
 
@@ -239,8 +242,8 @@ std::string CgiResponseGenerator::m_getPathTranslated(std::string &path_info,
 }
 
 void CgiResponseGenerator::m_cleanUp(char *cgi_args[], char *cgi_env[],
-                                    int response_pipe_fd[ 2 ],
-                                    int body_pipe_fd[ 2 ], short option) const
+                                     int cgi_output_pipe_fd[ 2 ],
+                                     int cgi_input_pipe_fd[ 2 ], short option) const
 {
     // Free args
     if (cgi_args != NULL)
@@ -260,20 +263,20 @@ void CgiResponseGenerator::m_cleanUp(char *cgi_args[], char *cgi_env[],
         }
     }
 
-    // Close response pipe
-    if (response_pipe_fd != NULL)
+    // Close CGI Output pipe
+    if (cgi_output_pipe_fd != NULL)
     {
-        if ((option & KEEP_RESPONSE_READ_PIPE) == 0)
-            close(response_pipe_fd[ 0 ]);
-        close(response_pipe_fd[ 1 ]);
+        if ((option & KEEP_CGI_OUTPUT_PIPE_READ_END) == 0)
+            close(cgi_output_pipe_fd[ 0 ]);
+        close(cgi_output_pipe_fd[ 1 ]);
     }
 
-    // Close body pipe
-    if (body_pipe_fd != NULL)
+    // Close CGI Input pipe
+    if (cgi_input_pipe_fd != NULL)
     {
-        if ((option & KEEP_BODY_WRITE_PIPE) == 0)
-            close(body_pipe_fd[ 1 ]);
-        close(body_pipe_fd[ 0 ]);
+        if ((option & KEEP_CGI_INPUT_PIPE_WRITE_END) == 0)
+            close(cgi_input_pipe_fd[ 1 ]);
+        close(cgi_input_pipe_fd[ 0 ]);
     }
 
     // Throw an exception

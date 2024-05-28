@@ -23,7 +23,6 @@ void SignalHandler::m_sigintHandler(int param, siginfo_t*info, void *context)
 	handler->m_sigint_received = true;
 }
 
-
 void SignalHandler::sigint()
 {
 	struct sigaction sa;

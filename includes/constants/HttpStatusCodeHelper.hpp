@@ -185,15 +185,20 @@ private:
     const std::map<HttpStatusCode, std::string>
         m_http_status_code_string_map; // Map of HttpStatusCode enum values to
                                   // string representations
+    const std::map<std::string, std::string>
+        m_status_code_description; // Map of status code to description
+    const std::map<HttpStatusCode, std::string>
+        m_status_code_html_page_map; // Map of status code to html page
 
     // Private member functions for initialization
     static std::vector<std::string> m_setStatusCodeList();
     static std::map<std::string, HttpStatusCode> m_setStringHttpStatusCodeMap();
     static std::map<HttpStatusCode, std::string> m_setHttpStatusCodeStringMap();
+    std::map<HttpStatusCode, std::string> m_setStatusCodeHtmlPageMap(std::vector<std::string> error_page);
 
 public:
     // Constructor
-    HttpStatusCodeHelper();
+    HttpStatusCodeHelper(std::vector<std::string> error_page = std::vector<std::string>());
 
     // Member functions to access data
     const std::string &httpStatusCodeStringMap(HttpStatusCode status_code)
