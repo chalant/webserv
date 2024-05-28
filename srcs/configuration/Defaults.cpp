@@ -9,7 +9,7 @@ Defaults::Defaults()
     m_directive_parameters[ "listen" ].push_back("8080");
     m_directive_parameters[ "server_name" ].push_back("default");
     m_directive_parameters[ "error_log" ].push_back("/logs/error.log");
-    m_directive_parameters[ "error_log" ].push_back("debug");
+    m_directive_parameters[ "error_log" ].push_back("verbose");
     m_directive_parameters[ "access_log" ].push_back("/logs/access.log");
     m_directive_parameters[ "deny" ].push_back("all");
     m_block_parameters[ "location" ].push_back("/");

@@ -57,7 +57,10 @@ assert response_status_line == "HTTP/1.1 413 Payload Too Large"
 print("\tPayload too large(413) test".ljust(34) + f"{GREEN}OK!{RESET}")
 
 # Terminate the server
-webserv.kill()
+webserv.send_signal(signal.SIGINT)
+
+# Wait for the server to terminate
+webserv.wait()
 
 # Clean up
 subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

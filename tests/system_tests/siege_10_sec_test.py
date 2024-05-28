@@ -34,6 +34,7 @@ time.sleep(12)
 
 # Check that availability is 100%
 siege_err = siege.stderr.read().decode()
+#print("siege_err: " + siege_err)
 assert "Availability:		      100.00 %" in siege_err
 #print("\tsiege_10_sec test".ljust(34) + f"{GREEN}OK!{RESET}")
 
@@ -41,7 +42,10 @@ assert "Availability:		      100.00 %" in siege_err
 siege.kill()
 
 # Terminate the server
-webserv.kill()
+webserv.send_signal(signal.SIGINT)
+
+# Wait for the server to close
+webserv.wait()
 
 # Clean up
 subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

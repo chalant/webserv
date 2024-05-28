@@ -38,11 +38,15 @@ time.sleep(1)
 
 # Test /hello.py
 response_body = getResponseBody(b'GET /hello.py HTTP/1.1\r\nHost: localhost\r\n\r\n')
+#print("response_body: " + response_body)
 assert response_body == "Hello, world!"
 #print("\thello.py test".ljust(34) + f"{GREEN}OK!{RESET}")
 
 # Terminate the server
-webserv.kill()
+webserv.send_signal(signal.SIGINT)
+
+# Wait for the server to terminate
+webserv.wait()
 
 # Clean up
 subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

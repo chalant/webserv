@@ -99,9 +99,13 @@ void Server::m_initializeServerSocket(int ip, int port, int max_connections)
     if (server_socket_descriptor < 0)
         throw SocketCreateError();
 
+    // Set server socket option to reuse address
+    if (m_socket.setReuseAddr(server_socket_descriptor) < 0)
+        throw SocketSetError();
+
     // Bind server socket to port
     if (m_socket.bind(server_socket_descriptor, ip, port) < 0)
-        throw SocketBindError();
+        throw SocketBindError(server_socket_descriptor, ip, port);
 
     // Listen for incoming connections
     if (m_socket.listen(server_socket_descriptor, max_connections) < 0)
@@ -161,3 +165,5 @@ void Server::acceptConnection(int server_socket_descriptor)
     m_logger.log(VERBOSE, "Accepted new connection from " + client_ip +
                                    ":" + client_port + ".");
 }
+
+// Path: /srcs/network/Server.cpp

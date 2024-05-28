@@ -14,26 +14,42 @@
  */
 
 // Constructor for PollFdManager class
-PollfdManager::PollfdManager(IConfiguration &configuration)
+PollfdManager::PollfdManager(IConfiguration &configuration, ILogger &logger)
     : m_pollfds(
           configuration.getBlocks("events")[ 0 ]->getInt("worker_connections") +
-          3) // + 3 for server socket, error log, and access log, or
-             // more in case of several server sockets
+          3), // + 3 for server socket, error log, and access log, or more in
+              // case of several server sockets
+      m_logger(logger)
 {
+    // Log the creation of the PollfdManager
+    m_logger.log(DEBUG,
+                 "PollfdManager created.");
 }
 
 // Destructor for PollFdManager class
-PollfdManager::~PollfdManager() {}
+PollfdManager::~PollfdManager() {
+    // Log the destruction of the PollfdManager
+    m_logger.log(DEBUG,
+                 "PollfdManager destroyed.");
+}
 
 // Method to add a polling file descriptor
-void PollfdManager::m_addPollfd(pollfd pollFd) { m_pollfds.push(pollFd); }
+void PollfdManager::m_addPollfd(pollfd pollFd)
+{
+    // Log the addition of a pollfd
+    m_logger.log(VERBOSE,
+                 "[POLLFDMANAGER] Adding pollfd for descriptor: " + std::to_string(pollFd.fd));
+    
+    // Add the pollfd to the pollfdQueue
+    m_pollfds.push(pollFd);
+}
 
 // Method to add a regular file pollfd to the pollfdQueue
 void PollfdManager::addRegularFilePollfd(pollfd pollFd)
 {
-    if (m_descriptor_type_map.find(pollFd.fd) !=
-        m_descriptor_type_map.end())
+    if (m_descriptor_type_map.find(pollFd.fd) != m_descriptor_type_map.end())
         return; // Flush is already pending
+
     m_descriptor_type_map[ pollFd.fd ] = REGULAR_FILE;
     m_addPollfd(pollFd);
 }
@@ -62,15 +78,16 @@ void PollfdManager::addPipePollfd(pollfd pollFd)
 // Method to remove a polling file descriptor
 void PollfdManager::removePollfd(int position)
 {
-    m_descriptor_type_map.erase(m_pollfds[ position ].fd);
+    int descriptor = m_pollfds[ position ].fd;
+    // Log the removal of a pollfd
+    m_logger.log(VERBOSE, "[POLLFDMANAGER] Removing pollfd for descriptor: " +
+                                        std::to_string(descriptor));
+    m_descriptor_type_map.erase(descriptor);
     m_pollfds.erase(position);
 }
 
 // Method to add the POLLOUT event for a specific position in the PollfdQueue
-void PollfdManager::addPollOut(int position)
-{
-    m_pollfds.pollout(position);
-}
+void PollfdManager::addPollOut(int position) { m_pollfds.pollout(position); }
 
 // Method to close all file descriptors in the PollfdQueue
 void PollfdManager::closeAllFileDescriptors()
@@ -78,15 +95,18 @@ void PollfdManager::closeAllFileDescriptors()
     for (size_t i = 0; i < m_pollfds.size(); i++)
     {
         if (m_pollfds[ i ].fd != -1)
+        {
+            // Log the closing of a file descriptor
+            m_logger.log(VERBOSE,
+                         "[POLLFDMANAGER] Closing file descriptor: " +
+                             std::to_string(m_pollfds[ i ].fd));
             close(m_pollfds[ i ].fd);
+        }
     }
 }
 
 // Method to get the size of the PollfdQueue
-size_t PollfdManager::getPollfdQueueSize() const
-{
-    return m_pollfds.size();
-}
+size_t PollfdManager::getPollfdQueueSize() const { return m_pollfds.size(); }
 
 // Method to get the events at a specific position in the PollfdQueue
 short PollfdManager::getEvents(int position)

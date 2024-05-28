@@ -33,13 +33,14 @@ private:
     PollfdQueue m_pollfds; // Queue for storing polling file descriptors
     std::map<int, DescriptorType>
         m_descriptor_type_map; // Map for storing the type of descriptor
+    ILogger &m_logger;         // Reference to the logger object
 
     // Method to add a polling file descriptor
     virtual void m_addPollfd(pollfd pollFd);
 
 public:
     // Constructor for PollfdManager class
-    PollfdManager(IConfiguration &configuration);
+    PollfdManager(IConfiguration &configuration, ILogger &logger);
 
     // Destructor for PollfdManager class
     ~PollfdManager();

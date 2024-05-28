@@ -25,7 +25,7 @@ int Socket::socket() const
     // protocol: protocol to be used with the socket (0 for default protocol)
     return ::socket(AF_INET, SOCK_STREAM, 0);
 }
-
+#include <iostream>
 // Binds the socket to an address
 int Socket::bind(int socket_descriptor, int ip, int port) const
 {
@@ -50,7 +50,13 @@ int Socket::bind(int socket_descriptor, int ip, int port) const
     {
         addr.sin_addr.s_addr = htonl(ip);
     }
-    return ::bind(socket_descriptor, (struct sockaddr *)&addr, sizeof(addr));
+    int return_value = ::bind(socket_descriptor, (struct sockaddr *)&addr, sizeof(addr));
+    if (return_value == -1)
+    {
+        std::cerr << "Error binding socket to address" << std::endl;
+        std::cerr << "Error code: " << errno << std::endl;
+    }
+    return return_value;
 }
 
 // Listens for incoming connections
@@ -154,3 +160,11 @@ ssize_t Socket::recv(int socket_descriptor, char *buffer, size_t len) const
     // an empty vector is returned on error
     return ::recv(socket_descriptor, buffer, len, MSG_DONTWAIT);
 }
+
+// Forcibly bind a socket to a port in use
+int Socket::setReuseAddr(int fd) const{
+    int optval = 1;
+    return setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+}
+
+// Path: srcs/network/socket.cpp

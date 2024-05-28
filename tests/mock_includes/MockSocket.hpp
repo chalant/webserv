@@ -56,6 +56,9 @@ public:
 
     // Receives data from the socket
     virtual ssize_t recv(int socket_descriptor, char *buffer, size_t len) const;
+
+    // Forcibly bind a socket to a port in use
+    virtual int setReuseAddr(int fd) const;
 };
 
 #endif // MOCKSOCKET_HPP

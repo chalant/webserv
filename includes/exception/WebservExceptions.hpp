@@ -44,6 +44,7 @@
  */
 
 #include "../constants/LogLevelHelper.hpp"
+#include "../utils/Converter.hpp"
 #include <exception>
 #include <sstream>
 #include <string>
@@ -143,6 +144,8 @@ class SocketBindError : public WebservException
 public:
     SocketBindError()
         : WebservException(CRITICAL, "Failed to bind socket.", 1) {};
+    SocketBindError(int socket_descriptor, int ip, int port)
+        : WebservException(CRITICAL, "Failed to bind socket #" + Converter::toString(socket_descriptor) + " to " + Converter::toString(ip) + ":" + Converter::toString(port), 1) {};
 };
 
 class ServerSocketError : public WebservException

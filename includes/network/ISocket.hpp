@@ -50,6 +50,9 @@ public:
     // Receives data from the socket
     virtual ssize_t recv(int socket_descriptor, char *buffer,
                          size_t len) const = 0;
+
+    // Forcibly bind a socket to a port in use
+    virtual int setReuseAddr(int fd) const = 0;
 };
 
 #endif // ISOCKET_HPP

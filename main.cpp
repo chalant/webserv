@@ -36,7 +36,6 @@
 
 int main(int argc, char **argv)
 {
-	close(5);
     // Instantiate the SignalHandler.
 	SignalHandler signalHandler;
 
@@ -76,7 +75,7 @@ int main(int argc, char **argv)
         // parse the configuration file
 
         // Instantiate the PollfdManager.
-        PollfdManager pollfd_manager(configuration);
+        PollfdManager pollfd_manager(configuration, logger);
 
         // Configure the logger
         LoggerConfiguration logger_configuration(buffer_manager, configuration,
