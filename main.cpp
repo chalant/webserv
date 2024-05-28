@@ -36,6 +36,7 @@
 
 int main(int argc, char **argv)
 {
+	close(5);
     // Instantiate the SignalHandler.
 	SignalHandler signalHandler;
 

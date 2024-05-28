@@ -136,12 +136,12 @@ std::string RequestParser::m_parseMethod(
     }
 
     // Check for unexpected end of request
-    // if (request_iterator == raw_request.end())
-    // {
-    //     throw HttpStatusCodeException(
-    //         BAD_REQUEST,
-    //         "Unexpected end of request"); // throw '400' status error
-    // }
+    if (request_iterator == raw_request.end())
+    {
+        throw HttpStatusCodeException(
+            BAD_REQUEST,
+            "Unexpected end of request"); // throw '400' status error
+    }
 
     // Move marker to next character
     ++request_iterator;
@@ -397,13 +397,13 @@ void RequestParser::m_parseBody(
     }
 
 	state.setContentRed(state.getContentRed() + (raw_request.end() - request_iterator));
-	m_logger.log(DEBUG, "Cuurent content red: " + Converter::toString(state.getContentRed()));
+	//m_logger.log(DEBUG, "Cuurent content red: " + Converter::toString(state.getContentRed()));
     //Check if body size exceeds client body buffer size
-    // if (body_size > m_configuration.getSize_t("client_body_buffer_size"))
-    // {
-    //     // throw '413' status error
-    //     throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
-    // }
+    if (static_cast<size_t>(state.getContentRed()) > m_configuration.getSize_t("client_body_buffer_size"))
+    {
+        // throw '413' status error
+        throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
+    }
 
     // Check if body size exceeds remaining request size
     // size_t remaining_request_size = raw_request.end() - request_iterator;
