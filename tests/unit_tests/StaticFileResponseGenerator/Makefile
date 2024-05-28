@@ -1,6 +1,7 @@
 NAME            = StaticFileResponseGenerator_test
 
 SOURCES         = StaticFileResponseGenerator_test_main.cpp \
+				  ../../../srcs/request/RequestState.cpp \
                   ../../../srcs/response/StaticFileResponseGenerator.cpp \
 				  ../../../srcs/constants/HttpStatusCodeHelper.cpp \
 				  ../../../srcs/constants/HttpMethodHelper.cpp \

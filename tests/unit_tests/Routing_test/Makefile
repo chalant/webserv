@@ -21,6 +21,7 @@ CC        	=   c++
 #-------------------SOURCES FILES----------------------
 				
 SRCS        =	main.cpp \
+				../../../srcs/request/RequestState.cpp \
 				../../../srcs/buffer/BufferManager.cpp \
 				../../../srcs/buffer/FileBuffer.cpp \
 				../../../srcs/buffer/SocketBuffer.cpp \

@@ -2,6 +2,7 @@ NAME            = Session_Cookies_test
 
 SOURCES         = Session_Cookies_test_main.cpp \
                   ../../../srcs/request/Request.cpp \
+				  ../../../srcs/request/RequestState.cpp \
 				  ../../../srcs/request/RequestParser.cpp \
 				  ../../../srcs/connection/ConnectionManager.cpp \
 				  ../../../srcs/response/Response.cpp \

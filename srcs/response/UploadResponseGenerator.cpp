@@ -28,8 +28,18 @@ Triplet_t	UploadResponseGenerator::generateResponse(const IRoute &route,
 			continue;
 
 		std::string	file_path = route.getRoot() + itr->filename;
-		file_path += configuration.getBlocks("types")[0]->getStringVector(itr->content_type)[0];
-
+		size_t	ext_pos = file_path.find(".");
+		if (file_path.find(".") == std::string::npos)
+		{
+			try
+			{
+				file_path += configuration.getBlocks("types")[0]->getStringVector(itr->content_type)[0];
+			}
+			catch(const std::exception& e)
+			{
+				m_logger.log(DEBUG, "Mime Type: " + itr->content_type + "not recognized");
+			}
+		}
 		m_logger.log(DEBUG, "Received upload request for: " + file_path);
 		// check if file exists.
 		if (stat(file_path.c_str(), &buffer) == 0 && !created)

@@ -9,6 +9,7 @@
  */
 
 #include "../../includes/request/IRequest.hpp" // Include the base interface header
+#include "../../includes/request/Request.hpp"
 
 class MockRequest : public IRequest
 {
@@ -28,7 +29,8 @@ private:
     bool m_test_upload_request;
 
     // Request body
-    std::vector<char> m_test_body;
+    std::vector<char>	m_test_body;
+	RequestState		m_state;
 
 public:
     // Constructor
@@ -75,6 +77,8 @@ public:
     virtual std::string getAuthority() const;
     virtual const std::vector<BodyParameter> &getBodyParameters() const;
     virtual bool isUploadRequest() const;
+	virtual RequestState		&getState(void);
+	virtual std::vector<char>	&getBody(void);
 
     // Setters
     virtual void setMethod(const std::string &method);

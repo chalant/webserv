@@ -1,6 +1,7 @@
 NAME            = Server_test
 
 SOURCES         = Server_test_main.cpp \
+				  ../../../srcs/request/RequestState.cpp \
                   ../../../srcs/network/Server.cpp \
 				  ../../../srcs/constants/HttpStatusCodeHelper.cpp \
 				  ../../../srcs/constants/HttpMethodHelper.cpp \

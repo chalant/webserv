@@ -1,6 +1,7 @@
 NAME            = RequestParser_test
 
 SOURCES         = RequestParser_test_main.cpp \
+				  ../../../srcs/request/RequestState.cpp \
                   ../../../srcs/request/RequestParser.cpp \
 				  ../../../srcs/parsing/Grammar.cpp \
 				  ../../../srcs/parsing/GrammarRule.cpp \

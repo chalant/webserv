@@ -140,6 +140,10 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
         // Add the POLLOUT event for the socket
         m_pollfd_manager.addPollOut(pollfd_index);
     }
+	else if (info.first == -2) //chunked data...
+	{
+		m_logger.log(ERROR, "YOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+	}
     else // read pipe returned
     {
         // Get the info

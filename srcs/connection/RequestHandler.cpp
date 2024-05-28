@@ -62,17 +62,39 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
     // Get a reference to the Response
     IResponse &response = connection.getResponse();
 
+	RequestState	&state = request.getState();
+
     try
     {
         // Read the raw request from the client
-        std::vector<char> raw_request = m_client_handler.readRequest();
-
-        // Parse the raw request into a Request object
-        m_request_parser.parseRequest(raw_request, request);
-
-        // Assign session to connection
+        std::vector<char>	raw_request = m_client_handler.readRequest();
+		// Assign session to connection
+		//m_request_parser.parseRequest(raw_request, request);
         m_connection_manager.assignSessionToConnection(connection, request,
-                                                           response);
+                    	                                     response);
+		if (state.initial())
+		{
+			m_request_parser.parseRequestHeader(raw_request, request);
+			state.initial(false);
+			if (!state.finished())
+			{
+				return Triplet_t(-2, std::pair<int, int>(-1, -1));
+			}
+		}
+		else if (!state.finished())
+		{
+			m_request_parser.parsePartialBody(raw_request, request);
+			if (!state.finished())
+			{
+				return Triplet_t(-2, std::pair<int, int>(-1, -1));
+			}
+		}
+		//finally, parse body parameters
+		m_request_parser.parseBodyParameters(request);
+		state.reset();
+        
+		// Parse the raw request into a Request object
+        //m_request_parser.parseRequest(raw_request, request);
 
         // Delete these 3 lines once router is implemented
         //(void)m_router;
@@ -109,7 +131,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         {
             // Push the response to the buffer
             m_sendResponse(socket_descriptor);
-            // return -1
+			request.getBody().clear();
             return Triplet_t(-1, std::pair<int, int>(-1, -1));
         }
     }

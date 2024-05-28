@@ -154,6 +154,9 @@ const std::vector<BodyParameter> &MockRequest::getBodyParameters() const
 
 bool MockRequest::isUploadRequest() const { return m_test_upload_request; };
 
+RequestState	&MockRequest::getState() { return m_state; }
+std::vector<char>	&MockRequest::getBody() { return m_test_body; }
+
 // Setters
 void MockRequest::setMethod(const std::string &method)
 {

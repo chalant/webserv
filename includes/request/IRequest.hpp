@@ -37,6 +37,28 @@ struct BodyParameter
                  // for both files and form fields
 };
 
+class RequestState
+{
+	private:
+		int		m_content_red;
+		int		m_content_length;
+		bool	m_initial;
+		bool	m_finished;
+	public:
+		RequestState();
+		bool	finished(void) const;
+		bool	initial(void) const;
+		int		getContentRed(void) const;
+		int		getContentLength(void) const;
+
+		void	finished(bool value);
+		void	initial(bool value);
+		void	incrementContentRed();
+		void	setContentRed(int value);
+		void	setContentLength(int value);
+		void	reset(void);
+};
+
 class IRequest
 {
 public:
@@ -66,6 +88,8 @@ public:
     virtual std::string getAuthority() const = 0;
     virtual const std::vector<BodyParameter> &getBodyParameters() const = 0;
     virtual bool isUploadRequest() const = 0;
+	virtual RequestState	&getState(void) = 0;
+	virtual	std::vector<char>	&getBody(void) = 0;
 
     // Setters
     virtual void setMethod(const std::string &method) = 0;

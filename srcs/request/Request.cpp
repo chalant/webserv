@@ -150,6 +150,8 @@ std::string Request::getBodyString() const
     return std::string(m_body.begin(), m_body.end());
 }
 
+std::vector<char>	&Request::getBody() { return m_body; }
+
 // Getter function for retrieving the query string
 std::string Request::getQueryString() const
 {
@@ -277,6 +279,8 @@ void Request::setMethod(const std::string &method)
     m_method = m_http_helper.stringHttpMethodMap(method);
 }
 
+RequestState	&Request::getState(void) { return m_state; }
+
 // Setter function for setting the URI of the request
 void Request::setUri(const std::string &uri)
 {
@@ -361,6 +365,11 @@ void Request::setBody(const std::string &body)
 
     // Set the body of the request
     this->setBody(bodyVector);
+}
+
+void Request::addBodyChar(char value)
+{
+	m_body.push_back(value);
 }
 
 // Function for adding a cookie to the request

@@ -1,7 +1,7 @@
 #include "../../includes/parsing/Parser.hpp"
 #include <iostream>
 
-/*The Parser is responsible for building a the ParseTree*/
+/*The Parser is responsible for building the ParseTree*/
 
 void print_chart(std::vector<std::vector<EarleyEdge> > &chart,
                  Grammar const &m_grammar)
@@ -58,7 +58,7 @@ static void print_parse_tree(ParseTree &parse_tree, int depth,
 }
 
 // inverts the earley sets and turns them into a graph, that will be used to
-// guide the parsing tree building processs.
+// guide the parsing tree building process.
 static void buildChart(std::vector<std::vector<EarleyEdge> > &chart,
                        std::vector<std::vector<EarleyItem> > &sets)
 {
@@ -196,8 +196,6 @@ void Parser::m_buildTree(ParseTree &parse_tree,
 
 ParseTree &Parser::parse(std::vector<Token> const &tokens)
 {
-    // todo: the recognizer should throw an exception if a parse is not
-    // possible. (syntax error)
     m_recognizer.recognize(tokens, m_grammar, m_earley_sets);
     buildChart(m_chart, m_earley_sets);
     setRootNode(*m_parse_tree, m_grammar, m_chart);

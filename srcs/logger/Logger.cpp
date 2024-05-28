@@ -107,7 +107,7 @@ int Logger::log(const IConnection &connection)
         return -1;
 
     // Get a reference to the Request and Response objects
-    const IRequest &request = connection.getRequest();
+    IRequest &request = connection.getRequest();
     const IResponse &response = connection.getResponse();
 
     std::string log_message;
@@ -131,7 +131,7 @@ int Logger::log(const IConnection &connection)
                           << response.getResponseSizeString() << "\",\n"
                           << "\tuser_agent=\""
                           << request.getHeaderValue(USER_AGENT) << "\",\n"
-                          << "\treferrer=\"" << request.getHeaderValue(REFERER)
+                          << "\treferrer=\"" << request.getHeaderValue(REFERER) << "\n"
                           << "\"\n";
 
         // Add request headers to the log message

@@ -23,6 +23,45 @@ RequestParser::RequestParser(const IConfiguration &configuration,
 {
 }
 
+void	RequestParser::parseRequestHeader(const std::vector<char> raw_request,
+										IRequest &request) const
+{
+	std::vector<char>::const_iterator it = raw_request.begin();
+
+    // Parse the request line
+    m_parseRequestLine(it, raw_request, request);
+
+    // Check for whitespace between request-line and first header field
+    if (m_isWhitespace(*it))
+    {
+        // throw '400' status error
+        throw HttpStatusCodeException(
+            BAD_REQUEST,
+            "whitespace between the start-line and the first header field");
+    }
+
+    m_parseHeaders(it, raw_request, request);
+	// std::string content_length_string =
+    //     request.getHeaderValue(CONTENT_LENGTH);
+    // if (content_length_string.empty() &&
+    // 	request.getHeaderValue(TRANSFER_ENCODING) != "chunked")
+    // {
+    //     m_logger.log(DEBUG, "\t\t[REQUESTPARSER] Content-Length is empty");
+    //     // throw '411' status error
+    //     throw HttpStatusCodeException(LENGTH_REQUIRED,
+    //                                   "no content-length header found");
+    // }
+	// request.getState().setContentLength(atoi(content_length_string.c_str()));
+	m_parseBody(it, raw_request, request);
+}
+
+void	RequestParser::parsePartialBody(const std::vector<char> raw_request,
+										IRequest &request) const
+{
+	std::vector<char>::const_iterator it = raw_request.begin();
+	m_parseBody(it, raw_request, request);
+}
+
 // Function to parse a raw HTTP request and convert it into a Request object
 void RequestParser::parseRequest(const std::vector<char> &raw_request,
                                  IRequest &parsed_request) const
@@ -50,12 +89,12 @@ void RequestParser::parseRequest(const std::vector<char> &raw_request,
     m_parseBody(it, raw_request, parsed_request);
 
     // Parse the Upload BodyParameters
-    if (parsed_request.getHeaderValue(CONTENT_TYPE)
-            .find("multipart/form-data") != std::string::npos)
-    {
-        m_parseBodyParameters(parsed_request);
-    }
-
+    // if (parsed_request.getHeaderValue(CONTENT_TYPE)
+    //         .find("multipart/form-data") != std::string::npos)
+    // {
+    //     parseBodyParameters(parsed_request);
+    // }
+	parseBodyParameters(parsed_request);
     m_logger.log(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
 }
 
@@ -97,12 +136,12 @@ std::string RequestParser::m_parseMethod(
     }
 
     // Check for unexpected end of request
-    if (request_iterator == raw_request.end())
-    {
-        throw HttpStatusCodeException(
-            BAD_REQUEST,
-            "Unexpected end of request"); // throw '400' status error
-    }
+    // if (request_iterator == raw_request.end())
+    // {
+    //     throw HttpStatusCodeException(
+    //         BAD_REQUEST,
+    //         "Unexpected end of request"); // throw '400' status error
+    // }
 
     // Move marker to next character
     ++request_iterator;
@@ -129,12 +168,12 @@ RequestParser::m_parseUri(std::vector<char>::const_iterator &request_iterator,
     }
 
     // Check for unexpected end of request
-    if (request_iterator == raw_request.end())
-    {
-        throw HttpStatusCodeException(
-            BAD_REQUEST,
-            "Unexpected end of request"); // throw '400' status error
-    }
+    // if (request_iterator == raw_request.end())
+    // {
+    //     throw HttpStatusCodeException(
+    //         BAD_REQUEST,
+    //         "Unexpected end of request"); // throw '400' status error
+    // }
 
     // Move marker to next character
     ++request_iterator;
@@ -175,12 +214,12 @@ std::string RequestParser::m_parseHttpVersion(
     }
 
     // Check for unexpected end of request
-    if (request_iterator == raw_request.end())
-    {
-        throw HttpStatusCodeException(
-            BAD_REQUEST,
-            "Unexpected end of request"); // throw '400' status error
-    }
+    // if (request_iterator == raw_request.end())
+    // {
+    //     throw HttpStatusCodeException(
+    //         BAD_REQUEST,
+    //         "Unexpected end of request"); // throw '400' status error
+    // }
 
     // Move marker passed CRLF
     request_iterator += 2;
@@ -204,7 +243,6 @@ void RequestParser::m_parseHeaders(
         // End of headers, break loop
         if (m_isCRLF(request_iterator))
             break;
-
         // Check for invalid characters
         if (m_isCharInSet(request_iterator, "\r\n"))
         {
@@ -217,10 +255,10 @@ void RequestParser::m_parseHeaders(
     }
 
     // Check for unexpected end of request
-    if (request_iterator == raw_request.end())
-    {
-        throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
-    }
+    // if (request_iterator == raw_request.end())
+    // {
+    //     throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
+    // }
 
     // Set authority in parsed request
     parsed_request.setAuthority();
@@ -275,10 +313,10 @@ void RequestParser::m_parseHeader(
     }
 
     // Check for unexpected end of request
-    if (request_iterator == raw_request.end())
-    {
-        throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
-    }
+    // if (request_iterator == raw_request.end())
+    // {
+    //     throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
+    // }
     // Check if header size exceeds client header buffer size
     if (client_header_buffer_size < 0)
     {
@@ -310,31 +348,29 @@ void RequestParser::m_parseHeader(
         m_parseCookie(header_value, parsed_request);
     }
 }
+
+#include <iostream>
 // Function to parse the body of an HTTP request
 void RequestParser::m_parseBody(
     std::vector<char>::const_iterator &request_iterator,
     const std::vector<char> &raw_request, IRequest &parsed_request) const
 {
+	RequestState	&state = parsed_request.getState();
     // If method is not POST or PUT, no need to parse body
     if (parsed_request.getMethodString() != "POST" &&
         parsed_request.getMethod() != PUT)
     {
-        return; // No need to parse body for other methods
+		state.finished(true);
+        return ; // No need to parse body for other methods
     }
-
     // Check if 'Transfer-Encoding' is chunked
     std::string transfer_encoding =
         parsed_request.getHeaderValue(TRANSFER_ENCODING);
     if (transfer_encoding == "chunked")
     {
         // Handle chunked encoding
-        std::vector<char> body =
-            m_unchunkBody(request_iterator, raw_request);
-
-        // Set unchunked body in parsed request
-        parsed_request.setBody(body);
-
-        return;
+        m_unchunkBody(request_iterator, raw_request, parsed_request);
+        return ;
     }
 
     // Check if 'content-length' header is required and missing
@@ -360,36 +396,45 @@ void RequestParser::m_parseBody(
                              content_length_string + ")");
     }
 
-    // Check if body size exceeds client body buffer size
-    if (body_size > m_configuration.getSize_t("client_body_buffer_size"))
-    {
-        // throw '413' status error
-        throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
-    }
+	state.setContentRed(state.getContentRed() + (raw_request.end() - request_iterator));
+	m_logger.log(DEBUG, "Cuurent content red: " + Converter::toString(state.getContentRed()));
+    //Check if body size exceeds client body buffer size
+    // if (body_size > m_configuration.getSize_t("client_body_buffer_size"))
+    // {
+    //     // throw '413' status error
+    //     throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
+    // }
 
     // Check if body size exceeds remaining request size
-    size_t remaining_request_size = raw_request.end() - request_iterator;
-    if (remaining_request_size < body_size)
-    {
-        // throw '400' status error
-        throw HttpStatusCodeException(
-            BAD_REQUEST, "body size exceeds remaining request size");
-    }
+    // size_t remaining_request_size = raw_request.end() - request_iterator;
+    // if (remaining_request_size < body_size)
+    // {
+    //     // throw '400' status error
+    //     throw HttpStatusCodeException(
+    //         BAD_REQUEST, "body size exceeds remaining request size");
+    // }
 
     // Extract body
-    std::vector<char> body(request_iterator, request_iterator + body_size);
-
+    //std::vector<char> body(request_iterator, request_iterator + body_size);
+	std::vector<char> &body = parsed_request.getBody();
+	body.insert(body.end(), request_iterator, raw_request.end());
+	//set the request state to finished once all the content has been red.
+	if (static_cast<size_t>(state.getContentRed()) == body_size)
+	{
+		state.finished(true);
+	}
     // Set body in parsed request
-    parsed_request.setBody(body);
+    //parsed_request.setBody(body);
 }
 
 // Function to unchunk the body of an HTTP request
-std::vector<char> RequestParser::m_unchunkBody(
+void	RequestParser::m_unchunkBody(
     std::vector<char>::const_iterator &request_iterator,
-    const std::vector<char> &raw_request) const
+    const std::vector<char> &raw_request, IRequest &request) const
 {
+	RequestState	&state = request.getState();
     // Initialize body vector
-    std::vector<char> body;
+    std::vector<char> &body = request.getBody();
 
     // Set Max Size
     size_t remaining_request_size =
@@ -406,32 +451,35 @@ std::vector<char> RequestParser::m_unchunkBody(
             ++request_iterator;
         }
 
-        // Check for last chunk
+        // Check for last chunk and set the request state to finished.
         if (chunk_size_string == "0")
+		{
+			state.finished(true);
             break;
+		}
 
         // Move marker passed CRLF
         request_iterator += 2;
 
         // Check for unexpected end of request
-        if (request_iterator == raw_request.end())
-        {
-            // throw '400' status error
-            throw HttpStatusCodeException(BAD_REQUEST,
-                                          "Unexpected end of request");
-        }
+        // if (request_iterator == raw_request.end())
+        // {
+        //     // throw '400' status error
+        //     throw HttpStatusCodeException(BAD_REQUEST,
+        //                                   "Unexpected end of request");
+        // }
 
         // Get chunk size
         size_t chunk_size = strtol(chunk_size_string.c_str(), NULL, 16);
 
         // Check if chunk size is valid
-        if (chunk_size <= 0)
-        {
-            // throw '400' status error
-            throw HttpStatusCodeException(BAD_REQUEST,
-                                          "chunk size conversion failed (" +
-                                              chunk_size_string + ")");
-        }
+        // if (chunk_size <= 0)
+        // {
+        //     // throw '400' status error
+        //     throw HttpStatusCodeException(BAD_REQUEST,
+        //                                   "chunk size conversion failed (" +
+        //                                       chunk_size_string + ")");
+        // }
 
         // Check if body size exceeds maximum client body buffer size
         if (remaining_request_size < chunk_size)
@@ -450,9 +498,6 @@ std::vector<char> RequestParser::m_unchunkBody(
         // Move marker passed CRLF
         request_iterator += 2;
     }
-
-    // Return body
-    return body;
 }
 
 // Function to parse cookies from the request
@@ -479,8 +524,13 @@ void RequestParser::m_parseCookie(std::string &cookie_header_value,
     }
 }
 
-void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
+void RequestParser::parseBodyParameters(IRequest &parsed_request) const
 {
+	if (parsed_request.getHeaderValue(CONTENT_TYPE)
+            .find("multipart/form-data") == std::string::npos)
+    {
+		return ;
+    }
     // Log the start of the body parameter parsing
     m_logger.log(VERBOSE, "[REQUESTPARSER] Parsing multipart request...");
 
@@ -490,7 +540,7 @@ void RequestParser::m_parseBodyParameters(IRequest &parsed_request) const
         "--" + content_type.substr(content_type.find("boundary=") + 9);
 
     // Get body stream
-    std::vector<char> body = parsed_request.getBody();
+    std::vector<char> &body = parsed_request.getBody();
     std::string body_string(body.begin(), body.end());
     std::istringstream body_stream(body_string);
 

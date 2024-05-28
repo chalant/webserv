@@ -1,6 +1,7 @@
 NAME            = CgiResponseGenerator_test
 
 SOURCES         = CgiResponseGenerator_test_main.cpp \
+				  ../../../srcs/request/RequestState.cpp \
                   ../../../srcs/response/CgiResponseGenerator.cpp \
 				  ../../../srcs/constants/HttpStatusCodeHelper.cpp \
 				  ../../../srcs/constants/HttpMethodHelper.cpp \
