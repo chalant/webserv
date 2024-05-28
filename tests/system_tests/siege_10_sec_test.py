@@ -17,16 +17,6 @@ def sigHandler(sig, frame):
     
 signal.signal(signal.SIGINT, sigHandler)
 
-def getResponseBody(request):
-    server_address = ('localhost', 8080)
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(server_address)
-    s.sendall(request)
-    response = s.recv(4096)
-    s.close()
-    # return the body of the response
-    return response.decode().splitlines()[-1]
-
 # Compile the project
 subprocess.run(['make', '-j8'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
@@ -36,10 +26,19 @@ webserv = subprocess.Popen(['./webserv'], cwd=os.path.join(os.path.dirname(__fil
 #Wait for the server to start
 time.sleep(1)
 
-# Test /hello.py
-response_body = getResponseBody(b'GET /hello.py HTTP/1.1\r\nHost: localhost\r\n\r\n')
-assert response_body == "Hello, world!"
-#print("\thello.py test".ljust(34) + f"{GREEN}OK!{RESET}")
+# Test the siege command
+siege = subprocess.Popen(['siege', '-b', '-t10s', '127.0.0.1:8080'], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+
+# Wait for siege to finish
+time.sleep(12)
+
+# Check that availability is 100%
+siege_err = siege.stderr.read().decode()
+assert "Availability:		      100.00 %" in siege_err
+#print("\tsiege_10_sec test".ljust(34) + f"{GREEN}OK!{RESET}")
+
+# Terminate siege just in case
+siege.kill()
 
 # Terminate the server
 webserv.kill()
