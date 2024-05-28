@@ -112,4 +112,15 @@ bool PollfdManager::hasReachedCapacity() const
 // Method to get a pointer to the pollfd array
 pollfd *PollfdManager::getPollfdArray() { return m_pollfds.data(); }
 
+// Method to get the index of a file descriptor in the PollfdQueue
+int PollfdManager::getPollfdQueueIndex(int fd)
+{
+    for (size_t i = 0; i < m_pollfds.size(); i++)
+    {
+        if (m_pollfds[ i ].fd == fd)
+            return i;
+    }
+    return -1;
+}
+
 // Path: srcs/PollfdManager.cpp

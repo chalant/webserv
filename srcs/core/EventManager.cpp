@@ -313,7 +313,12 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
 
         // Add the POLLOUT event for the client socket since the response is
         // ready
-        m_pollfd_manager.addPollOut(client_socket);
+        ssize_t client_pollfd_index =
+            m_pollfd_manager.getPollfdQueueIndex(client_socket);
+        if (client_pollfd_index == -1)
+            m_logger.log(ERROR, "[EVENTMANAGER] Client socket not found in poll set");
+        else
+            m_pollfd_manager.addPollOut(client_pollfd_index);
 
         // Clear buffer, remove from polling and close pipe
         m_cleanUp(pollfd_index, pipe_descriptor);

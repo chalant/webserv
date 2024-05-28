@@ -216,7 +216,13 @@ void Response::setCgiResponse(std::vector<char> response)
 
     // Set the body
     if (crlf_pos != std::string::npos)
-        this->setBody(response_string.substr(crlf_pos + 2));
+    {
+        std::string body = response_string.substr(crlf_pos + 2);
+        // Remove trailing CRLF
+        if (body.find("\r\n") == body.length() - 2)
+            body = body.substr(0, body.length() - 2);
+        this->setBody(body);
+    }
 
     // Set missing headers
     if (m_headers.find("content-length") == m_headers.end())

@@ -81,6 +81,9 @@ public:
 
     // Method to get a pointer to the pollfd array
     virtual pollfd *getPollfdArray();
+
+    // Method to get the current pollfd queue index given a file descriptor
+    virtual int getPollfdQueueIndex(int fd);
 };
 
 #endif // POLLFDMANAGER_HPP

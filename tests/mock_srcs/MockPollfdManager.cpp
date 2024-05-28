@@ -62,4 +62,8 @@ bool MockPollfdManager::hasReachedCapacity() const { return false; }
 
 pollfd *MockPollfdManager::getPollfdArray() { return NULL; }
 
+int MockPollfdManager::getPollfdQueueIndex(int fd) { 
+    static_cast<void>(fd);
+    return 0; }
+
 // Path: tests/mock_srcs/MockPollfdManager.cpp
