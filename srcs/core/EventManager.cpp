@@ -144,28 +144,28 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
     {
         // Get the info
         int cgi_pid = info.first;
-        int response_read_pipe = info.second.first;
-        int request_write_pipe = info.second.second;
+        int cgi_output_pipe_read_end = info.second.first;
+        int cgi_input_pipe_write_end = info.second.second;
 
         // Log the dynamic serving
         m_logger.log(
             VERBOSE, "[EVENTMANAGER] Dynamically serving client socket: " +
                          Converter::toString(client_socket_descriptor) +
                          " waiting for process " + Converter::toString(cgi_pid) +
-                         " (response read pipe: " +
-                         Converter::toString(response_read_pipe) +
-                         ", request write pipe: " +
-                         Converter::toString(request_write_pipe) + ")");
+                         " (CGI output pipe Read end: " +
+                         Converter::toString(cgi_output_pipe_read_end) +
+                         ", CGI input pipe Write end: " +
+                         Converter::toString(cgi_input_pipe_write_end) + ")");
 
-        // Add the response read pipe to the poll set
+        // Add the CGI output pipe Read end to the poll set
         pollfd pollfd;
-        pollfd.fd = response_read_pipe;
+        pollfd.fd = cgi_output_pipe_read_end;
         pollfd.events = POLLIN;
         pollfd.revents = 0;
         m_pollfd_manager.addPipePollfd(pollfd);
 
-        // Add the request write pipe to the poll set
-        pollfd.fd = request_write_pipe;
+        // Add the CGI input pipe Write end to the poll set
+        pollfd.fd = cgi_input_pipe_write_end;
         pollfd.events = POLLOUT;
         pollfd.revents = 0;
         m_pollfd_manager.addPipePollfd(pollfd);

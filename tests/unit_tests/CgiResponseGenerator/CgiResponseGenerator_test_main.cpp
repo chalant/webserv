@@ -34,8 +34,9 @@ int main()
         conf_loader.loadConfiguration("test_configuration.conf");
 
     // Set Mock Configuration Variables
-    // mock_configuration_block.setString("PhpCgiPath", "/usr/bin/php-cgi");
-    // mock_configuration_block.setString("PythonCgiPath", "/usr/bin/python3");
+    // mock_configuration_block.setString("php_cgi_path", "/usr/bin/php-cgi");
+    // mock_configuration_block.setString("python_cgi_path",
+    // "/usr/bin/python3");
 
     // Declare cgi info
     Triplet_t cgi_info; // <cgi_pid, <response_read_pipe, request_write_pipe> >
@@ -67,9 +68,9 @@ int main()
 
     // Read the response
     ssize_t bytes_read;
-    while ((bytes_read =
-                read(response_read_pipe, read_buffer, sizeof(read_buffer))) <= 0)
-        ;                           // wait for the response
+    while ((bytes_read = read(response_read_pipe, read_buffer,
+                              sizeof(read_buffer))) <= 0)
+        ;                             // wait for the response
     read_buffer[ bytes_read ] = '\0'; // Null-terminate the string
 
     // Close the pipe
@@ -99,9 +100,9 @@ int main()
     response_read_pipe = cgi_info.second.first;
 
     // Read the response
-    while ((bytes_read =
-                read(response_read_pipe, read_buffer, sizeof(read_buffer))) <= 0)
-        ;                           // wait for the response
+    while ((bytes_read = read(response_read_pipe, read_buffer,
+                              sizeof(read_buffer))) <= 0)
+        ;                             // wait for the response
     read_buffer[ bytes_read ] = '\0'; // Null-terminate the string
 
     // Close the pipe
@@ -142,9 +143,9 @@ int main()
           mock_request.getBody().size());
 
     // Read the response
-    while ((bytes_read =
-                read(response_read_pipe, read_buffer, sizeof(read_buffer))) <= 0)
-        ;                           // wait for the response
+    while ((bytes_read = read(response_read_pipe, read_buffer,
+                              sizeof(read_buffer))) <= 0)
+        ;                             // wait for the response
     read_buffer[ bytes_read ] = '\0'; // Null-terminate the string
 
     // Close the pipe

@@ -1,6 +1,7 @@
 #include "../../includes/connection/RequestHandler.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <unistd.h>
 #include <utility>
 
 /*
@@ -89,18 +90,18 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         {
             // Get CGI Info
             int cgi_pid = cgi_info.first;
-            int response_read_pipe = cgi_info.second.first;
-            int request_write_pipe = cgi_info.second.second;
+            int cgi_output_pipe_read_end = cgi_info.second.first;
+            int cgi_input_pipe_write_end = cgi_info.second.second;
 
             // Record the cgi info
-            connection.setCgiInfo(cgi_pid, response_read_pipe, request_write_pipe);
+            connection.setCgiInfo(cgi_pid, cgi_output_pipe_read_end, cgi_input_pipe_write_end);
 
             // Record the pipes to connection socket mappings
-            m_pipe_routes[ response_read_pipe ] = socket_descriptor;
-            m_pipe_routes[ request_write_pipe ] = socket_descriptor;
+            m_pipe_routes[ cgi_output_pipe_read_end ] = socket_descriptor;
+            m_pipe_routes[ cgi_input_pipe_write_end ] = socket_descriptor;
 
             // Push the request body to the request pipe
-            m_buffer_manager.pushSocketBuffer(request_write_pipe,
+            m_buffer_manager.pushFileBuffer(cgi_input_pipe_write_end,
                                                   request.getBody());
 
             return cgi_info; // cgi content
@@ -154,22 +155,30 @@ int RequestHandler::handlePipeException(int pipe_descriptor)
     // Return the client socket descriptor
     return client_socket;
 }
-
+#include <iostream>
 // Handles read input from pipe - responses larger than the buffer size are
 // currently not supported
-int RequestHandler::handlePipeRead(int pipe_descriptor)
+int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
 {
+    std::cout << "handlePipeRead" << std::endl;
     // Get the client socket descriptor linked to the pipe
-    int client_socket = m_pipe_routes[ pipe_descriptor ];
-
-    // Remove the pipe descriptor from the map
-    m_pipe_routes.erase(pipe_descriptor);
+    int client_socket = m_pipe_routes[ cgi_output_pipe_read_end ];
 
     // Give the ClientHandler the current socket descriptor
     m_client_handler.setSocketDescriptor(client_socket);
 
     // Read the response from the pipe
-    std::vector<char> raw_response = m_client_handler.readRequest();
+    std::vector<char> raw_response(4096, 0);
+    ssize_t bytesread = read(cgi_output_pipe_read_end, raw_response.data(), raw_response.size());
+    if (bytesread < 0)
+    {
+        // Handle error response
+        this->handleErrorResponse(client_socket, INTERNAL_SERVER_ERROR);
+        return client_socket;
+    }
+    raw_response.resize(bytesread);
+
+    std::cerr << "Response: " << raw_response.data() << "END OF RESPONSE" << std::endl;
 
     // Get a reference to the Response
     IResponse &response = m_connection_manager.getResponse(client_socket);
@@ -178,10 +187,27 @@ int RequestHandler::handlePipeRead(int pipe_descriptor)
     if (raw_response.empty()) // Check if the response is empty
         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
     else
-        response.setResponse(raw_response); // Good response
+        response.setCgiResponse(raw_response); // Good response
 
     // Push the response to the buffer
     m_sendResponse(client_socket);
+
+    // Clean up
+
+    // Get a reference to the Connection
+    IConnection &connection =
+        m_connection_manager.getConnection(client_socket);
+
+    // Get the CGI input pipe write end
+    int cgi_input_pipe_write_end = connection.getCgiInputPipeWriteEnd();
+
+    // Remove the descriptors from the pipe;socket map
+    m_pipe_routes.erase(cgi_output_pipe_read_end);
+    m_pipe_routes.erase(cgi_input_pipe_write_end);
+
+    // Close the pipes
+    close(cgi_output_pipe_read_end);
+    close(cgi_input_pipe_write_end);
 
     // Return the client socket descriptor
     return client_socket;

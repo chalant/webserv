@@ -27,7 +27,9 @@ int MockConnection::getPort() const { return 0; }
 
 std::string MockConnection::getRemoteAddress() const { return std::string(); }
 
-int MockConnection::getResponseReadPipeFd() const { return 0; }
+int MockConnection::getCgiInputPipeWriteEnd() const { return 0; }
+
+int MockConnection::getCgiOutputPipeReadEnd() const { return 0; }
 
 IRequest &MockConnection::getRequest() const { return *this->_m_request; }
 

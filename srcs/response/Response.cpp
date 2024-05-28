@@ -1,5 +1,6 @@
 #include "../../includes/response/Response.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <cstddef>
 
 /*
  * Response class
@@ -25,13 +26,12 @@ std::string Response::getStatusLine() const { return m_status_line; }
 std::string Response::getHeaders() const
 {
     std::string headers;
-    for (std::map<HttpHeader, std::string>::const_iterator it =
+    for (std::map<std::string, std::string>::const_iterator it =
              m_headers.begin();
          it != m_headers.end(); it++)
     {
         // Construct each header line in the format "HeaderName: Value\r\n"
-        headers += m_http_helper.httpHeaderStringMap(it->first) + ": " +
-                   it->second + "\r\n";
+        headers += it->first + ": " + it->second + "\r\n";
     }
     return headers;
 }
@@ -64,10 +64,9 @@ void Response::setHeaders(std::vector<std::string> headers)
         std::string header = *it;
         std::string header_name = header.substr(0, header.find(":"));
         std::string header_value = header.substr(header.find(":") + 1);
-        HttpHeader header_enum =
-            m_http_helper.stringHttpHeaderMap(header_name);
+
         // Add header to the map
-        m_headers[ header_enum ] = header_value;
+        m_headers[ header_name ] = header_value;
     }
 }
 
@@ -81,24 +80,36 @@ void Response::setHeaders(std::string headers)
         headers = headers.substr(headers.find("\r\n") + 2);
         std::string header_name = header.substr(0, header.find(":"));
         std::string header_value = header.substr(header.find(":") + 1);
-        HttpHeader header_enum =
-            m_http_helper.stringHttpHeaderMap(header_name);
+
         // Add header to the map
-        m_headers[ header_enum ] = header_value;
+        m_headers[ header_name ] = header_value;
     }
 }
 
 // Add a header to the map - Enum, string input
 void Response::addHeader(HttpHeader header, std::string value)
 {
-    m_headers[ header ] = value;
+    this->addHeader(m_http_helper.httpHeaderStringMap(header), value);
 }
 
 // Add a header to the map - string, string input
 void Response::addHeader(std::string header, std::string value)
 {
-    HttpHeader header_enum = m_http_helper.stringHttpHeaderMap(header);
-    m_headers[ header_enum ] = value;
+    m_headers[ header ] = value;
+}
+
+// Add a header to the map - single string input
+void Response::addHeader(std::string header)
+{
+    // Get the position of the colon in the header
+    size_t colon_pos = header.find(":");
+
+    // Extract the header name and value
+    std::string header_name = header.substr(0, colon_pos);
+    std::string header_value = header.substr(colon_pos + 1);
+
+    // Add the header to the map
+    this->addHeader(header_name, header_value);
 }
 
 // Add a cookie to the map
@@ -116,7 +127,7 @@ void Response::addCookieHeaders()
     {
         // Construct the Set-Cookie header for the current cookie
         std::string cookie_header = it->first + "=" + it->second +
-                                   "; HttpOnly; Secure; SameSite=Strict;";
+                                    "; HttpOnly; Secure; SameSite=Strict;";
 
         // Add the Set-Cookie header to the response
         this->addHeader(SET_COOKIE, cookie_header);
@@ -156,15 +167,67 @@ void Response::setErrorResponse(int status_code)
     this->setErrorResponse(static_cast<HttpStatusCode>(status_code));
 }
 
-// Set all response fields from a complete response vector
-void Response::setResponse(std::vector<char> response)
+// Set response from a CGI response
+void Response::setCgiResponse(std::vector<char> response)
 {
+    // Replace all LF with CRLF where needed
+    for (std::vector<char>::iterator it = response.begin();
+         it != response.end(); it++)
+        if (*it != '\r' && (it + 1) != response.end() && *(it + 1) == '\n')
+            it = response.insert(it + 1, '\r');
+
     // Parse the response vector
     std::string response_string(response.begin(), response.end());
-    m_status_line = response_string.substr(0, response_string.find("\r\n"));
-    response_string = response_string.substr(response_string.find("\r\n") + 2);
-    this->setHeaders(response_string.substr(0, response_string.find("\r\n\r\n")));
-    this->setBody(response_string.substr(response_string.find("\r\n\r\n") + 4));
+
+    // Get the first line of the response
+    std::string line = response_string.substr(0, response_string.find("\r\n"));
+
+    // Check if it is a status line or a header
+    if (line.find("HTTP") != std::string::npos)
+    {
+        // Set the status line
+        this->setStatusLine(line);
+        response_string =
+            response_string.substr(response_string.find("\r\n") + 2);
+    }
+    else
+    {
+        // Set the default status line
+        this->setStatusLine(OK);
+    }
+
+    // Set the headers
+    size_t crlf_pos = response_string.find("\r\n");
+    // starting with CRLF indicates the end of the headers
+    while (crlf_pos != 0 && crlf_pos != std::string::npos)
+    {
+        // Get the header excluding the CRLF
+        std::string header = response_string.substr(0, crlf_pos);
+
+        // Add the header to the response
+        this->addHeader(header);
+
+        // Move to the next header
+        response_string = response_string.substr(crlf_pos + 2);
+
+        // Find the next CRLF
+        crlf_pos = response_string.find("\r\n");
+    }
+
+    // Set the body
+    if (crlf_pos != std::string::npos)
+        this->setBody(response_string.substr(crlf_pos + 2));
+
+    // Set missing headers
+    if (m_headers.find("content-length") == m_headers.end())
+        this->addHeader("content-length: " +
+                        Converter::toString(m_body.size()));
+    if (m_headers.find("content-type") == m_headers.end())
+        this->addHeader("content-type: text/html");
+    if (m_headers.find("connection") == m_headers.end())
+        this->addHeader("connection: close");
+    if (m_headers.find("server") == m_headers.end())
+        this->addHeader("server: webserv/1.0");
 }
 
 // Extract the status code from the status line
@@ -177,15 +240,13 @@ std::string Response::getStatusCodeString() const
 std::string Response::getResponseSizeString() const
 {
     return Converter::toString(m_status_line.length() +
-                               this->getHeaders().length() +
-                               m_body.size());
+                               this->getHeaders().length() + m_body.size());
 }
 
 // Calculate the size of the response in bytes
 size_t Response::getResponseSize() const
 {
-    return m_status_line.length() + this->getHeaders().length() +
-           m_body.size();
+    return m_status_line.length() + this->getHeaders().length() + m_body.size();
 }
 
 // Get the map of cookies
@@ -197,8 +258,7 @@ std::map<std::string, std::string> Response::getCookiesMap() const
 // Get a specific cookie from the map
 std::string Response::getCookie(const std::string &key) const
 {
-    std::map<std::string, std::string>::const_iterator it =
-        m_cookies.find(key);
+    std::map<std::string, std::string>::const_iterator it = m_cookies.find(key);
     if (it != m_cookies.end())
     {
         return it->second;
@@ -209,15 +269,7 @@ std::string Response::getCookie(const std::string &key) const
 // Convert headers to a map of strings
 std::map<std::string, std::string> Response::getHeadersStringMap() const
 {
-    std::map<std::string, std::string> headers;
-    for (std::map<HttpHeader, std::string>::const_iterator it =
-             m_headers.begin();
-         it != m_headers.end(); it++)
-    {
-        headers[ m_http_helper.httpHeaderStringMap(it->first) ] =
-            it->second;
-    }
-    return headers;
+    return m_headers;
 }
 
 // Serialise the response into a vector of chars
@@ -226,8 +278,7 @@ std::vector<char> Response::serialise()
     std::vector<char> response;
 
     // Add status line
-    response.insert(response.end(), m_status_line.begin(),
-                    m_status_line.end());
+    response.insert(response.end(), m_status_line.begin(), m_status_line.end());
 
     // Add headers
     this->addCookieHeaders(); // Add cookies to the headers first

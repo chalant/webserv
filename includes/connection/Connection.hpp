@@ -27,8 +27,8 @@ private:
     std::string m_ip;            // Client's IP address
     int m_port;                  // Port number
     std::string m_remote_address; // Remote address
-    int m_response_read_pipe_fd;    // Read pipe descriptor for the response
-    int m_request_write_pipe_fd;    // Write pipe descriptor for the request
+    int m_cgi_output_pipe_read_end;    // Read pipe descriptor for the response
+    int m_cgi_input_pipe_write_end;    // Write pipe descriptor for the request
     int m_cgi_pid;                // PID of the CGI process
     ILogger &m_logger;           // Reference to the logger
     IRequest *m_request;         // Pointer to the request object
@@ -51,7 +51,8 @@ public:
     virtual std::string getIp() const;
     virtual int getPort() const;
     virtual std::string getRemoteAddress() const;
-    virtual int getResponseReadPipeFd() const;
+    virtual int getCgiInputPipeWriteEnd() const;
+    virtual int getCgiOutputPipeReadEnd() const;
     virtual IRequest &getRequest() const;
     virtual IResponse &getResponse() const;
     virtual ISession &getSession() const;

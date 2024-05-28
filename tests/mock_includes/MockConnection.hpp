@@ -30,7 +30,8 @@ public:
     std::string getIp() const;
     int getPort() const;
     std::string getRemoteAddress() const;
-    int getResponseReadPipeFd() const;
+    virtual int getCgiInputPipeWriteEnd() const;
+    virtual int getCgiOutputPipeReadEnd() const;
     IRequest &getRequest() const;
     IResponse &getResponse() const;
     ISession &getSession() const;

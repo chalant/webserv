@@ -19,7 +19,7 @@ private:
     std::string m_status_line;
 
     // Response headers
-    std::map<HttpHeader, std::string> m_headers;
+    std::map<std::string, std::string> m_headers;
 
     // Response body
     std::vector<char> m_body;
@@ -50,6 +50,7 @@ public:
     virtual void setHeaders(std::string headers);
     virtual void addHeader(HttpHeader header, std::string value);
     virtual void addHeader(std::string header, std::string value);
+    virtual void addHeader(std::string header);
     virtual void addCookie(std::string key, std::string value);
     virtual void addCookieHeaders();
     virtual void setBody(std::string body);
@@ -60,7 +61,7 @@ public:
     virtual void setErrorResponse(int status_code);
 
     // Set response fields from a complete response vector
-    virtual void setResponse(std::vector<char> response);
+    virtual void setCgiResponse(std::vector<char> response);
 
     // Getters for specific parts of the response
     virtual std::string getStatusCodeString() const;

@@ -51,8 +51,7 @@ void MockResponse::setHeaders(std::vector<std::string> headers)
         std::string header = *it;
         std::string header_name = header.substr(0, header.find(":"));
         std::string header_value = header.substr(header.find(":") + 1);
-        HttpHeader header_enum =
-            m_http_helper.stringHttpHeaderMap(header_name);
+        HttpHeader header_enum = m_http_helper.stringHttpHeaderMap(header_name);
         // Add header to the map
         m_headers[ header_enum ] = header_value;
     }
@@ -67,8 +66,7 @@ void MockResponse::setHeaders(std::string headers)
         headers = headers.substr(headers.find("\r\n") + 2);
         std::string header_name = header.substr(0, header.find(":"));
         std::string header_value = header.substr(header.find(":") + 1);
-        HttpHeader header_enum =
-            m_http_helper.stringHttpHeaderMap(header_name);
+        HttpHeader header_enum = m_http_helper.stringHttpHeaderMap(header_name);
         // Add header to the map
         m_headers[ header_enum ] = header_value;
     }
@@ -85,6 +83,8 @@ void MockResponse::addHeader(std::string header, std::string value)
     (void)header;
     (void)value;
 }
+
+void MockResponse::addHeader(std::string header) { (void)header; }
 
 void MockResponse::addCookie(std::string key, std::string value)
 {
@@ -118,7 +118,10 @@ void MockResponse::setErrorResponse(HttpStatusCode status_code)
 void MockResponse::setErrorResponse(int status_code) { (void)status_code; }
 
 // Set response fields from a complete response vector
-void MockResponse::setResponse(std::vector<char> response) { (void)response; }
+void MockResponse::setCgiResponse(std::vector<char> response)
+{
+    (void)response;
+}
 
 // Getters for specific parts of the response
 std::string MockResponse::getStatusCodeString() const { return ""; }

@@ -17,6 +17,7 @@ Defaults::Defaults()
     m_directive_parameters[ "root" ].push_back("sample_site");
     m_directive_parameters[ "index" ].push_back("index.html");
     m_directive_parameters[ "path" ].push_back("/"); // temp for testing
+    m_directive_parameters[ "python_cgi_path" ].push_back("/usr/bin/python3");
 }
 
 Defaults::~Defaults() {}
