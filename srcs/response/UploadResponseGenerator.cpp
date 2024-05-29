@@ -45,7 +45,7 @@ Triplet_t	UploadResponseGenerator::generateResponse(const IRoute &route,
 		{
 			created = true;
 		}
-		std::ofstream	file(file_path.c_str());
+		std::ofstream	file(file_path.c_str(), std::ios::binary);
 		if (!file.is_open())
 		{
 			m_logger.log(ERROR, "Failed to open file for write: " + file_path);

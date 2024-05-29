@@ -121,9 +121,8 @@ std::string RequestParser::m_parseMethod(
     const std::vector<char> &raw_request) const
 {
     std::string method;
-
     // Skip leading CRLF
-    while (m_isCRLF(request_iterator))
+    while (raw_request.end() - request_iterator >= 2 && m_isCRLF(request_iterator))
     {
         request_iterator += 2;
     }
