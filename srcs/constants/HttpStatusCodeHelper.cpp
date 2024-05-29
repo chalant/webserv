@@ -434,7 +434,7 @@ std::map<HttpStatusCode, std::string> HttpStatusCodeHelper::m_setStatusCodeHtmlP
         // open the file
         std::string path = it->data();
         path.insert(0, ".");
-        std::ifstream file_stream(path);
+        std::ifstream file_stream(path.c_str());
 
         // check if the file is open
         if (!file_stream.is_open())

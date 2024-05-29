@@ -3,6 +3,7 @@
 #include "../../includes/response/StaticFileResponseGenerator.hpp"
 #include "../../includes/response/UploadResponseGenerator.hpp"
 #include "../../includes/response/CgiResponseGenerator.hpp"
+#include "../../includes/utils/Converter.hpp"
 
 /*TempRouter: Selects the right 'ResponseGenerator' based on URI (etc.)
 in the 'IRequest' (each locationblock in the conf file corresponds
@@ -75,7 +76,7 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
 	Triplet_t return_value = route->getResponseGenerator()->generateResponse(*route, *request, *response, m_configuration, script_name);
 
     // print return value
-    m_logger.log(DEBUG, "Return value: " + std::to_string(return_value.first) + " " + std::to_string(return_value.second.first) + " " + std::to_string(return_value.second.second));
+    m_logger.log(DEBUG, "Return value: " + Converter::toString(return_value.first) + " " + Converter::toString(return_value.second.first) + " " + Converter::toString(return_value.second.second));
 
     return return_value;
 }

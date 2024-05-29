@@ -1,4 +1,5 @@
 #include "../../includes/pollfd/PollfdManager.hpp"
+#include "../../includes/utils/Converter.hpp"
 
 /*
  * PollfdManager.hpp
@@ -38,7 +39,7 @@ void PollfdManager::m_addPollfd(pollfd pollFd)
 {
     // Log the addition of a pollfd
     m_logger.log(VERBOSE,
-                 "[POLLFDMANAGER] Adding pollfd for descriptor: " + std::to_string(pollFd.fd));
+                 "[POLLFDMANAGER] Adding pollfd for descriptor: " + Converter::toString(pollFd.fd));
     
     // Add the pollfd to the pollfdQueue
     m_pollfds.push(pollFd);
@@ -81,7 +82,7 @@ void PollfdManager::removePollfd(int position)
     int descriptor = m_pollfds[ position ].fd;
     // Log the removal of a pollfd
     m_logger.log(VERBOSE, "[POLLFDMANAGER] Removing pollfd for descriptor: " +
-                                        std::to_string(descriptor));
+                                        Converter::toString(descriptor));
     m_descriptor_type_map.erase(descriptor);
     m_pollfds.erase(position);
 }
@@ -99,7 +100,7 @@ void PollfdManager::closeAllFileDescriptors()
             // Log the closing of a file descriptor
             m_logger.log(VERBOSE,
                          "[POLLFDMANAGER] Closing file descriptor: " +
-                             std::to_string(m_pollfds[ i ].fd));
+                             Converter::toString(m_pollfds[ i ].fd));
             close(m_pollfds[ i ].fd);
         }
     }
