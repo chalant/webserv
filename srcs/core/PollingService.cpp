@@ -1,6 +1,7 @@
 #include "../../includes/core/PollingService.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <cerrno>
 
 PollingService::PollingService(IPollfdManager &pollfd_manager, ILogger &logger,
                                int timeout)

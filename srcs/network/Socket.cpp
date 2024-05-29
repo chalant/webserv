@@ -2,6 +2,7 @@
 #include <sstream>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <cerrno>
 
 /*
  * Socket - Class for socket operations.

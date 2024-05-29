@@ -218,7 +218,7 @@ char *CgiResponseGenerator::m_getScriptPath(const std::string &script_name,
     std::string prefix = route.getPath();
 
     // Append a slash if the prefix does not end with a slash
-    if (prefix.back() != '/')
+    if (prefix[prefix.size() - 1] != '/')
         prefix += '/';
 
     // Return the script path without the query string
