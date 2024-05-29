@@ -27,6 +27,7 @@ int Socket::socket() const
     return ::socket(AF_INET, SOCK_STREAM, 0);
 }
 #include <iostream>
+#include <cerrno>
 // Binds the socket to an address
 int Socket::bind(int socket_descriptor, int ip, int port) const
 {

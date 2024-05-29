@@ -75,7 +75,7 @@ def run_tests(test_folder):
 def main():
     print(f"{YELLOW}Running Webserv Test Suite...{RESET}")
 
-    for folder in ('system_tests', 'unit_tests', 'integration_tests', 'system_tests'):
+    for folder in ('unit_tests', 'integration_tests', 'system_tests'):
         print(f"{YELLOW}\n\t{folder}:{RESET}")
         run_tests(folder)
 
