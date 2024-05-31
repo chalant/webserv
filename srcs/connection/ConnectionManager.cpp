@@ -49,6 +49,11 @@ ConnectionManager::~ConnectionManager()
 void ConnectionManager::addConnection(
     std::pair<int, std::pair<std::string, std::string> > client_info)
 {
+	//remove connection if it already exists
+	if (m_connections.find(client_info.first) != m_connections.end())
+	{
+		this->removeConnection(client_info.first);
+	}
     IConnection *connection = m_factory.createConnection(client_info);
     m_connections[ client_info.first ] = connection;
 
@@ -259,7 +264,7 @@ void ConnectionManager::collectGarbage()
 
     for (size_t i = 0; i < connections_to_erase.size(); i++)
     {
-        m_sessions.erase(connections_to_erase[ i ]);
+        m_connections.erase(connections_to_erase[ i ]);
     }
     // Calculate the number of sessions retired
     size_t retired_sessions = session_count - m_sessions.size();
