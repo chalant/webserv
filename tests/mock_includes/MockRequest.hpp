@@ -25,6 +25,9 @@ private:
     // Body parameters
     std::vector<BodyParameter> m_test_body_parameters;
 
+    // Buffer
+    std::vector<char> m_test_buffer;
+
     // Upload request flag
     bool m_test_upload_request;
 

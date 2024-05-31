@@ -91,6 +91,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             std::string buffer_str(buffer.begin(), buffer.end());
             if (buffer_str.find("\r\n\r\n") != std::string::npos)
             {
+                state.initial(false);
                 state.headers(true); // Because we now have all the headers
             }
             else

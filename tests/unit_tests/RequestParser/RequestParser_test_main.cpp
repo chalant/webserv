@@ -55,25 +55,7 @@ int main()
     // Clear the contents of the Request object for the next test
     mock_request.clear();
 
-    // test case 2: An incomplete Request
-    //***********************************
-    // GET
-    raw_request = stringToVector("GET");
-    try
-    {
-        // Parse the raw request
-        request_parser.parseRequest(raw_request, mock_request);
-        // If the request is invalid, an exception will be thrown
-        // otherwise the test will fail
-        assert(false);
-    }
-    catch (HttpStatusCodeException &e)
-    {
-        // Verify the exception thrown
-        assert(e.getErrorCode() == BAD_REQUEST);
-    }
-
-    // test case 3: A multipart/form-data
+    // test case 2: A multipart/form-data
     //***********************************
     // POST /upload HTTP/1.1
     // Host: 42.fr

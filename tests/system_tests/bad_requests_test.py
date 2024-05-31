@@ -52,7 +52,15 @@ assert response_status_line == "HTTP/1.1 414 URI Too Long"
 print("\tURI too long(414) test".ljust(34) + f"{GREEN}OK!{RESET}")
 
 # Test a request with a payload that is too long
-response_status_line = getResponseStatusLine(b'POST / HTTP/1.1\r\nHost: localhost\r\nContent-Length: 1000000\r\n\r\n' + b'a'*1000000)
+# Get the client_max_body_size value from the default config file
+client_max_body_size = 0
+with open(os.path.join(os.path.dirname(__file__), '../../config/default.conf'), 'r') as f:
+    for line in f:
+        if 'client_max_body_size' in line:
+            client_max_body_size = int(line.split()[1].split(';')[0])
+            break
+test_body_size = str(client_max_body_size + 1).encode()
+response_status_line = getResponseStatusLine(b'POST / HTTP/1.1\r\nHost: localhost\r\nContent-Length:' + test_body_size +  b'\r\n\r\n' + b'a'*int(test_body_size))
 assert response_status_line == "HTTP/1.1 413 Payload Too Large"
 print("\tPayload too large(413) test".ljust(34) + f"{GREEN}OK!{RESET}")
 

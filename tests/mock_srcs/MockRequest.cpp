@@ -158,7 +158,7 @@ RequestState &MockRequest::getState() { return m_state; }
 std::vector<char> &MockRequest::getBody() { return m_test_body; }
 const std::vector<char> &MockRequest::getBuffer() const
 {
-    return std::vector<char>();
+    return m_test_buffer;
 };
 
 // Setters
