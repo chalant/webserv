@@ -43,15 +43,18 @@ class RequestState
 		int		m_content_red;
 		int		m_content_length;
 		bool	m_initial;
+        bool    m_headers;
 		bool	m_finished;
 	public:
 		RequestState();
 		bool	finished(void) const;
+        bool    headers(void) const;
 		bool	initial(void) const;
 		int		getContentRed(void) const;
 		int		getContentLength(void) const;
 
 		void	finished(bool value);
+        void    headers(bool value);
 		void	initial(bool value);
 		void	incrementContentRed();
 		void	setContentRed(int value);
@@ -90,6 +93,7 @@ public:
     virtual bool isUploadRequest() const = 0;
 	virtual RequestState	&getState(void) = 0;
 	virtual	std::vector<char>	&getBody(void) = 0;
+    virtual const std::vector<char> &getBuffer() const = 0;
 
     // Setters
     virtual void setMethod(const std::string &method) = 0;
@@ -104,6 +108,7 @@ public:
     virtual void setAuthority() = 0;
     virtual void addBodyParameter(const BodyParameter &body_parameter) = 0;
     virtual void setUploadRequest(bool upload_request) = 0;
+    virtual void appendBuffer(const std::vector<char> &raw_request) = 0;
 };
 
 #endif // IREQUEST_HPP

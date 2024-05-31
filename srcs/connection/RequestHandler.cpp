@@ -3,6 +3,7 @@
 #include "../../includes/utils/Converter.hpp"
 #include <unistd.h>
 #include <utility>
+#include <algorithm>
 
 /*
  * RequestHandler class
@@ -41,7 +42,7 @@ RequestHandler::~RequestHandler()
     // Log the destruction of the RequestHandler instance.
     m_logger.log(VERBOSE, "RequestHandler instance destroyed.");
 }
-
+#include <iostream>
 // Handles a client request
 // Returns Cgi Info for dynamic content or -1 for static content and invalid
 // requests
@@ -69,16 +70,47 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
     {
         // Read the raw request from the client
         std::vector<char>	raw_request = m_client_handler.readRequest();
-		// Assign session to connection
-		//m_request_parser.parseRequest(raw_request, request);
-        m_connection_manager.assignSessionToConnection(connection, request,
-                    	                                     response);
+        
+        // Check if the client has disconnected
+        if (raw_request.empty())
+        {
+            // EOF read, indicating an orderly disconnect
+            return Triplet_t(-3, std::pair<int, int>(-1, -1));
+        }
+
 		if (state.initial())
+        {
+            // Append the raw request to the request buffer
+            request.appendBuffer(raw_request);
+
+            // If raw request contains CRLF CRLF, we move to the next stage
+            // CRLF CRLF (\r\n\r\n) marks the end of the headers
+            std::vector<char> buffer = request.getBuffer();
+
+            std::string buffer_str(buffer.begin(), buffer.end());
+            if (buffer_str.find("\r\n\r\n") != std::string::npos)
+            {
+                state.headers(true); // Because we now have all the headers
+            }
+            else
+            {
+                // log the situation
+                m_logger.log(VERBOSE, "RequestHandler::handleRequest: Request is incomplete - state: initial. Buffer: " + buffer_str);
+                return Triplet_t(-2, std::pair<int, int>(-1, -1));
+            }
+        }
+        if (state.headers()) // Parse the headers etc.
 		{
-			m_request_parser.parseRequestHeader(raw_request, request);
-			state.initial(false);
+			m_request_parser.parseRequestHeader(request);
+			state.headers(false);
+            
+            // Assign session to connection
+            m_connection_manager.assignSessionToConnection(connection, request,
+                    	                                     response);
 			if (!state.finished())
 			{
+                // log the situation
+                m_logger.log(VERBOSE, "RequestHandler::handleRequest: Request is incomplete - state: headers done.");
 				return Triplet_t(-2, std::pair<int, int>(-1, -1));
 			}
 		}
@@ -87,6 +119,8 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
 			m_request_parser.parsePartialBody(raw_request, request);
 			if (!state.finished())
 			{
+                // log the situation
+                m_logger.log(VERBOSE, "RequestHandler::handleRequest: Request is incomplete - state: partial body.");
 				return Triplet_t(-2, std::pair<int, int>(-1, -1));
 			}
 		}

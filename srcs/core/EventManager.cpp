@@ -142,8 +142,17 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
     }
 	else if (info.first == -2) //chunked data...
 	{
-		m_logger.log(ERROR, "YOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+		m_logger.log(VERBOSE, "[EVENTMANAGER] Incomplete request received for client socket: " + Converter::toString(client_socket_descriptor));
 	}
+    else if (info.first == -3) // Client closed the connection
+    {
+        // Log the client disconnection
+        m_logger.log(VERBOSE, "Client disconnected socket: " +
+                                    Converter::toString(client_socket_descriptor));
+
+        // Clear buffer, remove from polling and close socket
+        m_cleanUp(pollfd_index, client_socket_descriptor);
+    }
     else // read pipe returned
     {
         // Get the info
@@ -219,7 +228,7 @@ void EventManager::m_handleClientException(ssize_t &pollfd_index, short events)
     if (events & POLLHUP)
     {
         // Log the disconnection
-        m_logger.log(INFO, "Client disconnected socket: " +
+        m_logger.log(ERROR, "Client unexpectedly disconnected socket: " +
                                     Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket

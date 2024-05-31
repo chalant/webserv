@@ -4,9 +4,8 @@
 #include <cstdlib>
 #include "../../includes/exception/WebservExceptions.hpp"
 
-SignalHandler::SignalHandler()
+SignalHandler::SignalHandler() : m_sigint_received(0)
 {
-	m_sigint_received = false;
 }
 
 SignalHandler::~SignalHandler()
@@ -20,7 +19,7 @@ void SignalHandler::m_sigintHandler(int param, siginfo_t*info, void *context)
 	SignalHandler *handler = static_cast<SignalHandler *>(context);
 	if (!handler)		
 		exit(1); // Should not happen
-	handler->m_sigint_received = true;
+	handler->m_sigint_received = 1;
 }
 
 void SignalHandler::sigint()

@@ -63,6 +63,7 @@ void ConnectionManager::addConnection(
 // Remove a connection
 void ConnectionManager::removeConnection(SocketDescriptor_t socket_descriptor)
 {
+    // Remove the request
     delete m_connections[ socket_descriptor ];
     m_connections[ socket_descriptor ] = NULL;
 

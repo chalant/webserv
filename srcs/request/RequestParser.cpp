@@ -23,9 +23,9 @@ RequestParser::RequestParser(const IConfiguration &configuration,
 {
 }
 
-void	RequestParser::parseRequestHeader(const std::vector<char> raw_request,
-										IRequest &request) const
+void	RequestParser::parseRequestHeader(IRequest &request) const
 {
+    const std::vector<char>raw_request = request.getBuffer();
 	std::vector<char>::const_iterator it = raw_request.begin();
 
     // Parse the request line
@@ -135,12 +135,12 @@ std::string RequestParser::m_parseMethod(
     }
 
     // Check for unexpected end of request
-    if (request_iterator == raw_request.end())
+/*     if (request_iterator == raw_request.end())
     {
         throw HttpStatusCodeException(
             BAD_REQUEST,
-            "Unexpected end of request"); // throw '400' status error
-    }
+            "Unexpected end of request while parsing method"); // throw '400' status error
+    } */
 
     // Move marker to next character
     ++request_iterator;

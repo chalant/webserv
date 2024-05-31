@@ -54,6 +54,9 @@ private:
     // Request body
     std::vector<char> m_body;
 
+    // Request buffer - used to store incomplete headers
+    std::vector<char> m_buffer;
+
     // Included Request parameters
     std::string m_host_name;
     std::string m_host_port;
@@ -106,6 +109,7 @@ public:
     const std::vector<BodyParameter> &getBodyParameters() const;
     bool isUploadRequest() const;
 	RequestState	&getState(void);
+    const std::vector<char> &getBuffer() const;
 
 
     // Setters
@@ -120,6 +124,7 @@ public:
     void setAuthority();
     void addBodyParameter(const BodyParameter &body_parameter);
     void setUploadRequest(bool upload_request);
+    void appendBuffer(const std::vector<char> &raw_request);
 };
 
 #endif // REQUEST_HPP

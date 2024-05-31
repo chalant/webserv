@@ -88,7 +88,7 @@ public:
     // object
     void parseRequest(const std::vector<char> &raw_request,
                       IRequest &parsed_request) const;
-	void	parseRequestHeader(const std::vector<char> raw_request, IRequest &request) const;
+	void	parseRequestHeader(IRequest &request) const;
 	void	parsePartialBody(const std::vector<char> buffer, IRequest &request) const;
 	// Function to parse the Upload Chunked Body
     void	parseBodyParameters(IRequest &parsed_request) const;

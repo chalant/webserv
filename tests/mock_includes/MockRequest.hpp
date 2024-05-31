@@ -79,6 +79,7 @@ public:
     virtual bool isUploadRequest() const;
 	virtual RequestState		&getState(void);
 	virtual std::vector<char>	&getBody(void);
+    virtual const std::vector<char> &getBuffer() const;
 
     // Setters
     virtual void setMethod(const std::string &method);
@@ -91,6 +92,7 @@ public:
     virtual void setAuthority();
     virtual void addBodyParameter(const BodyParameter &body_parameter);
     virtual void setUploadRequest(bool upload_request);
+    virtual void appendBuffer(const std::vector<char> &raw_request);
 
     // Clear the contents of the MockRequest object
     void clear();

@@ -7,7 +7,7 @@ class SignalHandler
 {
 	private:
 		static void m_sigintHandler(int param, siginfo_t*info, void *context);
-		bool m_sigint_received;
+		volatile sig_atomic_t m_sigint_received;
 	public:
 		SignalHandler();
 		~SignalHandler();

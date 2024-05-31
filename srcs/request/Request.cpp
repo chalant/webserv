@@ -279,7 +279,11 @@ void Request::setMethod(const std::string &method)
     m_method = m_http_helper.stringHttpMethodMap(method);
 }
 
+// Getter function for retrieving the state of the request
 RequestState	&Request::getState(void) { return m_state; }
+
+// Getter function for retrieving the buffer of the request
+const std::vector<char> &Request::getBuffer() const { return m_buffer; }
 
 // Setter function for setting the URI of the request
 void Request::setUri(const std::string &uri)
@@ -414,6 +418,12 @@ void Request::addBodyParameter(const BodyParameter &body_parameter)
 void Request::setUploadRequest(bool upload_request)
 {
     m_upload_request = upload_request;
+}
+
+// Method to append new date to the buffer
+void Request::appendBuffer(const std::vector<char> &raw_request)
+{
+    m_buffer.insert(m_buffer.end(), raw_request.begin(), raw_request.end());
 }
 
 // path: srcs/request/Request.cpp
