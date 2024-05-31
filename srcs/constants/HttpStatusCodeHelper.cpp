@@ -1,10 +1,10 @@
 #include "../../includes/constants/HttpStatusCodeHelper.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <fstream>
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <vector>
-#include <fstream>
 
 /*
  * HttpStatusCodeHelper.hpp
@@ -258,69 +258,69 @@ HttpStatusCodeHelper::m_setStringHttpStatusCodeMap()
     std::map<std::string, HttpStatusCode> string_http_status_code_map;
 
     // Add mappings from string representations to HttpStatusCode enum values
-    string_http_status_code_map["100"] = CONTINUE;
-    string_http_status_code_map["101"] = SWITCHING_PROTOCOLS;
-    string_http_status_code_map["102"] = PROCESSING;
-    string_http_status_code_map["103"] = EARLY_HINTS;
-    string_http_status_code_map["200"] = OK;
-    string_http_status_code_map["201"] = CREATED;
-    string_http_status_code_map["202"] = ACCEPTED;
-    string_http_status_code_map["203"] = NON_AUTHORITATIVE_INFORMATION;
-    string_http_status_code_map["204"] = NO_CONTENT;
-    string_http_status_code_map["205"] = RESET_CONTENT;
-    string_http_status_code_map["206"] = PARTIAL_CONTENT;
-    string_http_status_code_map["207"] = MULTI_STATUS;
-    string_http_status_code_map["208"] = ALREADY_REPORTED;
-    string_http_status_code_map["226"] = IM_USED;
-    string_http_status_code_map["300"] = MULTIPLE_CHOICES;
-    string_http_status_code_map["301"] = MOVED_PERMANENTLY;
-    string_http_status_code_map["302"] = FOUND;
-    string_http_status_code_map["303"] = SEE_OTHER;
-    string_http_status_code_map["304"] = NOT_MODIFIED;
-    string_http_status_code_map["305"] = USE_PROXY;
-    string_http_status_code_map["306"] = SWITCH_PROXY;
-    string_http_status_code_map["307"] = TEMPORARY_REDIRECT;
-    string_http_status_code_map["308"] = PERMANENT_REDIRECT;
-    string_http_status_code_map["400"] = BAD_REQUEST;
-    string_http_status_code_map["401"] = UNAUTHORIZED;
-    string_http_status_code_map["402"] = PAYMENT_REQUIRED;
-    string_http_status_code_map["403"] = FORBIDDEN;
-    string_http_status_code_map["404"] = NOT_FOUND;
-    string_http_status_code_map["405"] = METHOD_NOT_ALLOWED;
-    string_http_status_code_map["406"] = NOT_ACCEPTABLE;
-    string_http_status_code_map["407"] = PROXY_AUTHENTICATION_REQUIRED;
-    string_http_status_code_map["408"] = REQUEST_TIMEOUT;
-    string_http_status_code_map["409"] = CONFLICT;
-    string_http_status_code_map["410"] = GONE;
-    string_http_status_code_map["411"] = LENGTH_REQUIRED;
-    string_http_status_code_map["412"] = PRECONDITION_FAILED;
-    string_http_status_code_map["413"] = PAYLOAD_TOO_LARGE;
-    string_http_status_code_map["414"] = URI_TOO_LONG;
-    string_http_status_code_map["415"] = UNSUPPORTED_MEDIA_TYPE;
-    string_http_status_code_map["416"] = RANGE_NOT_SATISFIABLE;
-    string_http_status_code_map["417"] = EXPECTATION_FAILED;
-    string_http_status_code_map["418"] = IM_A_TEAPOT;
-    string_http_status_code_map["421"] = MISDIRECTED_REQUEST;
-    string_http_status_code_map["422"] = UNPROCESSABLE_ENTITY;
-    string_http_status_code_map["423"] = LOCKED;
-    string_http_status_code_map["424"] = FAILED_DEPENDENCY;
-    string_http_status_code_map["425"] = TOO_EARLY;
-    string_http_status_code_map["426"] = UPGRADE_REQUIRED;
-    string_http_status_code_map["428"] = PRECONDITION_REQUIRED; 
-    string_http_status_code_map["429"] = TOO_MANY_REQUESTS;
-    string_http_status_code_map["431"] = REQUEST_HEADER_FIELDS_TOO_LARGE;
-    string_http_status_code_map["451"] = UNAVAILABLE_FOR_LEGAL_REASONS;
-    string_http_status_code_map["500"] = INTERNAL_SERVER_ERROR;
-    string_http_status_code_map["501"] = NOT_IMPLEMENTED;
-    string_http_status_code_map["502"] = BAD_GATEWAY;
-    string_http_status_code_map["503"] = SERVICE_UNAVAILABLE;
-    string_http_status_code_map["504"] = GATEWAY_TIMEOUT;
-    string_http_status_code_map["505"] = HTTP_VERSION_NOT_SUPPORTED;
-    string_http_status_code_map["506"] = VARIANT_ALSO_NEGOTIATES;
-    string_http_status_code_map["507"] = INSUFFICIENT_STORAGE;
-    string_http_status_code_map["508"] = LOOP_DETECTED;
-    string_http_status_code_map["510"] = NOT_EXTENDED;
-    string_http_status_code_map["511"] = NETWORK_AUTHENTICATION_REQUIRED;
+    string_http_status_code_map[ "100" ] = CONTINUE;
+    string_http_status_code_map[ "101" ] = SWITCHING_PROTOCOLS;
+    string_http_status_code_map[ "102" ] = PROCESSING;
+    string_http_status_code_map[ "103" ] = EARLY_HINTS;
+    string_http_status_code_map[ "200" ] = OK;
+    string_http_status_code_map[ "201" ] = CREATED;
+    string_http_status_code_map[ "202" ] = ACCEPTED;
+    string_http_status_code_map[ "203" ] = NON_AUTHORITATIVE_INFORMATION;
+    string_http_status_code_map[ "204" ] = NO_CONTENT;
+    string_http_status_code_map[ "205" ] = RESET_CONTENT;
+    string_http_status_code_map[ "206" ] = PARTIAL_CONTENT;
+    string_http_status_code_map[ "207" ] = MULTI_STATUS;
+    string_http_status_code_map[ "208" ] = ALREADY_REPORTED;
+    string_http_status_code_map[ "226" ] = IM_USED;
+    string_http_status_code_map[ "300" ] = MULTIPLE_CHOICES;
+    string_http_status_code_map[ "301" ] = MOVED_PERMANENTLY;
+    string_http_status_code_map[ "302" ] = FOUND;
+    string_http_status_code_map[ "303" ] = SEE_OTHER;
+    string_http_status_code_map[ "304" ] = NOT_MODIFIED;
+    string_http_status_code_map[ "305" ] = USE_PROXY;
+    string_http_status_code_map[ "306" ] = SWITCH_PROXY;
+    string_http_status_code_map[ "307" ] = TEMPORARY_REDIRECT;
+    string_http_status_code_map[ "308" ] = PERMANENT_REDIRECT;
+    string_http_status_code_map[ "400" ] = BAD_REQUEST;
+    string_http_status_code_map[ "401" ] = UNAUTHORIZED;
+    string_http_status_code_map[ "402" ] = PAYMENT_REQUIRED;
+    string_http_status_code_map[ "403" ] = FORBIDDEN;
+    string_http_status_code_map[ "404" ] = NOT_FOUND;
+    string_http_status_code_map[ "405" ] = METHOD_NOT_ALLOWED;
+    string_http_status_code_map[ "406" ] = NOT_ACCEPTABLE;
+    string_http_status_code_map[ "407" ] = PROXY_AUTHENTICATION_REQUIRED;
+    string_http_status_code_map[ "408" ] = REQUEST_TIMEOUT;
+    string_http_status_code_map[ "409" ] = CONFLICT;
+    string_http_status_code_map[ "410" ] = GONE;
+    string_http_status_code_map[ "411" ] = LENGTH_REQUIRED;
+    string_http_status_code_map[ "412" ] = PRECONDITION_FAILED;
+    string_http_status_code_map[ "413" ] = PAYLOAD_TOO_LARGE;
+    string_http_status_code_map[ "414" ] = URI_TOO_LONG;
+    string_http_status_code_map[ "415" ] = UNSUPPORTED_MEDIA_TYPE;
+    string_http_status_code_map[ "416" ] = RANGE_NOT_SATISFIABLE;
+    string_http_status_code_map[ "417" ] = EXPECTATION_FAILED;
+    string_http_status_code_map[ "418" ] = IM_A_TEAPOT;
+    string_http_status_code_map[ "421" ] = MISDIRECTED_REQUEST;
+    string_http_status_code_map[ "422" ] = UNPROCESSABLE_ENTITY;
+    string_http_status_code_map[ "423" ] = LOCKED;
+    string_http_status_code_map[ "424" ] = FAILED_DEPENDENCY;
+    string_http_status_code_map[ "425" ] = TOO_EARLY;
+    string_http_status_code_map[ "426" ] = UPGRADE_REQUIRED;
+    string_http_status_code_map[ "428" ] = PRECONDITION_REQUIRED;
+    string_http_status_code_map[ "429" ] = TOO_MANY_REQUESTS;
+    string_http_status_code_map[ "431" ] = REQUEST_HEADER_FIELDS_TOO_LARGE;
+    string_http_status_code_map[ "451" ] = UNAVAILABLE_FOR_LEGAL_REASONS;
+    string_http_status_code_map[ "500" ] = INTERNAL_SERVER_ERROR;
+    string_http_status_code_map[ "501" ] = NOT_IMPLEMENTED;
+    string_http_status_code_map[ "502" ] = BAD_GATEWAY;
+    string_http_status_code_map[ "503" ] = SERVICE_UNAVAILABLE;
+    string_http_status_code_map[ "504" ] = GATEWAY_TIMEOUT;
+    string_http_status_code_map[ "505" ] = HTTP_VERSION_NOT_SUPPORTED;
+    string_http_status_code_map[ "506" ] = VARIANT_ALSO_NEGOTIATES;
+    string_http_status_code_map[ "507" ] = INSUFFICIENT_STORAGE;
+    string_http_status_code_map[ "508" ] = LOOP_DETECTED;
+    string_http_status_code_map[ "510" ] = NOT_EXTENDED;
+    string_http_status_code_map[ "511" ] = NETWORK_AUTHENTICATION_REQUIRED;
 
     return string_http_status_code_map;
 }
@@ -414,18 +414,22 @@ HttpStatusCodeHelper::m_setHttpStatusCodeStringMap()
 }
 
 // Sets the status code to html page mapping
-std::map<HttpStatusCode, std::string> HttpStatusCodeHelper::m_setStatusCodeHtmlPageMap(std::vector<std::string> error_page)
+std::map<HttpStatusCode, std::string>
+HttpStatusCodeHelper::m_setStatusCodeHtmlPageMap(
+    std::vector<std::string> error_page)
 {
-    //e.g. error_page = {"500", "502", "503", "504", "/50x.html", "404", "/404.html"};
+    // e.g. error_page = {"500", "502", "503", "504", "/50x.html", "404",
+    // "/404.html"};
     std::vector<std::string>::iterator it = error_page.begin();
     std::map<HttpStatusCode, std::string> status_code_html_page_map;
 
-    // Iterate through the error_page restarting the loop after each html page path
+    // Iterate through the error_page restarting the loop after each html page
+    // path
     while (it != error_page.end())
     {
         // Stack the error codes until we reach the html page path
         std::vector<std::string> stack;
-        while (it->data()[0] != '/')
+        while (it->data()[ 0 ] != '/')
         {
             stack.push_back(it->data());
             it++;
@@ -453,8 +457,9 @@ std::map<HttpStatusCode, std::string> HttpStatusCodeHelper::m_setStatusCodeHtmlP
         while (!stack.empty())
         {
             std::string status_code_string = stack.back();
-            HttpStatusCode http_status_code = stringHttpStatusCodeMap(stack.back());
-            status_code_html_page_map[http_status_code] = html_page;
+            HttpStatusCode http_status_code =
+                stringHttpStatusCodeMap(stack.back());
+            status_code_html_page_map[ http_status_code ] = html_page;
             stack.pop_back();
         }
         it++;

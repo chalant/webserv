@@ -5,17 +5,17 @@
 LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager,
                                          IConfiguration &configuration,
                                          IPollfdManager &pollfdManager)
-    : m_access_log_file(configuration.getBlocks("http")[ 0 ]
-                         ->getBlocks("server")[ 0 ]
-                         ->getString("access_log")), // Currently only supports
-                                                     // one access log file
+    : m_access_log_file(
+          configuration.getBlocks("http")[ 0 ]
+              ->getBlocks("server")[ 0 ]
+              ->getString("access_log")), // Currently only supports
+                                          // one access log file
       m_buffer_manager(BufferManager), m_pollfd_manager(pollfdManager),
       m_buffer_size(LOG_BUFFER_SIZE),
       m_access_log_file_descriptor(
           m_access_log_file == "off"
               ? -2
-              : open(m_access_log_file.c_str(),
-                     O_WRONLY | O_CREAT | O_APPEND,
+              : open(m_access_log_file.c_str(), O_WRONLY | O_CREAT | O_APPEND,
                      S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)),
       m_access_log_enabled(m_access_log_file_descriptor < 0 ? false : true),
       m_log_level_helper()
@@ -47,8 +47,7 @@ LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager,
     }
 
     // Throw an exception if the log file could not be opened
-    if (m_error_log_file_descriptor == -1 ||
-        m_access_log_file_descriptor == -1)
+    if (m_error_log_file_descriptor == -1 || m_access_log_file_descriptor == -1)
         throw LogFileOpenError();
 
     // Set the buffer size
@@ -56,7 +55,8 @@ LoggerConfiguration::LoggerConfiguration(IBufferManager &BufferManager,
 
     // transfer STDERR buffer to the error log file buffer
     if (m_error_log_enabled)
-        m_buffer_manager.transferBuffer(STDERR_FILENO, m_error_log_file_descriptor);
+        m_buffer_manager.transferBuffer(STDERR_FILENO,
+                                        m_error_log_file_descriptor);
 }
 
 LoggerConfiguration::~LoggerConfiguration()

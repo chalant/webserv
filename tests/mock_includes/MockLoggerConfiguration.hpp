@@ -44,8 +44,9 @@ public:
 
     // Testing purposes
     virtual void setBufferSize(size_t buffer_size);
-    virtual void setFileDescriptor(int error_log_file_descriptor,
-                                   int access_log_file_descriptor = STDOUT_FILENO);
+    virtual void
+    setFileDescriptor(int error_log_file_descriptor,
+                      int access_log_file_descriptor = STDOUT_FILENO);
 };
 
 #endif // MOCKLOGGERCONFIGURATION_HPP

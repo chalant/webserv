@@ -124,8 +124,8 @@ void Server::m_initializeServerSocket(int ip, int port, int max_connections)
 
     // Log server socket initialization
     m_logger.log(INFO, "Server socket initialized. Listening on " +
-                                (ip ? Converter::toString(ip) : "ALL") + ":" +
-                                Converter::toString(port));
+                           (ip ? Converter::toString(ip) : "ALL") + ":" +
+                           Converter::toString(port));
 }
 
 /* Terminate server*/
@@ -162,8 +162,8 @@ void Server::acceptConnection(int server_socket_descriptor)
         throw SocketSetError();
 
     // Log accepted connection
-    m_logger.log(VERBOSE, "Accepted new connection from " + client_ip +
-                                   ":" + client_port + ".");
+    m_logger.log(VERBOSE, "Accepted new connection from " + client_ip + ":" +
+                              client_port + ".");
 }
 
 // Path: /srcs/network/Server.cpp

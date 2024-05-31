@@ -14,7 +14,8 @@ Route::Route() {}
 
 Router::Router(IConfiguration &configuration, ILogger &logger,
                HttpHelper m_http_helper)
-    : m_configuration(configuration), m_logger(logger), m_http_helper(m_http_helper)
+    : m_configuration(configuration), m_logger(logger),
+      m_http_helper(m_http_helper)
 {
     // Log the creation of the Router
     m_logger.log(VERBOSE, "Initializing Router...");
@@ -96,7 +97,7 @@ void Router::m_createRoutes(IConfiguration *server_block)
                 m_routes[ i ].appendUri(*port_it);
                 m_routes[ i ].appendUri(prefix);
                 m_routes[ i ].setMethod(methods[ methods.size() - 1 ],
-                                       m_http_helper);
+                                        m_http_helper);
                 i++;
             }
         }
@@ -182,10 +183,7 @@ bool Route::operator<(const Route &other) const
     return (m_uri.length() > other.m_uri.length());
 }
 
-void Route::appendUri(const std::string &newString)
-{
-    m_uri.append(newString);
-}
+void Route::appendUri(const std::string &newString) { m_uri.append(newString); }
 
 // placeholder for adding a route
 void Router::addRoute(const IRequest &request,

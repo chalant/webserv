@@ -23,10 +23,10 @@ RequestParser::RequestParser(const IConfiguration &configuration,
 {
 }
 
-void	RequestParser::parseRequestHeader(IRequest &request) const
+void RequestParser::parseRequestHeader(IRequest &request) const
 {
-    const std::vector<char>raw_request = request.getBuffer();
-	std::vector<char>::const_iterator it = raw_request.begin();
+    const std::vector<char> raw_request = request.getBuffer();
+    std::vector<char>::const_iterator it = raw_request.begin();
 
     // Parse the request line
     m_parseRequestLine(it, raw_request, request);
@@ -41,7 +41,7 @@ void	RequestParser::parseRequestHeader(IRequest &request) const
     }
 
     m_parseHeaders(it, raw_request, request);
-	// std::string content_length_string =
+    // std::string content_length_string =
     //     request.getHeaderValue(CONTENT_LENGTH);
     // if (content_length_string.empty() &&
     // 	request.getHeaderValue(TRANSFER_ENCODING) != "chunked")
@@ -51,15 +51,15 @@ void	RequestParser::parseRequestHeader(IRequest &request) const
     //     throw HttpStatusCodeException(LENGTH_REQUIRED,
     //                                   "no content-length header found");
     // }
-	// request.getState().setContentLength(atoi(content_length_string.c_str()));
-	m_parseBody(it, raw_request, request);
+    // request.getState().setContentLength(atoi(content_length_string.c_str()));
+    m_parseBody(it, raw_request, request);
 }
 
-void	RequestParser::parsePartialBody(const std::vector<char> raw_request,
-										IRequest &request) const
+void RequestParser::parsePartialBody(const std::vector<char> raw_request,
+                                     IRequest &request) const
 {
-	std::vector<char>::const_iterator it = raw_request.begin();
-	m_parseBody(it, raw_request, request);
+    std::vector<char>::const_iterator it = raw_request.begin();
+    m_parseBody(it, raw_request, request);
 }
 
 // Function to parse a raw HTTP request and convert it into a Request object
@@ -94,7 +94,7 @@ void RequestParser::parseRequest(const std::vector<char> &raw_request,
     // {
     //     parseBodyParameters(parsed_request);
     // }
-	parseBodyParameters(parsed_request);
+    parseBodyParameters(parsed_request);
     m_logger.log(DEBUG, "[REQUESTPARSER] ...request parsed successfully");
 }
 
@@ -122,7 +122,8 @@ std::string RequestParser::m_parseMethod(
 {
     std::string method;
     // Skip leading CRLF
-    while (raw_request.end() - request_iterator >= 2 && m_isCRLF(request_iterator))
+    while (raw_request.end() - request_iterator >= 2 &&
+           m_isCRLF(request_iterator))
     {
         request_iterator += 2;
     }
@@ -135,12 +136,13 @@ std::string RequestParser::m_parseMethod(
     }
 
     // Check for unexpected end of request
-/*     if (request_iterator == raw_request.end())
-    {
-        throw HttpStatusCodeException(
-            BAD_REQUEST,
-            "Unexpected end of request while parsing method"); // throw '400' status error
-    } */
+    /*     if (request_iterator == raw_request.end())
+        {
+            throw HttpStatusCodeException(
+                BAD_REQUEST,
+                "Unexpected end of request while parsing method"); // throw
+       '400' status error
+        } */
 
     // Move marker to next character
     ++request_iterator;
@@ -224,8 +226,8 @@ std::string RequestParser::m_parseHttpVersion(
     request_iterator += 2;
 
     // Log 'http_version'
-    m_logger.log(VERBOSE, "[REQUESTPARSER] HTTP Version: \"" +
-                                    http_version + "\"");
+    m_logger.log(VERBOSE,
+                 "[REQUESTPARSER] HTTP Version: \"" + http_version + "\"");
 
     // Return 'http_version' string
     return http_version;
@@ -256,7 +258,8 @@ void RequestParser::m_parseHeaders(
     // Check for unexpected end of request
     // if (request_iterator == raw_request.end())
     // {
-    //     throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
+    //     throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of
+    //     request");
     // }
 
     // Set authority in parsed request
@@ -303,8 +306,7 @@ void RequestParser::m_parseHeader(
     }
 
     // Find end of header value
-    while (request_iterator != raw_request.end() &&
-           !m_isCRLF(request_iterator))
+    while (request_iterator != raw_request.end() && !m_isCRLF(request_iterator))
     {
         header_value += *request_iterator;
         client_header_buffer_size--;
@@ -314,7 +316,8 @@ void RequestParser::m_parseHeader(
     // Check for unexpected end of request
     // if (request_iterator == raw_request.end())
     // {
-    //     throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
+    //     throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of
+    //     request");
     // }
     // Check if header size exceeds client header buffer size
     if (client_header_buffer_size < 0)
@@ -327,8 +330,8 @@ void RequestParser::m_parseHeader(
     request_iterator += 2;
 
     // Log header
-    m_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + header_name +
-                                    ": " + header_value + "\"");
+    m_logger.log(VERBOSE, "[REQUESTPARSER] Header: \"" + header_name + ": " +
+                              header_value + "\"");
 
     // Add header to parsed request
     try
@@ -354,13 +357,13 @@ void RequestParser::m_parseBody(
     std::vector<char>::const_iterator &request_iterator,
     const std::vector<char> &raw_request, IRequest &parsed_request) const
 {
-	RequestState	&state = parsed_request.getState();
+    RequestState &state = parsed_request.getState();
     // If method is not POST or PUT, no need to parse body
     if (parsed_request.getMethodString() != "POST" &&
         parsed_request.getMethod() != PUT)
     {
-		state.finished(true);
-        return ; // No need to parse body for other methods
+        state.finished(true);
+        return; // No need to parse body for other methods
     }
     // Check if 'Transfer-Encoding' is chunked
     std::string transfer_encoding =
@@ -369,7 +372,7 @@ void RequestParser::m_parseBody(
     {
         // Handle chunked encoding
         m_unchunkBody(request_iterator, raw_request, parsed_request);
-        return ;
+        return;
     }
 
     // Check if 'content-length' header is required and missing
@@ -395,10 +398,13 @@ void RequestParser::m_parseBody(
                              content_length_string + ")");
     }
 
-	state.setContentRed(state.getContentRed() + (raw_request.end() - request_iterator));
-	//m_logger.log(DEBUG, "Cuurent content red: " + Converter::toString(state.getContentRed()));
-    //Check if body size exceeds client body buffer size
-    if (static_cast<size_t>(state.getContentRed()) > m_configuration.getSize_t("client_body_buffer_size"))
+    state.setContentRed(state.getContentRed() +
+                        (raw_request.end() - request_iterator));
+    // m_logger.log(DEBUG, "Cuurent content red: " +
+    // Converter::toString(state.getContentRed()));
+    // Check if body size exceeds client body buffer size
+    if (static_cast<size_t>(state.getContentRed()) >
+        m_configuration.getSize_t("client_body_buffer_size"))
     {
         // throw '413' status error
         throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
@@ -414,24 +420,24 @@ void RequestParser::m_parseBody(
     // }
 
     // Extract body
-    //std::vector<char> body(request_iterator, request_iterator + body_size);
-	std::vector<char> &body = parsed_request.getBody();
-	body.insert(body.end(), request_iterator, raw_request.end());
-	//set the request state to finished once all the content has been red.
-	if (static_cast<size_t>(state.getContentRed()) == body_size)
-	{
-		state.finished(true);
-	}
+    // std::vector<char> body(request_iterator, request_iterator + body_size);
+    std::vector<char> &body = parsed_request.getBody();
+    body.insert(body.end(), request_iterator, raw_request.end());
+    // set the request state to finished once all the content has been red.
+    if (static_cast<size_t>(state.getContentRed()) == body_size)
+    {
+        state.finished(true);
+    }
     // Set body in parsed request
-    //parsed_request.setBody(body);
+    // parsed_request.setBody(body);
 }
 
 // Function to unchunk the body of an HTTP request
-void	RequestParser::m_unchunkBody(
+void RequestParser::m_unchunkBody(
     std::vector<char>::const_iterator &request_iterator,
     const std::vector<char> &raw_request, IRequest &request) const
 {
-	RequestState	&state = request.getState();
+    RequestState &state = request.getState();
     // Initialize body vector
     std::vector<char> &body = request.getBody();
 
@@ -452,10 +458,10 @@ void	RequestParser::m_unchunkBody(
 
         // Check for last chunk and set the request state to finished.
         if (chunk_size_string == "0")
-		{
-			state.finished(true);
+        {
+            state.finished(true);
             break;
-		}
+        }
 
         // Move marker passed CRLF
         request_iterator += 2;
@@ -525,10 +531,10 @@ void RequestParser::m_parseCookie(std::string &cookie_header_value,
 
 void RequestParser::parseBodyParameters(IRequest &parsed_request) const
 {
-	if (parsed_request.getHeaderValue(CONTENT_TYPE)
+    if (parsed_request.getHeaderValue(CONTENT_TYPE)
             .find("multipart/form-data") == std::string::npos)
     {
-		return ;
+        return;
     }
     // Log the start of the body parameter parsing
     m_logger.log(VERBOSE, "[REQUESTPARSER] Parsing multipart request...");
@@ -630,8 +636,8 @@ void RequestParser::parseBodyParameters(IRequest &parsed_request) const
                     body_parameter.content_type = value;
             }
             // Log the header
-            m_logger.log(VERBOSE, "[REQUESTPARSER]  Header: " + key +
-                                            ": \"" + value + "\"");
+            m_logger.log(VERBOSE, "[REQUESTPARSER]  Header: " + key + ": \"" +
+                                      value + "\"");
         } while (m_getlineNoCr(body_stream, line) && !line.empty());
 
         // Parse BodyParameter data
@@ -663,8 +669,7 @@ void RequestParser::parseBodyParameters(IRequest &parsed_request) const
     }
 
     // Log the end of the BodyParameter
-    m_logger.log(VERBOSE,
-                       "[REQUESTPARSER] ...done parsing multipart request");
+    m_logger.log(VERBOSE, "[REQUESTPARSER] ...done parsing multipart request");
 
     // Mark the request as an upload request
     parsed_request.setUploadRequest(true);

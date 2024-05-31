@@ -102,10 +102,7 @@ void PollfdQueue::pollout(size_t index)
 // HasReachedCapacity: Checks if the PollfdQueue has reached its maximum
 // capacity. Returns true if the size equals the capacity, indicating that no
 // more pollfd objects can be added.
-bool PollfdQueue::hasReachedCapacity() const
-{
-    return m_size == m_capacity;
-}
+bool PollfdQueue::hasReachedCapacity() const { return m_size == m_capacity; }
 
 // Size: Returns the current number of pollfd objects stored in the PollfdQueue.
 size_t PollfdQueue::size() const { return m_size; }

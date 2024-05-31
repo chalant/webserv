@@ -27,7 +27,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     // if root does not end with a slash and uri does not start with a slash
     if (root[ root.size() - 1 ] != '/' && uri[ 0 ] != '/')
     {
-     // add a slash to the root
+        // add a slash to the root
         root += "/";
     }
     std::string file_path = root + uri;
@@ -78,12 +78,13 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
         {
             // close the file
             file.close();
-			
+
             // set the response
             response.setBody(body);
             response.setStatusLine(OK);
             response.addHeader(CONTENT_TYPE, m_getMimeType(file_path));
-            response.addHeader(CONTENT_LENGTH, Converter::toString(body.size()));
+            response.addHeader(CONTENT_LENGTH,
+                               Converter::toString(body.size()));
         }
     }
 

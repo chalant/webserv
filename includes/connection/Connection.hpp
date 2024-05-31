@@ -23,19 +23,19 @@ class Connection : public IConnection
 {
 private:
     SocketDescriptor_t
-        m_socket_descriptor;      // Socket descriptor for the connection
-    std::string m_ip;            // Client's IP address
-    int m_port;                  // Port number
-    std::string m_remote_address; // Remote address
-    int m_cgi_output_pipe_read_end;    // Read pipe descriptor for the response
-    int m_cgi_input_pipe_write_end;    // Write pipe descriptor for the request
-    int m_cgi_pid;                // PID of the CGI process
-    ILogger &m_logger;           // Reference to the logger
-    IRequest *m_request;         // Pointer to the request object
-    IResponse *m_response;       // Pointer to the response object
-    ISession *m_session;         // Pointer to the session object
-    const time_t m_timeout;      // Timeout for the connection
-    time_t m_last_access;         // Last access time
+        m_socket_descriptor;        // Socket descriptor for the connection
+    std::string m_ip;               // Client's IP address
+    int m_port;                     // Port number
+    std::string m_remote_address;   // Remote address
+    int m_cgi_output_pipe_read_end; // Read pipe descriptor for the response
+    int m_cgi_input_pipe_write_end; // Write pipe descriptor for the request
+    int m_cgi_pid;                  // PID of the CGI process
+    ILogger &m_logger;              // Reference to the logger
+    IRequest *m_request;            // Pointer to the request object
+    IResponse *m_response;          // Pointer to the response object
+    ISession *m_session;            // Pointer to the session object
+    const time_t m_timeout;         // Timeout for the connection
+    time_t m_last_access;           // Last access time
 
 public:
     Connection(std::pair<int, std::pair<std::string, std::string> > client_info,

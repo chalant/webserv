@@ -20,7 +20,7 @@
 class FileBuffer : public IBuffer
 {
 private:
-    std::vector<char> m_buffer;    // Buffer to hold data
+    std::vector<char> m_buffer;     // Buffer to hold data
     const size_t m_flush_threshold; // Threshold at which to request a flush
     const size_t m_max_size;        // Maximum size of the buffer
 

@@ -42,11 +42,11 @@ private:
     Server *m_server;  // Pointer to the server instance
     const HttpStatusCodeHelper
         m_http_status_code_helper; // Helper instance for HTTP status codes
-    
+
     int m_handleWebservException(const WebservException &e,
-                                const std::string &context = "") const;
-    int m_handleStandardException(const std::exception &e,
                                  const std::string &context = "") const;
+    int m_handleStandardException(const std::exception &e,
+                                  const std::string &context = "") const;
 
 public:
     // Constructor: Initializes ExceptionHandler with an logger instance.

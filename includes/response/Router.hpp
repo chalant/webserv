@@ -25,7 +25,7 @@ class Route
 {
 public:
     Route();
-    std::string	getUri() const;
+    std::string getUri() const;
     void setUri(std::string new_uri);
     void appendUri(const std::string &new_string);
     HttpMethod getMethod() const;

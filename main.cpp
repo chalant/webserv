@@ -37,7 +37,7 @@
 int main(int argc, char **argv)
 {
     // Instantiate the SignalHandler.
-	SignalHandler signalHandler;
+    SignalHandler signalHandler;
 
     // Catch SIGINT signal.
     signalHandler.sigint();
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
         // Configure the logger
         LoggerConfiguration logger_configuration(buffer_manager, configuration,
-                                                pollfd_manager);
+                                                 pollfd_manager);
         logger.configure(logger_configuration);
 
         // Instantiate the Factory.
@@ -93,20 +93,20 @@ int main(int argc, char **argv)
                       logger);
 
         // Instantiate the Router.
-        //Router router(configuration, logger, HttpHelper());
+        // Router router(configuration, logger, HttpHelper());
         TempRouter router(configuration, logger);
 
         // Instantiate the RequestHandler.
         RequestHandler request_handler(buffer_manager, connection_manager,
-                                      configuration, router, logger,
-                                      exception_handler, client_handler);
+                                       configuration, router, logger,
+                                       exception_handler, client_handler);
 
         // Instantiate the PollingService.
         PollingService polling_service(pollfd_manager, logger);
 
         // Instantiate the EventManager.
         EventManager event_manager(pollfd_manager, buffer_manager, server,
-                                  request_handler, logger);
+                                   request_handler, logger);
 
         // Start the webserv core cycle.
         while (true)
@@ -129,7 +129,7 @@ int main(int argc, char **argv)
             {
                 // Handle exceptions.
                 exception_handler.handleException(e, "webserv core cycle: ");
-                break ;
+                break;
             }
         }
     }
@@ -142,10 +142,10 @@ int main(int argc, char **argv)
         // Handle setup exceptions.
         exception_handler.handleException(e, "webserv setup: ");
     }
-    
+
     // Configure the logger with a null configuration.
-    //LoggerConfiguration *null = NULL;
-    //logger.configure(*null);
+    // LoggerConfiguration *null = NULL;
+    // logger.configure(*null);
 }
 
 // Path: main.cpp

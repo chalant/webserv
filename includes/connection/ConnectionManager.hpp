@@ -30,7 +30,8 @@ private:
     std::map<SocketDescriptor_t, IConnection *>
         m_connections;                            // active connections
     std::map<SessionId_t, ISession *> m_sessions; // active sessions
-    time_t m_last_garbage_collection; // last time garbage collection was performed
+    time_t
+        m_last_garbage_collection; // last time garbage collection was performed
     IFactory &m_factory; // factory object to create connections and sessions
     ILogger &m_logger;   // logger object
 

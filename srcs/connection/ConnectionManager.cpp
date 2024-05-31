@@ -37,8 +37,7 @@ ConnectionManager::~ConnectionManager()
         delete it->second;
 
     // Delete all sessions
-    for (std::map<SessionId_t, ISession *>::iterator it =
-             m_sessions.begin();
+    for (std::map<SessionId_t, ISession *>::iterator it = m_sessions.begin();
          it != m_sessions.end(); it++)
         delete it->second;
 
@@ -54,10 +53,10 @@ void ConnectionManager::addConnection(
     m_connections[ client_info.first ] = connection;
 
     // Log the new connection
-    m_logger.log(
-        VERBOSE, "New connection created. Remote address: " +
-                     client_info.second.first + ":" + client_info.second.second +
-                     " Socket: " + Converter::toString(client_info.first));
+    m_logger.log(VERBOSE, "New connection created. Remote address: " +
+                              client_info.second.first + ":" +
+                              client_info.second.second + " Socket: " +
+                              Converter::toString(client_info.first));
 }
 
 // Remove a connection
@@ -69,7 +68,7 @@ void ConnectionManager::removeConnection(SocketDescriptor_t socket_descriptor)
 
     // Log the removed connection
     m_logger.log(VERBOSE, "Connection removed. Socket: " +
-                                   Converter::toString(socket_descriptor));
+                              Converter::toString(socket_descriptor));
 }
 
 // Get a reference to a connection
@@ -105,7 +104,7 @@ SessionId_t ConnectionManager::addSession()
 
     // Log the new session
     m_logger.log(VERBOSE, "New session created. Session ID: " +
-                                   Converter::toString(session_id));
+                              Converter::toString(session_id));
 
     // Return the session id
     return session_id;
@@ -119,7 +118,7 @@ void ConnectionManager::removeSession(SessionId_t session_id)
 
     // Log the removed session
     m_logger.log(VERBOSE, "Session removed. Session ID: " +
-                                   Converter::toString(session_id));
+                              Converter::toString(session_id));
 }
 
 // Get a reference to a session
@@ -168,14 +167,14 @@ void ConnectionManager::assignSessionToConnection(IConnection &connection,
         session_id = m_stringToSessionId(session_id_string);
         if (m_sessions.find(session_id) == m_sessions.end())
         {
-            session_id = this->addSession(); // Session not found, generate a new
-                                            // session id
+            session_id = this->addSession(); // Session not found, generate a
+                                             // new session id
         }
         else
         {
             // Log the session assignment
             m_logger.log(VERBOSE, "Existing session found. Session ID: " +
-                                           Converter::toString(session_id));
+                                      Converter::toString(session_id));
         }
     }
 
@@ -186,11 +185,11 @@ void ConnectionManager::assignSessionToConnection(IConnection &connection,
     response.addCookie("session", Converter::toString(session_id));
 
     // Log the session assignment
-    m_logger.log(
-        INFO, "Session ID: " + Converter::toString(session_id) +
-                  " Assigned to connection on Socket: " +
-                  Converter::toString(connection.getSocketDescriptor()) +
-                  " with client: " + connection.getRemoteAddress());
+    m_logger.log(INFO,
+                 "Session ID: " + Converter::toString(session_id) +
+                     " Assigned to connection on Socket: " +
+                     Converter::toString(connection.getSocketDescriptor()) +
+                     " with client: " + connection.getRemoteAddress());
 }
 
 // Retire idle sessions and reap zombie processes
@@ -218,8 +217,7 @@ void ConnectionManager::collectGarbage()
     std::vector<SessionId_t> sessions_to_erase;
 
     // Iterate over all sessions
-    for (std::map<SessionId_t, ISession *>::iterator it =
-             m_sessions.begin();
+    for (std::map<SessionId_t, ISession *>::iterator it = m_sessions.begin();
          it != m_sessions.end(); it++)
     {
         // Check if the session has expired
@@ -227,7 +225,7 @@ void ConnectionManager::collectGarbage()
         {
             // Log the expired session
             m_logger.log(VERBOSE, "Session expired. Session ID: " +
-                                           Converter::toString(it->first));
+                                      Converter::toString(it->first));
 
             // Remove the session
             this->removeSession(it->first);
@@ -251,7 +249,7 @@ void ConnectionManager::collectGarbage()
         {
             // Log the expired connection
             m_logger.log(VERBOSE, "Connection expired. Socket: " +
-                                           Converter::toString(it->first));
+                                      Converter::toString(it->first));
 
             // Remove the connection
             this->removeConnection(it->first);
@@ -267,12 +265,11 @@ void ConnectionManager::collectGarbage()
     size_t retired_sessions = session_count - m_sessions.size();
 
     // Log the garbage collection
-    m_logger.log(DEBUG,
-                      "Garbage collection completed. Retired " +
-                          Converter::toString(retired_sessions) + " session" +
-                          (retired_sessions == 1 ? "." : "s.") +
-                          " Remaining sessions: " +
-                          Converter::toString(m_sessions.size()) + ".");
+    m_logger.log(DEBUG, "Garbage collection completed. Retired " +
+                            Converter::toString(retired_sessions) + " session" +
+                            (retired_sessions == 1 ? "." : "s.") +
+                            " Remaining sessions: " +
+                            Converter::toString(m_sessions.size()) + ".");
 }
 
 // Generate a unique session ID

@@ -59,8 +59,7 @@ ssize_t BufferManager::pushFileBuffer(int file_descriptor,
     // If the buffer for this file descriptor doesn't exist, create it
     if (m_buffers.find(file_descriptor) == m_buffers.end())
     {
-        m_buffers[ file_descriptor ] =
-            new FileBuffer(m_flush_threshold);
+        m_buffers[ file_descriptor ] = new FileBuffer(m_flush_threshold);
     }
     // Push data into the file buffer
     return m_buffers[ file_descriptor ]->push(
@@ -90,7 +89,8 @@ ssize_t BufferManager::flushBuffer(int descriptor, bool blocking)
     if (m_buffers.find(descriptor) != m_buffers.end())
     {
         // Flush the buffer and get the number of remaining bytes
-        ssize_t remaining_bytes = m_buffers[ descriptor ]->flush(descriptor, blocking);
+        ssize_t remaining_bytes =
+            m_buffers[ descriptor ]->flush(descriptor, blocking);
 
         // If the buffer is completely flushed, destroy it
         if (remaining_bytes == 0)

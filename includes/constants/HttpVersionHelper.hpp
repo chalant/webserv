@@ -56,10 +56,10 @@ private:
         m_version_list; // List of string representations of HTTP versions
     const std::map<std::string, HttpVersion>
         m_string_http_version_map; // Map of string representations to
-                               // HttpVersion enum values
+                                   // HttpVersion enum values
     const std::map<HttpVersion, std::string>
         m_http_version_string_map; // Map of HttpVersion enum values to string
-                               // representations
+                                   // representations
 
     // Private member functions for initialization
     static std::vector<std::string> m_setVersionList();

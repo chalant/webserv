@@ -13,8 +13,8 @@
  * off' To disable access logging, set the access_log directive to "off":
  * 'access_log off'
  *
- * NOTE: supported log levels currently are: exhaustive, verbose, debug, info, warn, error,
- * critical
+ * NOTE: supported log levels currently are: exhaustive, verbose, debug, info,
+ * warn, error, critical
  */
 
 #define LOG_BUFFER_SIZE 4096 // 4KB

@@ -5,10 +5,11 @@
 #include <cstdlib>
 
 #define NO_THROW 0x1 // Do not throw an exception
-#define KEEP_CGI_OUTPUT_PIPE_READ_END                                                \
+#define KEEP_CGI_OUTPUT_PIPE_READ_END                                          \
     0x2 // Do no close the read end of the CGI Output pipe
-#define KEEP_CGI_INPUT_PIPE_WRITE_END 0x4 // Do not close the write end of the CGI Input pipe
-#define READ_END 0 // Read end of a pipe
+#define KEEP_CGI_INPUT_PIPE_WRITE_END                                          \
+    0x4             // Do not close the write end of the CGI Input pipe
+#define READ_END 0  // Read end of a pipe
 #define WRITE_END 1 // Write end of a pipe
 
 CgiResponseGenerator::CgiResponseGenerator(ILogger &logger)
@@ -66,14 +67,16 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
                          Converter::toString(getpid()) +
                          " Parent PID: " + Converter::toString(getppid()));
         // stdin should read from CGI Input pipe
-        close(cgi_input_pipe_fd[ WRITE_END ]);              // close write end
-        dup2(cgi_input_pipe_fd[ READ_END ], STDIN_FILENO); // redirect stdin to pipe
-        close(cgi_input_pipe_fd[ READ_END ]);              // close read end
+        close(cgi_input_pipe_fd[ WRITE_END ]); // close write end
+        dup2(cgi_input_pipe_fd[ READ_END ],
+             STDIN_FILENO);                   // redirect stdin to pipe
+        close(cgi_input_pipe_fd[ READ_END ]); // close read end
 
         // stdout should write to CGI Output pipe
-        close(cgi_output_pipe_fd[ READ_END ]);               // close read end
-        dup2(cgi_output_pipe_fd[ WRITE_END ], STDOUT_FILENO); // redirect stdout to pipe
-        close(cgi_output_pipe_fd[ WRITE_END ]);               // close write end
+        close(cgi_output_pipe_fd[ READ_END ]); // close read end
+        dup2(cgi_output_pipe_fd[ WRITE_END ],
+             STDOUT_FILENO);                    // redirect stdout to pipe
+        close(cgi_output_pipe_fd[ WRITE_END ]); // close write end
 
         // Call execve
         execve(cgi_args[ 0 ], cgi_args.data(), cgi_env.data());
@@ -95,11 +98,12 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
         // Set the write end of the CGI Input pipe to non-blocking
         fcntl(cgi_input_pipe_fd[ 1 ], F_SETFL, O_NONBLOCK);
 
-        // Free memory and keep the write end of the CGI Input pipe open and the read
-        // end of the CGI Output pipe open
+        // Free memory and keep the write end of the CGI Input pipe open and the
+        // read end of the CGI Output pipe open
         m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd,
                   cgi_input_pipe_fd,
-                  NO_THROW | KEEP_CGI_OUTPUT_PIPE_READ_END | KEEP_CGI_INPUT_PIPE_WRITE_END);
+                  NO_THROW | KEEP_CGI_OUTPUT_PIPE_READ_END |
+                      KEEP_CGI_INPUT_PIPE_WRITE_END);
 
         // Log the Cgi info
         m_logger.log(VERBOSE, "Returning CGI info tuple; PID: " +
@@ -111,8 +115,9 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
 
         // Return the read end of the pipe to read the response later without
         // blocking
-        return std::make_pair(
-            pid, std::make_pair(cgi_output_pipe_fd[ READ_END ], cgi_input_pipe_fd[ WRITE_END ]));
+        return std::make_pair(pid,
+                              std::make_pair(cgi_output_pipe_fd[ READ_END ],
+                                             cgi_input_pipe_fd[ WRITE_END ]));
     }
 
     return std::make_pair(-1, std::make_pair(-1, -1)); // unreachable code
@@ -151,11 +156,10 @@ void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script_name,
         strdup(("CONTENT_LENGTH=" + request.getContentLength()).c_str()));
     cgi_env.push_back(
         strdup(("CONTENT_TYPE=" + request.getContentType()).c_str()));
-    cgi_env.push_back(strdup(("SCRIPT_FILENAME=" + route.getRoot() +
-                              route.getPath() + script_name)
-                                 .c_str()));
-    cgi_env.push_back(
-        strdup(("SCRIPT_NAME=" + script_name).c_str()));
+    cgi_env.push_back(strdup(
+        ("SCRIPT_FILENAME=" + route.getRoot() + route.getPath() + script_name)
+            .c_str()));
+    cgi_env.push_back(strdup(("SCRIPT_NAME=" + script_name).c_str()));
     std::string path_info = request.getPathInfo(script_name);
     cgi_env.push_back(strdup(("PATH_INFO=" + path_info).c_str()));
     cgi_env.push_back(strdup(
@@ -218,7 +222,7 @@ char *CgiResponseGenerator::m_getScriptPath(const std::string &script_name,
     std::string prefix = route.getPath();
 
     // Append a slash if the prefix does not end with a slash
-    if (prefix[prefix.size() - 1] != '/')
+    if (prefix[ prefix.size() - 1 ] != '/')
         prefix += '/';
 
     // Return the script path without the query string
@@ -243,7 +247,8 @@ std::string CgiResponseGenerator::m_getPathTranslated(std::string &path_info,
 
 void CgiResponseGenerator::m_cleanUp(char *cgi_args[], char *cgi_env[],
                                      int cgi_output_pipe_fd[ 2 ],
-                                     int cgi_input_pipe_fd[ 2 ], short option) const
+                                     int cgi_input_pipe_fd[ 2 ],
+                                     short option) const
 {
     // Free args
     if (cgi_args != NULL)

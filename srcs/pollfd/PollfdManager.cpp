@@ -23,24 +23,23 @@ PollfdManager::PollfdManager(IConfiguration &configuration, ILogger &logger)
       m_logger(logger)
 {
     // Log the creation of the PollfdManager
-    m_logger.log(DEBUG,
-                 "PollfdManager created.");
+    m_logger.log(DEBUG, "PollfdManager created.");
 }
 
 // Destructor for PollFdManager class
-PollfdManager::~PollfdManager() {
+PollfdManager::~PollfdManager()
+{
     // Log the destruction of the PollfdManager
-    m_logger.log(DEBUG,
-                 "PollfdManager destroyed.");
+    m_logger.log(DEBUG, "PollfdManager destroyed.");
 }
 
 // Method to add a polling file descriptor
 void PollfdManager::m_addPollfd(pollfd pollFd)
 {
     // Log the addition of a pollfd
-    m_logger.log(VERBOSE,
-                 "[POLLFDMANAGER] Adding pollfd for descriptor: " + Converter::toString(pollFd.fd));
-    
+    m_logger.log(VERBOSE, "[POLLFDMANAGER] Adding pollfd for descriptor: " +
+                              Converter::toString(pollFd.fd));
+
     // Add the pollfd to the pollfdQueue
     m_pollfds.push(pollFd);
 }
@@ -82,7 +81,7 @@ void PollfdManager::removePollfd(int position)
     int descriptor = m_pollfds[ position ].fd;
     // Log the removal of a pollfd
     m_logger.log(VERBOSE, "[POLLFDMANAGER] Removing pollfd for descriptor: " +
-                                        Converter::toString(descriptor));
+                              Converter::toString(descriptor));
     m_descriptor_type_map.erase(descriptor);
     m_pollfds.erase(position);
 }
@@ -98,9 +97,8 @@ void PollfdManager::closeAllFileDescriptors()
         if (m_pollfds[ i ].fd != -1)
         {
             // Log the closing of a file descriptor
-            m_logger.log(VERBOSE,
-                         "[POLLFDMANAGER] Closing file descriptor: " +
-                             Converter::toString(m_pollfds[ i ].fd));
+            m_logger.log(VERBOSE, "[POLLFDMANAGER] Closing file descriptor: " +
+                                      Converter::toString(m_pollfds[ i ].fd));
             close(m_pollfds[ i ].fd);
         }
     }

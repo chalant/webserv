@@ -61,10 +61,10 @@ private:
         m_supported_methods; // Set of string representations of HTTP methods
     const std::map<std::string, HttpMethod>
         m_string_http_method_map; // Map of string representations to HttpMethod
-                              // enum values
+                                  // enum values
     const std::map<HttpMethod, std::string>
         m_http_method_string_map; // Map of HttpMethod enum values to string
-                              // representations
+                                  // representations
 
     // Private member functions for initialization
     static std::vector<std::string> m_setMethodList();

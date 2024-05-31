@@ -54,7 +54,8 @@ HttpMethodHelper::stringHttpMethodMap(const std::string &method) const
 // Member function to check if a string is a valid HTTP method
 bool HttpMethodHelper::isMethod(const std::string &method) const
 {
-    return m_string_http_method_map.find(method) != m_string_http_method_map.end();
+    return m_string_http_method_map.find(method) !=
+           m_string_http_method_map.end();
 }
 
 // Member function to check if a string is a supported HTTP method
@@ -76,8 +77,8 @@ bool HttpMethodHelper::isSupportedMethod(const std::string &method) const
     return false;
 }
 
-// Helper function to initialize m_method_list with string representations of HTTP
-// methods
+// Helper function to initialize m_method_list with string representations of
+// HTTP methods
 std::vector<std::string> HttpMethodHelper::m_setMethodList()
 {
     std::vector<std::string> method_list;
@@ -96,8 +97,8 @@ std::vector<std::string> HttpMethodHelper::m_setMethodList()
     return method_list;
 }
 
-// Helper function to initialize m_supported_methods with string representations of
-// supported HTTP methods
+// Helper function to initialize m_supported_methods with string representations
+// of supported HTTP methods
 const std::vector<std::string> HttpMethodHelper::m_setSupportedMethods()
 {
     std::vector<std::string> supported_methods;
@@ -109,8 +110,8 @@ const std::vector<std::string> HttpMethodHelper::m_setSupportedMethods()
     return supported_methods;
 }
 
-// Helper function to initialize m_string_http_method_map with mappings from string
-// representations to HttpMethod enum values
+// Helper function to initialize m_string_http_method_map with mappings from
+// string representations to HttpMethod enum values
 std::map<std::string, HttpMethod> HttpMethodHelper::m_setStringHttpMethodMap()
 {
     std::map<std::string, HttpMethod> string_http_method_map;

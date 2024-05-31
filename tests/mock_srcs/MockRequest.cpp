@@ -154,9 +154,12 @@ const std::vector<BodyParameter> &MockRequest::getBodyParameters() const
 
 bool MockRequest::isUploadRequest() const { return m_test_upload_request; };
 
-RequestState	&MockRequest::getState() { return m_state; }
-std::vector<char>	&MockRequest::getBody() { return m_test_body; }
-const std::vector<char> &MockRequest::getBuffer() const { return std::vector<char>(); };
+RequestState &MockRequest::getState() { return m_state; }
+std::vector<char> &MockRequest::getBody() { return m_test_body; }
+const std::vector<char> &MockRequest::getBuffer() const
+{
+    return std::vector<char>();
+};
 
 // Setters
 void MockRequest::setMethod(const std::string &method)
@@ -176,7 +179,10 @@ void MockRequest::addHeader(const std::string &key, const std::string &value)
     m_test_headers[ key ] = value;
 };
 
-void MockRequest::setBody(const std::vector<char> &body) { m_test_body = body; };
+void MockRequest::setBody(const std::vector<char> &body)
+{
+    m_test_body = body;
+};
 
 void MockRequest::setBody(const std::string &body)
 {

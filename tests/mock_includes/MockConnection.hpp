@@ -35,7 +35,8 @@ public:
     IRequest &getRequest() const;
     IResponse &getResponse() const;
     ISession &getSession() const;
-    void setCgiInfo(int cgi_pid, int response_read_pipe_fd, int request_write_pipe_fd);
+    void setCgiInfo(int cgi_pid, int response_read_pipe_fd,
+                    int request_write_pipe_fd);
 
     // Connection management
     void touch();

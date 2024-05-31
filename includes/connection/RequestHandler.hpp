@@ -54,8 +54,9 @@ private:
     // AResponseGenerator *m_request_handler;                 // Pointer to the
     // recruited request handler
     HttpHelper m_http_helper; // Helper class for request-related operations
-    ILogger &m_logger;       // Reference to the logger
-    const IExceptionHandler &m_exception_handler; // Ref to the exception handler
+    ILogger &m_logger;        // Reference to the logger
+    const IExceptionHandler
+        &m_exception_handler;         // Ref to the exception handler
     std::map<int, int> m_pipe_routes; // pipe descriptors to socket descriptors
 
     // private method

@@ -31,7 +31,6 @@ int main()
     // Recipient of the Request Parser's output
     MockRequest mock_request;
 
-
     // test case 1: A Valid IRequest
     //******************************
     // GET /index.html HTTP/1.1
@@ -56,7 +55,6 @@ int main()
     // Clear the contents of the Request object for the next test
     mock_request.clear();
 
-
     // test case 2: An incomplete Request
     //***********************************
     // GET
@@ -74,7 +72,6 @@ int main()
         // Verify the exception thrown
         assert(e.getErrorCode() == BAD_REQUEST);
     }
-
 
     // test case 3: A multipart/form-data
     //***********************************
@@ -99,13 +96,15 @@ int main()
     // Contents of file 2 here
     // --MY_BOUNDARY--
     raw_request = stringToVector(
-        "POST /upload HTTP/1.1\r\nHost: 42.fr\r\nContent-Length: 363\r\nContent-Type: "
+        "POST /upload HTTP/1.1\r\nHost: 42.fr\r\nContent-Length: "
+        "363\r\nContent-Type: "
         "multipart/form-data; boundary=MY_BOUNDARY\r\n\r\n--MY_BOUNDARY\r\n"
         "Content-Disposition: form-data; name=\"field1\"\r\n\r\nvalue1\r\n"
         "--MY_BOUNDARY\r\nContent-Disposition: form-data; name=\"file_1\"; "
         "filename=\"file1.txt\"\r\nContent-Type: text/plain\r\n\r\nContents of "
         "file 1 here\r\n--MY_BOUNDARY\r\nContent-Disposition: form-data; "
-        "name=\"file_2\"; filename=\"file2.txt\"\r\nContent-Type: text/plain\r\n\r\nContents of "
+        "name=\"file_2\"; filename=\"file2.txt\"\r\nContent-Type: "
+        "text/plain\r\n\r\nContents of "
         "file 2 here\r\n--MY_BOUNDARY--\r\n");
 
     // Parse the raw request
@@ -140,22 +139,34 @@ int main()
 
     // Assert that the body_parameters vector contains the expected values
     assert(body_parameters.size() == 3);
-    assert(body_parameters[0].filename == expected_body_parameters[0].filename);
-    assert(body_parameters[0].content_type == expected_body_parameters[0].content_type);
-    assert(body_parameters[0].data == expected_body_parameters[0].data);
-    assert(body_parameters[0].disposition_type == expected_body_parameters[0].disposition_type);
-    assert(body_parameters[0].field_name == expected_body_parameters[0].field_name);
-    assert(body_parameters[1].filename == expected_body_parameters[1].filename);
-    assert(body_parameters[1].content_type == expected_body_parameters[1].content_type);
-    assert(body_parameters[1].data == expected_body_parameters[1].data);
-    assert(body_parameters[1].disposition_type == expected_body_parameters[1].disposition_type);
-    assert(body_parameters[1].field_name == expected_body_parameters[1].field_name);
-    assert(body_parameters[2].filename == expected_body_parameters[2].filename);
-    assert(body_parameters[2].content_type == expected_body_parameters[2].content_type);
-    assert(body_parameters[2].data == expected_body_parameters[2].data);
-    assert(body_parameters[2].disposition_type == expected_body_parameters[2].disposition_type);
-    assert(body_parameters[2].field_name == expected_body_parameters[2].field_name);
-    
+    assert(body_parameters[ 0 ].filename ==
+           expected_body_parameters[ 0 ].filename);
+    assert(body_parameters[ 0 ].content_type ==
+           expected_body_parameters[ 0 ].content_type);
+    assert(body_parameters[ 0 ].data == expected_body_parameters[ 0 ].data);
+    assert(body_parameters[ 0 ].disposition_type ==
+           expected_body_parameters[ 0 ].disposition_type);
+    assert(body_parameters[ 0 ].field_name ==
+           expected_body_parameters[ 0 ].field_name);
+    assert(body_parameters[ 1 ].filename ==
+           expected_body_parameters[ 1 ].filename);
+    assert(body_parameters[ 1 ].content_type ==
+           expected_body_parameters[ 1 ].content_type);
+    assert(body_parameters[ 1 ].data == expected_body_parameters[ 1 ].data);
+    assert(body_parameters[ 1 ].disposition_type ==
+           expected_body_parameters[ 1 ].disposition_type);
+    assert(body_parameters[ 1 ].field_name ==
+           expected_body_parameters[ 1 ].field_name);
+    assert(body_parameters[ 2 ].filename ==
+           expected_body_parameters[ 2 ].filename);
+    assert(body_parameters[ 2 ].content_type ==
+           expected_body_parameters[ 2 ].content_type);
+    assert(body_parameters[ 2 ].data == expected_body_parameters[ 2 ].data);
+    assert(body_parameters[ 2 ].disposition_type ==
+           expected_body_parameters[ 2 ].disposition_type);
+    assert(body_parameters[ 2 ].field_name ==
+           expected_body_parameters[ 2 ].field_name);
+
     // Clear the contents of the Request object for the next test
     mock_request.clear();
 

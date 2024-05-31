@@ -50,7 +50,8 @@ void EventManager::handleEvents()
     }
 }
 
-void EventManager::m_handleRegularFileEvents(ssize_t &pollfd_index, short events)
+void EventManager::m_handleRegularFileEvents(ssize_t &pollfd_index,
+                                             short events)
 {
     m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling regular file events");
 
@@ -67,15 +68,16 @@ void EventManager::m_handleRegularFileEvents(ssize_t &pollfd_index, short events
         int file_descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
 
         // Log the error
-        m_logger.log(ERROR, "Error on file: " +
-                                     Converter::toString(file_descriptor));
+        m_logger.log(ERROR,
+                     "Error on file: " + Converter::toString(file_descriptor));
 
         // Clear buffer, remove from polling and close file
         m_cleanUp(pollfd_index, file_descriptor);
     }
 }
 
-void EventManager::m_handleServerSocketEvents(ssize_t pollfd_index, short events)
+void EventManager::m_handleServerSocketEvents(ssize_t pollfd_index,
+                                              short events)
 {
     m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling server socket events");
     // Check for errors on server socket
@@ -100,7 +102,8 @@ void EventManager::m_handleServerSocketEvents(ssize_t pollfd_index, short events
     }
 }
 
-void EventManager::m_handleClientSocketEvents(ssize_t &pollfd_index, short events)
+void EventManager::m_handleClientSocketEvents(ssize_t &pollfd_index,
+                                              short events)
 {
     m_logger.log(EXHAUSTIVE, "[EVENTMANAGER] Handling client socket events");
     // Check for exceptions
@@ -124,31 +127,33 @@ void EventManager::m_handleClientSocketEvents(ssize_t &pollfd_index, short event
 
 void EventManager::m_handleRequest(ssize_t &pollfd_index)
 {
-    int client_socket_descriptor =
-        m_pollfd_manager.getDescriptor(pollfd_index);
+    int client_socket_descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
 
-    Triplet_t info =
-        m_request_handler.handleRequest(client_socket_descriptor);
+    Triplet_t info = m_request_handler.handleRequest(client_socket_descriptor);
 
     if (info.first == -1) // served static files or bad request
     {
         // Log the static serving
         m_logger.log(VERBOSE,
-                          "[EVENTMANAGER] Statically served client socket: " +
-                              Converter::toString(client_socket_descriptor));
+                     "[EVENTMANAGER] Statically served client socket: " +
+                         Converter::toString(client_socket_descriptor));
 
         // Add the POLLOUT event for the socket
         m_pollfd_manager.addPollOut(pollfd_index);
     }
-	else if (info.first == -2) //chunked data...
-	{
-		m_logger.log(VERBOSE, "[EVENTMANAGER] Incomplete request received for client socket: " + Converter::toString(client_socket_descriptor));
-	}
+    else if (info.first == -2) // chunked data...
+    {
+        m_logger.log(
+            VERBOSE,
+            "[EVENTMANAGER] Incomplete request received for client socket: " +
+                Converter::toString(client_socket_descriptor));
+    }
     else if (info.first == -3) // Client closed the connection
     {
         // Log the client disconnection
-        m_logger.log(VERBOSE, "Client disconnected socket: " +
-                                    Converter::toString(client_socket_descriptor));
+        m_logger.log(VERBOSE,
+                     "Client disconnected socket: " +
+                         Converter::toString(client_socket_descriptor));
 
         // Clear buffer, remove from polling and close socket
         m_cleanUp(pollfd_index, client_socket_descriptor);
@@ -161,10 +166,11 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
         int cgi_input_pipe_write_end = info.second.second;
 
         // Log the dynamic serving
-        m_logger.log(
-            VERBOSE, "[EVENTMANAGER] Dynamically serving client socket: " +
+        m_logger.log(VERBOSE,
+                     "[EVENTMANAGER] Dynamically serving client socket: " +
                          Converter::toString(client_socket_descriptor) +
-                         " waiting for process " + Converter::toString(cgi_pid) +
+                         " waiting for process " +
+                         Converter::toString(cgi_pid) +
                          " (CGI output pipe Read end: " +
                          Converter::toString(cgi_output_pipe_read_end) +
                          ", CGI input pipe Write end: " +
@@ -196,7 +202,7 @@ void EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
     {
         // Log the error
         m_logger.log(ERROR, "Error flushing buffer for descriptor: " +
-                                     Converter::toString(descriptor));
+                                Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket
         m_cleanUp(pollfd_index, descriptor);
@@ -205,7 +211,7 @@ void EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
     {
         // Log the flush
         m_logger.log(VERBOSE, "Flushed buffer for descriptor: " +
-                                       Converter::toString(descriptor));
+                                  Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket
         m_cleanUp(pollfd_index, descriptor, options);
@@ -213,10 +219,10 @@ void EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
     else
     {
         // Log the flush
-        m_logger.log(
-            VERBOSE, "Partially Flushed buffer for descriptor: " +
-                         Converter::toString(descriptor) + " with " +
-                         Converter::toString(return_value) + " bytes remaining");
+        m_logger.log(VERBOSE, "Partially Flushed buffer for descriptor: " +
+                                  Converter::toString(descriptor) + " with " +
+                                  Converter::toString(return_value) +
+                                  " bytes remaining");
     }
 }
 
@@ -229,7 +235,7 @@ void EventManager::m_handleClientException(ssize_t &pollfd_index, short events)
     {
         // Log the disconnection
         m_logger.log(ERROR, "Client unexpectedly disconnected socket: " +
-                                    Converter::toString(descriptor));
+                                Converter::toString(descriptor));
 
         // Clear buffer, remove from polling and close socket
         m_cleanUp(pollfd_index, descriptor);
@@ -240,14 +246,14 @@ void EventManager::m_handleClientException(ssize_t &pollfd_index, short events)
     {
         // Log the error
         m_logger.log(ERROR, "Invalid request on socket: " +
-                                     Converter::toString(descriptor));
+                                Converter::toString(descriptor));
 
         // Destroy the buffer associated with the descriptor
         m_buffer_manager.destroyBuffer(descriptor);
 
         // Let the request handler handle the error
         m_request_handler.handleErrorResponse(descriptor,
-                                                  BAD_REQUEST); // 400
+                                              BAD_REQUEST); // 400
 
         // Add the POLLOUT event for the socket
         m_pollfd_manager.addPollOut(pollfd_index);
@@ -257,22 +263,23 @@ void EventManager::m_handleClientException(ssize_t &pollfd_index, short events)
     if (events & POLLERR)
     {
         // Log the error
-        m_logger.log(ERROR, "Error on socket: " +
-                                     Converter::toString(descriptor));
+        m_logger.log(ERROR,
+                     "Error on socket: " + Converter::toString(descriptor));
 
         // Destroy the buffer associated with the descriptor
         m_buffer_manager.destroyBuffer(descriptor);
 
         // Let the request handler handle the error
         m_request_handler.handleErrorResponse(descriptor,
-                                                  INTERNAL_SERVER_ERROR); // 500
+                                              INTERNAL_SERVER_ERROR); // 500
 
         // Add the POLLOUT event for the socket
         m_pollfd_manager.addPollOut(pollfd_index);
     }
 }
 
-void EventManager::m_cleanUp(ssize_t &pollfd_index, int descriptor, short options)
+void EventManager::m_cleanUp(ssize_t &pollfd_index, int descriptor,
+                             short options)
 {
     // Destroy the buffer associated with the descriptor
     m_buffer_manager.destroyBuffer(descriptor);
@@ -288,8 +295,8 @@ void EventManager::m_cleanUp(ssize_t &pollfd_index, int descriptor, short option
     pollfd_index--;
 
     // Log the cleanup
-    m_logger.log(VERBOSE, "Cleaned up descriptor: " +
-                                Converter::toString(descriptor));
+    m_logger.log(VERBOSE,
+                 "Cleaned up descriptor: " + Converter::toString(descriptor));
 }
 
 void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
@@ -304,13 +311,12 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
     if (events & (POLLHUP | POLLERR | POLLNVAL))
     {
         // Log the error
-        m_logger.log(ERROR, "Error on pipe: " +
-                                     Converter::toString(pipe_descriptor));
+        m_logger.log(ERROR,
+                     "Error on pipe: " + Converter::toString(pipe_descriptor));
 
         // Let the request handler handle the exception, returns the client
         // socket descriptor linked to the pipe
-        client_socket =
-            m_request_handler.handlePipeException(pipe_descriptor);
+        client_socket = m_request_handler.handlePipeException(pipe_descriptor);
     }
 
     // Read the response from the Response pipe if ready
@@ -318,7 +324,7 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
     {
         // Log the pipe read
         m_logger.log(VERBOSE, "Pipe read event on pipe: " +
-                                       Converter::toString(pipe_descriptor));
+                                  Converter::toString(pipe_descriptor));
 
         // Let the request handler handle the pipe read, returns the client
         // socket descriptor linked to the pipe
@@ -329,7 +335,8 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
         ssize_t client_pollfd_index =
             m_pollfd_manager.getPollfdQueueIndex(client_socket);
         if (client_pollfd_index == -1)
-            m_logger.log(ERROR, "[EVENTMANAGER] Client socket not found in poll set");
+            m_logger.log(ERROR,
+                         "[EVENTMANAGER] Client socket not found in poll set");
         else
             m_pollfd_manager.addPollOut(client_pollfd_index);
 
@@ -342,7 +349,7 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
     {
         // Log the pipe write
         m_logger.log(VERBOSE, "Pipe write event on pipe: " +
-                                       Converter::toString(pipe_descriptor));
+                                  Converter::toString(pipe_descriptor));
 
         // Flush the buffer
         m_flushBuffer(pollfd_index);

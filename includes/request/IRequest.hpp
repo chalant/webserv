@@ -39,33 +39,34 @@ struct BodyParameter
 
 class RequestState
 {
-	private:
-		int		m_content_red;
-		int		m_content_length;
-		bool	m_initial;
-        bool    m_headers;
-		bool	m_finished;
-	public:
-		RequestState();
-		bool	finished(void) const;
-        bool    headers(void) const;
-		bool	initial(void) const;
-		int		getContentRed(void) const;
-		int		getContentLength(void) const;
+private:
+    int m_content_red;
+    int m_content_length;
+    bool m_initial;
+    bool m_headers;
+    bool m_finished;
 
-		void	finished(bool value);
-        void    headers(bool value);
-		void	initial(bool value);
-		void	incrementContentRed();
-		void	setContentRed(int value);
-		void	setContentLength(int value);
-		void	reset(void);
+public:
+    RequestState();
+    bool finished(void) const;
+    bool headers(void) const;
+    bool initial(void) const;
+    int getContentRed(void) const;
+    int getContentLength(void) const;
+
+    void finished(bool value);
+    void headers(bool value);
+    void initial(bool value);
+    void incrementContentRed();
+    void setContentRed(int value);
+    void setContentLength(int value);
+    void reset(void);
 };
 
 class IRequest
 {
 public:
-    virtual ~IRequest(){};
+    virtual ~IRequest() {};
 
     // Getters
     virtual HttpMethod getMethod() const = 0;
@@ -91,8 +92,8 @@ public:
     virtual std::string getAuthority() const = 0;
     virtual const std::vector<BodyParameter> &getBodyParameters() const = 0;
     virtual bool isUploadRequest() const = 0;
-	virtual RequestState	&getState(void) = 0;
-	virtual	std::vector<char>	&getBody(void) = 0;
+    virtual RequestState &getState(void) = 0;
+    virtual std::vector<char> &getBody(void) = 0;
     virtual const std::vector<char> &getBuffer() const = 0;
 
     // Setters

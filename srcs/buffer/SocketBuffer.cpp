@@ -55,8 +55,7 @@ ssize_t SocketBuffer::flush(int socket_descriptor, bool blocking)
         // Update buffer state after successful send
         size_t bytesRemaining =
             m_buffer.size() - static_cast<size_t>(bytes_sent);
-        memmove(&m_buffer[ 0 ], &m_buffer[ bytes_sent ],
-                bytesRemaining);
+        memmove(&m_buffer[ 0 ], &m_buffer[ bytes_sent ], bytesRemaining);
         m_buffer.resize(bytesRemaining);
     }
     return m_buffer.size(); // Return the remaining size of the buffer

@@ -21,8 +21,9 @@ Connection::Connection(
     ILogger &logger, IRequest *request, IResponse *response, time_t timeout)
     : m_socket_descriptor(client_info.first), m_ip(client_info.second.first),
       m_port(Converter::toInt(client_info.second.second)),
-      m_remote_address(m_ip + ":" + client_info.second.second), m_logger(logger),
-      m_request(request), m_response(response), m_timeout(timeout)
+      m_remote_address(m_ip + ":" + client_info.second.second),
+      m_logger(logger), m_request(request), m_response(response),
+      m_timeout(timeout)
 {
     m_last_access = time(NULL);
 }
@@ -44,14 +45,17 @@ std::string Connection::getIp() const { return m_ip; }
 
 int Connection::getPort() const { return m_port; }
 
-std::string Connection::getRemoteAddress() const
+std::string Connection::getRemoteAddress() const { return m_remote_address; }
+
+int Connection::getCgiOutputPipeReadEnd() const
 {
-    return m_remote_address;
+    return m_cgi_output_pipe_read_end;
 }
 
-int Connection::getCgiOutputPipeReadEnd() const { return m_cgi_output_pipe_read_end; }
-
-int Connection::getCgiInputPipeWriteEnd() const { return m_cgi_input_pipe_write_end; }
+int Connection::getCgiInputPipeWriteEnd() const
+{
+    return m_cgi_input_pipe_write_end;
+}
 
 IRequest &Connection::getRequest() const { return *m_request; }
 
@@ -82,10 +86,9 @@ void Connection::touch()
     now_string.erase(now_string.length() - 1);
 
     // Log the last access update
-    m_logger.log(
-        VERBOSE,
-        "Updating last access for connection with: " + m_remote_address +
-            " from " + last_access_string + " to " + now_string);
+    m_logger.log(VERBOSE, "Updating last access for connection with: " +
+                              m_remote_address + " from " + last_access_string +
+                              " to " + now_string);
 
     // Update the last access time
     m_last_access = now;

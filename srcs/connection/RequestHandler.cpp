@@ -1,9 +1,9 @@
 #include "../../includes/connection/RequestHandler.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <algorithm>
 #include <unistd.h>
 #include <utility>
-#include <algorithm>
 
 /*
  * RequestHandler class
@@ -27,7 +27,8 @@ RequestHandler::RequestHandler(IBufferManager &buffer_manager,
                                ITempRouter &router, ILogger &logger,
                                const IExceptionHandler &exception_handler,
                                IClientHandler &client_handler)
-    : m_buffer_manager(buffer_manager), m_connection_manager(connection_manager),
+    : m_buffer_manager(buffer_manager),
+      m_connection_manager(connection_manager),
       m_client_handler(client_handler), m_request_parser(configuration, logger),
       m_router(router), m_http_helper(configuration), m_logger(logger),
       m_exception_handler(exception_handler)
@@ -64,13 +65,13 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
     // Get a reference to the Response
     IResponse &response = connection.getResponse();
 
-	RequestState	&state = request.getState();
+    RequestState &state = request.getState();
 
     try
     {
         // Read the raw request from the client
-        std::vector<char>	raw_request = m_client_handler.readRequest();
-        
+        std::vector<char> raw_request = m_client_handler.readRequest();
+
         // Check if the client has disconnected
         if (raw_request.empty())
         {
@@ -78,7 +79,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             return Triplet_t(-3, std::pair<int, int>(-1, -1));
         }
 
-		if (state.initial())
+        if (state.initial())
         {
             // Append the raw request to the request buffer
             request.appendBuffer(raw_request);
@@ -95,41 +96,46 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             else
             {
                 // log the situation
-                m_logger.log(VERBOSE, "RequestHandler::handleRequest: Request is incomplete - state: initial. Buffer: " + buffer_str);
+                m_logger.log(VERBOSE,
+                             "RequestHandler::handleRequest: Request is "
+                             "incomplete - state: initial. Buffer: " +
+                                 buffer_str);
                 return Triplet_t(-2, std::pair<int, int>(-1, -1));
             }
         }
         if (state.headers()) // Parse the headers etc.
-		{
-			m_request_parser.parseRequestHeader(request);
-			state.headers(false);
-            
+        {
+            m_request_parser.parseRequestHeader(request);
+            state.headers(false);
+
             // Assign session to connection
             m_connection_manager.assignSessionToConnection(connection, request,
-                    	                                     response);
-			if (!state.finished())
-			{
+                                                           response);
+            if (!state.finished())
+            {
                 // log the situation
-                m_logger.log(VERBOSE, "RequestHandler::handleRequest: Request is incomplete - state: headers done.");
-				return Triplet_t(-2, std::pair<int, int>(-1, -1));
-			}
-		}
-		else if (!state.finished())
-		{
-			m_request_parser.parsePartialBody(raw_request, request);
-			if (!state.finished())
-			{
+                m_logger.log(VERBOSE, "RequestHandler::handleRequest: Request "
+                                      "is incomplete - state: headers done.");
+                return Triplet_t(-2, std::pair<int, int>(-1, -1));
+            }
+        }
+        else if (!state.finished())
+        {
+            m_request_parser.parsePartialBody(raw_request, request);
+            if (!state.finished())
+            {
                 // log the situation
-                m_logger.log(VERBOSE, "RequestHandler::handleRequest: Request is incomplete - state: partial body.");
-				return Triplet_t(-2, std::pair<int, int>(-1, -1));
-			}
-		}
-		//finally, parse body parameters
-		m_request_parser.parseBodyParameters(request);
-		state.reset();
-        
-		// Parse the raw request into a Request object
-        //m_request_parser.parseRequest(raw_request, request);
+                m_logger.log(VERBOSE, "RequestHandler::handleRequest: Request "
+                                      "is incomplete - state: partial body.");
+                return Triplet_t(-2, std::pair<int, int>(-1, -1));
+            }
+        }
+        // finally, parse body parameters
+        m_request_parser.parseBodyParameters(request);
+        state.reset();
+
+        // Parse the raw request into a Request object
+        // m_request_parser.parseRequest(raw_request, request);
 
         // Delete these 3 lines once router is implemented
         //(void)m_router;
@@ -150,7 +156,8 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             int cgi_input_pipe_write_end = cgi_info.second.second;
 
             // Record the cgi info
-            connection.setCgiInfo(cgi_pid, cgi_output_pipe_read_end, cgi_input_pipe_write_end);
+            connection.setCgiInfo(cgi_pid, cgi_output_pipe_read_end,
+                                  cgi_input_pipe_write_end);
 
             // Record the pipes to connection socket mappings
             m_pipe_routes[ cgi_output_pipe_read_end ] = socket_descriptor;
@@ -158,7 +165,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
 
             // Push the request body to the request pipe
             m_buffer_manager.pushFileBuffer(cgi_input_pipe_write_end,
-                                                  request.getBody());
+                                            request.getBody());
 
             return cgi_info; // cgi content
         }
@@ -166,7 +173,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         {
             // Push the response to the buffer
             m_sendResponse(socket_descriptor);
-			request.getBody().clear();
+            request.getBody().clear();
             return Triplet_t(-1, std::pair<int, int>(-1, -1));
         }
     }
@@ -180,7 +187,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
                 e.getErrorCode(); // An HttpStatusCodeException was thrown
         else
             status_code = 500; // Internal Server Error; Default status code for
-                              // other exceptions
+                               // other exceptions
 
         // Log the exception
         m_exception_handler.handleException(
@@ -225,7 +232,8 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
 
     // Read the response from the pipe
     std::vector<char> raw_response(4096, 0);
-    ssize_t bytesread = read(cgi_output_pipe_read_end, raw_response.data(), raw_response.size());
+    ssize_t bytesread = read(cgi_output_pipe_read_end, raw_response.data(),
+                             raw_response.size());
     if (bytesread < 0)
     {
         // Handle error response
@@ -234,7 +242,8 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     }
     raw_response.resize(bytesread);
 
-    std::cerr << "Response: " << raw_response.data() << "END OF RESPONSE" << std::endl;
+    std::cerr << "Response: " << raw_response.data() << "END OF RESPONSE"
+              << std::endl;
 
     // Get a reference to the Response
     IResponse &response = m_connection_manager.getResponse(client_socket);
@@ -251,8 +260,7 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     // Clean up
 
     // Get a reference to the Connection
-    IConnection &connection =
-        m_connection_manager.getConnection(client_socket);
+    IConnection &connection = m_connection_manager.getConnection(client_socket);
 
     // Get the CGI input pipe write end
     int cgi_input_pipe_write_end = connection.getCgiInputPipeWriteEnd();
@@ -273,8 +281,7 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
 int RequestHandler::m_sendResponse(int socket_descriptor)
 {
     // Get a reference to the Response
-    IResponse &response =
-        m_connection_manager.getResponse(socket_descriptor);
+    IResponse &response = m_connection_manager.getResponse(socket_descriptor);
     // Get a reference to the Request
     IRequest &request =
         m_connection_manager.getConnection(socket_descriptor).getRequest();
@@ -298,8 +305,7 @@ int RequestHandler::m_sendResponse(int socket_descriptor)
 void RequestHandler::handleErrorResponse(int socket_descriptor, int status_code)
 {
     // Get a reference to the Response
-    IResponse &response =
-        m_connection_manager.getResponse(socket_descriptor);
+    IResponse &response = m_connection_manager.getResponse(socket_descriptor);
 
     // Set the response to the error status code
     response.setErrorResponse(status_code);
@@ -313,8 +319,7 @@ void RequestHandler::handleErrorResponse(int socket_descriptor,
                                          HttpStatusCode status_code)
 {
     // Get a reference to the Response
-    IResponse &response =
-        m_connection_manager.getResponse(socket_descriptor);
+    IResponse &response = m_connection_manager.getResponse(socket_descriptor);
 
     // Set the response to the error status code
     response.setErrorResponse(status_code);

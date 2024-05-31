@@ -50,11 +50,12 @@ HttpHeaderHelper::stringHttpHeaderMap(const std::string &header) const
 // Check if a string is a valid HTTP header name
 bool HttpHeaderHelper::isHeaderName(const std::string &header) const
 {
-    return m_string_http_header_map.find(header) != m_string_http_header_map.end();
+    return m_string_http_header_map.find(header) !=
+           m_string_http_header_map.end();
 }
 
-// Helper function to initialize m_header_list with string representations of HTTP
-// headers
+// Helper function to initialize m_header_list with string representations of
+// HTTP headers
 std::vector<std::string> HttpHeaderHelper::m_setHeaderList()
 {
     std::vector<std::string> header_list;
@@ -138,8 +139,8 @@ std::vector<std::string> HttpHeaderHelper::m_setHeaderList()
     return header_list;
 }
 
-// Helper function to initialize m_string_http_header_map with string representations
-// of HTTP headers
+// Helper function to initialize m_string_http_header_map with string
+// representations of HTTP headers
 std::map<std::string, HttpHeader> HttpHeaderHelper::m_setStringHttpHeaderMap()
 {
     std::map<std::string, HttpHeader> string_http_header_map;
@@ -208,7 +209,8 @@ std::map<std::string, HttpHeader> HttpHeaderHelper::m_setStringHttpHeaderMap()
     string_http_header_map[ "access-control-request-headers" ] =
         ACCESS_CONTROL_REQUEST_HEADERS;
     string_http_header_map[ "content-disposition" ] = CONTENT_DISPOSITION;
-    string_http_header_map[ "content-security-policy" ] = CONTENT_SECURITY_POLICY;
+    string_http_header_map[ "content-security-policy" ] =
+        CONTENT_SECURITY_POLICY;
     string_http_header_map[ "content-security-policy-report-only" ] =
         CONTENT_SECURITY_POLICY_REPORT_ONLY;
     string_http_header_map[ "dnt" ] = DNT;
@@ -302,7 +304,8 @@ std::map<HttpHeader, std::string> HttpHeaderHelper::m_setHttpHeaderStringMap()
     http_header_string_map[ ACCESS_CONTROL_REQUEST_HEADERS ] =
         "access-control-request-headers";
     http_header_string_map[ CONTENT_DISPOSITION ] = "content-disposition";
-    http_header_string_map[ CONTENT_SECURITY_POLICY ] = "content-security-policy";
+    http_header_string_map[ CONTENT_SECURITY_POLICY ] =
+        "content-security-policy";
     http_header_string_map[ CONTENT_SECURITY_POLICY_REPORT_ONLY ] =
         "content-security-policy-report-only";
     http_header_string_map[ DNT ] = "dnt";

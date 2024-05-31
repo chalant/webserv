@@ -66,16 +66,16 @@ private:
     std::string
     m_getCurrentTimestamp() const; // Method to get the current timestamp
     void m_appendMapToLog(std::ostringstream &ss, const std::string &field_name,
-                         const std::map<std::string, std::string> &data_map)
+                          const std::map<std::string, std::string> &data_map)
         const; // Method to append a map to the log message
     int m_pushToBuffer(const std::string &log_message,
-                      const int file_descriptor); // Method to push log messages
-                                                 // to the buffer
+                       const int file_descriptor); // Method to push log
+                                                   // messages to the buffer
 
 public:
     // Constructors and Destructor
     Logger(IBufferManager &buffer_manager); // Constructor
-    virtual ~Logger();                     // Destructor
+    virtual ~Logger();                      // Destructor
 
     // Getter method
     // virtual int getLogFileDescriptor() const; // Getter method for log file

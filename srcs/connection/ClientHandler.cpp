@@ -41,9 +41,8 @@ const std::vector<char> ClientHandler::readRequest() const
 
     // Read data from the client socket
     // Double the buffer as long as necessary
-    while ((bytes_read = m_socket.recv(m_socket_descriptor,
-                                           &buffer[ offset ], max_read_size)) ==
-           max_read_size)
+    while ((bytes_read = m_socket.recv(m_socket_descriptor, &buffer[ offset ],
+                                       max_read_size)) == max_read_size)
     {
         // Move the offset to the end of the buffer
         offset += bytes_read;
@@ -72,8 +71,8 @@ const std::vector<char> ClientHandler::readRequest() const
     buffer.resize(offset + bytes_read);
 
     // Log the request read from the client
-    m_logger.log(
-        EXHAUSTIVE, "[CLIENTHANDLER] Request on socket: " +
+    m_logger.log(EXHAUSTIVE,
+                 "[CLIENTHANDLER] Request on socket: " +
                      Converter::toString(m_socket_descriptor) + ": \"" +
                      std::string(buffer.begin(), buffer.end()) + "\"");
 
@@ -86,13 +85,12 @@ ssize_t ClientHandler::sendResponse(const std::vector<char> &response) const
 {
     ssize_t bytesSent = m_socket.send(m_socket_descriptor, response);
     if (bytesSent == -1)
-        m_logger.log(ERROR,
-                          "Error sending response to client on socket: " +
-                              Converter::toString(m_socket_descriptor));
+        m_logger.log(ERROR, "Error sending response to client on socket: " +
+                                Converter::toString(m_socket_descriptor));
 
     // Log the response sent to the client
-    m_logger.log(
-        VERBOSE, "[CLIENTHANDLER] Responded on socket: " +
+    m_logger.log(VERBOSE,
+                 "[CLIENTHANDLER] Responded on socket: " +
                      Converter::toString(m_socket_descriptor) + ": \"" +
                      std::string(response.begin(), response.end()) + "\"");
 

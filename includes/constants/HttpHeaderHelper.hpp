@@ -181,10 +181,10 @@ private:
         m_header_list; // List of string representations of HTTP headers
     const std::map<std::string, HttpHeader>
         m_string_http_header_map; // Map of string representations to HttpHeader
-                              // enum values
+                                  // enum values
     const std::map<HttpHeader, std::string>
         m_http_header_string_map; // Map of HttpHeader enum values to string
-                              // representations
+                                  // representations
 
     // Private member functions for initialization
     static std::vector<std::string> m_setHeaderList();

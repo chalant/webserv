@@ -44,7 +44,7 @@ Recognizer::Recognizer()
 Recognizer::~Recognizer() {}
 
 void Recognizer::m_scan(std::vector<std::vector<EarleyItem> > &sets,
-                      Token const &token, EarleyItem const &item)
+                        Token const &token, EarleyItem const &item)
 {
     if (m_symbol->match(token))
     {
@@ -54,8 +54,9 @@ void Recognizer::m_scan(std::vector<std::vector<EarleyItem> > &sets,
 }
 
 void Recognizer::m_complete(Grammar const &grammar,
-                          std::vector<std::vector<EarleyItem> > &sets,
-                          std::vector<EarleyItem> &current_set, int item_index)
+                            std::vector<std::vector<EarleyItem> > &sets,
+                            std::vector<EarleyItem> &current_set,
+                            int item_index)
 {
     EarleyItem *old_item;
     EarleyItem *current_item;
@@ -82,7 +83,7 @@ void Recognizer::m_complete(Grammar const &grammar,
 }
 
 void Recognizer::m_predict(const Grammar &grammar,
-                         std::vector<EarleyItem> &current_set)
+                           std::vector<EarleyItem> &current_set)
 {
     for (size_t i = 0; i < grammar.size(); i++)
     {

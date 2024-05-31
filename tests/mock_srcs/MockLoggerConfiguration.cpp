@@ -8,8 +8,9 @@
 MockLoggerConfiguration::MockLoggerConfiguration(
     IBufferManager &buffer_manager, const IConfiguration &configuration,
     IPollfdManager &pollfd_manager)
-    : m_error_log_file(""), m_access_log_file(""), m_buffer_manager(buffer_manager),
-      m_buffer_size(99999), m_error_log_file_descriptor(STDOUT_FILENO),
+    : m_error_log_file(""), m_access_log_file(""),
+      m_buffer_manager(buffer_manager), m_buffer_size(99999),
+      m_error_log_file_descriptor(STDOUT_FILENO),
       m_access_log_file_descriptor(STDOUT_FILENO), m_error_log_enabled(true),
       m_access_log_enabled(true)
 {

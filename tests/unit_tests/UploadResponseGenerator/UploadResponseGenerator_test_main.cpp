@@ -15,7 +15,4 @@
 #include "../../../includes/response/TempRouter.hpp"
 #include "../../../includes/utils/SignalHandler.hpp"
 
-int	main()
-{
-	
-}
+int main() {}

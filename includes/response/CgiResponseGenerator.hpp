@@ -18,20 +18,20 @@ private:
     HttpStatusCodeHelper m_http_status_code_helper;
 
     void m_setCgiArguments(const std::string &script_name, const IRoute &route,
-                          const IConfiguration &configuration,
-                          std::vector<char *> &cgi_args);
-    void m_setCgiEnvironment(const std::string &script_name, const IRoute &route,
-                            const IRequest &request,
-                            std::vector<char *> &cgi_env);
+                           const IConfiguration &configuration,
+                           std::vector<char *> &cgi_args);
+    void m_setCgiEnvironment(const std::string &script_name,
+                             const IRoute &route, const IRequest &request,
+                             std::vector<char *> &cgi_env);
     char *m_getCgiInterpreterPath(const std::string &script_name,
-                                 const IConfiguration &configuration) const;
+                                  const IConfiguration &configuration) const;
     char *m_getScriptPath(const std::string &script_name,
-                         const IRoute &route) const;
+                          const IRoute &route) const;
     std::string m_getPathTranslated(std::string &script_name,
-                                   const IRoute &route) const;
+                                    const IRoute &route) const;
     void m_cleanUp(char *cgi_args[], char *cgi_env[] = NULL,
-                  int response_pipe_fd[ 2 ] = NULL, int body_pipe_fd[ 2 ] = NULL,
-                  short option = 0x0) const;
+                   int response_pipe_fd[ 2 ] = NULL,
+                   int body_pipe_fd[ 2 ] = NULL, short option = 0x0) const;
 
 public:
     CgiResponseGenerator(ILogger &logger);

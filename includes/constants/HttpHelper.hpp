@@ -12,20 +12,20 @@
  * Path: includes/constants/HttpHelper.hpp
  */
 
+#include "../configuration/IConfiguration.hpp"
 #include "HttpHeaderHelper.hpp"
 #include "HttpMethodHelper.hpp"
 #include "HttpStatusCodeHelper.hpp"
 #include "HttpVersionHelper.hpp"
-#include "../configuration/IConfiguration.hpp"
 #include <string>
 
 class HttpHelper
 {
 private:
     // Private member variables for helper classes
-    HttpMethodHelper m_method_helper;         // Helper for HTTP methods
-    HttpVersionHelper m_version_helper;       // Helper for HTTP versions
-    HttpHeaderHelper m_header_helper;         // Helper for HTTP headers
+    HttpMethodHelper m_method_helper;          // Helper for HTTP methods
+    HttpVersionHelper m_version_helper;        // Helper for HTTP versions
+    HttpHeaderHelper m_header_helper;          // Helper for HTTP headers
     HttpStatusCodeHelper m_status_code_helper; // Helper for HTTP status codes
 
 public:

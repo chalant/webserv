@@ -46,18 +46,16 @@ ssize_t FileBuffer::push(const std::vector<char> &data)
 ssize_t FileBuffer::flush(int file_descriptor, bool regardless_of_threshold)
 {
     // Check if the buffer size is less than the flush threshold
-    if (regardless_of_threshold == false &&
-        m_buffer.size() < m_flush_threshold)
+    if (regardless_of_threshold == false && m_buffer.size() < m_flush_threshold)
     {
-        return m_buffer
-            .size(); // Not enough data to flush, do nothing, just return
-                     // the remaining size of the buffer
+        return m_buffer.size(); // Not enough data to flush, do nothing, just
+                                // return the remaining size of the buffer
     }
 
     // Write the buffer to the file descriptor
     ssize_t bytes_written =
         ::write(file_descriptor, m_buffer.data(), m_buffer.size());
-    
+
     if (bytes_written == -1)
     {
         return -1; // Error writing to file descriptor
@@ -67,8 +65,7 @@ ssize_t FileBuffer::flush(int file_descriptor, bool regardless_of_threshold)
         // Update buffer state after successful write
         size_t bytes_remaining = m_buffer.size() - bytes_written;
         // Shift the remaining data to the beginning of the buffer
-        memmove(&m_buffer[ 0 ], &m_buffer[ bytes_written ],
-                bytes_remaining);
+        memmove(&m_buffer[ 0 ], &m_buffer[ bytes_written ], bytes_remaining);
         m_buffer.resize(bytes_remaining);
     }
     return m_buffer.size(); // Return the remaining size of the buffer

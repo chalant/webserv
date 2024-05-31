@@ -1,8 +1,8 @@
 #include "../../includes/response/TempRouter.hpp"
+#include "../../includes/response/CgiResponseGenerator.hpp"
 #include "../../includes/response/Route.hpp"
 #include "../../includes/response/StaticFileResponseGenerator.hpp"
 #include "../../includes/response/UploadResponseGenerator.hpp"
-#include "../../includes/response/CgiResponseGenerator.hpp"
 #include "../../includes/utils/Converter.hpp"
 
 /*TempRouter: Selects the right 'ResponseGenerator' based on URI (etc.)
@@ -12,7 +12,8 @@ locationblock)*/
 
 // Constructor
 TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
-    : m_configuration(configuration), m_logger(logger), m_http_helper(HttpHelper(configuration))
+    : m_configuration(configuration), m_logger(logger),
+      m_http_helper(HttpHelper(configuration))
 {
     // Log the creation of the TempRouter
     m_logger.log(VERBOSE, "Initializing TempRouter...");
@@ -26,14 +27,11 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
         new StaticFileResponseGenerator(m_logger);
     m_static_route = new Route(path, root, index, *response_generator);
 
-	response_generator =
-        new UploadResponseGenerator(m_logger);
+    response_generator = new UploadResponseGenerator(m_logger);
     m_upload_route = new Route(path, root, index, *response_generator);
 
-    response_generator =
-        new CgiResponseGenerator(m_logger);
+    response_generator = new CgiResponseGenerator(m_logger);
     m_cgi_route = new Route(path, root, index, *response_generator);
-    
 }
 
 // Destructor
@@ -44,39 +42,45 @@ TempRouter::~TempRouter()
 
     // Delete the ResponseGenerator
     delete m_static_route->getResponseGenerator();
-    //delete m_upload_route->getResponseGenerator();
-    //delete m_cgi_route->getResponseGenerator();
+    // delete m_upload_route->getResponseGenerator();
+    // delete m_cgi_route->getResponseGenerator();
 
     // Delete the Route
     delete m_static_route;
-    //delete m_upload_route;
-    //delete m_cgi_route;
+    // delete m_upload_route;
+    // delete m_cgi_route;
 }
 
 // Execute the route
 Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
 {
-	IRoute	*route;
+    IRoute *route;
     std::string script_name;
 
     // temp skip routing and select the only route available
-	if (request->getMethod() == POST)
-	{
-		m_logger.log(DEBUG, "POST REQUEST");
-		route = m_upload_route;
-	} else if (request->getUri() == "/hello.py")
+    if (request->getMethod() == POST)
+    {
+        m_logger.log(DEBUG, "POST REQUEST");
+        route = m_upload_route;
+    }
+    else if (request->getUri() == "/hello.py")
     {
         m_logger.log(DEBUG, "CGI REQUEST");
         route = m_cgi_route;
         script_name = "hello.py";
-    } else
-	{
-		route = m_static_route;
-	}
-	Triplet_t return_value = route->getResponseGenerator()->generateResponse(*route, *request, *response, m_configuration, script_name);
+    }
+    else
+    {
+        route = m_static_route;
+    }
+    Triplet_t return_value = route->getResponseGenerator()->generateResponse(
+        *route, *request, *response, m_configuration, script_name);
 
     // print return value
-    m_logger.log(DEBUG, "Return value: " + Converter::toString(return_value.first) + " " + Converter::toString(return_value.second.first) + " " + Converter::toString(return_value.second.second));
+    m_logger.log(DEBUG,
+                 "Return value: " + Converter::toString(return_value.first) +
+                     " " + Converter::toString(return_value.second.first) +
+                     " " + Converter::toString(return_value.second.second));
 
     return return_value;
 }

@@ -35,7 +35,8 @@ MockConnectionManager::getConnection(SocketDescriptor_t socket_descriptor)
     return *new MockConnection();
 }
 
-IRequest &MockConnectionManager::getRequest(SocketDescriptor_t socket_descriptor)
+IRequest &
+MockConnectionManager::getRequest(SocketDescriptor_t socket_descriptor)
 {
     (void)socket_descriptor;
     return *new MockRequest();

@@ -14,7 +14,7 @@ Defaults::Defaults()
     m_directive_parameters[ "deny" ].push_back("all");
     m_block_parameters[ "location" ].push_back("/");
     m_block_parameters[ "limit_except" ].push_back("GET");
-	m_block_parameters[ "limit_except" ].push_back("POST");
+    m_block_parameters[ "limit_except" ].push_back("POST");
     m_directive_parameters[ "root" ].push_back("sample_site");
     m_directive_parameters[ "index" ].push_back("index.html");
     m_directive_parameters[ "path" ].push_back("/"); // temp for testing

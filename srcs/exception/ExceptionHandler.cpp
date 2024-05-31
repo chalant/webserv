@@ -58,12 +58,12 @@ ExceptionHandler::~ExceptionHandler()
 // m_handleWebservException method: Logs exception details and handles critical
 // exceptions.
 int ExceptionHandler::m_handleWebservException(const WebservException &e,
-                                              const std::string &context) const
+                                               const std::string &context) const
 {
     // Log the exception details, including context and error message.
     m_logger.log(e.getLogLevel(), "[EXCEPTION] " + context +
-                                           (context.empty() ? ": " : " : ") +
-                                           e.what());
+                                      (context.empty() ? ": " : " : ") +
+                                      e.what());
 
     // Check if the exception's log level is critical.
     if (e.getLogLevel() == CRITICAL)
@@ -77,12 +77,12 @@ int ExceptionHandler::m_handleWebservException(const WebservException &e,
 }
 
 // m_handleStandardException method: Logs standard exception details
-int ExceptionHandler::m_handleStandardException(const std::exception &e,
-                                               const std::string &context) const
+int ExceptionHandler::m_handleStandardException(
+    const std::exception &e, const std::string &context) const
 {
     // Log the exception details, including context and error message.
     m_logger.log(UNKNOWN, "[EXCEPTION] " + context +
-                                   (context.empty() ? ": " : " : ") + e.what());
+                              (context.empty() ? ": " : " : ") + e.what());
     return 0;
 }
 

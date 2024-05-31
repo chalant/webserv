@@ -18,7 +18,7 @@ class ClientHandler : public IClientHandler
 {
 private:
     const ISocket &m_socket; // Reference to the Socket instance
-    int m_socket_descriptor;  // Socket descriptor for client connection
+    int m_socket_descriptor; // Socket descriptor for client connection
     ILogger &m_logger;       // Reference to the error logger object
 
 public:

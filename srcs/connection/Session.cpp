@@ -38,8 +38,7 @@ void Session::setData(const std::string &key, const std::string &value)
 // Get session data
 std::string Session::getData(const std::string &key) const
 {
-    std::map<std::string, std::string>::const_iterator it =
-        m_data.find(key);
+    std::map<std::string, std::string>::const_iterator it = m_data.find(key);
 
     if (it == m_data.end())
         return "";

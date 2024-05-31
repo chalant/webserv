@@ -36,8 +36,7 @@ Logger::Logger(IBufferManager &buffer_manager)
 
 // Destructor: Handles cleanup tasks like flushing buffer and closing log file
 // descriptor
-Logger::~Logger() {
-}
+Logger::~Logger() {}
 
 // Method to get the current timestamp
 std::string Logger::m_getCurrentTimestamp() const
@@ -60,15 +59,14 @@ int Logger::log(const std::string &message)
         return -1;
 
     // Construct the log message string
-    std::string log_message =
-        m_getCurrentTimestamp() + " " + message + "\n";
+    std::string log_message = m_getCurrentTimestamp() + " " + message + "\n";
 
     // Push the log message to the log file buffer if configured, otherwise push
     // to stderr buffer
-    return m_pushToBuffer(
-        log_message, m_configuration
-                         ? m_configuration->getErrorLogFileDescriptor()
-                         : STDERR_FILENO);
+    return m_pushToBuffer(log_message,
+                          m_configuration
+                              ? m_configuration->getErrorLogFileDescriptor()
+                              : STDERR_FILENO);
 }
 
 // Method to log error messages
@@ -86,15 +84,15 @@ int Logger::log(LogLevel logLevel, const std::string &message)
         "[" + m_log_level_helper.logLevelStringMap(logLevel) + "]";
     log_level_string.append(12 - log_level_string.length(),
                             ' '); // Fix width of log level string
-    std::string log_message = m_getCurrentTimestamp() + " " +
-                              log_level_string + " " + message + "\n";
+    std::string log_message =
+        m_getCurrentTimestamp() + " " + log_level_string + " " + message + "\n";
 
     // Push the log message to the log file buffer if configured, otherwise push
     // to stderr buffer
-    return m_pushToBuffer(
-        log_message, m_configuration
-                         ? m_configuration->getErrorLogFileDescriptor()
-                         : STDERR_FILENO);
+    return m_pushToBuffer(log_message,
+                          m_configuration
+                              ? m_configuration->getErrorLogFileDescriptor()
+                              : STDERR_FILENO);
 }
 
 // Method to log access events
@@ -126,25 +124,27 @@ int Logger::log(const IConnection &connection)
                           << "\trequest_uri=\"" << request.getUri() << "\",\n"
                           << "\thttp_version=\"" << request.getHttpVersion()
                           << "\",\n"
-                          << "\tstatus_code=\"" << response.getStatusCodeString()
+                          << "\tstatus_code=\""
+                          << response.getStatusCodeString()
                           << "\tresponse_size=\""
                           << response.getResponseSizeString() << "\",\n"
                           << "\tuser_agent=\""
                           << request.getHeaderValue(USER_AGENT) << "\",\n"
-                          << "\treferrer=\"" << request.getHeaderValue(REFERER) << "\n"
+                          << "\treferrer=\"" << request.getHeaderValue(REFERER)
+                          << "\n"
                           << "\"\n";
 
         // Add request headers to the log message
         m_appendMapToLog(log_buffer_stream, "request_headers",
-                               request.getHeadersStringMap());
+                         request.getHeadersStringMap());
 
         // Add response headers to the log message
         m_appendMapToLog(log_buffer_stream, "response_headers",
-                               response.getHeadersStringMap());
+                         response.getHeadersStringMap());
 
         // Add cookies to the log message
         m_appendMapToLog(log_buffer_stream, "response_cookies",
-                               request.getCookies());
+                         request.getCookies());
 
         log_buffer_stream << "}\n";
 
@@ -159,10 +159,10 @@ int Logger::log(const IConnection &connection)
 
     // Push the log message to the access log file buffer if configured,
     // otherwise push to stderr buffer
-    return m_pushToBuffer(
-        log_message, m_configuration
-                         ? m_configuration->getAccessLogFileDescriptor()
-                         : STDERR_FILENO);
+    return m_pushToBuffer(log_message,
+                          m_configuration
+                              ? m_configuration->getAccessLogFileDescriptor()
+                              : STDERR_FILENO);
 }
 
 // Method to append map to log message
@@ -209,8 +209,8 @@ int Logger::m_pushToBuffer(const std::string &log_message,
                                          log_message.end());
 
     // Push the log message to the buffer, returns 1 if a flush is requested
-    int return_value = m_buffer_manager.pushFileBuffer(
-        file_descriptor, log_message_vector);
+    int return_value =
+        m_buffer_manager.pushFileBuffer(file_descriptor, log_message_vector);
     if (return_value == 1 && m_configuration)
     {
         // If the buffer threshold is reached, request a flush

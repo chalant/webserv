@@ -31,7 +31,7 @@ void MockConfigurationBlock::setBlock(const std::string &parameter,
                                       IConfiguration *block)
 {
     m_logger.log(DEBUG, "Setting Block '" + parameter + "' to '" +
-                                 block->getName() + "'");
+                            block->getName() + "'");
 
     // Add the block to the BlockList
     m_blocks[ parameter ].push_back(block);
@@ -40,8 +40,8 @@ void MockConfigurationBlock::setBlock(const std::string &parameter,
 void MockConfigurationBlock::setString(const std::string &parameter,
                                        const std::string &value)
 {
-    m_logger.log(DEBUG, "Setting Directive '" + parameter + "' to " +
-                                 value + "'");
+    m_logger.log(DEBUG,
+                 "Setting Directive '" + parameter + "' to " + value + "'");
 
     // Check if the parameter already exists
     if (m_directives.find(parameter) != m_directives.end())
@@ -110,7 +110,7 @@ const std::string &MockConfigurationBlock::getString(const std::string &key,
                                                      size_t index) const
 {
     m_logger.log(DEBUG, "Getting Directive '" + key + "' at index " +
-                                 std::to_string(index) + "'");
+                            std::to_string(index) + "'");
     return m_directives.at(key)->at(index);
 }
 

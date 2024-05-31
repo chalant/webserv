@@ -45,7 +45,7 @@ int main()
     std::ostringstream body_size_stream;
     body_size_stream << body.size(); // content-type header
     mock_message_string += "content-length: " + body_size_stream.str() +
-                         "\r\n";            // content-length header
+                           "\r\n";            // content-length header
     mock_message_string += "Host: 42.fr\r\n"; // Mandatory Host header
     mock_message_string +=
         "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -62,12 +62,12 @@ int main()
     mock_message_string +=
         "Accept-Encoding: gzip, deflate, br\r\n"; // Mandatory
                                                   // Accept-Encoding header
-    mock_message_string += "\r\n";                  // Empty line before the body
+    mock_message_string += "\r\n";                // Empty line before the body
     mock_message_string += body;
     // Request body
     // Convert the string to a vector
     mock_message_vector.assign(mock_message_string.begin(),
-                             mock_message_string.end());
+                               mock_message_string.end());
 
     // Send to the socket
     mock_socket.send(mock_client_socket_descriptor, mock_message_vector);
@@ -98,7 +98,7 @@ int main()
     body_size_stream.clear();
     body_size_stream << body.size(); // content-type header
     mock_message_string += "content-length: " + body_size_stream.str() +
-                         "\r\n";            // content-length header
+                           "\r\n";            // content-length header
     mock_message_string += "Host: 42.fr\r\n"; // Mandatory Host header
     mock_message_string +=
         "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -115,12 +115,12 @@ int main()
     mock_message_string +=
         "Accept-Encoding: gzip, deflate, br\r\n"; // Mandatory
                                                   // Accept-Encoding header
-    mock_message_string += "\r\n";                  // Empty line before the body
-    mock_message_string += body;                    // Request body
+    mock_message_string += "\r\n";                // Empty line before the body
+    mock_message_string += body;                  // Request body
 
     // Convert the string to a vector
     mock_message_vector.assign(mock_message_string.begin(),
-                             mock_message_string.end());
+                               mock_message_string.end());
 
     // Send to the socket
     client_handler.sendResponse(mock_message_vector);

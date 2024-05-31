@@ -29,8 +29,8 @@ private:
     bool m_test_upload_request;
 
     // Request body
-    std::vector<char>	m_test_body;
-	RequestState		m_state;
+    std::vector<char> m_test_body;
+    RequestState m_state;
 
 public:
     // Constructor
@@ -77,8 +77,8 @@ public:
     virtual std::string getAuthority() const;
     virtual const std::vector<BodyParameter> &getBodyParameters() const;
     virtual bool isUploadRequest() const;
-	virtual RequestState		&getState(void);
-	virtual std::vector<char>	&getBody(void);
+    virtual RequestState &getState(void);
+    virtual std::vector<char> &getBody(void);
     virtual const std::vector<char> &getBuffer() const;
 
     // Setters

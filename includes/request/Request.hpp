@@ -72,7 +72,7 @@ private:
 
     // Helper
     const HttpHelper &m_http_helper;
-	RequestState	m_state;
+    RequestState m_state;
 
 public:
     // Constructor and Destructor
@@ -96,7 +96,7 @@ public:
     std::map<std::string, std::string> getCookies() const;
     std::string getCookie(const std::string &key) const;
     const std::vector<char> getBody() const;
-	std::vector<char>	&getBody(void);
+    std::vector<char> &getBody(void);
     std::string getBodyString() const;
     std::string getQueryString() const;
     std::string getContentLength() const;
@@ -108,9 +108,8 @@ public:
     std::string getAuthority() const;
     const std::vector<BodyParameter> &getBodyParameters() const;
     bool isUploadRequest() const;
-	RequestState	&getState(void);
+    RequestState &getState(void);
     const std::vector<char> &getBuffer() const;
-
 
     // Setters
     void setMethod(const std::string &method);
@@ -119,7 +118,7 @@ public:
     void addHeader(const std::string &key, const std::string &value);
     void setBody(const std::vector<char> &body);
     void setBody(const std::string &body);
-	void addBodyChar(char value);
+    void addBodyChar(char value);
     void addCookie(const std::string &key, const std::string &value);
     void setAuthority();
     void addBodyParameter(const BodyParameter &body_parameter);

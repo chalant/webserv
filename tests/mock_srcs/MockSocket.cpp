@@ -127,7 +127,8 @@ ssize_t MockSocket::recv(int socket_descriptor, char *buffer, size_t len) const
 }
 
 // Forcibly bind a socket to a port in use
-int MockSocket::setReuseAddr(int fd) const{
+int MockSocket::setReuseAddr(int fd) const
+{
     static_cast<void>(fd);
     return 0;
 }

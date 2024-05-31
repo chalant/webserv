@@ -106,7 +106,8 @@ int main()
     //******************************************************
     // Push data to the buffer
     std::string test_string3 = "This is a socket msg";
-    std::vector<char> test_string3Vector(test_string3.begin(), test_string3.end());
+    std::vector<char> test_string3Vector(test_string3.begin(),
+                                         test_string3.end());
     ssize_t returnVal = buffer_manager.pushSocketBuffer(0, test_string3Vector);
 
     // Check the filebuffer buffer

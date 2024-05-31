@@ -22,7 +22,7 @@ static void get_values(const std::vector<Token> &tokens, ParseTree &parse_tree,
 
 ConfigurationLoader::ConfigurationLoader(ILogger &logger) : m_logger(logger)
 {
-	m_separators.push_back(" ");
+    m_separators.push_back(" ");
     m_separators.push_back("\n");
     m_separators.push_back("\t");
 
@@ -40,18 +40,19 @@ ConfigurationLoader::ConfigurationLoader(ILogger &logger) : m_logger(logger)
 // todo: delete all the blocks.
 ConfigurationLoader::~ConfigurationLoader() { delete m_config; }
 
-void	ConfigurationLoader::m_addBlock(const Grammar &grammar, 
-								const std::vector<Token> &tokens,
-								ParseTree &parse_tree, ConfigurationBlock &block)
+void ConfigurationLoader::m_addBlock(const Grammar &grammar,
+                                     const std::vector<Token> &tokens,
+                                     ParseTree &parse_tree,
+                                     ConfigurationBlock &block)
 {
-	ConfigurationBlock  *new_block;
+    ConfigurationBlock *new_block;
     const std::string rule_name =
         grammar.getRule(parse_tree[ 1 ]->ruleIndex())->getName();
 
     // check if it is a block with at block_parameters and retreive the
     // block_parameters.
     new_block = new ConfigurationBlock(
-            &block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, m_defaults);
+        &block, tokens[ parse_tree[ 0 ]->tokenIndex() ].value, m_defaults);
     if (rule_name == "block-parameters")
     {
         int start = 0;
@@ -74,53 +75,62 @@ void	ConfigurationLoader::m_addBlock(const Grammar &grammar,
     block.addBlock(tokens[ parse_tree[ 0 ]->tokenIndex() ].value, new_block);
 }
 
-void	ConfigurationLoader::m_addDirective(const Grammar &grammar,
-								const std::vector<Token> &tokens, 
-								ParseTree &parse_tree, ConfigurationBlock &block)
+void ConfigurationLoader::m_addDirective(const Grammar &grammar,
+                                         const std::vector<Token> &tokens,
+                                         ParseTree &parse_tree,
+                                         ConfigurationBlock &block)
 {
-	const std::string &directive = tokens[ (*parse_tree[ 0 ])[ 0 ]->tokenIndex() ].value;
-	if (directive == "include")
-	{
-		//include configuration from the provided path.
-		std::vector<std::string> params;
-		get_values(tokens, *parse_tree[ 1 ], params);
-    
+    const std::string &directive =
+        tokens[ (*parse_tree[ 0 ])[ 0 ]->tokenIndex() ].value;
+    if (directive == "include")
+    {
+        // include configuration from the provided path.
+        std::vector<std::string> params;
+        get_values(tokens, *parse_tree[ 1 ], params);
+
         // open file provided in params, load it and parse it
-		Tokenizer tokenizer(m_separators, m_reserved_symbols);
-		Parser parser(grammar);
-		std::ifstream conf_stream(params[0].c_str());
-		if (!conf_stream.is_open())
-		{
-			m_logger.log(ERROR, "ConfigurationLoader: file " + params[0] + " not found");
-			return ;
-		}
-		try
-		{
-			const std::vector<Token> &new_tokens = tokenizer.tokenize(conf_stream);
-			conf_stream.close();
-			ParseTree&	new_parse_tree = parser.parse(new_tokens);
-			// recursively build configuration and add it to the parent of the current block.
-			m_buildConfig(grammar, new_tokens, new_parse_tree, *block.getParent());
-		}
-		catch(const std::exception& e)
-		{
-			m_logger.log(ERROR, "Couldn't include " + params[0] + " " + e.what());
-		}
-		return ;
-	}
+        Tokenizer tokenizer(m_separators, m_reserved_symbols);
+        Parser parser(grammar);
+        std::ifstream conf_stream(params[ 0 ].c_str());
+        if (!conf_stream.is_open())
+        {
+            m_logger.log(ERROR, "ConfigurationLoader: file " + params[ 0 ] +
+                                    " not found");
+            return;
+        }
+        try
+        {
+            const std::vector<Token> &new_tokens =
+                tokenizer.tokenize(conf_stream);
+            conf_stream.close();
+            ParseTree &new_parse_tree = parser.parse(new_tokens);
+            // recursively build configuration and add it to the parent of the
+            // current block.
+            m_buildConfig(grammar, new_tokens, new_parse_tree,
+                          *block.getParent());
+        }
+        catch (const std::exception &e)
+        {
+            m_logger.log(ERROR,
+                         "Couldn't include " + params[ 0 ] + " " + e.what());
+        }
+        return;
+    }
     // the first sub-child is the directive name and the second is the
     // parameters list.
     std::vector<std::string> &params = block.addDirective(directive);
-	//todo: check if the direction is an include, if so, run a configuration loader and add sub-blocks...
-	// the first parameter should be a path.
+    // todo: check if the direction is an include, if so, run a configuration
+    // loader and add sub-blocks...
+    //  the first parameter should be a path.
     get_values(tokens, *parse_tree[ 1 ], params);
 }
 
-void	ConfigurationLoader::m_buildConfig(const Grammar &grammar, 
-								const std::vector<Token> &tokens,
-								ParseTree &parse_tree, ConfigurationBlock &block)
+void ConfigurationLoader::m_buildConfig(const Grammar &grammar,
+                                        const std::vector<Token> &tokens,
+                                        ParseTree &parse_tree,
+                                        ConfigurationBlock &block)
 {
-	const GrammarRule *rule = grammar.getRule(parse_tree.ruleIndex());
+    const GrammarRule *rule = grammar.getRule(parse_tree.ruleIndex());
     const std::string rule_name = rule->getName();
     if (rule_name == "block")
     {
@@ -147,8 +157,8 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
 
     // Log the loading of the configuration file.
     m_logger.log(INFO, "Loading configuration file: '" + path + "'.");
-	Grammar	grammar;
-	SubsetSymbolMatching subset_matching;
+    Grammar grammar;
+    SubsetSymbolMatching subset_matching;
     EqualSymbolMatching equal_matching;
     DigitMatching digit_matching;
     SubStringMatching substring_matching;
@@ -185,7 +195,7 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
 
     // configuration
     GrammarRule *rule = grammar.addRule(configuration);
-	rule->addSymbol(&block_element);
+    rule->addSymbol(&block_element);
     rule = grammar.addRule(configuration);
     rule->addSymbol(&block_element);
     rule->addSymbol(&configuration);
@@ -236,18 +246,18 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     rule = grammar.addRule(comment);
     rule->addSymbol(&hashtag);
     rule->addSymbol(&text);
-	rule->addSymbol(&semicolon);
-	rule = grammar.addRule(comment);
+    rule->addSymbol(&semicolon);
+    rule = grammar.addRule(comment);
     rule->addSymbol(&hashtag);
     rule->addSymbol(&text);
-	rule = grammar.addRule(comment);
+    rule = grammar.addRule(comment);
     rule->addSymbol(&hashtag);
     rule->addSymbol(&text);
-	rule->addSymbol(&curl_open);
-	rule = grammar.addRule(comment);
+    rule->addSymbol(&curl_open);
+    rule = grammar.addRule(comment);
     rule->addSymbol(&hashtag);
     rule->addSymbol(&text);
-	rule->addSymbol(&curl_close);
+    rule->addSymbol(&curl_close);
     rule = grammar.addRule(comment);
     rule->addSymbol(&hashtag);
 
@@ -284,15 +294,16 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     rule->addSymbol(&string_);
     rule->addSymbol(&text);
 
-	// ConfigurationParser	parser;
-    // Pair<const std::vector<Token>&, ParseTree&>	result = parser.parse(path.c_str(), grammar);
-	std::ifstream conf_stream(path.c_str());
+    // ConfigurationParser	parser;
+    // Pair<const std::vector<Token>&, ParseTree&>	result =
+    // parser.parse(path.c_str(), grammar);
+    std::ifstream conf_stream(path.c_str());
     if (!conf_stream.is_open())
-		throw InvalidConfigFileError();
-	Tokenizer tokenizer(m_separators, m_reserved_symbols);
+        throw InvalidConfigFileError();
+    Tokenizer tokenizer(m_separators, m_reserved_symbols);
     Parser parser(grammar);
     const std::vector<Token> &tokens = tokenizer.tokenize(conf_stream);
-	ParseTree&	parse_tree = parser.parse(tokens);
+    ParseTree &parse_tree = parser.parse(tokens);
     if (m_config)
         delete m_config;
     // initial block.

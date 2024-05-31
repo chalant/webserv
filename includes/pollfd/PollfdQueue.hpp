@@ -61,9 +61,9 @@ class PollfdQueue
 {
 private:
     std::vector<pollfd> m_pollfd_array; // Internal storage for pollfd objects
-    size_t m_size;                     // Current number of elements in the queue
-    size_t m_capacity;                 // Maximum capacity of the queue
-    short m_poll_mask;                  // Poll mask for polling events;
+    size_t m_size;     // Current number of elements in the queue
+    size_t m_capacity; // Maximum capacity of the queue
+    short m_poll_mask; // Poll mask for polling events;
 
 public:
     // Constructor: Initializes a PollfdQueue object with the specified

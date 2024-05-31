@@ -19,14 +19,14 @@ class WebservExceptions;
 
 enum LogLevel
 {
-    EXHAUSTIVE = 0,    // TRACE messages
-    VERBOSE = 1,  // VERBOSE messages
-    DEBUG = 2,    // Debugging information
-    INFO = 3,     // Informational messages
-    WARN = 4,     // Warnings
-    ERROR = 5,    // Errors
-    CRITICAL = 6, // Critical errors
-    UNKNOWN = 7   // Unknown log level
+    EXHAUSTIVE = 0, // TRACE messages
+    VERBOSE = 1,    // VERBOSE messages
+    DEBUG = 2,      // Debugging information
+    INFO = 3,       // Informational messages
+    WARN = 4,       // Warnings
+    ERROR = 5,      // Errors
+    CRITICAL = 6,   // Critical errors
+    UNKNOWN = 7     // Unknown log level
 };
 
 class LogLevelHelper
@@ -37,10 +37,10 @@ private:
         m_log_level_list; // List of string representations of log levels
     const std::map<std::string, LogLevel>
         m_string_log_level_map; // Map of string representations to LogLevel
-                            // enum values
+                                // enum values
     const std::map<LogLevel, std::string>
         m_log_level_string_map; // Map of LogLevel enum values to string
-                            // representations
+                                // representations
 
     // Private member functions for initialization
     static std::vector<std::string> m_setLogLevelList();

@@ -150,7 +150,7 @@ std::string Request::getBodyString() const
     return std::string(m_body.begin(), m_body.end());
 }
 
-std::vector<char>	&Request::getBody() { return m_body; }
+std::vector<char> &Request::getBody() { return m_body; }
 
 // Getter function for retrieving the query string
 std::string Request::getQueryString() const
@@ -280,7 +280,7 @@ void Request::setMethod(const std::string &method)
 }
 
 // Getter function for retrieving the state of the request
-RequestState	&Request::getState(void) { return m_state; }
+RequestState &Request::getState(void) { return m_state; }
 
 // Getter function for retrieving the buffer of the request
 const std::vector<char> &Request::getBuffer() const { return m_buffer; }
@@ -371,10 +371,7 @@ void Request::setBody(const std::string &body)
     this->setBody(bodyVector);
 }
 
-void Request::addBodyChar(char value)
-{
-	m_body.push_back(value);
-}
+void Request::addBodyChar(char value) { m_body.push_back(value); }
 
 // Function for adding a cookie to the request
 void Request::addCookie(const std::string &key, const std::string &value)

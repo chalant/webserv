@@ -13,12 +13,14 @@
 
 // Constructors to initialize helper classes
 HttpHelper::HttpHelper()
-    : m_method_helper(), m_version_helper(), m_header_helper(), m_status_code_helper()
+    : m_method_helper(), m_version_helper(), m_header_helper(),
+      m_status_code_helper()
 {
 }
 
 HttpHelper::HttpHelper(const IConfiguration &configuration)
-    : m_method_helper(), m_version_helper(), m_header_helper(), m_status_code_helper(configuration.getStringVector("error_page"))
+    : m_method_helper(), m_version_helper(), m_header_helper(),
+      m_status_code_helper(configuration.getStringVector("error_page"))
 {
 }
 

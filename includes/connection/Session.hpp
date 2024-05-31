@@ -24,7 +24,7 @@ class Session : public ISession
 private:
     const SessionId_t m_id; // Unique session id
     const time_t m_timeout; // Time elapsed before session expires
-    time_t m_last_access;    // Last time session was accessed
+    time_t m_last_access;   // Last time session was accessed
     std::map<std::string, std::string> m_data; // Session data
 
 public:

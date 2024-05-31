@@ -13,7 +13,6 @@ PollingService::~PollingService() {}
 
 void PollingService::pollEvents()
 {
-
     // Get the pollfd array
     pollfd *pollfd_array = m_pollfd_manager.getPollfdArray();
 
@@ -25,21 +24,19 @@ void PollingService::pollEvents()
     if (poll_result < 0)
     {
         if (errno == EINTR)
-            m_logger.log(VERBOSE, "[POLLINGSERVICE] Poll interrupted by signal");
+            m_logger.log(VERBOSE,
+                         "[POLLINGSERVICE] Poll interrupted by signal");
         throw PollError();
     }
 
     // Log poll result
     if (poll_result == 0) // Timeout occurred
-        m_logger.log(
-            EXHAUSTIVE, "[POLLINGSERVICE] Poll returned after timeout (0 events)");
+        m_logger.log(EXHAUSTIVE,
+                     "[POLLINGSERVICE] Poll returned after timeout (0 events)");
     else // Events occurred
         m_logger.log(VERBOSE, "[POLLINGSERVICE] Poll returned " +
-                                       Converter::toString(poll_result) +
-                                       " events.");
+                                  Converter::toString(poll_result) +
+                                  " events.");
 }
 
-void PollingService::setPollingTimeout(int timeout)
-{
-    m_timeout = timeout;
-}
+void PollingService::setPollingTimeout(int timeout) { m_timeout = timeout; }

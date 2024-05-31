@@ -63,8 +63,8 @@ std::vector<std::string> LogLevelHelper::m_setLogLevelList()
     return log_level_list;
 }
 
-// Helper function to initialize m_string_log_level_map with mappings from string
-// representations to LogLevel enum values
+// Helper function to initialize m_string_log_level_map with mappings from
+// string representations to LogLevel enum values
 std::map<std::string, LogLevel> LogLevelHelper::m_setStringLogLevelMap()
 {
     std::map<std::string, LogLevel> string_log_level_map;
@@ -82,8 +82,8 @@ std::map<std::string, LogLevel> LogLevelHelper::m_setStringLogLevelMap()
     return string_log_level_map;
 }
 
-// Helper function to initialize m_log_level_string_map with mappings from LogLevel
-// enum values to string representations
+// Helper function to initialize m_log_level_string_map with mappings from
+// LogLevel enum values to string representations
 std::map<LogLevel, std::string> LogLevelHelper::m_setLogLevelStringMap()
 {
     std::map<LogLevel, std::string> log_level_string_map;

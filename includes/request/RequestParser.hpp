@@ -51,8 +51,9 @@ private:
                      IRequest &parsed_request) const;
 
     // Function to unchunk the body of an HTTP request
-    void	m_unchunkBody(std::vector<char>::const_iterator &request_iterator, 
-		const std::vector<char> &raw_request, IRequest &request) const;
+    void m_unchunkBody(std::vector<char>::const_iterator &request_iterator,
+                       const std::vector<char> &raw_request,
+                       IRequest &request) const;
 
     // Function to parse a Cookie header
     void m_parseCookie(std::string &cookie_header_value,
@@ -77,8 +78,7 @@ private:
     void m_removeQuotes(std::string &string) const;
 
     // Custom getline function to remove carriage returns
-    std::istream& m_getlineNoCr(std::istream& is, std::string& line) const;
-
+    std::istream &m_getlineNoCr(std::istream &is, std::string &line) const;
 
 public:
     // Constructor to initialize the RequestParser with required references
@@ -88,10 +88,11 @@ public:
     // object
     void parseRequest(const std::vector<char> &raw_request,
                       IRequest &parsed_request) const;
-	void	parseRequestHeader(IRequest &request) const;
-	void	parsePartialBody(const std::vector<char> buffer, IRequest &request) const;
-	// Function to parse the Upload Chunked Body
-    void	parseBodyParameters(IRequest &parsed_request) const;
+    void parseRequestHeader(IRequest &request) const;
+    void parsePartialBody(const std::vector<char> buffer,
+                          IRequest &request) const;
+    // Function to parse the Upload Chunked Body
+    void parseBodyParameters(IRequest &parsed_request) const;
 };
 
 #endif // REQUESTPARSER_HPP

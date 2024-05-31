@@ -1,8 +1,8 @@
 #include "../../includes/network/Socket.hpp"
+#include <cerrno>
 #include <sstream>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <cerrno>
 
 /*
  * Socket - Class for socket operations.
@@ -26,8 +26,8 @@ int Socket::socket() const
     // protocol: protocol to be used with the socket (0 for default protocol)
     return ::socket(AF_INET, SOCK_STREAM, 0);
 }
-#include <iostream>
 #include <cerrno>
+#include <iostream>
 // Binds the socket to an address
 int Socket::bind(int socket_descriptor, int ip, int port) const
 {
@@ -52,7 +52,8 @@ int Socket::bind(int socket_descriptor, int ip, int port) const
     {
         addr.sin_addr.s_addr = htonl(ip);
     }
-    int return_value = ::bind(socket_descriptor, (struct sockaddr *)&addr, sizeof(addr));
+    int return_value =
+        ::bind(socket_descriptor, (struct sockaddr *)&addr, sizeof(addr));
     if (return_value == -1)
     {
         std::cerr << "Error binding socket to address" << std::endl;
@@ -127,7 +128,8 @@ Socket::accept(int server_socket_fd) const
     ss << client_port_uint_16;
     std::string client_port = ss.str();
 
-    return std::make_pair(client_socket_fd, std::make_pair(client_ip, client_port));
+    return std::make_pair(client_socket_fd,
+                          std::make_pair(client_ip, client_port));
 }
 
 // Sends data over the socket Non-Blockingly
@@ -164,7 +166,8 @@ ssize_t Socket::recv(int socket_descriptor, char *buffer, size_t len) const
 }
 
 // Forcibly bind a socket to a port in use
-int Socket::setReuseAddr(int fd) const{
+int Socket::setReuseAddr(int fd) const
+{
     int optval = 1;
     return setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 }
