@@ -174,7 +174,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         {
             // Push the response to the buffer
             m_sendResponse(socket_descriptor);
-            request.getBody().clear();
+            //request.getBody().clear();
             return Triplet_t(-1, std::pair<int, int>(-1, -1));
         }
     }
