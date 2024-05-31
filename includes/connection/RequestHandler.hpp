@@ -85,6 +85,9 @@ public:
     // Handles error responses
     void handleErrorResponse(int socket_descriptor, int status_code);
     void handleErrorResponse(int socket_descriptor, HttpStatusCode status_code);
+
+    // Remove and close the connection
+    void removeConnection(int socket_descriptor);
 };
 
 #endif // CONNECTIONS_HPP

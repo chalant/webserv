@@ -21,6 +21,7 @@ public:
     virtual int handlePipeRead(int);
     virtual void handleErrorResponse(int, int);
     virtual void handleErrorResponse(int, HttpStatusCode);
+    virtual void removeConnection(int);
 };
 
 #endif // MOCKREQUESTHANDLER_HPP

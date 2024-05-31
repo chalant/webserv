@@ -21,4 +21,6 @@ void MockRequestHandler::handleErrorResponse(int, int) { return; }
 
 void MockRequestHandler::handleErrorResponse(int, HttpStatusCode) { return; }
 
+void MockRequestHandler::removeConnection(int) { return; }
+
 // Path: tests/mock_srcs/MockRequestHandler.cpp

@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #define NO_EVENTS 0xC0
+#define FILE_TYPE_MASK 0xC0
 #define KEEP_DESCRIPTOR 0x01
 
 EventManager::EventManager(IPollfdManager &pollfd_manager,
@@ -286,7 +287,14 @@ void EventManager::m_cleanUp(ssize_t &pollfd_index, int descriptor,
 
     // Close the descriptor
     if (options != KEEP_DESCRIPTOR)
-        close(descriptor);
+    {
+        // if it is a client socket, let request handler handle the cleanup
+        if ((m_pollfd_manager.getEvents(pollfd_index) & FILE_TYPE_MASK) ==
+            CLIENT_SOCKET)
+            m_request_handler.removeConnection(descriptor);
+        else
+            close(descriptor);
+    }
 
     // Remove the descriptor from the poll set
     m_pollfd_manager.removePollfd(pollfd_index);

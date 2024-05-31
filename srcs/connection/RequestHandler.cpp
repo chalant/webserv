@@ -283,20 +283,15 @@ int RequestHandler::m_sendResponse(int socket_descriptor)
 {
     // Get a reference to the Response
     IResponse &response = m_connection_manager.getResponse(socket_descriptor);
-    // Get a reference to the Request
-    IRequest &request =
-        m_connection_manager.getConnection(socket_descriptor).getRequest();
+
     // Serialise the response
     std::vector<char> serialised_response = response.serialise();
+
     // Push the response to the buffer
     m_buffer_manager.pushSocketBuffer(socket_descriptor, serialised_response);
 
     // create an access log entry
     m_logger.log(m_connection_manager.getConnection(socket_descriptor));
-
-    // Remove the connection if the 'Connection' header is set to 'close'
-    if (request.getHeaderValue(CONNECTION) == "close")
-        m_connection_manager.removeConnection(socket_descriptor);
 
     // return 0
     return (0);
@@ -327,6 +322,24 @@ void RequestHandler::handleErrorResponse(int socket_descriptor,
 
     // Push the response to the buffer
     m_sendResponse(socket_descriptor);
+}
+
+// Remove and close the connection
+void RequestHandler::removeConnection(int socket_descriptor)
+{
+    // Get a reference to the Connection
+    IConnection &connection =
+        m_connection_manager.getConnection(socket_descriptor);
+
+    // Get a reference to the Request
+    IRequest &request = connection.getRequest();
+
+    // Remove the connection if the 'Connection' header is set to 'close'
+    if (request.getHeaderValue(CONNECTION) == "close")
+        m_connection_manager.removeConnection(socket_descriptor);
+    else // temp fix; close it anyway
+        m_connection_manager.removeConnection(socket_descriptor);
+
 }
 
 // path: srcs/RequestHandler.cpp
