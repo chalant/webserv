@@ -181,6 +181,9 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
 
     catch (const WebservException &e)
     {
+        // Set the request state to finished
+        state.finished(true);
+        
         // Get the status code
         int status_code;
         if (dynamic_cast<const HttpStatusCodeException *>(&e))

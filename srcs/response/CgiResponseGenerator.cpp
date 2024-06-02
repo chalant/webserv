@@ -181,7 +181,6 @@ void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script_name,
 char *CgiResponseGenerator::m_getCgiInterpreterPath(
     const std::string &script_name, const IConfiguration &configuration) const
 {
-    std::cout << "script_name: " << script_name << std::endl;
     // Extract file extension
     std::string file_extension;
     size_t dot_pos = script_name.find_last_of('.');

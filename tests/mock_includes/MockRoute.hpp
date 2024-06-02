@@ -25,6 +25,8 @@ public:
     virtual std::string getIndex() const;
     virtual void setRoot(std::string &root);
     virtual void setPath(std::string &prefix);
+    virtual bool isAllowedMethod(const HttpMethod method) const;
+    virtual bool isRegex() const;
     virtual IResponseGenerator *getResponseGenerator() const;
 };
 
