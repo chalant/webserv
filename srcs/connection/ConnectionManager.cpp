@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
+#include <unistd.h> // only for linux ?
 
 /*
  * ConnectionManager

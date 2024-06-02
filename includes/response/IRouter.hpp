@@ -14,8 +14,6 @@ class IRouter
 public:
     virtual ~IRouter() {};
 
-    virtual void addRoute(const IRequest &request,
-                          void (*new_handler)(IRequest *, IResponse *)) = 0;
     virtual void execRoute(IRequest *req, IResponse *res) = 0;
 };
 

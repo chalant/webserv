@@ -70,7 +70,6 @@ SRCS        =	main.cpp \
 				srcs/response/UploadResponseGenerator.cpp \
 				srcs/response/RegexMatcher.cpp \
 				srcs/response/Response.cpp \
-				srcs/response/Router.cpp \
 				srcs/response/TempRouter.cpp \
 				srcs/response/Route.cpp \
 				srcs/response/StaticFileResponseGenerator.cpp \

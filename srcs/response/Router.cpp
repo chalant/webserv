@@ -4,21 +4,29 @@ to a 'ResponseGenerator' mapping, ie the Router selects the correct
 locationblock)*/
 
 #include "../../includes/response/Router.hpp"
+#include "../../includes/response/StaticFileResponseGenerator.hpp"
+#include "../../includes/response/UploadResponseGenerator.hpp"
 #include "../../includes/configuration/ConfigurationLoader.hpp"
 #include "../../includes/constants/HttpMethodHelper.hpp"
 #include <algorithm>
 #include <iostream>
 #include <vector>
 
-Route::Route() {}
+typedef std::pair<int, std::pair<int, int> > Triplet_t;
+
+Route::Route(IResponseGenerator *response_generator) :
+      m_response_generator(response_generator)
+{
+}
+
+Route::~Route() {}
 
 Router::Router(IConfiguration &configuration, ILogger &logger,
                HttpHelper m_http_helper)
-    : m_configuration(configuration), m_logger(logger),
-      m_http_helper(m_http_helper)
+    : m_configuration(configuration), m_logger(logger), m_http_helper(m_http_helper)
 {
     // Log the creation of the Router
-    m_logger.log(VERBOSE, "Initializing Router...");
+    this->m_logger.log(VERBOSE, "Initializing Router...");
 
     // For every server block in the configuration, insert a routeMapEntry into
     // the m_routes map const std::vector<IConfiguration *> servers =
@@ -30,27 +38,31 @@ Router::Router(IConfiguration &configuration, ILogger &logger,
              servers.begin();
          serverIt != servers.end(); serverIt++)
     {
-        m_createServerRoutes(*serverIt);
+        this->m_createServerRoutes(*serverIt);
+        const std::vector<IConfiguration *> &locations =
+        (*serverIt)->getBlocks("location");
+        size_t numLocations = locations.size();
     }
 }
 
 Router::~Router()
 {
+    for (std::vector<IRoute*>::iterator it = m_routes.begin(); it != m_routes.end(); ++it) {
+        delete *it;
+    }
     // Log the destruction of the Router
-    m_logger.log(VERBOSE, "Router destroyed.");
+    this->m_logger.log(VERBOSE, "Router destroyed.");
 }
 
 void Router::m_createServerRoutes(IConfiguration *server_block)
 {
-    m_createRoutes(server_block);
+    this->m_createRoutes(server_block);
 }
 
 void Router::m_createRoutes(IConfiguration *server_block)
 {
-    std::vector<IConfiguration *> locations =
+    const std::vector<IConfiguration *> &locations =
         server_block->getBlocks("location");
-    std::vector<IConfiguration *>::iterator location_it;
-
     std::vector<std::string> hostnames =
         server_block->getStringVector("server_name");
     std::vector<std::string>::iterator hostname_it;
@@ -58,6 +70,7 @@ void Router::m_createRoutes(IConfiguration *server_block)
     std::vector<std::string> ports = server_block->getStringVector("listen");
     std::vector<std::string>::iterator port_it;
 
+    std::string root;
     std::string prefix;
     std::vector<std::string> methods;
 
@@ -70,8 +83,8 @@ void Router::m_createRoutes(IConfiguration *server_block)
     for (hostname_it = hostnames.begin(); hostname_it != hostnames.end();
          hostname_it++)
     {
-        for (location_it = locations.begin(); location_it != locations.end();
-             location_it++)
+        for (std::vector<IConfiguration *>::const_iterator location_it = locations.begin(); location_it != locations.end();
+            ++location_it)
         {
             // methods = (*location_it)->getStringVector("limit_except");
             methods =
@@ -85,21 +98,35 @@ void Router::m_createRoutes(IConfiguration *server_block)
                 methods.clear();
                 methods.push_back("GET");
             }
-
             // prefix = (*location_it)->getString("prefix");
             prefix = (*location_it)->getParameters()[ 0 ];
+            root = (*location_it)->getString("root");
             for (port_it = ports.begin(); port_it != ports.end(); port_it++)
             {
-                Route new_route;
+                IResponseGenerator *response_generator =
+                        new StaticFileResponseGenerator(this->m_logger);
+                
+                /*if (true)
+                {
+                    IResponseGenerator *response_generator =
+                        new UploadResponseGenerator(this->m_logger);
+                }*/
+                IRoute *new_route = new Route(response_generator);
                 m_routes.push_back(new_route);
-                m_routes[ i ].setUri(*hostname_it);
-                m_routes[ i ].appendUri(":");
-                m_routes[ i ].appendUri(*port_it);
-                m_routes[ i ].appendUri(prefix);
-                m_routes[ i ].setMethod(methods[ methods.size() - 1 ],
-                                        m_http_helper);
+                m_routes[ i ]->setRegex((*location_it)->isRegex());
+                m_routes[ i ]->setUri(*hostname_it);
+                m_routes[ i ]->setHostname(*hostname_it);
+                m_routes[ i ]->appendUri(":");
+                m_routes[ i ]->appendUri(*port_it);
+                m_routes[ i ]->setPort(*port_it);
+                m_routes[ i ]->appendUri(prefix);
+                m_routes[ i ]->setPath(prefix);
+                m_routes[ i ]->setRoot(root);
+                m_routes[ i ]->setMethod(methods,
+                                       this->m_http_helper);
                 i++;
             }
+            m_routes[ i - 1]->setIndex((*location_it)->getString("index"));
         }
     }
     std::sort(m_routes.begin(), m_routes.end());
@@ -127,12 +154,50 @@ bool isCgiRequest(IRequest *req)
     return (false);
 }
 
-void Router::execRoute(IRequest *req, IResponse *res)
+std::vector<std::string> splitString(const std::string& str, const std::string& delimiters) {
+    std::vector<std::string> words;
+    std::string current;
+
+    for (size_t i = 0; i < str.size(); ++i) {
+        if (delimiters.find(str[i]) != std::string::npos) 
+        {
+            if (!current.empty()) 
+            {
+                words.push_back(current);
+                current.clear();
+            }
+        } else 
+        {
+            current += str[i];
+        }
+    }
+    if (!current.empty()) 
+    {
+        words.push_back(current);
+    }
+    return words;
+}
+
+bool containsRegex(const std::string& regexStr, const std::string& reqStr)
+{
+    std::string delimiters = "|()^/";
+    std::vector<std::string> words = splitString(regexStr, delimiters);
+    for (size_t i = 0; i < words.size(); i++)
+    {
+       if (reqStr.find(words[i]) != std::string::npos)
+       {
+           return true;
+       }
+    }
+    return false;
+}
+
+Triplet_t Router::execRoute(IRequest *req, IResponse *res)
 {
     (void)res; // remove this line when implementing the handler
     (void)this
         ->m_configuration; // remove this line when implementing the handler
-    std::vector<Route>::iterator i = m_routes.begin();
+    std::vector<IRoute*>::iterator route = m_routes.begin();
 
     // todo: implement isACgiRequest or equivalent matcher logic
     // if (isACgiRequest(req)) // ends in .py, .php, .pl etc.
@@ -144,65 +209,115 @@ void Router::execRoute(IRequest *req, IResponse *res)
         // need implementation ;
         ;
     }
-    while (i != m_routes.end())
+    for (route = m_routes.begin(); route != m_routes.end(); route++)
     {
-        // match request path with a route
-        if (req->getUri().find(i->getUri()) &&
-            req->getMethod() == i->getMethod())
+
+         if (req->getHostName() == (*route)->getHostname() &&
+            req->getHostPort() == (*route)->getPort() &&
+            std::find((*route)->getMethod().begin(), (*route)->getMethod().end(),
+            req->getMethod()) != (*route)->getMethod().end()
+            && !(*route)->getRegex()
+            && req->getUri() == (*route)->getRoot() + (*route)->getPath())
         {
-            // i->handler(req, res); // handle static file // not implemented
-            // yet
-            break;
+            // Exact match
+            return (*route)->getResponseGenerator()->generateResponse(**route, *req, *res, this->m_configuration);
         }
-        i++;
+    }
+    for (route = m_routes.begin(); route != m_routes.end(); route++)
+    {
+        if (req->getHostName() == (*route)->getHostname() &&
+            req->getHostPort() == (*route)->getPort() &&
+            std::find((*route)->getMethod().begin(), (*route)->getMethod().end(),
+            req->getMethod()) != (*route)->getMethod().end()
+            && (*route)->getRegex() 
+            && containsRegex((*route)->getPath(), req->getUri()))
+        {
+            // regex match
+            return (*route)->getResponseGenerator()->generateResponse(**route, *req, *res, this->m_configuration);
+        }
+    }
+    for (route = m_routes.begin(); route != m_routes.end(); route++)
+    {
+        if (req->getHostName() == (*route)->getHostname() &&
+            req->getHostPort() == (*route)->getPort() &&
+            std::find((*route)->getMethod().begin(), (*route)->getMethod().end(),
+            req->getMethod()) != (*route)->getMethod().end()
+            && !(*route)->getRegex() 
+            && req->getUri().find((*route)->getPath()) != std::string::npos)
+        {
+            // longest prefix match
+           return (*route)->getResponseGenerator()->generateResponse(**route, *req, *res, this->m_configuration);
+        }
+    }
+    return (*route)->getResponseGenerator()->generateResponse(**route, *req, *res, this->m_configuration);
+}
+
+
+size_t Router::getRouteCount(void) const { return (this->m_routes.size()); }
+
+std::vector<IRoute*> Router::getRoutes(void) const { return (this->m_routes); }
+
+std::string Route::getUri() const { return (this->m_uri); }
+
+std::vector<HttpMethod> Route::getMethod() const { return (this->m_methods); }
+
+std::string Route::getHostname() const { return (this->m_host_name); }
+
+std::string Route::getRoot() const { return (this->m_root); }
+
+std::string Route::getPath() const { return (this->m_path); }
+
+std::string Route::getPort() const { return (this->m_port); }
+
+std::string Route::getIndex() const { return (this->m_index); }
+
+void Route::setIndex(std::string newIndex) { this->m_index = newIndex; } 
+
+IResponseGenerator *Route::getResponseGenerator(void) const { return (this->m_response_generator); }
+
+void Route::setUri(std::string newUri) { this->m_uri = newUri; }
+
+void Route::setHostname(std::string newHostname) { this->m_host_name = newHostname; }
+
+void Route::setRoot(std::string newRoot) { this->m_root = newRoot; }
+
+void Route::setPath(std::string newPath) { this->m_path = newPath; }
+
+void Route::setPort(std::string newPort) { this->m_port = newPort; }
+
+void Route::setMethod(const std::vector<std::string> newMethods, HttpHelper &httpHelper)
+{
+    // Set the method of the request
+    for (size_t i = 0; i < newMethods.size(); i++)
+    {
+        this->m_methods.push_back(httpHelper.stringHttpMethodMap(newMethods[i]));
     }
 }
 
-std::string Route::getUri() const { return (m_uri); }
+bool Route::getRegex() const { return (this->m_regex_flag); }
 
-void Route::setUri(std::string newUri) { m_uri = newUri; }
-
-HttpMethod Route::getMethod() const { return (m_method); }
-
-void Route::setMethod(const std::string newMethod, HttpHelper &httpHelper)
-{
-    /*if (m_http_helper.isMethod(newMethod) == false)
-            throw HttpStatusCodeException(METHOD_NOT_ALLOWED, // Throw '405'
-    status error "unknown method: \"" + newMethod + "\""); else if
-    (m_http_helper.isSupportedMethod(newMethod) == false) throw
-    HttpStatusCodeException(NOT_IMPLEMENTED, // Throw '501' status error
-                                                                      "unsupported
-    method: \"" + newMethod + "\"");*/
-
-    // Set the method of the request
-    m_method = httpHelper.stringHttpMethodMap(newMethod);
-}
+void Route::setRegex(bool new_regex) { this->m_regex_flag = new_regex; }
 
 bool Route::operator<(const Route &other) const
 {
-    return (m_uri.length() > other.m_uri.length());
+    return (this->m_uri.length() > other.m_uri.length());
 }
 
-void Route::appendUri(const std::string &newString) { m_uri.append(newString); }
-
-// placeholder for adding a route
-void Router::addRoute(const IRequest &request,
-                      void (*newHandler)(IRequest *, IResponse *))
+void Route::appendUri(const std::string &newString)
 {
-    (void)request;
-    (void)newHandler;
+    this->m_uri.append(newString);
 }
-
-size_t Router::getRouteCount(void) const { return (m_routes.size()); }
-
-std::vector<Route> Router::getRoutes(void) const { return (m_routes); }
 
 Route &Route::operator=(const Route &other)
 {
     if (this != &other)
     {
-        m_uri = other.m_uri;
-        m_method = other.m_method;
+        this->m_host_name = other.m_host_name;
+        this->m_methods = other.m_methods;
+        this->m_port = other.m_port;
+        this->m_path = other.m_path;
+        this->m_regex_flag = other.m_regex_flag;
+        this->m_root = other.m_root;
     }
     return *this;
 }
