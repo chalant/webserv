@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
-#include <unistd.h> // only for linux ?
+#include <unistd.h>
 
 /*
  * ConnectionManager
@@ -50,11 +50,6 @@ ConnectionManager::~ConnectionManager()
 void ConnectionManager::addConnection(
     std::pair<int, std::pair<std::string, std::string> > client_info)
 {
-	//remove connection if it already exists
-	if (m_connections.find(client_info.first) != m_connections.end())
-	{
-		this->removeConnection(client_info.first);
-	}
     IConnection *connection = m_factory.createConnection(client_info);
     m_connections[ client_info.first ] = connection;
 

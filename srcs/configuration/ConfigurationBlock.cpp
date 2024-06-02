@@ -92,7 +92,8 @@ int ConfigurationBlock::getInt(const std::string &key, size_t index = 0) const
 {
     try
     {
-        return Converter::toInt(m_directives.at(key)->at(index));
+        const std::string &value_str = this->getString(key, index);
+        return Converter::toInt(value_str);
     }
     catch (const std::out_of_range &e)
     {
