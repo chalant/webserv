@@ -23,14 +23,14 @@ PollfdManager::PollfdManager(IConfiguration &configuration, ILogger &logger)
       m_logger(logger)
 {
     // Log the creation of the PollfdManager
-    m_logger.log(DEBUG, "PollfdManager created.");
+    m_logger.log(VERBOSE, "PollfdManager created.");
 }
 
 // Destructor for PollFdManager class
 PollfdManager::~PollfdManager()
 {
     // Log the destruction of the PollfdManager
-    m_logger.log(DEBUG, "PollfdManager destroyed.");
+    m_logger.log(VERBOSE, "PollfdManager destroyed.");
 }
 
 // Method to add a polling file descriptor

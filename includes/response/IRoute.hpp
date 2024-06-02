@@ -2,6 +2,7 @@
 #define IROUTE_HPP
 
 #include <string>
+#include "../constants/HttpMethodHelper.hpp"
 
 class IResponseGenerator;
 
@@ -52,6 +53,8 @@ public:
     virtual std::string getRoot() const = 0;
     virtual std::string getPath() const = 0;
     virtual std::string getIndex() const = 0;
+    virtual bool isAllowedMethod(const HttpMethod method) const = 0;
+    virtual bool isRegex() const = 0;
     virtual IResponseGenerator *getResponseGenerator() const = 0;
 };
 

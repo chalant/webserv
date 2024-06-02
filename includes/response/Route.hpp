@@ -9,6 +9,8 @@ class Route : public IRoute
 {
 private:
     const std::string m_path; // The path of the route (prefix)
+    const bool m_is_regex; // If the path is a regex
+    const std::vector<HttpMethod> m_methods; // The method of the route
     const std::string
         m_root; // The root directory of the route (where the files are stored)
     const std::string
@@ -16,12 +18,14 @@ private:
     IResponseGenerator &m_response_generator;
 
 public:
-    Route(const std::string path, const std::string root,
+    Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
           const std::string index, IResponseGenerator &response_generator);
     ~Route();
     std::string getPath() const;
     std::string getRoot() const;
     std::string getIndex() const;
+    bool isAllowedMethod(const HttpMethod method) const;
+    bool isRegex() const;
     IResponseGenerator *getResponseGenerator() const;
 };
 

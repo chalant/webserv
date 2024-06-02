@@ -18,6 +18,7 @@ def sigHandler(sig, frame):
 signal.signal(signal.SIGINT, sigHandler)
 
 # Compile the project
+subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 subprocess.run(['make', '-j8'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # Start the server

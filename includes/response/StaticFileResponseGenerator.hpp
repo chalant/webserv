@@ -12,6 +12,7 @@ private:
 
     std::map<std::string, std::string> m_initialiseMimeTypes() const;
     std::string m_getMimeType(const std::string &file_path) const;
+    bool m_isDirectory(const std::string &path) const;
 
 public:
     StaticFileResponseGenerator(ILogger &logger);

@@ -27,6 +27,7 @@ def getResponseStatusLine(request):
     return response.decode().splitlines()[0]
 
 # Compile the project
+subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 subprocess.run(['make', '-j8'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # Start the server
@@ -39,12 +40,12 @@ time.sleep(1)
 # Test an Unknown Method
 response_status_line = getResponseStatusLine(b'NOTKNOWN / HTTP/1.1\r\nHost: localhost\r\n\r\n')
 assert response_status_line == "HTTP/1.1 405 Method Not Allowed"
-print("\tUnknown Method(405) test".ljust(34) + f"{GREEN}OK!{RESET}")
+print("\tUnknown Method(405 Not allowed) test".ljust(34) + f"{GREEN}OK!{RESET}")
 
 # Test an Unimplemented Method
 response_status_line = getResponseStatusLine(b'PATCH / HTTP/1.1\r\nHost: localhost\r\n\r\n')
-assert response_status_line == "HTTP/1.1 501 Not Implemented"
-print("\tUnimplemented method(501) test".ljust(34) + f"{GREEN}OK!{RESET}")
+assert response_status_line == "HTTP/1.1 405 Method Not Allowed"
+print("\tUnimplemented method(405 Not allowed) test".ljust(34) + f"{GREEN}OK!{RESET}")
 
 # Test a request with a uri that is too long
 response_status_line = getResponseStatusLine(b'GET /' + b'a'*1100 + b' HTTP/1.1\r\nHost: localhost\r\n\r\n')

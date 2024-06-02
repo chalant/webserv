@@ -13,6 +13,7 @@
 #include "../logger/ILogger.hpp"
 #include "../request/IRequest.hpp"
 #include "IResponse.hpp"
+#include "IResponseGenerator.hpp"
 #include "IRoute.hpp"
 #include "ITempRouter.hpp"
 
@@ -23,9 +24,11 @@ private:
     ILogger &m_logger;
     HttpHelper m_http_helper;
 
-    IRoute *m_static_route;
-    IRoute *m_upload_route;
-    IRoute *m_cgi_route;
+    std::vector<IRoute *> m_routes;
+    std::map<std::string, IResponseGenerator *> m_response_generators;
+
+    // Method to compare two routes by path length
+    static bool m_sortRoutes(const IRoute *a, const IRoute *b);
 
 public:
     TempRouter(IConfiguration &Configuration, ILogger &logger);

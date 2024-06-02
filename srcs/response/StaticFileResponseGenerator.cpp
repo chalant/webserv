@@ -1,6 +1,7 @@
 #include "../../includes/response/StaticFileResponseGenerator.hpp"
 #include "../../includes/utils/Converter.hpp"
 #include <fstream>
+#include <sys/stat.h>
 
 // Constructor
 StaticFileResponseGenerator::StaticFileResponseGenerator(ILogger &logger)
@@ -10,7 +11,7 @@ StaticFileResponseGenerator::StaticFileResponseGenerator(ILogger &logger)
 
 // Destructor
 StaticFileResponseGenerator::~StaticFileResponseGenerator() {}
-
+#include <iostream>
 // Generate response
 Triplet_t StaticFileResponseGenerator::generateResponse(
     const IRoute &route, const IRequest &request, IResponse &response,
@@ -23,6 +24,10 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     // Get the file path
     std::string root = route.getRoot();
     std::string uri = request.getUri();
+    std::cout << "URI: " << uri << std::endl;
+    // remove the location path from the uri
+    if (route.getPath() != "/")
+        uri = uri.substr(route.getPath().size());
 
     // if root does not end with a slash and uri does not start with a slash
     if (root[ root.size() - 1 ] != '/' && uri[ 0 ] != '/')
@@ -33,12 +38,17 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     std::string file_path = root + uri;
 
     // check if the file_path is a directory
-    if (file_path[ file_path.size() - 1 ] == '/')
-    {
+    if (m_isDirectory(file_path))    {
+        // log the situation
+        m_logger.log(VERBOSE, "Directory requested: " + file_path + " serving index file: " + root + route.getIndex());
+
+        // append a slash to the file path
+        file_path += "/";
+
         // append the default file name
         file_path += route.getIndex();
     }
-
+    
     // open the file in binary mode, in read mode and at the end
     std::ifstream file(file_path.c_str(),
                        std::ios::in | std::ios::binary | std::ios::ate);
@@ -54,13 +64,13 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     {
         // log the file being served
         m_logger.log(VERBOSE, "Serving file: " + file_path);
-
+std::cout << "tellg" << std::endl;
         // get the size of the file
         std::streampos size = file.tellg();
-
+std::cout << "seekg" << std::endl;
         // set the position of the file to the beginning
         file.seekg(0, std::ios::beg);
-
+std::cout << "read" << std::endl;
         // read the file into the body
         std::vector<char> body(size);
         file.read(&body[ 0 ], size);
@@ -78,16 +88,19 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
         {
             // close the file
             file.close();
-
+std::cout << "setting body" << std::endl;
             // set the response
             response.setBody(body);
+std::cout << "setting headers" << std::endl;
             response.setStatusLine(OK);
+std::cout << "setting headers 2" << std::endl;
             response.addHeader(CONTENT_TYPE, m_getMimeType(file_path));
+std::cout << "setting headers 3" << std::endl;
             response.addHeader(CONTENT_LENGTH,
                                Converter::toString(body.size()));
         }
     }
-
+std::cout << "returning triplet" << std::endl;
     // return -1
     return Triplet_t(-1,
                      std::make_pair(0, 0)); // -1 currently just means no CGI
@@ -109,7 +122,11 @@ StaticFileResponseGenerator::m_getMimeType(const std::string &file_path) const
         extension = file_path.substr(dot_position + 1);
 
     // Return the mime type
-    return m_mime_types.at(extension);
+    try {
+        return m_mime_types.at(extension);
+    } catch (const std::out_of_range &e) {
+        return m_mime_types.at("unknown");
+    }
 }
 
 // Set the mime types
@@ -144,6 +161,18 @@ StaticFileResponseGenerator::m_initialiseMimeTypes() const
     mime_types[ "svg" ] = "image/svg+xml";
     mime_types[ "unknown" ] = "application/octet-stream";
     return mime_types;
+}
+
+// Check if a path is a directory
+bool StaticFileResponseGenerator::m_isDirectory(const std::string &path) const
+{
+    struct stat info;
+    if (stat(path.c_str(), &info) != 0)
+        return false; // path does not exist
+    else if (info.st_mode & S_IFDIR)
+        return true; // path is a directory
+    else
+        return false; // path is a file
 }
 
 // Path: srcs/response/Response.cpp

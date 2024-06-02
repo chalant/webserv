@@ -271,8 +271,11 @@ void Request::setMethod(const std::string &method)
             METHOD_NOT_ALLOWED, // Throw '405' status error
             "unknown method: \"" + method + "\"");
     else if (m_http_helper.isSupportedMethod(method) == false)
+        //throw HttpStatusCodeException(
+         //   NOT_IMPLEMENTED, // Throw '501' status error
+         //   "unsupported method: \"" + method + "\"");
         throw HttpStatusCodeException(
-            NOT_IMPLEMENTED, // Throw '501' status error
+            METHOD_NOT_ALLOWED, // Throw '405' status error
             "unsupported method: \"" + method + "\"");
 
     // Set the method of the request
