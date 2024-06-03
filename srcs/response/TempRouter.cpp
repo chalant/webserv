@@ -103,7 +103,7 @@ TempRouter::~TempRouter()
         delete m_routes[i];
     }
 }
-#include <iostream>
+
 // Execute the route
 Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
 {
@@ -140,8 +140,6 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
     HttpMethod method = request->getMethod();
     for (size_t i = 0; i < routes_stop; i++)
     {
-        std::cout << "Route path: " << m_routes[i]->getPath() << std::endl;
-        std::cout << "URI: " << uri << std::endl;
         // if the route path is contained in the uri
         if (uri.find(m_routes[i]->getPath()) != std::string::npos)
         {

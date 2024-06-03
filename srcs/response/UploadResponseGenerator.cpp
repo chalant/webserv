@@ -52,7 +52,7 @@ Triplet_t UploadResponseGenerator::generateResponse(
             response.setErrorResponse(INTERNAL_SERVER_ERROR);
             return std::make_pair(-1, std::make_pair(-1, -1));
         }
-        file.write(itr->data.c_str(), itr->data.size());
+        file.write(itr->data.data(), itr->data.size());
     }
     // if a file was created set the status to created.
     if (created)

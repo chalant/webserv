@@ -3,6 +3,8 @@
 #include <sstream>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <cerrno>
+#include <iostream>
 
 /*
  * Socket - Class for socket operations.
@@ -26,8 +28,7 @@ int Socket::socket() const
     // protocol: protocol to be used with the socket (0 for default protocol)
     return ::socket(AF_INET, SOCK_STREAM, 0);
 }
-#include <cerrno>
-#include <iostream>
+
 // Binds the socket to an address
 int Socket::bind(int socket_descriptor, int ip, int port) const
 {
@@ -56,7 +57,7 @@ int Socket::bind(int socket_descriptor, int ip, int port) const
         ::bind(socket_descriptor, (struct sockaddr *)&addr, sizeof(addr));
     if (return_value == -1)
     {
-        std::cerr << "Error binding socket to address" << std::endl;
+        std::cerr << "FATAL Error binding socket to address" << std::endl;
         std::cerr << "Error code: " << errno << std::endl;
     }
     return return_value;

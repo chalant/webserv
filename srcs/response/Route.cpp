@@ -19,16 +19,10 @@ std::string Route::getRoot() const { return m_root; }
 
 // Get the index
 std::string Route::getIndex() const { return m_index; }
-#include <iostream>
+
 // Check if the method is allowed
 bool Route::isAllowedMethod(const HttpMethod method) const
 {
-    std::cout << "method to check: " << static_cast<int>(method) << std::endl;
-    // print the methods
-    for (std::vector<HttpMethod>::const_iterator it = m_methods.begin(); it != m_methods.end(); ++it)
-    {
-       // std::cout << "method allowed: " << static_cast<int>(*it) << std::endl;
-    }
     for (std::vector<HttpMethod>::const_iterator it = m_methods.begin(); it != m_methods.end(); ++it)
     {
         if (*it == method)

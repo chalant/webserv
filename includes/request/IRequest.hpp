@@ -26,7 +26,7 @@ struct BodyParameter
     std::string filename;     // Name of the file; applicable for file uploads
     std::string content_type; // MIME type of the content; applicable for file
                               // uploads
-    std::string data;         // Data of the file or field; contains the content
+    std::vector<char> data;         // Data of the file or field; contains the content
                               // of the part
     std::string disposition_type; // Disposition type (e.g., "form-data",
                                   // "attachment", "inline")

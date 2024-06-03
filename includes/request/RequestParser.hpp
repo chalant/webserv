@@ -80,6 +80,9 @@ private:
     // Custom getline function to remove carriage returns
     std::istream &m_getlineNoCr(std::istream &is, std::string &line) const;
 
+    // Function to read a stringstream into a char vector until the boundary is found
+    void m_assignUntilBoundary(std::istringstream &iss, const std::string &boundary, std::vector<char> &dest) const;
+
 public:
     // Constructor to initialize the RequestParser with required references
     RequestParser(const IConfiguration &configuration, ILogger &logger);

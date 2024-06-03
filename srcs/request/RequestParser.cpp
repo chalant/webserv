@@ -3,6 +3,7 @@
 #include "../../includes/exception/WebservExceptions.hpp"
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
 #include <cstdlib>
 
 /*
@@ -640,29 +641,19 @@ void RequestParser::parseBodyParameters(IRequest &parsed_request) const
                                       value + "\"");
         } while (m_getlineNoCr(body_stream, line) && !line.empty());
 
-        // Parse BodyParameter data
-        while (m_getlineNoCr(body_stream, line))
-        {
-            // Stop parsing if the boundary is found
-            if (line.find(boundary) != std::string::npos)
-                break;
+        // Assign the data to the body_parameter data member
+        m_assignUntilBoundary(
+            body_stream, boundary, body_parameter.data);
 
-            // Append the line to the BodyParameter data
-            body_parameter.data += line + '\n';
-        }
-
-        // Remove the final newline
+        // Log the first character of the BodyParameter data
         if (!body_parameter.data.empty())
-            body_parameter.data.erase(body_parameter.data.end() - 1);
-
-        // Trim whitespace after loop
-        body_parameter.data = m_trimWhitespace(body_parameter.data);
-
-        // Log the first 3 characters of the BodyParameter data
-        m_logger.log(
-            VERBOSE,
-            "[REQUESTPARSER]   Data: \"" + body_parameter.data.substr(0, 3) +
-                (body_parameter.data.length() > 3 ? "... (etc.)" : "") + "\"");
+            m_logger.log(VERBOSE,
+                         "[REQUESTPARSER]  Data: \"" +
+                             Converter::toString(body_parameter.data[ 0 ]) +
+                             "...\"");
+        else
+            m_logger.log(VERBOSE,
+                         "[REQUESTPARSER] No data found in BodyParameter");
 
         // Add BodyParameter to vector
         parsed_request.addBodyParameter(body_parameter);
@@ -740,4 +731,55 @@ std::istream &RequestParser::m_getlineNoCr(std::istream &is,
     return is;
 }
 
+// Function to read a stringstream into a char vector until the boundary is found
+// NOTE - This function will currently fail when the boundary is split between two buffer reads
+void RequestParser::m_assignUntilBoundary(std::istringstream &iss,
+                                            const std::string &boundary,
+                                            std::vector<char> &dest) const
+{
+    const size_t buffer_size = 1024;
+    char buffer[ buffer_size ];
+    size_t boundary_length = boundary.length();
+    size_t bytes_read;
+    size_t pos;
+
+    // Read the buffer until the boundary is found
+    while (!iss.eof())
+    {
+        // Get the current position
+        pos = iss.tellg();
+
+        // Read the buffer
+        iss.read(buffer, buffer_size);
+
+        // Get the number of bytes read
+        bytes_read = iss.gcount();
+
+        // Check if the boundary is found in the buffer
+        for (size_t i = 0; i < bytes_read; i++)
+        {
+            if (buffer[ i ] == boundary[ 0 ])
+            {
+                // Check if the boundary is found in the buffer
+                if (strncmp(&buffer[ i ], boundary.c_str(), boundary_length) ==
+                    0)
+                {
+                    // Add the buffer to the destination minus the CRLF
+                    dest.insert(dest.end(), buffer, buffer + i - 2);
+
+                    // Move the stringstream to the end of the boundary
+                    // and passed the CRLF
+                    iss.clear(); // Clear the eof flag if necessary
+                    iss.seekg(pos + i + boundary_length + 2);
+
+                    // Return from the function
+                    return;
+                }
+            }
+        }
+
+        // Add the buffer to the destination and continue reading
+        dest.insert(dest.end(), buffer, buffer + bytes_read);
+    }
+}
 // path: srcs/RequestHandler.cpp

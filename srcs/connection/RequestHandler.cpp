@@ -43,7 +43,7 @@ RequestHandler::~RequestHandler()
     // Log the destruction of the RequestHandler instance.
     m_logger.log(VERBOSE, "RequestHandler instance destroyed.");
 }
-#include <iostream>
+
 // Handles a client request
 // Returns Cgi Info for dynamic content or -1 for static content and invalid
 // requests
@@ -222,12 +222,11 @@ int RequestHandler::handlePipeException(int pipe_descriptor)
     // Return the client socket descriptor
     return client_socket;
 }
-#include <iostream>
+
 // Handles read input from pipe - responses larger than the buffer size are
 // currently not supported
 int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
 {
-    std::cout << "handlePipeRead" << std::endl;
     // Get the client socket descriptor linked to the pipe
     int client_socket = m_pipe_routes[ cgi_output_pipe_read_end ];
 
@@ -245,9 +244,6 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
         return client_socket;
     }
     raw_response.resize(bytesread);
-
-    std::cerr << "Response: " << raw_response.data() << "END OF RESPONSE"
-              << std::endl;
 
     // Get a reference to the Response
     IResponse &response = m_connection_manager.getResponse(client_socket);

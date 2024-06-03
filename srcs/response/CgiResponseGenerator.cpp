@@ -177,7 +177,7 @@ void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script_name,
     for (size_t i = 0; i < cgi_env.size() - 1; ++i)
         m_logger.log(DEBUG, "CGI Environment: " + std::string(cgi_env[ i ]));
 }
-#include <iostream>
+
 char *CgiResponseGenerator::m_getCgiInterpreterPath(
     const std::string &script_name, const IConfiguration &configuration) const
 {

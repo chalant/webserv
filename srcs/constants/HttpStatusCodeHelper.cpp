@@ -88,7 +88,7 @@ HttpStatusCodeHelper::getErrorResponse(HttpStatusCode status_code) const
            "content-length: " + Converter::toString(body.length()) + "\r\n" +
            "Connection: close\r\n" + "Server: webserv/1.0\r\n" + "\r\n" + body;
 }
-#include <iostream>
+
 // Generate an HTML page with the specified HTTP status code
 std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode status_code) const
 {
@@ -96,8 +96,6 @@ std::string HttpStatusCodeHelper::getHtmlPage(HttpStatusCode status_code) const
     if (m_status_code_html_page_map.find(status_code) !=
         m_status_code_html_page_map.end())
     {
-        std::cout << "Custom HTML page found for status code "
-                  << static_cast<size_t>(status_code) << std::endl;
         return m_status_code_html_page_map.at(status_code);
     }
 

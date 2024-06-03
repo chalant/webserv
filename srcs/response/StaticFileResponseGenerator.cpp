@@ -11,7 +11,7 @@ StaticFileResponseGenerator::StaticFileResponseGenerator(ILogger &logger)
 
 // Destructor
 StaticFileResponseGenerator::~StaticFileResponseGenerator() {}
-#include <iostream>
+
 // Generate response
 Triplet_t StaticFileResponseGenerator::generateResponse(
     const IRoute &route, const IRequest &request, IResponse &response,
@@ -24,7 +24,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     // Get the file path
     std::string root = route.getRoot();
     std::string uri = request.getUri();
-    std::cout << "URI: " << uri << std::endl;
+
     // remove the location path from the uri
     if (route.getPath() != "/")
         uri = uri.substr(route.getPath().size());
@@ -64,13 +64,13 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     {
         // log the file being served
         m_logger.log(VERBOSE, "Serving file: " + file_path);
-std::cout << "tellg" << std::endl;
+
         // get the size of the file
         std::streampos size = file.tellg();
-std::cout << "seekg" << std::endl;
+
         // set the position of the file to the beginning
         file.seekg(0, std::ios::beg);
-std::cout << "read" << std::endl;
+
         // read the file into the body
         std::vector<char> body(size);
         file.read(&body[ 0 ], size);
@@ -88,19 +88,19 @@ std::cout << "read" << std::endl;
         {
             // close the file
             file.close();
-std::cout << "setting body" << std::endl;
+
             // set the response
             response.setBody(body);
-std::cout << "setting headers" << std::endl;
+
             response.setStatusLine(OK);
-std::cout << "setting headers 2" << std::endl;
+
             response.addHeader(CONTENT_TYPE, m_getMimeType(file_path));
-std::cout << "setting headers 3" << std::endl;
+
             response.addHeader(CONTENT_LENGTH,
                                Converter::toString(body.size()));
         }
     }
-std::cout << "returning triplet" << std::endl;
+
     // return -1
     return Triplet_t(-1,
                      std::make_pair(0, 0)); // -1 currently just means no CGI
