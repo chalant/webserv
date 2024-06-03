@@ -16,8 +16,7 @@ public:
     virtual Triplet_t generateResponse(const IRoute &route,
                                        const IRequest &request,
                                        IResponse &response,
-                                       IConfiguration &configuration,
-                                       const std::string &script_name = "") = 0;
+                                       IConfiguration &configuration) = 0;
 };
 
 #endif // IRESPONSEGENERATOR_HPP

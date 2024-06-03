@@ -17,10 +17,9 @@ private:
     ILogger &m_logger;
     HttpStatusCodeHelper m_http_status_code_helper;
 
-    void m_setCgiArguments(const std::string &script_name, const IRoute &route,
-                           const IConfiguration &configuration,
+    void m_setCgiArguments(const std::string &cgi_script, const std::string &script, const IRoute &route,
                            std::vector<char *> &cgi_args);
-    void m_setCgiEnvironment(const std::string &script_name,
+    void m_setCgiEnvironment(const std::string &cgi_script,
                              const IRoute &route, const IRequest &request,
                              std::vector<char *> &cgi_env);
     char *m_getCgiInterpreterPath(const std::string &script_name,
@@ -40,8 +39,7 @@ public:
     virtual Triplet_t generateResponse(const IRoute &route,
                                        const IRequest &request,
                                        IResponse &response,
-                                       IConfiguration &configuration,
-                                       const std::string &script_name = "");
+                                       IConfiguration &configuration);
 };
 
 #endif // CGIRESPONSEGENERATOR_HPP

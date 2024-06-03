@@ -32,7 +32,7 @@ subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '
 subprocess.run(['make', '-j8'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # Start the server
-webserv = subprocess.Popen(['./webserv'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+webserv = subprocess.Popen(['./webserv'], cwd=os.path.join(os.path.dirname(__file__), '../../'))#, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 #Wait for the server to start
 time.sleep(1)

@@ -27,8 +27,10 @@ int main()
     // Set Mock Route Variables
     std::string root = ".";
     std::string prefix = "/mock-cgi-bin";
+    std::string cgi_script = "/usr/bin/python3";
     mock_route.setRoot(root);
     mock_route.setPath(prefix);
+    mock_route.setCgiScript(cgi_script);
 
     IConfiguration &mock_configuration_block =
         conf_loader.loadConfiguration("test_configuration.conf");
@@ -60,8 +62,7 @@ int main()
 
     // Generate cgi response
     cgi_info = cgi_response_generator.generateResponse(
-        mock_route, mock_request, mock_response, mock_configuration_block,
-        script_name);
+        mock_route, mock_request, mock_response, mock_configuration_block);
 
     // Get the read pipe file descriptor
     response_read_pipe = cgi_info.second.first;
@@ -93,8 +94,7 @@ int main()
 
     // Generate cgi response
     cgi_info = cgi_response_generator.generateResponse(
-        mock_route, mock_request, mock_response, mock_configuration_block,
-        script_name);
+        mock_route, mock_request, mock_response, mock_configuration_block);
 
     // Get the read pipe file descriptor
     response_read_pipe = cgi_info.second.first;
@@ -131,8 +131,7 @@ int main()
 
     // Generate cgi response
     cgi_info = cgi_response_generator.generateResponse(
-        mock_route, mock_request, mock_response, mock_configuration_block,
-        script_name);
+        mock_route, mock_request, mock_response, mock_configuration_block);
 
     // Get the pipe file descriptors
     response_read_pipe = cgi_info.second.first;

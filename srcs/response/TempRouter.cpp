@@ -35,6 +35,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
         std::vector<HttpMethod> methods;
         std::string root;
         std::string index;
+        std::string cgi_script;
 
         // Get the path
         std::vector<std::string> location_params = locations_list[i]->getParameters();
@@ -50,7 +51,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
             path = path.substr(0, path.length() - 1);
 
         // Get the Methods
-        std::vector<std::string> method_vector = locations_list[i]->getBlocks("limit_except")[0]->getParameters();
+        std::vector<std::string> method_vector = locations_list[i]->getStringVector("limit_except");
         std::string methods_string;
         for (size_t j = 0; j < method_vector.size(); j++)
             methods_string += method_vector[j] + " ";
@@ -60,24 +61,32 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
             methods.push_back(m_http_helper.stringHttpMethodMap(method_vector[j]));
 
         // Get the root
-        std::vector<std::string> root_vector = locations_list[i]->getBlocks("root")[0]->getParameters();
+        std::vector<std::string> root_vector = locations_list[i]->getStringVector("root");
         if (root_vector.size() == 0)
             root = locations_list[i]->getString("root");
         else
             root = root_vector[0];
 
         // Get the index
-        std::vector<std::string> index_vector = locations_list[i]->getBlocks("index")[0]->getParameters();
+        std::vector<std::string> index_vector = locations_list[i]->getStringVector("index");
         if (index_vector.size() == 0)
             index = locations_list[i]->getString("index");
         else
             index = index_vector[0];
 
+        // Get the cgi_script
+        // e.g. cgi_script /usr/bin/python3;
+        std::vector<std::string> cgi_script_vector = locations_list[i]->getStringVector("cgi_script");
+        if (cgi_script_vector.size() == 0)
+            cgi_script = "";
+        else
+            cgi_script = cgi_script_vector[0];
+
         // Add the route
-        m_routes.push_back(new Route(path, is_regex, methods, root, index, *m_response_generators["GET"])); // temp set to GET
+        m_routes.push_back(new Route(path, is_regex, methods, root, index, cgi_script, *m_response_generators["GET"])); // temp set to GET
 
         // Log the creation of the Route
-        m_logger.log(VERBOSE, "[TEMPROUTER] New location: " + path + " methods: " + methods_string + ", root: " + root + ", index: " + index + ".");
+        m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
     }
 
     // Sort the routes
@@ -108,7 +117,6 @@ TempRouter::~TempRouter()
 Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
 {
     IRoute *route = m_routes[m_routes.size() - 1]; // Default route
-    std::string script_name = ""; 
     size_t routes_stop = m_routes.size();
     std::string uri = request->getUri();
     std::string method_str = m_http_helper.httpMethodStringMap(request->getMethod());
@@ -122,8 +130,6 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
     if (extension == "php" || extension == "py")
     {
         response_generator = m_response_generators["CGI"];
-        size_t last_slash = uri.find_last_of('/');
-        script_name = uri.substr(last_slash + 1);
         uri = "." + extension; // temp for matching
         // set routes_stop to the first route that is not a regex
         for (size_t i = 0; i < routes_stop; i++)
@@ -155,7 +161,7 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
     }
 
     // Generate the response
-    Triplet_t return_value = response_generator->generateResponse(*route, *request, *response, m_configuration, script_name);
+    Triplet_t return_value = response_generator->generateResponse(*route, *request, *response, m_configuration);
 
     // print return value
     m_logger.log(DEBUG,

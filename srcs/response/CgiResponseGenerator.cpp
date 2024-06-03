@@ -18,26 +18,37 @@ CgiResponseGenerator::CgiResponseGenerator(ILogger &logger)
 }
 
 CgiResponseGenerator::~CgiResponseGenerator() {}
-
+#include <iostream>
 // calls execve to execute the CGI script
 // returns the cgi process Info (pid, read end of the CGI Output pipe, write end
 // of the CGI Input pipe) Throws an exception if an error occurs
 Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
                                                  const IRequest &request,
                                                  IResponse &response,
-                                                 IConfiguration &configuration,
-                                                 const std::string &script_name)
+                                                 IConfiguration &configuration)
 {
-    // void the unused IResponse &response
+    // void the unused parameters
     (void)response;
+    (void)configuration;
+
+    // Get the CGI script path
+    const std::string cgi_script = route.getCgiScript();
+
+    std::cout << "CGI script: " << cgi_script << std::endl;
+
+    // Set the Script path
+    std::string uri = request.getUri();
+    size_t last_slash = uri.find_last_of('/');
+    size_t question_mark = uri.find('?');
+    std::string script = uri.substr(last_slash + 1, question_mark - last_slash - 1);
 
     // Set cgi arguments
     std::vector<char *> cgi_args;
-    m_setCgiArguments(script_name, route, configuration, cgi_args);
+    m_setCgiArguments(cgi_script, script, route, cgi_args);
 
     // Set cgi environment variables
     std::vector<char *> cgi_env;
-    m_setCgiEnvironment(script_name, route, request, cgi_env);
+    m_setCgiEnvironment(script, route, request, cgi_env);
 
     // Create a pipe to send the response from the CGI script to the server
     int cgi_output_pipe_fd[ 2 ];
@@ -124,14 +135,13 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
 }
 
 void CgiResponseGenerator::m_setCgiArguments(
-    const std::string &script_name, const IRoute &route,
-    const IConfiguration &configuration, std::vector<char *> &cgi_args)
+    const std::string &cgi_script, const std::string &script, const IRoute &route, std::vector<char *> &cgi_args)
 {
-    cgi_args.push_back(m_getCgiInterpreterPath(
-        script_name, configuration)); // Interpreter absolute path
+    cgi_args.push_back(strdup(cgi_script.c_str())); // Interpreter absolute path
+
     cgi_args.push_back(m_getScriptPath(
-        script_name, route)); // script path: location block root path +
-                              // URI(excl. query string)
+        script, route)); // script path: location block root path +
+                                        // URI(excl. query string)
     cgi_args.push_back(NULL);
 
     // Check for strdup failures
@@ -143,7 +153,7 @@ void CgiResponseGenerator::m_setCgiArguments(
     m_logger.log(DEBUG, "CGI script: " + std::string(cgi_args[ 1 ]));
 }
 
-void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script_name,
+void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
                                                const IRoute &route,
                                                const IRequest &request,
                                                std::vector<char *> &cgi_env)
@@ -156,11 +166,14 @@ void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script_name,
         strdup(("CONTENT_LENGTH=" + request.getContentLength()).c_str()));
     cgi_env.push_back(
         strdup(("CONTENT_TYPE=" + request.getContentType()).c_str()));
+    std::string script_filename = route.getRoot() + route.getPath();
+    if (script_filename.back() != '/')
+        script_filename += "/";
+    script_filename += script;
     cgi_env.push_back(strdup(
-        ("SCRIPT_FILENAME=" + route.getRoot() + route.getPath() + script_name)
-            .c_str()));
-    cgi_env.push_back(strdup(("SCRIPT_NAME=" + script_name).c_str()));
-    std::string path_info = request.getPathInfo(script_name);
+        ("SCRIPT_FILENAME=" + script_filename).c_str()));
+    cgi_env.push_back(strdup(("SCRIPT_NAME=" + script).c_str()));
+    std::string path_info = request.getPathInfo(script);
     cgi_env.push_back(strdup(("PATH_INFO=" + path_info).c_str()));
     cgi_env.push_back(strdup(
         ("PATH_TRANSLATED=" + m_getPathTranslated(path_info, route)).c_str()));
@@ -178,6 +191,8 @@ void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script_name,
         m_logger.log(DEBUG, "CGI Environment: " + std::string(cgi_env[ i ]));
 }
 
+// Not used, must be defined in configuration file
+// e.g. cgi_script /usr/bin/python3
 char *CgiResponseGenerator::m_getCgiInterpreterPath(
     const std::string &script_name, const IConfiguration &configuration) const
 {

@@ -474,13 +474,13 @@ void RequestParser::m_unchunkBody(
         // Move marker passed CRLF
         request_iterator += 2;
 
-        // Check for unexpected end of request
-        // if (request_iterator == raw_request.end())
-        // {
-        //     // throw '400' status error
-        //     throw HttpStatusCodeException(BAD_REQUEST,
-        //                                   "Unexpected end of request");
-        // }
+        //Check for unexpected end of request
+        if (request_iterator == raw_request.end())
+        {
+            // throw '400' status error
+            throw HttpStatusCodeException(BAD_REQUEST,
+                                          "Unexpected end of request");
+        }
 
         // Get chunk size
         size_t chunk_size = strtol(chunk_size_string.c_str(), NULL, 16);

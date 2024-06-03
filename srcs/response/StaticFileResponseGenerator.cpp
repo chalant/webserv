@@ -15,11 +15,10 @@ StaticFileResponseGenerator::~StaticFileResponseGenerator() {}
 // Generate response
 Triplet_t StaticFileResponseGenerator::generateResponse(
     const IRoute &route, const IRequest &request, IResponse &response,
-    IConfiguration &configuration, const std::string &script_name)
+    IConfiguration &configuration)
 {
     // void the unused parameters
     (void)configuration;
-    (void)script_name;
 
     // Get the file path
     std::string root = route.getRoot();

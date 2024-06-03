@@ -15,15 +15,17 @@ private:
         m_root; // The root directory of the route (where the files are stored)
     const std::string
         m_index; // The file to serve if the request uri is a directory
+    const std::string m_cgi_script; // The script to execute if the request is a CGI
     IResponseGenerator &m_response_generator;
 
 public:
     Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-          const std::string index, IResponseGenerator &response_generator);
+          const std::string index, const std::string cgi_script, IResponseGenerator &response_generator);
     ~Route();
     std::string getPath() const;
     std::string getRoot() const;
     std::string getIndex() const;
+    std::string getCgiScript() const;
     bool isAllowedMethod(const HttpMethod method) const;
     bool isRegex() const;
     IResponseGenerator *getResponseGenerator() const;

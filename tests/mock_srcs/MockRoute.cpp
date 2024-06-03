@@ -17,9 +17,13 @@ std::string MockRoute::getPath() const { return m_path; }
 
 std::string MockRoute::getIndex() const { return ""; }
 
+std::string MockRoute::getCgiScript() const { return m_cgi_script; }
+
 void MockRoute::setRoot(std::string &root) { m_root = root; }
 
 void MockRoute::setPath(std::string &prefix) { m_path = prefix; }
+
+void MockRoute::setCgiScript(std::string &cgi_script) { m_cgi_script = cgi_script; }
 
 bool MockRoute::isAllowedMethod(const HttpMethod method) const { 
     static_cast<void>(method);

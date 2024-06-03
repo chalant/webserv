@@ -11,9 +11,8 @@ UploadResponseGenerator::~UploadResponseGenerator() {}
 
 Triplet_t UploadResponseGenerator::generateResponse(
     const IRoute &route, const IRequest &request, IResponse &response,
-    IConfiguration &configuration, const std::string &script_name)
+    IConfiguration &configuration)
 {
-    static_cast<void>(script_name);
     struct stat buffer;
     const std::vector<BodyParameter> &body_params = request.getBodyParameters();
     bool created = false;

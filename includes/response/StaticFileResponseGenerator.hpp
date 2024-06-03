@@ -19,8 +19,7 @@ public:
     ~StaticFileResponseGenerator();
     Triplet_t generateResponse(const IRoute &route, const IRequest &request,
                                IResponse &response,
-                               IConfiguration &configuration,
-                               const std::string &script_name = "");
+                               IConfiguration &configuration);
 };
 
 #endif // STATICFILERESPONSEGENERATOR_HPP

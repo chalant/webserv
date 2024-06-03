@@ -15,6 +15,7 @@ class MockRoute : public IRoute
 private:
     std::string m_root;
     std::string m_path;
+    std::string m_cgi_script;
 
 public:
     MockRoute();
@@ -23,8 +24,10 @@ public:
     virtual std::string getRoot() const;
     virtual std::string getPath() const;
     virtual std::string getIndex() const;
+    virtual std::string getCgiScript() const;
     virtual void setRoot(std::string &root);
     virtual void setPath(std::string &prefix);
+    virtual void setCgiScript(std::string &cgi_script);
     virtual bool isAllowedMethod(const HttpMethod method) const;
     virtual bool isRegex() const;
     virtual IResponseGenerator *getResponseGenerator() const;
