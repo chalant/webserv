@@ -451,12 +451,19 @@ void RequestParser::m_unchunkBody(
     {
         // Get chunk size
         std::string chunk_size_string;
-        while (*request_iterator != '\r')
+        while (request_iterator != raw_request.end() && *request_iterator != '\r')
         {
             chunk_size_string += *request_iterator;
-            ++request_iterator;
+            request_iterator++;
         }
 
+		// // Check if we reached the end without finding CR
+        // if (request_iterator == raw_request.end() || (request_iterator + 1) == raw_request.end() || *(request_iterator + 1) != '\n')
+        // {
+        //     throw HttpStatusCodeException(BAD_REQUEST, "Unexpected end of request");
+        // }
+
+		//sleep(100);
         // Check for last chunk and set the request state to finished.
         if (chunk_size_string == "0")
         {
@@ -478,14 +485,16 @@ void RequestParser::m_unchunkBody(
         // Get chunk size
         size_t chunk_size = strtol(chunk_size_string.c_str(), NULL, 16);
 
-        // Check if chunk size is valid
-        // if (chunk_size <= 0)
-        // {
-        //     // throw '400' status error
-        //     throw HttpStatusCodeException(BAD_REQUEST,
-        //                                   "chunk size conversion failed (" +
-        //                                       chunk_size_string + ")");
-        // }
+		std::cout << "Body Size: " << body.size() << " Remaining Request Size: " << remaining_request_size << " Chunk Size: " << chunk_size << " Chunk Size String: " << chunk_size_string << std::endl;
+		//sleep(100);
+        //Check if chunk size is valid
+        if (chunk_size <= 0)
+        {
+            // throw '400' status error
+            throw HttpStatusCodeException(BAD_REQUEST,
+                                          "chunk size conversion failed (" +
+                                              chunk_size_string + ")");
+        }
 
         // Check if body size exceeds maximum client body buffer size
         if (remaining_request_size < chunk_size)
@@ -497,12 +506,24 @@ void RequestParser::m_unchunkBody(
         // Decrement remaining request size
         remaining_request_size -= chunk_size;
 
+		// Check if the chunk data is within bounds
+        if (raw_request.end() - request_iterator < static_cast<ptrdiff_t>(chunk_size + 2))
+        {
+            throw HttpStatusCodeException(BAD_REQUEST, "Chunk data exceeds request size");
+        }
+
         // Append chunk to body
         body.insert(body.end(), request_iterator,
                     request_iterator + chunk_size);
 
-        // Move marker passed CRLF
-        request_iterator += 2;
+		// Move marker passed CRLF
+		request_iterator += chunk_size + 2;
+
+		// Validate the CRLF after the chunk data
+        if (request_iterator == raw_request.end() || (request_iterator + 1) == raw_request.end() || *request_iterator != '\r' || *(request_iterator + 1) != '\n')
+        {
+            throw HttpStatusCodeException(BAD_REQUEST, "Invalid chunk data ending");
+        }
     }
 }
 

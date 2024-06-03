@@ -43,7 +43,6 @@ RequestHandler::~RequestHandler()
     // Log the destruction of the RequestHandler instance.
     m_logger.log(VERBOSE, "RequestHandler instance destroyed.");
 }
-
 // Handles a client request
 // Returns Cgi Info for dynamic content or -1 for static content and invalid
 // requests
