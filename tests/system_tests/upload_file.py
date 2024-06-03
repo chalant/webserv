@@ -12,7 +12,7 @@ RED = '\033[91m'
 YELLOW = '\033[93m'
 RESET = '\033[0m'
 
-def	make(directory):
+def	make():
 	try:
 		subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 		subprocess.run(['make', '-j8'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -45,7 +45,7 @@ file_path = 'system_tests/upload_file.py'
 # The URL to which the file will be uploaded
 upload_url = 'http://localhost:8080/upload'
 
-if (not make(".")):
+if (not make()):
 	sys.exit(1)
 server = subprocess.Popen(['./webserv'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 # wait for the server to be ready
@@ -54,5 +54,5 @@ upload_status = upload_file(file_path, upload_url)
 time.sleep(3)
 server.send_signal(signal.SIGINT)
 server_status = server.wait()
-assert upload_status == 0
 subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+sys.exit(upload_status)

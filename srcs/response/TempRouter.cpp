@@ -38,7 +38,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
         std::string cgi_script;
 
         // Get the path
-        std::vector<std::string> location_params = locations_list[i]->getParameters();
+        std::vector<std::string> &location_params = locations_list[i]->getParameters();
         if (location_params.size() == 1)
             path = location_params[0];
         else 
@@ -51,12 +51,11 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
             path = path.substr(0, path.length() - 1);
 
         // Get the Methods
-        std::vector<std::string> method_vector = locations_list[i]->getStringVector("limit_except");
+        std::vector<std::string> &method_vector = locations_list[i]->getBlocks("limit_except")[0]->getParameters();
         std::string methods_string;
         for (size_t j = 0; j < method_vector.size(); j++)
             methods_string += method_vector[j] + " ";
-        if (method_vector.size() == 0)
-            methods.push_back(m_http_helper.stringHttpMethodMap("GET"));
+
         for (size_t j = 0; j < method_vector.size(); j++)
             methods.push_back(m_http_helper.stringHttpMethodMap(method_vector[j]));
 
