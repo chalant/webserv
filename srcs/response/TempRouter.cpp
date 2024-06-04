@@ -114,6 +114,7 @@ TempRouter::~TempRouter()
     }
 }
 
+#include <iostream>
 IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
 {
 	IRoute *route = m_routes[m_routes.size() - 1]; // Default route
@@ -152,6 +153,7 @@ IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
             // Check if the method is allowed
             if (m_routes[i]->isAllowedMethod(method) == false)
             {
+				std::cout << "NOT ALLOWEEEEEEEEEEEEED! " << method << std::endl;
                 response->setErrorResponse(METHOD_NOT_ALLOWED);
                 return NULL;
             }
@@ -225,6 +227,8 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
 
 Triplet_t TempRouter::execRoute(IRoute *route, IRequest *request, IResponse *response)
 {
+	if (!route)
+		return Triplet_t(-1, std::pair<int, int>(-1, -1));
     IResponseGenerator *response_generator = route->getResponseGenerator();
     // Generate the response
     Triplet_t return_value = response_generator->generateResponse(*route, *request, *response, m_configuration);

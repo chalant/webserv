@@ -36,6 +36,7 @@ RequestHandler::RequestHandler(IBufferManager &buffer_manager,
     m_logger.log(VERBOSE, "RequestHandler instance created.");
 }
 
+#include <iostream>
 // Destructor
 RequestHandler::~RequestHandler()
 {
@@ -111,7 +112,6 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
 			{
 				return Triplet_t(-1, std::pair<int, int>(-1, -1));
 			}
-			state.setRoute(route);
 
             // Assign session to connection
             m_connection_manager.assignSessionToConnection(connection, request,
@@ -135,7 +135,6 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
                 return Triplet_t(-2, std::pair<int, int>(-1, -1));
             }
         }
-
         // Delete these 3 lines once router is implemented
         //(void)m_router;
         // Triplet_t cgi_info(-1, std::pair<int, int>(-1, -1));
@@ -145,7 +144,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
 
         // todo: Route the request, return the CGI info
         //Triplet_t cgi_info = m_router.execRoute(&request, &response);
-		Triplet_t cgi_info = m_router.execRoute(state.getRoute(), &request, &response);
+		Triplet_t cgi_info = m_router.execRoute(route, &request, &response);
 		state.reset();
 
         // If dynamic content is being created, return the info
