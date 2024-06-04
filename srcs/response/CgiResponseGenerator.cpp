@@ -89,7 +89,7 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
 
         // Call execve
         execve(cgi_args[ 0 ], cgi_args.data(), cgi_env.data());
-        m_logger.log(DEBUG, "Execve failed: " + std::string(strerror(errno)));
+        m_logger.log(ERROR, "Execve failed: " + std::string(strerror(errno)));
         // If execve returns, an error occurred; free memory and exit
         m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd,
                   cgi_input_pipe_fd, NO_THROW);
@@ -131,12 +131,12 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
 
     return std::make_pair(-1, std::make_pair(-1, -1)); // unreachable code
 }
-
+#include <iostream>
 void CgiResponseGenerator::m_setCgiArguments(
     const std::string &cgi_script, const std::string &script, const IRoute &route, std::vector<char *> &cgi_args)
 {
     cgi_args.push_back(strdup(cgi_script.c_str())); // Interpreter absolute path
-
+std::cout << "cgi_script: " << cgi_script << std::endl;
     cgi_args.push_back(m_getScriptPath(
         script, route)); // script path: location block root path +
                                         // URI(excl. query string)

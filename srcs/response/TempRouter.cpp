@@ -39,13 +39,11 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 
         // Get the path
         std::vector<std::string> &location_params = locations_list[i]->getParameters();
-        if (location_params.size() == 1)
-            path = location_params[0];
-        else 
-        {
-            is_regex = true;
-            path = location_params[1];
-        }
+          path = location_params[0];
+
+          // set is_regex
+          is_regex = locations_list[i]->isRegex();
+
         // remove trailing slash
         if (path.length() > 1 && path[path.length() - 1] == '/')
             path = path.substr(0, path.length() - 1);
@@ -90,6 +88,12 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 
     // Sort the routes
     std::sort(m_routes.begin(), m_routes.end(), m_sortRoutes);
+
+    // print all the route paths
+    for (size_t i = 0; i < m_routes.size(); i++)
+    {
+        m_logger.log(VERBOSE, "[TEMPROUTER] Route path: '" + m_routes[i]->getPath() + "'.");
+    }
 }
 
 // Destructor
@@ -126,7 +130,7 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
     // Check if cgi request
     size_t last_dot = uri.find_last_of('.');
     std::string extension = uri.substr(last_dot + 1);
-    if (extension == "php" || extension == "py")
+    if (extension == "php" || extension == "py" || extension == "bla")
     {
         response_generator = m_response_generators["CGI"];
         uri = "." + extension; // temp for matching
@@ -135,6 +139,7 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
         {
             if (m_routes[i]->isRegex() == false)
             {
+                // print the route path
                 routes_stop = i;
                 break;
             }
@@ -171,10 +176,13 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
     // return the return value
     return return_value;
 }
-
+#include <iostream>
 // Sort Routes; regex first, then by path length in descending order
 bool TempRouter::m_sortRoutes(const IRoute *a, const IRoute *b)
 {
+    std::cout << "a: " << a->getPath() << " b: " << b->getPath() << std::endl;
+    std::cout << "a is regec: " << a->isRegex() << " b is regex: " << b->isRegex() << std::endl;
+    // if a is a regex and b is not a should be first
     if (a->isRegex() && !b->isRegex())
         return true;
     if (!a->isRegex() && b->isRegex())

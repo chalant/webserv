@@ -318,13 +318,35 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
     // Check for exceptions
     if (events & (POLLHUP | POLLERR | POLLNVAL))
     {
+        // Set the error description
+        std::string error_description;
+        if (events & POLLHUP)
+            error_description = "Pipe POLLHUP - pipe is no longer connected";
+        else if (events & POLLERR)
+            error_description = "Pipe POLLERR - asynchronous error";
+        else if (events & POLLNVAL)
+            error_description = "Pipe POLLNVAL - file descriptor is not open";
+
         // Log the error
-        m_logger.log(ERROR,
-                     "Error on pipe: " + Converter::toString(pipe_descriptor));
+        m_logger.log(ERROR, error_description +
+                     " | pipe fd: " + Converter::toString(pipe_descriptor));
 
         // Let the request handler handle the exception, returns the client
         // socket descriptor linked to the pipe
         client_socket = m_request_handler.handlePipeException(pipe_descriptor);
+
+        // Add the POLLOUT event for the client socket since the error response
+        // is ready
+        ssize_t client_pollfd_index =
+            m_pollfd_manager.getPollfdQueueIndex(client_socket);
+        if (client_pollfd_index == -1)
+            m_logger.log(ERROR,
+                         "[EVENTMANAGER] Client socket not found in poll set");
+        else
+            m_pollfd_manager.addPollOut(client_pollfd_index);
+
+        // Clear buffer, remove from polling and close pipe
+        m_cleanUp(pollfd_index, pipe_descriptor);
     }
 
     // Read the response from the Response pipe if ready
