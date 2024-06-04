@@ -24,8 +24,7 @@ RequestParser::RequestParser(const IConfiguration &configuration,
     : m_logger(logger), m_configuration(configuration)
 {
 }
-#include <iostream>
-#include <unistd.h>
+
 void RequestParser::parseRequest(IRequest &request) const
 {
     const std::vector<char> buffer = request.getBuffer();
@@ -57,11 +56,10 @@ void RequestParser::parseRequest(IRequest &request) const
         // throw HttpStatusCodeException(LENGTH_REQUIRED,
         //                              "no content-length header found");
     }
-std::cout << "before content PRE TRIM " << std::string(it, (it == buffer.end() ? it : it + 10)) << std::endl;
+
     // Remove the headers from the buffer
     request.trimBuffer(it - buffer.begin());
-    std::vector<char> buffer2 = request.getBuffer();
-std::cout << "BEFFUER NOW IS " << std::string(buffer2.begin(), (buffer2.begin()==buffer2.end() ? buffer2.begin() : buffer2.begin() + 10)) << std::endl;
+
     // Assign the content length to the request state
     request.getState().setContentLength(atoi(content_length_string.c_str()));
 

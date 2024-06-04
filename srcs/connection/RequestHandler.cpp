@@ -35,7 +35,7 @@ RequestHandler::RequestHandler(IBufferManager &buffer_manager,
     // Log the creation of the RequestHandler instance.
     m_logger.log(VERBOSE, "RequestHandler instance created.");
 }
-#include <iostream>
+
 // Destructor
 RequestHandler::~RequestHandler()
 {
@@ -85,7 +85,6 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             // If raw request contains CRLF CRLF, we move to the next stage
             // CRLF CRLF (\r\n\r\n) marks the end of the headers
             std::vector<char> buffer = request.getBuffer();
-            std::cout << "Buffer size: " << buffer.size() << std::endl;
             std::string buffer_str(buffer.begin(), buffer.end());
             if (buffer_str.find("\r\n\r\n") != std::string::npos)
             {
