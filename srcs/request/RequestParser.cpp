@@ -367,10 +367,7 @@ void RequestParser::parseBody(IRequest &parsed_request) const
             BAD_REQUEST, "content-length header conversion failed (" +
                              content_length_string + ")");
     }
-std::cout << "body size: " << body_size << std::endl;
-std::cout << "buffer size: " << buffer.size() << std::endl;
-std::cout << "buffer content " << std::string(buffer.begin(), buffer.end());
-std::cout << "content red: " << state.getContentRed() << std::endl;
+
     state.setContentRed(state.getContentRed() + buffer.size());
     // m_logger.log(DEBUG, "Cuurent content red: " +
     // Converter::toString(state.getContentRed()));
@@ -381,7 +378,6 @@ std::cout << "content red: " << state.getContentRed() << std::endl;
         // throw '413' status error
         throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
     }
-std::cout << "content red: " << state.getContentRed() << std::endl;
     // Check if body size exceeds remaining request size
     // size_t remaining_request_size = buffer.end() - request_iterator;
     // if (remaining_request_size < body_size)
@@ -394,8 +390,7 @@ std::cout << "content red: " << state.getContentRed() << std::endl;
     // Extract body
     // std::vector<char> body(request_iterator, request_iterator + body_size);
     parsed_request.appendBody(buffer.begin(), buffer.end());
-std::cout << "Body size: " << body_size << std::endl;
-std::cout << "Content red: " << state.getContentRed() << std::endl;
+
     // set the request state to finished once all the content has been red.
     if (static_cast<size_t>(state.getContentRed()) == body_size)
     {
@@ -418,7 +413,9 @@ void RequestParser::m_unchunkBody(const std::vector<char> &buffer,
     // Check if buffer is empty
     if (buffer.empty())
     {
-        std::cout << "No data to unchunk, Buffer is empty\n";
+        // Log the situation
+        m_logger.log(ERROR, "[REQUESTPARSER] No data to unchunk, Buffer is empty");
+
         return; // no data to unchunk
     }
 
@@ -431,7 +428,6 @@ void RequestParser::m_unchunkBody(const std::vector<char> &buffer,
     // Check if the chunk size line is found
     if (chunk_size_end == std::string::npos)
     {
-        std::cout << "Not enough chunk size data" << std::endl;
         return; // not enough data yet to parse the chunk size
     }
 
@@ -444,7 +440,9 @@ void RequestParser::m_unchunkBody(const std::vector<char> &buffer,
         // Set the request state as finished
         request.getState().finished(true);
 
-        std::cout << "Last chunk" << std::endl;
+        // Log the situation
+        m_logger.log(VERBOSE, "[REQUESTPARSER] Unchunking Completed; Final body size: " + Converter::toString(request.getBody().size()) + ".");
+
         // Done parsing chunks
         return;
     }
@@ -475,18 +473,14 @@ void RequestParser::m_unchunkBody(const std::vector<char> &buffer,
     // Check if enough data is available
     if (it + chunk_size + 2 > buffer.end())
     {
-        std::cout << "Not enough chunk data yet" << std::endl;
-        std::cout << "current buffer size: " << buffer.size() << std::endl;
-        std::cout << "current body size: " << request.getBody().size()
-                  << std::endl;
+        // Log the situation
+        m_logger.log(VERBOSE, "[REQUESTPARSER] Waiting for data; current body size: " + Converter::toString(request.getBody().size()) + ".");
+
         return; // not enough data yet
     }
-    std::cout << "Body size A: " << request.getBody().size() << std::endl;
 
     // Append the chunk data to the body
     request.appendBody(it, it + chunk_size);
-
-    std::cout << "Body size B: " << request.getBody().size() << std::endl;
 
     // Move the iterator to the end of the chunk data
     it += chunk_size;
