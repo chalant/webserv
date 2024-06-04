@@ -55,7 +55,8 @@
                     send
                     us a
                     message directly:</p>
-                <form action="/upload" method="POST" enctype="multipart/form-data">
+				<iframe name="noframe" id="noframe" style="display: none;"></iframe>
+                <form action="/upload/" target="noframe" method="POST" enctype="multipart/form-data">
                     <label for="name">Name:</label><br>
                     <input type="text" id="name" name="name" required><br>
 
@@ -68,7 +69,7 @@
                     <label for="file">Upload file:</label><br>
                     <input type="file" id="file" name="file"><br><br>
 
-                    <button type="submit">Send</button>
+                    <button type="submit" onclick="alert('Form Submitted')">Send</button>
                 </form>
                 <p>We look forward to hearing from you and helping you create the outdoor oasis of your dreams!</p>
             </section>
