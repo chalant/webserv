@@ -32,5 +32,6 @@ bool MockRoute::isAllowedMethod(const HttpMethod method) const {
 bool MockRoute::isRegex() const { return false; }
 
 IResponseGenerator *MockRoute::getResponseGenerator() const { return NULL; }
+void	MockRoute::setResponseGenerator(IResponseGenerator *generator) { static_cast<void>(generator); }
 
 // Path: tests/mock_srcs/MockRoute.cpp

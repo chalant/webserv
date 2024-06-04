@@ -34,7 +34,9 @@ public:
     TempRouter(IConfiguration &Configuration, ILogger &logger);
     ~TempRouter();
 
-    virtual Triplet_t execRoute(IRequest *req, IResponse *res);
+    virtual Triplet_t	execRoute(IRequest *req, IResponse *res);
+	virtual	IRoute		*getRoute(IRequest *req, IResponse *res);
+	virtual	Triplet_t	execRoute(IRoute *route, IRequest *req, IResponse *res);
 };
 
 #endif // TEMPROUTER_HPP

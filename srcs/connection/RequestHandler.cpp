@@ -65,6 +65,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
     IResponse &response = connection.getResponse();
 
     RequestState &state = request.getState();
+	IRoute	*route = NULL;
 
     try
     {
@@ -92,12 +93,6 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             {
                 state.initial(false);
                 state.headers(true); // Because we now have all the headers
-				//route = m_router.getRoute(request); -> should throw an error
-				//state.setRoute(route);
-				//if (!route.exists())
-				// {
-						//
-				// }
             }
             else
             {
@@ -113,6 +108,12 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         {
             m_request_parser.parseRequestHeader(request);
             state.headers(false);
+			route = m_router.getRoute(&request, &response);
+			if (!route)
+			{
+				return Triplet_t(-1, std::pair<int, int>(-1, -1));
+			}
+			state.setRoute(route);
 
             // Assign session to connection
             m_connection_manager.assignSessionToConnection(connection, request,
@@ -150,8 +151,8 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         //   "RequestHandler::handleRequest: Router not implemented yet.");
 
         // todo: Route the request, return the CGI info
-        Triplet_t cgi_info = m_router.execRoute(&request, &response);
-		//Triplet_t cgi_info = m_router.executeRoute(state.route, &request, &response);
+        //Triplet_t cgi_info = m_router.execRoute(&request, &response);
+		Triplet_t cgi_info = m_router.execRoute(state.getRoute(), &request, &response);
 		state.reset();
 
         // If dynamic content is being created, return the info

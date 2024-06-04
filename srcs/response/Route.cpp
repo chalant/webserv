@@ -2,10 +2,10 @@
 
 // Constructor
 Route::Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-             const std::string index, const std::string cgi_script, IResponseGenerator &response_generator)
-    : m_path(path), m_is_regex(is_regex), m_methods(methods),m_root(root), m_index(index), m_cgi_script(cgi_script),
-      m_response_generator(response_generator)
+             const std::string index, const std::string cgi_script)
+    : m_path(path), m_is_regex(is_regex), m_methods(methods),m_root(root), m_index(index), m_cgi_script(cgi_script)
 {
+	m_response_generator = NULL;
 }
 
 // Destructor
@@ -40,5 +40,10 @@ bool Route::isRegex() const { return m_is_regex; }
 // Get the response generator
 IResponseGenerator *Route::getResponseGenerator() const
 {
-    return &m_response_generator;
+    return m_response_generator;
+}
+
+void	Route::setResponseGenerator(IResponseGenerator *generator)
+{
+	m_response_generator = generator;
 }
