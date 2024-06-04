@@ -18,7 +18,7 @@ CgiResponseGenerator::CgiResponseGenerator(ILogger &logger)
 }
 
 CgiResponseGenerator::~CgiResponseGenerator() {}
-#include <iostream>
+
 // calls execve to execute the CGI script
 // returns the cgi process Info (pid, read end of the CGI Output pipe, write end
 // of the CGI Input pipe) Throws an exception if an error occurs
@@ -33,8 +33,6 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
 
     // Get the CGI script path
     const std::string cgi_script = route.getCgiScript();
-
-    std::cout << "CGI script: " << cgi_script << std::endl;
 
     // Set the Script path
     std::string uri = request.getUri();

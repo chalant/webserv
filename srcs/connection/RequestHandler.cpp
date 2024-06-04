@@ -1,7 +1,6 @@
 #include "../../includes/connection/RequestHandler.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
-#include <algorithm>
 #include <unistd.h>
 #include <utility>
 
@@ -79,15 +78,14 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             return Triplet_t(-3, std::pair<int, int>(-1, -1));
         }
 
+        // Append the raw request to the request buffer
+        request.appendBuffer(raw_request);
+
         if (state.initial())
         {
-            // Append the raw request to the request buffer
-            request.appendBuffer(raw_request);
-
             // If raw request contains CRLF CRLF, we move to the next stage
             // CRLF CRLF (\r\n\r\n) marks the end of the headers
             std::vector<char> buffer = request.getBuffer();
-
             std::string buffer_str(buffer.begin(), buffer.end());
             if (buffer_str.find("\r\n\r\n") != std::string::npos)
             {
@@ -106,7 +104,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         }
         if (state.headers()) // Parse the headers etc.
         {
-            m_request_parser.parseRequestHeader(request);
+            m_request_parser.parseRequest(request);
             state.headers(false);
 			route = m_router.getRoute(&request, &response);
 			if (!route)
@@ -128,7 +126,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         }
         else if (!state.finished())
         {
-            m_request_parser.parsePartialBody(raw_request, request);
+            m_request_parser.parseBody(request);
             if (!state.finished())
             {
                 // log the situation
@@ -137,11 +135,6 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
                 return Triplet_t(-2, std::pair<int, int>(-1, -1));
             }
         }
-        // finally, parse body parameters
-        m_request_parser.parseBodyParameters(request);
-
-        // Parse the raw request into a Request object
-        // m_request_parser.parseRequest(raw_request, request);
 
         // Delete these 3 lines once router is implemented
         //(void)m_router;

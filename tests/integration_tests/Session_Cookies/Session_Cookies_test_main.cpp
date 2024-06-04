@@ -85,8 +85,11 @@ int main()
         "\r\n";
     std::vector<char> raw_request = stringToVector(request_string);
 
+    // Append the raw request to the request buffer
+    request.appendBuffer(raw_request);
+
     // Parse the request
-    request_parser.parseRequest(raw_request, request);
+    request_parser.parseRequest(request);
 
     // Verify that there are no Active Sessions
     assert(connection_manager.getNumberOfSessions() == 0);
@@ -101,6 +104,9 @@ int main()
     // Verify that a session cookie was added to the response
     std::string session_cookie_id = response.getCookie("session");
     assert(session_cookie_id != "");
+
+    // clear the request buffer
+    request.clearBuffer();
 
     // Test2: Another request without a session cookie
     //***********************************************
@@ -119,8 +125,11 @@ int main()
                      "\r\n";
     raw_request = stringToVector(request_string);
 
+    // Append the raw request to the request buffer
+    request.appendBuffer(raw_request);
+
     // Parse the request
-    request_parser.parseRequest(raw_request, request);
+    request_parser.parseRequest(request);
 
     // Verify that there is still only one active session
     assert(connection_manager.getNumberOfSessions() == 1);
@@ -131,6 +140,9 @@ int main()
 
     // Verify that there are now two active sessions
     assert(connection_manager.getNumberOfSessions() == 2);
+
+    // Clear the request buffer
+    request.clearBuffer();
 
     // Test 3: A request with the session cookie from test 1
     //******************************************************
@@ -151,8 +163,11 @@ int main()
                      "\r\n";
     raw_request = stringToVector(request_string);
 
+    // Append the raw request to the request buffer
+    request.appendBuffer(raw_request);
+
     // Parse the request
-    request_parser.parseRequest(raw_request, request);
+    request_parser.parseRequest(request);
 
     // Verify that there is a session cookie in the request
     std::string session_cookie_from_request = request.getCookie("session");

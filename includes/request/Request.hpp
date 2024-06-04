@@ -36,6 +36,7 @@
 #include "../configuration/IConfiguration.hpp"
 #include "../constants/HttpHelper.hpp"
 #include "IRequest.hpp"
+#include <cstddef>
 #include <map>
 #include <string>
 #include <vector>
@@ -54,7 +55,7 @@ private:
     // Request body
     std::vector<char> m_body;
 
-    // Request buffer - used to store incomplete headers
+    // Request buffer - used to store incomplete headers & chunks
     std::vector<char> m_buffer;
 
     // Included Request parameters
@@ -123,7 +124,10 @@ public:
     void setAuthority();
     void addBodyParameter(const BodyParameter &body_parameter);
     void setUploadRequest(bool upload_request);
+    virtual void appendBody(std::vector<char>::const_iterator start, std::vector<char>::const_iterator end);
     void appendBuffer(const std::vector<char> &raw_request);
+    void clearBuffer(void);
+    void trimBuffer(ptrdiff_t new_start);
 };
 
 #endif // REQUEST_HPP

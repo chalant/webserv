@@ -420,10 +420,36 @@ void Request::setUploadRequest(bool upload_request)
     m_upload_request = upload_request;
 }
 
+// Method to append new data to the body
+void Request::appendBody(std::vector<char>::const_iterator start, std::vector<char>::const_iterator end)
+{
+    m_body.insert(m_body.end(), start, end);
+}
+
 // Method to append new date to the buffer
 void Request::appendBuffer(const std::vector<char> &raw_request)
 {
     m_buffer.insert(m_buffer.end(), raw_request.begin(), raw_request.end());
+}
+
+// Method to clear the buffer
+void Request::clearBuffer() { 
+    m_buffer.clear(); 
+    m_buffer.shrink_to_fit(); // makes .data() return nullptr
+    }
+
+// Method to trim the buffer
+void Request::trimBuffer(ptrdiff_t new_start)
+{
+    std::vector<char>::iterator new_start_it = m_buffer.begin() + new_start;
+    if (new_start_it == m_buffer.end())
+    {
+        this->clearBuffer();
+    }
+    else
+    {
+        m_buffer.erase(m_buffer.begin(), new_start_it);
+    }
 }
 
 // path: srcs/request/Request.cpp
