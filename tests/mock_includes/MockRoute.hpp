@@ -31,6 +31,7 @@ public:
     virtual bool isAllowedMethod(const HttpMethod method) const;
     virtual bool isRegex() const;
     virtual IResponseGenerator *getResponseGenerator() const;
+	virtual void				setResponseGenerator(IResponseGenerator *generator);
 };
 
 #endif // MOCKROUTE_HPP

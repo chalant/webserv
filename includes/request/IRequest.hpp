@@ -15,6 +15,7 @@
 #include "../constants/HttpHeaderHelper.hpp"
 #include "../constants/HttpMethodHelper.hpp"
 #include "../constants/HttpVersionHelper.hpp"
+#include "../response/IRoute.hpp"
 #include <cstddef>
 #include <map>
 #include <string>
@@ -46,6 +47,7 @@ private:
     bool m_initial;
     bool m_headers;
     bool m_finished;
+	IRoute	*m_route;
 
 public:
     RequestState();
@@ -54,6 +56,7 @@ public:
     bool initial(void) const;
     int getContentRed(void) const;
     int getContentLength(void) const;
+	IRoute	*getRoute(void) const;
 
     void finished(bool value);
     void headers(bool value);
@@ -62,6 +65,7 @@ public:
     void setContentRed(int value);
     void setContentLength(int value);
     void reset(void);
+	void	setRoute(IRoute *route);
 };
 
 class IRequest

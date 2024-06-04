@@ -6,6 +6,7 @@
 #include "../../includes/utils/Converter.hpp"
 #include <algorithm>
 #include <random>
+#include "../../includes/exception/WebservExceptions.hpp"
 
 /*TempRouter: Selects the right 'Route' and 'ResponseGenerator' based on URI (etc.)
 in the 'IRequest' (each locationblock in the conf file corresponds
@@ -80,7 +81,9 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
             cgi_script = cgi_script_vector[0];
 
         // Add the route
-        m_routes.push_back(new Route(path, is_regex, methods, root, index, cgi_script, *m_response_generators["GET"])); // temp set to GET
+		Route *route = new Route(path, is_regex, methods, root, index, cgi_script);
+		route->setResponseGenerator(m_response_generators["GET"]);
+        m_routes.push_back(route);
 
         // Log the creation of the Route
         m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
@@ -116,6 +119,62 @@ TempRouter::~TempRouter()
     }
 }
 
+#include <iostream>
+IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
+{
+	IRoute *route = m_routes[m_routes.size() - 1]; // Default route
+    size_t routes_stop = m_routes.size();
+    std::string uri = request->getUri();
+    std::string method_str = m_http_helper.httpMethodStringMap(request->getMethod());
+    IResponseGenerator *response_generator = m_response_generators[method_str];
+    
+    // Match the request to a route
+    (void)response;
+    // Check if cgi request
+    size_t last_dot = uri.find_last_of('.');
+    std::string extension = uri.substr(last_dot + 1);
+    if (extension == "php" || extension == "py")
+    {
+        response_generator = m_response_generators["CGI"];
+        uri = "." + extension; // temp for matching
+        // set routes_stop to the first route that is not a regex
+        for (size_t i = 0; i < routes_stop; i++)
+        {
+            if (m_routes[i]->isRegex() == false)
+            {
+                routes_stop = i;
+                break;
+            }
+        }
+    }
+
+    // Match the request to a route
+    HttpMethod method = request->getMethod();
+    size_t i;
+    for (i = 0; i < routes_stop; i++)
+    {
+        // if the route path is contained in the uri
+        if (uri.find(m_routes[i]->getPath()) != std::string::npos)
+        {
+            // Check if the method is allowed
+            if (m_routes[i]->isAllowedMethod(method) == false)
+            {
+                continue;
+            }
+            route = m_routes[i]; // select the route
+            route->setResponseGenerator(response_generator);
+            return route;
+        }
+    }
+    route = m_routes[m_routes.size() - 1]; // Default route
+    if (route->isAllowedMethod(method) == false)
+    {
+        throw HttpStatusCodeException(METHOD_NOT_ALLOWED);
+    }
+	route->setResponseGenerator(response_generator);
+	return route;
+}
+
 // Execute the route
 Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
 {
@@ -130,7 +189,7 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
     // Check if cgi request
     size_t last_dot = uri.find_last_of('.');
     std::string extension = uri.substr(last_dot + 1);
-    if (extension == "php" || extension == "py" || extension == "bla")
+    if (extension == "php" || extension == "py")
     {
         response_generator = m_response_generators["CGI"];
         uri = "." + extension; // temp for matching
@@ -176,7 +235,25 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
     // return the return value
     return return_value;
 }
-#include <iostream>
+
+Triplet_t TempRouter::execRoute(IRoute *route, IRequest *request, IResponse *response)
+{
+	if (!route)
+		return Triplet_t(-1, std::pair<int, int>(-1, -1));
+    IResponseGenerator *response_generator = route->getResponseGenerator();
+    // Generate the response
+    Triplet_t return_value = response_generator->generateResponse(*route, *request, *response, m_configuration);
+
+    // print return value
+    m_logger.log(DEBUG,
+                 "Return value: " + Converter::toString(return_value.first) +
+                     " " + Converter::toString(return_value.second.first) +
+                     " " + Converter::toString(return_value.second.second));
+
+    // return the return value
+    return return_value;
+}
+
 // Sort Routes; regex first, then by path length in descending order
 bool TempRouter::m_sortRoutes(const IRoute *a, const IRoute *b)
 {

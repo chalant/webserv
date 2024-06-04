@@ -36,6 +36,7 @@ RequestHandler::RequestHandler(IBufferManager &buffer_manager,
     m_logger.log(VERBOSE, "RequestHandler instance created.");
 }
 
+#include <iostream>
 // Destructor
 RequestHandler::~RequestHandler()
 {
@@ -91,12 +92,6 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             {
                 state.initial(false);
                 state.headers(true); // Because we now have all the headers
-				//route = m_router.getRoute(request); -> should throw an error
-				//state.setRoute(route);
-				//if (!route.exists())
-				// {
-						//
-				// }
             }
             else
             {
@@ -104,7 +99,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
                 m_logger.log(VERBOSE,
                              "RequestHandler::handleRequest: Request is "
                              "incomplete - state: initial. Buffer: " +
-                                 buffer_str);
+                                 buffer_str.substr(0, 10));
                 return Triplet_t(-2, std::pair<int, int>(-1, -1));
             }
         }
@@ -112,7 +107,6 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         {
             m_request_parser.parseRequest(request);
             state.headers(false);
-
             // Assign session to connection
             m_connection_manager.assignSessionToConnection(connection, request,
                                                            response);
@@ -135,17 +129,16 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
                 return Triplet_t(-2, std::pair<int, int>(-1, -1));
             }
         }
-
         // Delete these 3 lines once router is implemented
         //(void)m_router;
         // Triplet_t cgi_info(-1, std::pair<int, int>(-1, -1));
         // throw HttpStatusCodeException(
         //   NOT_IMPLEMENTED,
         //   "RequestHandler::handleRequest: Router not implemented yet.");
-
+        state.setRoute(m_router.getRoute(&request, &response));
         // todo: Route the request, return the CGI info
-        Triplet_t cgi_info = m_router.execRoute(&request, &response);
-		//Triplet_t cgi_info = m_router.executeRoute(state.route, &request, &response);
+        //Triplet_t cgi_info = m_router.execRoute(&request, &response);
+		Triplet_t cgi_info = m_router.execRoute(state.getRoute(), &request, &response);
 		state.reset();
 
         // If dynamic content is being created, return the info
