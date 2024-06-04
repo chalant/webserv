@@ -1,7 +1,6 @@
 #include "../../includes/connection/RequestHandler.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
-#include <algorithm>
 #include <unistd.h>
 #include <utility>
 
@@ -92,6 +91,12 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             {
                 state.initial(false);
                 state.headers(true); // Because we now have all the headers
+				//route = m_router.getRoute(request); -> should throw an error
+				//state.setRoute(route);
+				//if (!route.exists())
+				// {
+						//
+				// }
             }
             else
             {
@@ -130,9 +135,6 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
                 return Triplet_t(-2, std::pair<int, int>(-1, -1));
             }
         }
-        // finally, parse body parameters
-       m_request_parser.parseBodyParameters(request);
-        state.reset();
 
         // Delete these 3 lines once router is implemented
         //(void)m_router;
@@ -143,6 +145,8 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
 
         // todo: Route the request, return the CGI info
         Triplet_t cgi_info = m_router.execRoute(&request, &response);
+		//Triplet_t cgi_info = m_router.executeRoute(state.route, &request, &response);
+		state.reset();
 
         // If dynamic content is being created, return the info
         if (cgi_info.first != -1)
@@ -170,7 +174,6 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         {
             // Push the response to the buffer
             m_sendResponse(socket_descriptor);
-            //request.getBody().clear();
             return Triplet_t(-1, std::pair<int, int>(-1, -1));
         }
     }
