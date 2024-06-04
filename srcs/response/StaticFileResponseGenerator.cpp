@@ -39,10 +39,11 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     // check if the file_path is a directory
     if (m_isDirectory(file_path))    {
         // log the situation
-        m_logger.log(VERBOSE, "Directory requested: " + file_path + " serving index file: " + root + route.getIndex());
+        m_logger.log(VERBOSE, "Directory requested: " + file_path + " serving index file: " + file_path + route.getIndex());
 
-        // append a slash to the file path
-        file_path += "/";
+        // append a slash to the file path if needed
+        if (file_path.size() > 1 && file_path[ file_path.size() - 1 ] != '/')
+            file_path += "/";
 
         // append the default file name
         file_path += route.getIndex();

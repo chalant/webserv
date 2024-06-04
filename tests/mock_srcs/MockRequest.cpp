@@ -1,5 +1,6 @@
 #include "../mock_includes/MockRequest.hpp"
 #include "../../includes/constants/HttpHelper.hpp"
+#include <cstddef>
 
 /*
  * MockRequest class is a mock implementation of the IRequest interface
@@ -207,9 +208,29 @@ void MockRequest::setUploadRequest(bool upload_request)
     m_test_upload_request = upload_request;
 };
 
+void MockRequest::appendBody(std::vector<char>::const_iterator begin,
+                            std::vector<char>::const_iterator end)
+{
+    m_test_body.insert(m_test_body.end(), begin, end);
+}
+
 void MockRequest::appendBuffer(const std::vector<char> &raw_request)
 {
-    static_cast<void>(raw_request);
+    m_test_buffer.insert(m_test_buffer.end(), raw_request.begin(), raw_request.end());
+};
+
+void MockRequest::clearBuffer() { m_test_buffer.clear(); m_test_buffer.shrink_to_fit(); };
+
+void MockRequest::trimBuffer(ptrdiff_t new_start)
+{
+    std::vector<char>::iterator new_start_it = m_test_buffer.begin() + new_start;
+    if (new_start_it == m_test_buffer.end())
+    {
+        this->clearBuffer();
+    }
+    else {
+        m_test_buffer.erase(m_test_buffer.begin(), new_start_it);
+    }
 };
 
 // Clear the contents of the MockRequest object
@@ -220,6 +241,7 @@ void MockRequest::clear()
     m_test_http_version = "";
     m_test_headers.clear();
     m_test_body.clear();
+    this->clearBuffer();
 };
 
 // Path: tests/mock_srcs/MockRequest.cpp

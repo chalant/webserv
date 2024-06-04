@@ -15,6 +15,7 @@
 #include "../constants/HttpHeaderHelper.hpp"
 #include "../constants/HttpMethodHelper.hpp"
 #include "../constants/HttpVersionHelper.hpp"
+#include <cstddef>
 #include <map>
 #include <string>
 #include <vector>
@@ -109,7 +110,11 @@ public:
     virtual void setAuthority() = 0;
     virtual void addBodyParameter(const BodyParameter &body_parameter) = 0;
     virtual void setUploadRequest(bool upload_request) = 0;
+    virtual void appendBody(std::vector<char>::const_iterator begin,
+                            std::vector<char>::const_iterator end) = 0;
     virtual void appendBuffer(const std::vector<char> &raw_request) = 0;
+    virtual void clearBuffer() = 0;
+    virtual void trimBuffer(ptrdiff_t) = 0;
 };
 
 #endif // IREQUEST_HPP

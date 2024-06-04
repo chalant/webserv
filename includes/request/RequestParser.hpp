@@ -45,14 +45,8 @@ private:
                        const std::vector<char> &raw_request,
                        IRequest &parsed_request) const;
 
-    // Function to parse the body of an HTTP request
-    void m_parseBody(std::vector<char>::const_iterator &it,
-                     const std::vector<char> &raw_request,
-                     IRequest &parsed_request) const;
-
     // Function to unchunk the body of an HTTP request
-    void m_unchunkBody(std::vector<char>::const_iterator &request_iterator,
-                       const std::vector<char> &raw_request,
+    void m_unchunkBody(const std::vector<char> &raw_request,
                        IRequest &request) const;
 
     // Function to parse a Cookie header
@@ -89,11 +83,9 @@ public:
 
     // Function to parse a raw HTTP request and convert it into a IRequest
     // object
-    void parseRequest(const std::vector<char> &raw_request,
-                      IRequest &parsed_request) const;
-    void parseRequestHeader(IRequest &request) const;
-    void parsePartialBody(const std::vector<char> buffer,
-                          IRequest &request) const;
+    void parseRequest(IRequest &request) const;
+    // Function to parse the body of an HTTP request
+    void parseBody(IRequest &parsed_request) const;
     // Function to parse the Upload Chunked Body
     void parseBodyParameters(IRequest &parsed_request) const;
 };

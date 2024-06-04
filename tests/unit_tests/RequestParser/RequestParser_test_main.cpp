@@ -40,8 +40,11 @@ int main()
         stringToVector("GET /index.html HTTP/1.1\r\nHost: "
                        "42.fr\r\ncontent-length: 0\r\n\r\n");
 
+    // Append the raw request to the mock_request
+    mock_request.appendBuffer(raw_request);
+
     // Parse the raw request
-    request_parser.parseRequest(raw_request, mock_request);
+    request_parser.parseRequest(mock_request);
     // Verify the parsed Request object
     // If the request is invalid, an exception will be thrown
     // otherwise the test will pass
@@ -89,8 +92,11 @@ int main()
         "text/plain\r\n\r\nContents of "
         "file 2 here\r\n--MY_BOUNDARY--\r\n");
 
+    // Append the raw request to the mock request buffer
+    mock_request.appendBuffer(raw_request);
+
     // Parse the raw request
-    request_parser.parseRequest(raw_request, mock_request);
+    request_parser.parseRequest(mock_request);
 
     // Verify that the body_parameters vector contains the correct values
     std::vector<BodyParameter> expected_body_parameters;
