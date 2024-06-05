@@ -1,4 +1,4 @@
-#include "../../includes/response/CgiResponseGenerator.hpp"
+#include "../../includes/response/RFCCgiResponseGenerator.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
 #include <cerrno>
@@ -12,17 +12,17 @@
 #define READ_END 0  // Read end of a pipe
 #define WRITE_END 1 // Write end of a pipe
 
-CgiResponseGenerator::CgiResponseGenerator(ILogger &logger)
+RFCCgiResponseGenerator::RFCCgiResponseGenerator(ILogger &logger)
     : m_logger(logger), m_http_status_code_helper(HttpStatusCodeHelper())
 {
 }
 
-CgiResponseGenerator::~CgiResponseGenerator() {}
+RFCCgiResponseGenerator::~RFCCgiResponseGenerator() {}
 
 // calls execve to execute the CGI script
 // returns the cgi process Info (pid, read end of the CGI Output pipe, write end
 // of the CGI Input pipe) Throws an exception if an error occurs
-Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
+Triplet_t RFCCgiResponseGenerator::generateResponse(const IRoute &route,
                                                  const IRequest &request,
                                                  IResponse &response,
                                                  IConfiguration &configuration)
@@ -132,7 +132,7 @@ Triplet_t CgiResponseGenerator::generateResponse(const IRoute &route,
     return std::make_pair(-1, std::make_pair(-1, -1)); // unreachable code
 }
 #include <iostream>
-void CgiResponseGenerator::m_setCgiArguments(
+void RFCCgiResponseGenerator::m_setCgiArguments(
     const std::string &cgi_script, const std::string &script, const IRoute &route, std::vector<char *> &cgi_args)
 {
     cgi_args.push_back(strdup(cgi_script.c_str())); // Interpreter absolute path
@@ -151,7 +151,7 @@ std::cout << "cgi_script: " << cgi_script << std::endl;
     m_logger.log(DEBUG, "CGI script: " + std::string(cgi_args[ 1 ]));
 }
 
-void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
+void RFCCgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
                                                const IRoute &route,
                                                const IRequest &request,
                                                std::vector<char *> &cgi_env)
@@ -191,7 +191,7 @@ void CgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
 
 // Not used, must be defined in configuration file
 // e.g. cgi_script /usr/bin/python3
-char *CgiResponseGenerator::m_getCgiInterpreterPath(
+char *RFCCgiResponseGenerator::m_getCgiInterpreterPath(
     const std::string &script_name, const IConfiguration &configuration) const
 {
     // Extract file extension
@@ -224,7 +224,7 @@ char *CgiResponseGenerator::m_getCgiInterpreterPath(
     return strdup(interpreter_path.c_str());
 }
 
-char *CgiResponseGenerator::m_getScriptPath(const std::string &script_name,
+char *RFCCgiResponseGenerator::m_getScriptPath(const std::string &script_name,
                                             const IRoute &route) const
 {
     // Get the root path
@@ -242,7 +242,7 @@ char *CgiResponseGenerator::m_getScriptPath(const std::string &script_name,
                       .c_str()); //  e.g. /path/to/script.php
 }
 
-std::string CgiResponseGenerator::m_getPathTranslated(std::string &path_info,
+std::string RFCCgiResponseGenerator::m_getPathTranslated(std::string &path_info,
                                                       const IRoute &route) const
 {
     // PATH_TRANSLATED = location root + location prefix + PATH_INFO
@@ -257,7 +257,7 @@ std::string CgiResponseGenerator::m_getPathTranslated(std::string &path_info,
     return root_path + prefix + path_info;
 }
 
-void CgiResponseGenerator::m_cleanUp(char *cgi_args[], char *cgi_env[],
+void RFCCgiResponseGenerator::m_cleanUp(char *cgi_args[], char *cgi_env[],
                                      int cgi_output_pipe_fd[ 2 ],
                                      int cgi_input_pipe_fd[ 2 ],
                                      short option) const

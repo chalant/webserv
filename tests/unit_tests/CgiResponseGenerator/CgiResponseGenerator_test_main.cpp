@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 // include the header file for the class under test
-#include "../../../includes/response/CgiResponseGenerator.hpp"
+#include "../../../includes/response/RFCCgiResponseGenerator.hpp"
 
 #include "../../../includes/configuration/ConfigurationLoader.hpp"
 
@@ -49,7 +49,7 @@ int main()
     char read_buffer[ 1024 ];
 
     // Instantiate the CgiResponseGenerator object
-    CgiResponseGenerator cgi_response_generator(mock_logger);
+    RFCCgiResponseGenerator cgi_response_generator(mock_logger);
 
     // Test case 1: Generate a simple cgi python response
     //***************************************************

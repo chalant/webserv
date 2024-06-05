@@ -1,5 +1,5 @@
-#ifndef CGIRESPONSEGENERATOR_HPP
-#define CGIRESPONSEGENERATOR_HPP
+#ifndef RFCCGIRESPONSEGENERATOR_HPP
+#define RFCCGIRESPONSEGENERATOR_HPP
 
 #include "../configuration/IConfiguration.hpp"
 #include "../constants/HttpStatusCodeHelper.hpp"
@@ -11,7 +11,7 @@
 #include <string.h>
 #include <unistd.h>
 
-class CgiResponseGenerator : public IResponseGenerator
+class RFCCgiResponseGenerator : public IResponseGenerator
 {
 private:
     ILogger &m_logger;
@@ -33,8 +33,8 @@ private:
                    int body_pipe_fd[ 2 ] = NULL, short option = 0x0) const;
 
 public:
-    CgiResponseGenerator(ILogger &logger);
-    ~CgiResponseGenerator();
+    RFCCgiResponseGenerator(ILogger &logger);
+    ~RFCCgiResponseGenerator();
 
     virtual Triplet_t generateResponse(const IRoute &route,
                                        const IRequest &request,
@@ -42,5 +42,5 @@ public:
                                        IConfiguration &configuration);
 };
 
-#endif // CGIRESPONSEGENERATOR_HPP
+#endif // RFCCGIRESPONSEGENERATOR_HPP
 // Path: includes/CgiResponseGenerator.hpp

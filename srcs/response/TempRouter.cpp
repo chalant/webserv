@@ -1,5 +1,5 @@
 #include "../../includes/response/TempRouter.hpp"
-#include "../../includes/response/CgiResponseGenerator.hpp"
+#include "../../includes/response/RFCCgiResponseGenerator.hpp"
 #include "../../includes/response/Route.hpp"
 #include "../../includes/response/StaticFileResponseGenerator.hpp"
 #include "../../includes/response/UploadResponseGenerator.hpp"
@@ -25,7 +25,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
     m_response_generators["GET"] = new StaticFileResponseGenerator(logger);
     m_response_generators["POST"] = new UploadResponseGenerator(logger);
     m_response_generators["PUT"] = new UploadResponseGenerator(logger);
-    m_response_generators["CGI"] = new CgiResponseGenerator(logger);
+    m_response_generators["CGI"] = new RFCCgiResponseGenerator(logger);
 
     // Create a route for each location block
     BlockList locations_list = configuration.getBlocks("http")[0]->getBlocks("server")[0]->getBlocks("location");
