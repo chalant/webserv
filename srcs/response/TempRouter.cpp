@@ -25,10 +25,10 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
     m_response_generators["GET"] = new StaticFileResponseGenerator(logger);
     m_response_generators["POST"] = new UploadResponseGenerator(logger);
     m_response_generators["PUT"] = new UploadResponseGenerator(logger);
-    m_response_generators["CGI"] = new RFCCgiResponseGenerator(logger);
+    m_response_generators["CGI"] = NULL;
 
     // Create a route for each location block
-    BlockList locations_list = configuration.getBlocks("http")[0]->getBlocks("server")[0]->getBlocks("location");
+    const BlockList &locations_list = configuration.getBlocks("http")[0]->getBlocks("server")[0]->getBlocks("location");
     for (size_t i = 0; i < locations_list.size(); i++)
     {
         std::string path;
@@ -72,6 +72,27 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
         else
             index = index_vector[0];
 
+		// const BlockList	&cgis =  locations_list[i]->getBlocks("cgi");
+		// // if there is any CGI in the file, check if it is active and create it if it does not already exist.
+		// // a cgi response generator is mapped to its path.
+		// for (size_t j = 0; j < cgis.size(); j++)
+		// {
+		// 	if (cgis[j]->getParameters()[0] != "on") { continue; }
+		// 	const std::string &cgi_path = cgis[j]->getString("bin_path");
+		// 	if (m_response_generators.find(cgi_path) == m_response_generators.end()) { continue; }
+		// 	IResponseGenerator	*cgi_rg = m_createCGIResponseGenerator(cgis[j]->getString("type"), m_logger);
+		// 	const std::vector<std::string> &targets = cgis[j]->getStringVector("target");
+		// 	//todo: a special route type for cgi...
+		// 	//a route should have a match that takes in an uri.
+		// 	Route *route = new Route(path, is_regex, methods, root, index, cgi_script);
+		// 	route->setResponseGenerator(cgi_rg);
+		// 	m_routes.push_back(route);
+		// 	for (size_t k = 0; k < targets.size(); k++)
+		// 	{
+		// 		route->setExtension(targets[k]);
+		// 	}
+		// 	m_response_generators[ cgi_path ] = cgi_rg;
+		// }
         // Get the cgi_script
         // e.g. cgi_script /usr/bin/python3;
         std::vector<std::string> cgi_script_vector = locations_list[i]->getStringVector("cgi_script");
@@ -258,11 +279,22 @@ Triplet_t TempRouter::execRoute(IRoute *route, IRequest *request, IResponse *res
 bool TempRouter::m_sortRoutes(const IRoute *a, const IRoute *b)
 {
     std::cout << "a: " << a->getPath() << " b: " << b->getPath() << std::endl;
-    std::cout << "a is regec: " << a->isRegex() << " b is regex: " << b->isRegex() << std::endl;
+    std::cout << "a is regex: " << a->isRegex() << " b is regex: " << b->isRegex() << std::endl;
     // if a is a regex and b is not a should be first
     if (a->isRegex() && !b->isRegex())
         return true;
     if (!a->isRegex() && b->isRegex())
         return false;
     return a->getPath().length() > b->getPath().length();
+}
+
+IResponseGenerator	*TempRouter::m_createCGIResponseGenerator(const std::string type, ILogger &logger)
+{
+	if (type == "file")
+	{
+		//todo: implement
+		return NULL;
+	}
+	// default
+	return new RFCCgiResponseGenerator(logger);
 }
