@@ -23,11 +23,17 @@ Triplet_t UploadResponseGenerator::generateResponse(
         if (itr->filename.empty())
             continue;
 
-        std::string file_path = route.getRoot() + itr->filename;
+		std::string root = route.getRoot();
+		if (root[root.size() - 1] != '/')
+		{
+			root += "/";
+		}
+        std::string file_path = root + itr->filename;
         if (file_path.find(".") == std::string::npos)
         {
             try
             {
+				file_path += ".";
                 file_path +=
                     configuration.getBlocks("types")[ 0 ]->getStringVector(
                         itr->content_type)[ 0 ];
