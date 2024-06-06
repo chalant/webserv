@@ -30,7 +30,9 @@ public:
     virtual void setCgiScript(std::string &cgi_script);
     virtual bool isAllowedMethod(const HttpMethod method) const;
     virtual bool isRegex() const;
+	virtual bool isCGI() const;
     virtual IResponseGenerator *getResponseGenerator() const;
+	virtual bool match(const std::string &value);
 	virtual void				setResponseGenerator(IResponseGenerator *generator);
 };
 

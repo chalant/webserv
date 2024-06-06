@@ -68,7 +68,6 @@ SRCS        =	main.cpp \
 				srcs/request/RequestState.cpp \
 				srcs/response/RFCCgiResponseGenerator.cpp \
 				srcs/response/UploadResponseGenerator.cpp \
-				srcs/response/RegexMatcher.cpp \
 				srcs/response/Response.cpp \
 				srcs/response/TempRouter.cpp \
 				srcs/response/Route.cpp \

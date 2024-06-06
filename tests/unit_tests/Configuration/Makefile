@@ -25,8 +25,6 @@ SOURCES         = configuration_test.cpp \
 				  ../../../srcs/parsing/Parser.cpp \
 				  ../../../srcs/parsing/ParsingUtils.cpp \
 				  ../../../srcs/parsing/Tokenizer.cpp \
-				  ../../../srcs/response/RegexMatcher.cpp \
-				  ../../../srcs/response/DefaultMatcher.cpp \
 				  ../../../srcs/configuration/ConfigurationLoader.cpp \
 				  ../../../srcs/configuration/ConfigurationBlock.cpp \
 				  ../../../srcs/configuration/Defaults.cpp \

@@ -19,6 +19,10 @@ std::string MockRoute::getIndex() const { return ""; }
 
 std::string MockRoute::getCgiScript() const { return m_cgi_script; }
 
+bool	MockRoute::isCGI() const { return false; }
+	
+bool	MockRoute::match(const std::string &value) { (void)value; return false; }
+
 void MockRoute::setRoot(std::string &root) { m_root = root; }
 
 void MockRoute::setPath(std::string &prefix) { m_path = prefix; }

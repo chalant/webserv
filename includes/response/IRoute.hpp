@@ -56,8 +56,10 @@ public:
     virtual std::string getCgiScript() const = 0;
     virtual bool isAllowedMethod(const HttpMethod method) const = 0;
     virtual bool isRegex() const = 0;
+	virtual bool isCGI() const = 0;
     virtual IResponseGenerator *getResponseGenerator() const = 0;
 	virtual void				setResponseGenerator(IResponseGenerator *generator) = 0;
+	virtual bool				match(const std::string &uri) = 0;
 };
 
 #endif // IROUTE_HPP
