@@ -22,6 +22,7 @@ class DefaultMatcher : public IURIMatcher
 		bool match(const std::string &uri) { return uri.find(m_path) != std::string::npos; }
 };
 
+#include <iostream>
 class ExtensionMatcher : public IURIMatcher
 {
 	private:
@@ -33,7 +34,8 @@ class ExtensionMatcher : public IURIMatcher
 		bool match(const std::string &uri)
 		{
 			size_t last_dot = uri.find_last_of('.');
-			std::string extension = uri.substr(last_dot + 1);
+			if (last_dot == std::string::npos) { return false ;}
+			std::string extension = uri.substr(last_dot, uri.size());
 			for (size_t i = 0; i < m_extensions.size(); i++) { if (extension == m_extensions[i]) { return true; } }
 			return false;
 		}

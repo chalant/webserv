@@ -80,13 +80,13 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 		Route *route;
 		IResponseGenerator	*cgi_rg;
 		IURIMatcher	*matcher;
+		// marks the location as cgi
 		bool	cgi_route = false;
 		for (size_t j = 0; j < cgis.size(); j++)
 		{
-			//if (cgis[j]->getParameters()[0] != "on") { continue; }
-			const std::string &cgi_path = cgis[ j ]->getString("bin_path");
-			const std::vector<std::string> &cgi_target = cgis[ j ]->getStringVector("cgi_target");
-			const std::string &cgi_type = cgis[ j ]->getString("cgi_type");
+			const std::string& cgi_path = cgis[ j ]->getString("bin_path");
+			const std::vector<std::string>& cgi_target = cgis[ j ]->getParameters();
+			const std::string& cgi_type = cgis[ j ]->getString("cgi_type");
 			if (cgi_path == "none" || cgi_target[0] == "none" || cgi_type == "none")
 			{ continue; }
 			cgi_route = true;
@@ -94,7 +94,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 			// create or retrieve a CGI response generator
 			if (itr == m_response_generators.end())
 			{
-				cgi_rg = m_createCGIResponseGenerator(cgis[j]->getString("cgi_type"), m_logger);
+				cgi_rg = m_createCGIResponseGenerator(cgis[j]->getString("cgi_type"), cgi_path, m_logger);
 				m_response_generators[cgi_path] = cgi_rg;
 			}
 			else
@@ -104,7 +104,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 			//create and cache if no matcher exists
 			if (m_uri_matchers.find(cgi_path) == m_uri_matchers.end())
 			{
-				matcher =  new ExtensionMatcher(cgis[j]->getStringVector("cgi_target"));
+				matcher =  new ExtensionMatcher(cgi_target);
 				m_uri_matchers[cgi_path] = matcher;
 			}
 			else { matcher = m_uri_matchers[ cgi_path ]; }
@@ -329,13 +329,12 @@ bool TempRouter::m_sortRoutes(const IRoute *a, const IRoute *b)
     return a->getPath().length() > b->getPath().length();
 }
 
-IResponseGenerator	*TempRouter::m_createCGIResponseGenerator(const std::string type, ILogger &logger)
+IResponseGenerator	*TempRouter::m_createCGIResponseGenerator(const std::string& type, const std::string& cgi_path, ILogger &logger)
 {
 	if (type == "file")
 	{
-		//todo: implement
-		return NULL;
+		return new RFCCgiResponseGenerator(logger, cgi_path, true);
 	}
 	// default
-	return new RFCCgiResponseGenerator(logger);
+	return new RFCCgiResponseGenerator(logger, cgi_path);
 }

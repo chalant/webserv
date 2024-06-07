@@ -13,16 +13,17 @@
 
 class FileCGIResponseGenerator : public IResponseGenerator
 {
-private:
-	
-public:
-    FileCGIResponseGenerator(ILogger &logger);
-    ~FileCGIResponseGenerator();
+	private:
+		ILogger&			m_logger;
+		const std::string&	m_bin_path;
+	public:
+		FileCGIResponseGenerator(ILogger &logger, const std::string& bin_path);
+		~FileCGIResponseGenerator();
 
-    virtual Triplet_t generateResponse(const IRoute &route,
-                                       const IRequest &request,
-                                       IResponse &response,
-                                       IConfiguration &configuration);
+		Triplet_t generateResponse(const IRoute &route,
+									const IRequest &request,
+									IResponse &response,
+									IConfiguration &configuration);
 };
 
 #endif // RFCCGIRESPONSEGENERATOR_HPP

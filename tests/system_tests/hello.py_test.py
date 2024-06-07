@@ -3,6 +3,7 @@ import subprocess
 import time
 import signal
 import os
+import requests
 
 # ANSI escape codes for colors
 GREEN = '\033[92m'
@@ -32,7 +33,7 @@ subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '
 subprocess.run(['make', '-j8'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # Start the server
-webserv = subprocess.Popen(['./webserv'], cwd=os.path.join(os.path.dirname(__file__), '../../'))#, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+webserv = subprocess.Popen(['./webserv'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 #Wait for the server to start
 time.sleep(1)
@@ -42,6 +43,12 @@ response_body = getResponseBody(b'GET /hello.py HTTP/1.1\r\nHost: localhost\r\n\
 #print("response_body: " + response_body)
 assert response_body == "Hello, world!"
 #print("\thello.py test".ljust(34) + f"{GREEN}OK!{RESET}")
+
+# Test /hello.py
+response_body = getResponseBody(b'POST /hello.py HTTP/1.1\r\nHost: localhost\r\n\r\n')
+requests.post()
+#print("response_body: " + response_body)
+assert response_body == "Hello, world!"
 
 # Terminate the server
 webserv.send_signal(signal.SIGINT)

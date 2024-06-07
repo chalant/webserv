@@ -12,6 +12,12 @@ RED = '\033[91m'
 YELLOW = '\033[93m'
 RESET = '\033[0m'
 
+def sigHandler(sig, frame):
+    webserv.kill()
+    exit(0)
+    
+signal.signal(signal.SIGINT, sigHandler)
+
 def	make():
 	try:
 		subprocess.run(['make', 'fclean'], cwd=os.path.join(os.path.dirname(__file__), '../../'), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

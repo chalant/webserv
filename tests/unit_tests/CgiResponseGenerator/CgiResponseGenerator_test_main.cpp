@@ -49,7 +49,9 @@ int main()
     char read_buffer[ 1024 ];
 
     // Instantiate the CgiResponseGenerator object
-    RFCCgiResponseGenerator cgi_response_generator(mock_logger);
+    //RFCCgiResponseGenerator cgi_response_generator(mock_logger, );
+
+	RFCCgiResponseGenerator cgi_response_generator(mock_logger, mock_configuration_block.getBlocks("cgi")[0]->getString("bin_path"));
 
     // Test case 1: Generate a simple cgi python response
     //***************************************************
@@ -70,8 +72,7 @@ int main()
     // Read the response
     ssize_t bytes_read;
     while ((bytes_read = read(response_read_pipe, read_buffer,
-                              sizeof(read_buffer))) <= 0)
-        ;                             // wait for the response
+                              sizeof(read_buffer))) <= 0); // wait for the response
     read_buffer[ bytes_read ] = '\0'; // Null-terminate the string
 
     // Close the pipe

@@ -12,8 +12,13 @@
 #define READ_END 0  // Read end of a pipe
 #define WRITE_END 1 // Write end of a pipe
 
-RFCCgiResponseGenerator::RFCCgiResponseGenerator(ILogger &logger)
-    : m_logger(logger), m_http_status_code_helper(HttpStatusCodeHelper())
+RFCCgiResponseGenerator::RFCCgiResponseGenerator(ILogger &logger, const std::string& bin_path)
+	: m_logger(logger), m_http_status_code_helper(HttpStatusCodeHelper()), m_bin_path(bin_path), m_from_file(false)
+{
+}
+
+RFCCgiResponseGenerator::RFCCgiResponseGenerator(ILogger &logger, const std::string& bin_path, bool from_file)
+    : m_logger(logger), m_http_status_code_helper(HttpStatusCodeHelper()), m_bin_path(bin_path), m_from_file(from_file)
 {
 }
 
@@ -23,16 +28,16 @@ RFCCgiResponseGenerator::~RFCCgiResponseGenerator() {}
 // returns the cgi process Info (pid, read end of the CGI Output pipe, write end
 // of the CGI Input pipe) Throws an exception if an error occurs
 Triplet_t RFCCgiResponseGenerator::generateResponse(const IRoute &route,
-                                                 const IRequest &request,
-                                                 IResponse &response,
-                                                 IConfiguration &configuration)
+                                                	const IRequest &request,
+                                                 	IResponse &response,
+                                                 	IConfiguration &configuration)
 {
     // void the unused parameters
     (void)response;
     (void)configuration;
 
     // Get the CGI script path
-    const std::string cgi_script = route.getCgiScript();
+   // const std::string cgi_script = route.getCgiScript();
 
     // Set the Script path
     std::string uri = request.getUri();
@@ -40,9 +45,12 @@ Triplet_t RFCCgiResponseGenerator::generateResponse(const IRoute &route,
     size_t question_mark = uri.find('?');
     std::string script = uri.substr(last_slash + 1, question_mark - last_slash - 1);
 
+	m_logger.log(DEBUG, "CGI SCRIPT " + script);
+	(void)m_from_file;
+
     // Set cgi arguments
     std::vector<char *> cgi_args;
-    m_setCgiArguments(cgi_script, script, route, cgi_args);
+    m_setCgiArguments(m_bin_path, script, route, cgi_args);
 
     // Set cgi environment variables
     std::vector<char *> cgi_env;
@@ -144,8 +152,12 @@ std::cout << "cgi_script: " << cgi_script << std::endl;
 
     // Check for strdup failures
     for (size_t i = 0; i < cgi_args.size() - 1; ++i)
+	{
         if (cgi_args[ i ] == NULL)
+		{
             m_cleanUp(cgi_args.data()); // Free memory and throw exception 500
+		}
+	}
 
     m_logger.log(DEBUG, "CGI interpreter: " + std::string(cgi_args[ 0 ]));
     m_logger.log(DEBUG, "CGI script: " + std::string(cgi_args[ 1 ]));
@@ -187,41 +199,6 @@ void RFCCgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
     // Log the environment variables
     for (size_t i = 0; i < cgi_env.size() - 1; ++i)
         m_logger.log(DEBUG, "CGI Environment: " + std::string(cgi_env[ i ]));
-}
-
-// Not used, must be defined in configuration file
-// e.g. cgi_script /usr/bin/python3
-char *RFCCgiResponseGenerator::m_getCgiInterpreterPath(
-    const std::string &script_name, const IConfiguration &configuration) const
-{
-    // Extract file extension
-    std::string file_extension;
-    size_t dot_pos = script_name.find_last_of('.');
-    if (dot_pos == std::string::npos) // No file extension
-    {
-        throw HttpStatusCodeException(BAD_REQUEST); // 400
-    }
-    file_extension = script_name.substr(dot_pos + 1);
-
-    // Set the interpreter path based on the file extension
-    std::string interpreter_path;
-    if (file_extension == "php") // *.php
-    {
-        interpreter_path =
-            configuration.getString("php_cgi_path"); // e.g. /bin/php-cgi
-    }
-    else if (file_extension == "py") // *.py
-    {
-        interpreter_path =
-            configuration.getString("python_cgi_path"); // e.g. /usr/bin/python3
-    }
-    else // Unsupported file extension
-    {
-        throw HttpStatusCodeException(NOT_IMPLEMENTED); // 501
-    }
-
-    // Return the interpreter path
-    return strdup(interpreter_path.c_str());
 }
 
 char *RFCCgiResponseGenerator::m_getScriptPath(const std::string &script_name,

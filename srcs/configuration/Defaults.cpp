@@ -15,8 +15,8 @@ Defaults::Defaults()
     m_block_parameters[ "location" ].push_back("/");
     m_block_parameters[ "limit_except" ].push_back("GET");
     m_block_parameters[ "limit_except" ].push_back("POST");
+	m_block_parameters[ "cgi" ].push_back("none");
 	m_directive_parameters[ "cgi_type" ].push_back("none");
-	m_directive_parameters[ "cgi_target" ].push_back("none");
 	m_directive_parameters[ "bin_path" ].push_back("none");
     m_directive_parameters[ "root" ].push_back("sample_site");
     m_directive_parameters[ "index" ].push_back("index.html");

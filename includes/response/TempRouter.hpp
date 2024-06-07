@@ -31,7 +31,7 @@ private:
 
     // Method to compare two routes by path length
     static bool m_sortRoutes(const IRoute *a, const IRoute *b);
-	IResponseGenerator	*m_createCGIResponseGenerator(const std::string type, ILogger &logger);
+	IResponseGenerator	*m_createCGIResponseGenerator(const std::string& type, const std::string& bin_path, ILogger &logger);
 
 public:
     TempRouter(IConfiguration &Configuration, ILogger &logger);

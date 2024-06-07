@@ -56,6 +56,7 @@ void	Route::setResponseGenerator(IResponseGenerator *generator)
 	m_response_generator = generator;
 }
 
+#include <iostream>
 bool	Route::match(const std::string& uri)
 {
 	if (!m_matcher){ return uri.find(m_path) != std::string::npos; }

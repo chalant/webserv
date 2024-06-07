@@ -36,7 +36,6 @@ webserv = subprocess.Popen(['./webserv'], cwd=os.path.join(os.path.dirname(__fil
 #Wait for the server to start
 time.sleep(1)
 
-
 # Test an Unknown Method
 response_status_line = getResponseStatusLine(b'NOTKNOWN / HTTP/1.1\r\nHost: localhost\r\n\r\n')
 assert response_status_line == "HTTP/1.1 405 Method Not Allowed"
