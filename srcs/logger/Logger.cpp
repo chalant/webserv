@@ -122,7 +122,7 @@ int Logger::log(const IConnection &connection)
                           << "\tmethod=\"" << request.getMethodString()
                           << "\",\n"
                           << "\trequest_uri=\"" << request.getUri() << "\",\n"
-                          << "\thttp_version=\"" << request.getHttpVersion()
+                          << "\thttp_version=\"" << request.getHttpVersionString()
                           << "\",\n"
                           << "\tstatus_code=\""
                           << response.getStatusCodeString()
