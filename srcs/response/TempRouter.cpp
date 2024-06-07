@@ -25,7 +25,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
     m_response_generators["GET"] = new StaticFileResponseGenerator(logger);
     m_response_generators["POST"] = new UploadResponseGenerator(logger);
     m_response_generators["PUT"] = new UploadResponseGenerator(logger);
-    m_response_generators["CGI"] = NULL;
+    //m_response_generators["CGI"] = NULL;
 
     // Create a route for each location block
     const BlockList &locations_list = configuration.getBlocks("http")[0]->getBlocks("server")[0]->getBlocks("location");
@@ -80,13 +80,18 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 		Route *route;
 		IResponseGenerator	*cgi_rg;
 		IURIMatcher	*matcher;
-		bool	cgi_flag = false;
+		bool	cgi_route = false;
 		for (size_t j = 0; j < cgis.size(); j++)
 		{
-			if (cgis[j]->getParameters()[0] != "on") { continue; }
-			cgi_flag = true;
-			const std::string &cgi_path = cgis[j]->getString("bin_path");
+			//if (cgis[j]->getParameters()[0] != "on") { continue; }
+			const std::string &cgi_path = cgis[ j ]->getString("bin_path");
+			const std::vector<std::string> &cgi_target = cgis[ j ]->getStringVector("cgi_target");
+			const std::string &cgi_type = cgis[ j ]->getString("cgi_type");
+			if (cgi_path == "none" || cgi_target[0] == "none" || cgi_type == "none")
+			{ continue; }
+			cgi_route = true;
 			std::map<std::string, IResponseGenerator *>::iterator	itr = m_response_generators.find(cgi_path);
+			// create or retrieve a CGI response generator
 			if (itr == m_response_generators.end())
 			{
 				cgi_rg = m_createCGIResponseGenerator(cgis[j]->getString("cgi_type"), m_logger);
@@ -110,7 +115,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 			m_routes.push_back(route);
 			m_response_generators[ cgi_path ] = cgi_rg;
 		}
-		if (!cgi_flag)
+		if (!cgi_route)
 		{
 			m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
 			route = new Route(path, is_regex, methods, root, index);
@@ -222,6 +227,7 @@ IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
 		}
     }	
 
+	//todo: need a better default route this could be anything...
     route = m_routes[m_routes.size() - 1]; // Default route
     if (route->isAllowedMethod(method) == false)
     {
