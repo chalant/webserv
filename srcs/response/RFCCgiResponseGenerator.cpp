@@ -2,7 +2,9 @@
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
 #include <cerrno>
+#include <cstdio>
 #include <cstdlib>
+#include <string>
 
 #define NO_THROW 0x1 // Do not throw an exception
 #define KEEP_CGI_OUTPUT_PIPE_READ_END                                          \
@@ -23,7 +25,7 @@ RFCCgiResponseGenerator::RFCCgiResponseGenerator(ILogger &logger, const std::str
 }
 
 RFCCgiResponseGenerator::~RFCCgiResponseGenerator() {}
-
+#include <iostream>
 // calls execve to execute the CGI script
 // returns the cgi process Info (pid, read end of the CGI Output pipe, write end
 // of the CGI Input pipe) Throws an exception if an error occurs
@@ -63,19 +65,11 @@ Triplet_t RFCCgiResponseGenerator::generateResponse(const IRoute &route,
         m_cleanUp(cgi_args.data(),
                   cgi_env.data()); // Free memory and throw exception 500
 
-    // Create a pipe to send the request body from the server to the CGI script
-    int cgi_input_pipe_fd[ 2 ];
-    if (pipe(cgi_input_pipe_fd) == -1)
-        // pipe failed
-        m_cleanUp(cgi_args.data(), cgi_env.data(),
-                  cgi_output_pipe_fd); // Free memory and throw exception 500
-
     // Fork a child process
     pid_t pid = fork();
     if (pid == -1)
         // fork failed
-        m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd,
-                  cgi_input_pipe_fd); // Free memory and throw exception 500
+        m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd); // Free memory and throw exception 500
 
     else if (pid == 0) // child process
     {
@@ -83,12 +77,20 @@ Triplet_t RFCCgiResponseGenerator::generateResponse(const IRoute &route,
                      "Forked a child process to execute the CGI script PID: " +
                          Converter::toString(getpid()) +
                          " Parent PID: " + Converter::toString(getppid()));
-        // stdin should read from CGI Input pipe
-        close(cgi_input_pipe_fd[ WRITE_END ]); // close write end
-        dup2(cgi_input_pipe_fd[ READ_END ],
-             STDIN_FILENO);                   // redirect stdin to pipe
-        close(cgi_input_pipe_fd[ READ_END ]); // close read end
 
+        // open a file and write the request body to it
+        int file_fd = open("temp_file", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        write(file_fd, request.getBodyString().c_str(), request.getBody().size());
+        close(file_fd);
+
+        // open the file for reading
+        file_fd = open("temp_file", O_RDONLY);
+
+        // stdin should read from the request body file
+        dup2(file_fd,
+             STDIN_FILENO);                   // redirect stdin to file descriptor
+        //close(file_fd); // close file descriptor
+        
         // stdout should write to CGI Output pipe
         close(cgi_output_pipe_fd[ READ_END ]); // close read end
         dup2(cgi_output_pipe_fd[ WRITE_END ],
@@ -99,8 +101,7 @@ Triplet_t RFCCgiResponseGenerator::generateResponse(const IRoute &route,
         execve(cgi_args[ 0 ], cgi_args.data(), cgi_env.data());
         m_logger.log(ERROR, "Execve failed: " + std::string(strerror(errno)));
         // If execve returns, an error occurred; free memory and exit
-        m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd,
-                  cgi_input_pipe_fd, NO_THROW);
+        m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd, NO_THROW);
         exit(EXIT_FAILURE);
     }
 
@@ -112,29 +113,22 @@ Triplet_t RFCCgiResponseGenerator::generateResponse(const IRoute &route,
         // Set the read end of the Cgi Output Pipe to non-blocking
         fcntl(cgi_output_pipe_fd[ 0 ], F_SETFL, O_NONBLOCK);
 
-        // Set the write end of the CGI Input pipe to non-blocking
-        fcntl(cgi_input_pipe_fd[ 1 ], F_SETFL, O_NONBLOCK);
-
         // Free memory and keep the write end of the CGI Input pipe open and the
         // read end of the CGI Output pipe open
         m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd,
-                  cgi_input_pipe_fd,
-                  NO_THROW | KEEP_CGI_OUTPUT_PIPE_READ_END |
-                      KEEP_CGI_INPUT_PIPE_WRITE_END);
+                  NO_THROW | KEEP_CGI_OUTPUT_PIPE_READ_END);
 
         // Log the Cgi info
         m_logger.log(VERBOSE, "Returning CGI info tuple; PID: " +
                                   Converter::toString(pid) +
                                   " CGI output pipe Read end: " +
-                                  Converter::toString(cgi_output_pipe_fd[ 0 ]) +
-                                  " CGI input pipe Write end: " +
-                                  Converter::toString(cgi_input_pipe_fd[ 1 ]));
+                                  Converter::toString(cgi_output_pipe_fd[ 0 ]));
 
         // Return the read end of the pipe to read the response later without
         // blocking
         return std::make_pair(pid,
                               std::make_pair(cgi_output_pipe_fd[ READ_END ],
-                                             cgi_input_pipe_fd[ WRITE_END ]));
+                                             -1)); // change to a simple pair later
     }
 
     return std::make_pair(-1, std::make_pair(-1, -1)); // unreachable code
@@ -144,7 +138,6 @@ void RFCCgiResponseGenerator::m_setCgiArguments(
     const std::string &cgi_script, const std::string &script, const IRoute &route, std::vector<char *> &cgi_args)
 {
     cgi_args.push_back(strdup(cgi_script.c_str())); // Interpreter absolute path
-std::cout << "cgi_script: " << cgi_script << std::endl;
     cgi_args.push_back(m_getScriptPath(
         script, route)); // script path: location block root path +
                                         // URI(excl. query string)
@@ -183,13 +176,15 @@ void RFCCgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
     cgi_env.push_back(strdup(
         ("SCRIPT_FILENAME=" + script_filename).c_str()));
     cgi_env.push_back(strdup(("SCRIPT_NAME=" + script).c_str()));
-    // path info test
-    std::string path_info = "/directory/youpi.bla";
+    // path info to satisfy 42 tester
+    std::string path_info = request.getUri();
     cgi_env.push_back(strdup(("PATH_INFO=" + path_info).c_str()));
     cgi_env.push_back(strdup(
         ("PATH_TRANSLATED=" + m_getPathTranslated(path_info, route)).c_str()));
     cgi_env.push_back(strdup(("REQUEST_URI=" + request.getUri()).c_str()));
     cgi_env.push_back(strdup(("SERVER_PROTOCOL=" + request.getHttpVersionString()).c_str()));
+    std::map<HttpHeader, std::string> headers = request.getHeaders();
+    cgi_env.push_back(strdup(("HTTP_X_SECRET_HEADER_FOR_TEST=" + headers[X_SECRET_HEADER_FOR_TEST]).c_str()));
     cgi_env.push_back(NULL);
 
     // Check for strdup failures
@@ -238,7 +233,6 @@ std::string RFCCgiResponseGenerator::m_getPathTranslated(std::string &path_info,
 
 void RFCCgiResponseGenerator::m_cleanUp(char *cgi_args[], char *cgi_env[],
                                      int cgi_output_pipe_fd[ 2 ],
-                                     int cgi_input_pipe_fd[ 2 ],
                                      short option) const
 {
     // Free args
@@ -265,14 +259,6 @@ void RFCCgiResponseGenerator::m_cleanUp(char *cgi_args[], char *cgi_env[],
         if ((option & KEEP_CGI_OUTPUT_PIPE_READ_END) == 0)
             close(cgi_output_pipe_fd[ 0 ]);
         close(cgi_output_pipe_fd[ 1 ]);
-    }
-
-    // Close CGI Input pipe
-    if (cgi_input_pipe_fd != NULL)
-    {
-        if ((option & KEEP_CGI_INPUT_PIPE_WRITE_END) == 0)
-            close(cgi_input_pipe_fd[ 1 ]);
-        close(cgi_input_pipe_fd[ 0 ]);
     }
 
     // Throw an exception

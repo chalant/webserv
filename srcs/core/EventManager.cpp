@@ -164,7 +164,6 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
         // Get the info
         int cgi_pid = info.first;
         int cgi_output_pipe_read_end = info.second.first;
-        int cgi_input_pipe_write_end = info.second.second;
 
         // Log the dynamic serving
         m_logger.log(VERBOSE,
@@ -173,20 +172,12 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
                          " waiting for process " +
                          Converter::toString(cgi_pid) +
                          " (CGI output pipe Read end: " +
-                         Converter::toString(cgi_output_pipe_read_end) +
-                         ", CGI input pipe Write end: " +
-                         Converter::toString(cgi_input_pipe_write_end) + ")");
+                         Converter::toString(cgi_output_pipe_read_end));
 
         // Add the CGI output pipe Read end to the poll set
         pollfd pollfd;
         pollfd.fd = cgi_output_pipe_read_end;
         pollfd.events = POLLIN;
-        pollfd.revents = 0;
-        m_pollfd_manager.addPipePollfd(pollfd);
-
-        // Add the CGI input pipe Write end to the poll set
-        pollfd.fd = cgi_input_pipe_write_end;
-        pollfd.events = POLLOUT;
         pollfd.revents = 0;
         m_pollfd_manager.addPipePollfd(pollfd);
     }

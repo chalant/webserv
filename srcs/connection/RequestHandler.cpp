@@ -147,19 +147,13 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             // Get CGI Info
             int cgi_pid = cgi_info.first;
             int cgi_output_pipe_read_end = cgi_info.second.first;
-            int cgi_input_pipe_write_end = cgi_info.second.second;
 
             // Record the cgi info
             connection.setCgiInfo(cgi_pid, cgi_output_pipe_read_end,
-                                  cgi_input_pipe_write_end);
+                                  -1); // -1 not used
 
             // Record the pipes to connection socket mappings
             m_pipe_routes[ cgi_output_pipe_read_end ] = socket_descriptor;
-            m_pipe_routes[ cgi_input_pipe_write_end ] = socket_descriptor;
-
-            // Push the request body to the request pipe
-            m_buffer_manager.pushFileBuffer(cgi_input_pipe_write_end,
-                                            request.getBody());
 
             return cgi_info; // cgi content
         }
@@ -267,9 +261,7 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     response_buffer.resize(response_buffer.size() - read_buffer_size + read_return_value);
 
     // print the response
-    std::string raw_response_str(response_buffer.begin(), response_buffer.end());
-    m_logger.log(VERBOSE, "RequestHandler::handlePipeRead: Response from CGI: " +
-                              raw_response_str);
+    m_logger.log(VERBOSE, "CGI response received 100%");
 
     // Set the response
     if (response_buffer.empty()) // Check if the response is empty
@@ -290,7 +282,6 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
 
     // Remove the descriptors from the pipe;socket map
     m_pipe_routes.erase(cgi_output_pipe_read_end);
-    m_pipe_routes.erase(cgi_input_pipe_write_end);
 
     // Close the pipes
     close(cgi_output_pipe_read_end);

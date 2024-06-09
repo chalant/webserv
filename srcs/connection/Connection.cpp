@@ -64,11 +64,11 @@ IResponse &Connection::getResponse() const { return *m_response; }
 ISession &Connection::getSession() const { return *m_session; }
 
 void Connection::setCgiInfo(int cgi_pid, int cgi_output_pipe_read_end,
-                            int cgi_input_pipe_write_end)
+                                int cgi_input_pipe_write_end)
 {
+    (void)cgi_input_pipe_write_end; // Unused
     m_cgi_pid = cgi_pid;
     m_cgi_output_pipe_read_end = cgi_output_pipe_read_end;
-    m_cgi_input_pipe_write_end = cgi_input_pipe_write_end;
 }
 
 // Connection management

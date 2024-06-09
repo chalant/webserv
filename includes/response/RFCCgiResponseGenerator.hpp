@@ -29,8 +29,7 @@ class RFCCgiResponseGenerator : public IResponseGenerator
 		std::string m_getPathTranslated(std::string &script_name,
 										const IRoute &route) const;
 		void m_cleanUp(char *cgi_args[], char *cgi_env[] = NULL,
-					int response_pipe_fd[ 2 ] = NULL,
-					int body_pipe_fd[ 2 ] = NULL, short option = 0x0) const;
+					int response_pipe_fd[ 2 ] = NULL, short option = 0x0) const;
 
 	public:
 		RFCCgiResponseGenerator(ILogger &logger, const std::string& bin_path);
