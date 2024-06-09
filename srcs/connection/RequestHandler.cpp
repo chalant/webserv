@@ -240,16 +240,12 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     // Read the response from the pipe until the pipe is empty or blocks
     do
     {
-        std::cout << "Response buffer size: " << response_buffer.size() << std::endl;
-
         // Resize the response buffer
         response_buffer.resize(response_buffer.size() + read_buffer_size);
 
         // Read the response from the pipe
         read_return_value = read(cgi_output_pipe_read_end, response_buffer.data() + response_buffer.size() - read_buffer_size,
                          read_buffer_size);
-
-        std::cout << "Read return value: " << read_return_value << std::endl;
     } while (read_return_value == static_cast<ssize_t>(read_buffer_size));
 
     // Handle blocking read
