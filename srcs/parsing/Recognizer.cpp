@@ -18,7 +18,7 @@ static bool completed(std::vector<EarleyItem> &set)
 {
     for (size_t i = 0; i < set.size(); i++)
     {
-        if (set[ i ].completed())
+        if (set[ i ].start() == 0 && set[ i ].completed())
             return true;
     }
     return false;
@@ -151,6 +151,7 @@ void Recognizer::recognize(std::vector<Token> const &tokens,
         throw ConfigSyntaxError(
             CRITICAL,
             "Syntax error at: \"" + tokens[ sets.size() - 2 ].value + "\"", 2);
+	std::cout << "COMPLETED " << completed(*current_set) << std::endl;
 }
 
 void Recognizer::print(Grammar const &grammar,
