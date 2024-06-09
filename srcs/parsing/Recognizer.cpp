@@ -151,7 +151,6 @@ void Recognizer::recognize(std::vector<Token> const &tokens,
         throw ConfigSyntaxError(
             CRITICAL,
             "Syntax error at: \"" + tokens[ sets.size() - 2 ].value + "\"", 2);
-	std::cout << "COMPLETED " << completed(*current_set) << std::endl;
 }
 
 void Recognizer::print(Grammar const &grammar,

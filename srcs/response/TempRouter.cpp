@@ -69,7 +69,6 @@ IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
 {
 	std::string	server_name = request->getHostName();
 	std::string server_port = request->getHostPort();
-	IConfiguration	*server = m_servers[0];
 	std::vector<IRoute *> *routes = m_routes[0];
 
 	//match servers.
@@ -78,7 +77,6 @@ IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
 	{
 		if (server_name == m_servers[i]->getString("server_name") && server_port == m_servers[i]->getString("listen"))
 		{
-			server = m_servers[i];
 			routes = m_routes[i];
 		}
 	}
