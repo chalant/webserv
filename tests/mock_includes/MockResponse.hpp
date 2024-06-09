@@ -19,6 +19,7 @@ private:
     std::string m_status_line;
     std::map<HttpHeader, std::string> m_headers;
     std::vector<char> m_body;
+    std::vector<char> m_buffer;
 
 public:
     // Default constructor
@@ -27,11 +28,12 @@ public:
     // Destructor
     virtual ~MockResponse();
 
-    // Getters for status line, headers, and body
+    // Getters for status line, headers, body and buffer
     virtual std::string getStatusLine() const;
     virtual std::string getHeaders() const;
     virtual std::string getBodyString() const;
     virtual std::vector<char> getBody() const;
+    virtual std::vector<char> getBuffer() const;
 
     // Setters for status line, headers, and body
     virtual void setStatusLine(std::string status_line);
@@ -63,6 +65,9 @@ public:
     // Convert headers to map or string
     virtual std::map<std::string, std::string> getHeadersStringMap() const;
     virtual std::vector<char> serialise();
+
+    // Append data to the buffer
+    void appendBuffer(std::vector<char> &data);
 };
 
 #endif // MOCKRESPONSE_HPP

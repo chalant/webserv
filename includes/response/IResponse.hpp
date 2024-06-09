@@ -19,11 +19,12 @@ class IResponse
 public:
     virtual ~IResponse() {};
 
-    // Getters for status line, headers, and body
+    // Getters for status line, headers, body and buffer
     virtual std::string getStatusLine() const = 0;
     virtual std::string getHeaders() const = 0;
     virtual std::string getBodyString() const = 0;
     virtual std::vector<char> getBody() const = 0;
+    virtual std::vector<char> &getBuffer() = 0;
 
     // Setters for status line, headers, and body
     virtual void setStatusLine(std::string status_line) = 0;
@@ -55,6 +56,9 @@ public:
     // Convert headers to map or string
     virtual std::map<std::string, std::string> getHeadersStringMap() const = 0;
     virtual std::vector<char> serialise() = 0;
+
+    // Append data to the buffer
+    virtual void appendBuffer(std::vector<char> &data) = 0;
 };
 
 #endif // IRESPONSE_HPP

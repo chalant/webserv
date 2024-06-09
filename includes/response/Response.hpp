@@ -33,15 +33,19 @@ private:
     // Helper
     const HttpHelper &m_http_helper;
 
+    // Response buffer - used to store incomplete cgi responses
+    std::vector<char> m_buffer;
+
 public:
     Response(const HttpHelper &http_helper);
     ~Response();
 
-    // Getters for status line, headers, and body
+    // Getters for status line, headers, body, and buffer
     virtual std::string getStatusLine() const;
     virtual std::string getHeaders() const;
     virtual std::string getBodyString() const;
     virtual std::vector<char> getBody() const;
+    virtual std::vector<char> &getBuffer();
 
     // Setters for status line, headers, and body
     virtual void setStatusLine(std::string status_line);
@@ -73,6 +77,9 @@ public:
     // Convert headers to map or string
     virtual std::map<std::string, std::string> getHeadersStringMap() const;
     virtual std::vector<char> serialise();
+
+    // Append data to the buffer
+    virtual void appendBuffer(std::vector<char> &data);
 };
 
 #endif // RESPONSE_HPP

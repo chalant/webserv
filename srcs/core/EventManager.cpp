@@ -360,6 +360,16 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
         // socket descriptor linked to the pipe
         client_socket = m_request_handler.handlePipeRead(pipe_descriptor);
 
+        // Check if all data was read from the pipe
+        if (client_socket == -1) // -1 indicates that the pipe blocked at some point
+        {
+            m_logger.log(VERBOSE, "Pipe read buffered, waiting for unblocking on pipe: " +
+                                  Converter::toString(pipe_descriptor));
+
+            // Return and wait for the next POLLIN event on the pipe
+            return;
+        }
+
         // Add the POLLOUT event for the client socket since the response is
         // ready
         ssize_t client_pollfd_index =

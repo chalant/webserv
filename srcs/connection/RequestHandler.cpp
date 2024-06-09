@@ -215,8 +215,10 @@ int RequestHandler::handlePipeException(int pipe_descriptor)
     return client_socket;
 }
 
-// Handles read input from pipe - responses larger than the buffer size are
-// currently not supported
+// Handles read input from pipe
+// Read into the response buffer until the pipe is empty or blocks
+// returns the client socket descriptor destination for the response
+// or -1 in case of blocking
 int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
 {
     // Get the client socket descriptor linked to the pipe
@@ -225,31 +227,58 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     // Give the ClientHandler the current socket descriptor
     m_client_handler.setSocketDescriptor(client_socket);
 
-    // Read the response from the pipe
-    std::vector<char> raw_response(4096, 0);
-    ssize_t bytesread = read(cgi_output_pipe_read_end, raw_response.data(),
-                             raw_response.size());
-    if (bytesread < 0)
-    {
-        std::cout << "Error reading from pipe with errno: " << errno << std::endl;
-        // Handle error response
-        this->handleErrorResponse(client_socket, INTERNAL_SERVER_ERROR);
-        return client_socket;
-    }
-    raw_response.resize(bytesread);
-
-    // print the response
-    m_logger.log(VERBOSE, "RequestHandler::handlePipeRead: Response from CGI: " +
-                              std::string(raw_response.begin(), raw_response.end()));
-
     // Get a reference to the Response
     IResponse &response = m_connection_manager.getResponse(client_socket);
 
+    // Get a reference to the Response Buffer
+    std::vector<char> &response_buffer = response.getBuffer();
+
+    // Read the response from the pipe
+    size_t read_buffer_size = 8;
+    ssize_t read_return_value;
+
+    // Read the response from the pipe until the pipe is empty or blocks
+    do
+    {
+        std::cout << "Response buffer size: " << response_buffer.size() << std::endl;
+
+        // Resize the response buffer
+        response_buffer.resize(response_buffer.size() + read_buffer_size);
+
+        // Read the response from the pipe
+        read_return_value = read(cgi_output_pipe_read_end, response_buffer.data() + response_buffer.size() - read_buffer_size,
+                         read_buffer_size);
+
+        std::cout << "Read return value: " << read_return_value << std::endl;
+    } while (read_return_value == static_cast<ssize_t>(read_buffer_size));
+
+    // Handle blocking read
+    if (read_return_value < 0)
+    {
+        // Resize the response buffer to the actual size
+        response_buffer.resize(response_buffer.size() - read_buffer_size);
+
+        // test print the raw_response content
+        std::cout << " Read returned < 0; errno: " << errno << std::endl;
+        std::string raw_response_str(response_buffer.begin(), response_buffer.end());
+        std::cout << "Current response buffer content: " << raw_response_str << std::endl;
+
+        // return -1 to indicate that we are not done reading
+        return -1;
+    }
+
+    // Resize the response buffer to the actual size
+    response_buffer.resize(response_buffer.size() - read_buffer_size + read_return_value);
+
+    // print the response
+    m_logger.log(VERBOSE, "RequestHandler::handlePipeRead: Response from CGI: " +
+                              raw_response_str);
+
     // Set the response
-    if (raw_response.empty()) // Check if the response is empty
+    if (response_buffer.empty()) // Check if the response is empty
         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
     else
-        response.setCgiResponse(raw_response); // Good response
+        response.setCgiResponse(response_buffer); // Good response
 
     // Push the response to the buffer
     m_sendResponse(client_socket);

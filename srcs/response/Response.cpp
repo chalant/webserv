@@ -12,7 +12,7 @@
 
 // Default constructor
 Response::Response(const HttpHelper &httpHelper)
-    : m_content_length(0), m_http_helper(httpHelper)
+    : m_content_length(0), m_http_helper(httpHelper), m_buffer(0)
 {
 }
 
@@ -41,6 +41,9 @@ std::string Response::getBodyString() const { return m_body.data(); }
 
 // Getter for body vector
 std::vector<char> Response::getBody() const { return m_body; }
+
+// Getter for buffer vector
+std::vector<char> &Response::getBuffer() { return m_buffer; }
 
 // Setter for status line - string input
 void Response::setStatusLine(std::string status_line)
@@ -300,6 +303,12 @@ std::vector<char> Response::serialise()
 
     // Return the serialised response
     return response;
+}
+
+// Append data to the buffer
+void Response::appendBuffer(std::vector<char> &data)
+{
+    m_buffer.insert(m_buffer.end(), data.begin(), data.end());
 }
 
 // Path: srcs/Response.cpp
