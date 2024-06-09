@@ -271,6 +271,7 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     response_buffer.resize(response_buffer.size() - read_buffer_size + read_return_value);
 
     // print the response
+    std::string raw_response_str(response_buffer.begin(), response_buffer.end());
     m_logger.log(VERBOSE, "RequestHandler::handlePipeRead: Response from CGI: " +
                               raw_response_str);
 
