@@ -231,11 +231,16 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
                              raw_response.size());
     if (bytesread < 0)
     {
+        std::cout << "Error reading from pipe with errno: " << errno << std::endl;
         // Handle error response
         this->handleErrorResponse(client_socket, INTERNAL_SERVER_ERROR);
         return client_socket;
     }
     raw_response.resize(bytesread);
+
+    // print the response
+    m_logger.log(VERBOSE, "RequestHandler::handlePipeRead: Response from CGI: " +
+                              std::string(raw_response.begin(), raw_response.end()));
 
     // Get a reference to the Response
     IResponse &response = m_connection_manager.getResponse(client_socket);

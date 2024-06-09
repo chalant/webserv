@@ -319,9 +319,6 @@ Triplet_t TempRouter::execRoute(IRoute *route, IRequest *request, IResponse *res
 // Sort Routes; regex first, then by path length in descending order
 bool TempRouter::m_sortRoutes(const IRoute *a, const IRoute *b)
 {
-    std::cout << "a: " << a->getPath() << " b: " << b->getPath() << std::endl;
-    std::cout << "a is regex: " << a->isRegex() << " b is regex: " << b->isRegex() << std::endl;
-    // if a is a regex and b is not a should be first
     if (a->isRegex() && !b->isRegex())
         return true;
     if (!a->isRegex() && b->isRegex())

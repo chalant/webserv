@@ -183,11 +183,13 @@ void RFCCgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
     cgi_env.push_back(strdup(
         ("SCRIPT_FILENAME=" + script_filename).c_str()));
     cgi_env.push_back(strdup(("SCRIPT_NAME=" + script).c_str()));
-    std::string path_info = request.getPathInfo(script);
+    // path info test
+    std::string path_info = "/directory/youpi.bla";
     cgi_env.push_back(strdup(("PATH_INFO=" + path_info).c_str()));
     cgi_env.push_back(strdup(
         ("PATH_TRANSLATED=" + m_getPathTranslated(path_info, route)).c_str()));
     cgi_env.push_back(strdup(("REQUEST_URI=" + request.getUri()).c_str()));
+    cgi_env.push_back(strdup(("SERVER_PROTOCOL=" + request.getHttpVersionString()).c_str()));
     cgi_env.push_back(NULL);
 
     // Check for strdup failures
@@ -198,7 +200,7 @@ void RFCCgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
 
     // Log the environment variables
     for (size_t i = 0; i < cgi_env.size() - 1; ++i)
-        m_logger.log(DEBUG, "CGI Environment: " + std::string(cgi_env[ i ]));
+        m_logger.log(VERBOSE, "CGI Environment: " + std::string(cgi_env[ i ]));
 }
 
 char *RFCCgiResponseGenerator::m_getScriptPath(const std::string &script_name,
