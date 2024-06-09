@@ -27,8 +27,143 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
     m_response_generators["PUT"] = new UploadResponseGenerator(logger);
     //m_response_generators["CGI"] = NULL;
 
-    // Create a route for each location block
-    const BlockList &locations_list = configuration.getBlocks("http")[0]->getBlocks("server")[0]->getBlocks("location");
+	const BlockList &servers = configuration.getBlocks("http")[0]->getBlocks("server");
+	//first server is the root configuration and is the default one.
+	m_servers.push_back(&m_configuration);
+	m_routes.push_back(new std::vector<IRoute *>());
+	m_createRoutes(*servers[0], *m_routes[0]);
+    for (size_t i = 1; i < servers.size() + 1; i++)
+	{
+		m_servers.push_back(servers[i]);
+		m_routes.push_back(new std::vector<IRoute *>());
+		m_createRoutes(*servers[i], *m_routes[i]);
+	}
+}
+
+// Destructor
+TempRouter::~TempRouter()
+{
+    // Log the destruction of the TempRouter
+    m_logger.log(VERBOSE, "TempRouter destroyed.");
+
+    // Delete the ResponseGenerators
+    std::map<std::string, IResponseGenerator *>::iterator it;
+    for (it = m_response_generators.begin(); it != m_response_generators.end(); it++)
+    {
+        delete it->second;
+    }
+
+    // Delete the Routes
+    for (size_t i = 0; i < m_routes.size(); i++)
+    {
+		for (size_t j = 0; j < m_routes[i]->size(); j++)
+		{
+        	delete m_routes[i]->at(j);
+		}
+		delete m_routes[i];
+    }
+}
+
+#include <iostream>
+IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
+{
+	std::string	server_name = request->getHostName();
+	std::string server_port = request->getHostPort();
+	IConfiguration	*server = m_servers[0];
+	std::vector<IRoute *> *routes = m_routes[0];
+
+	//match servers.
+	size_t i;
+	for (i = 1; i < m_servers.size(); i++)
+	{
+		if (server_name == m_servers[i]->getString("server_name") && server_port == m_servers[i]->getString("listen"))
+		{
+			server = m_servers[i];
+			routes = m_routes[i];
+		}
+	}
+
+
+	IRoute *route = routes->at(routes->size() - 1); // Default route
+    size_t routes_stop = routes->size();
+    std::string uri = request->getUri();
+    std::string method_str = m_http_helper.httpMethodStringMap(request->getMethod());
+    IResponseGenerator *response_generator = m_response_generators[ method_str ];
+	size_t body_size = request->getBody().size();
+    
+    // Match the request to a route
+    (void)response;
+
+    // Match the request to a route
+    HttpMethod method = request->getMethod();
+    // size_t i;
+    // for (i = 0; i < routes_stop; i++)
+    // {
+    //     // if the route path is contained in the uri
+    //     if (uri.find(m_routes[i]->getPath()) != std::string::npos)
+    //     {
+    //         // Check if the method is allowed
+    //         if (m_routes[i]->isAllowedMethod(method) == false)
+    //         {
+    //             continue;
+    //         }
+    //         route = m_routes[i]; // select the route
+    //         route->setResponseGenerator(response_generator);
+    //         return route;
+    //     }
+    // }
+
+	// search for a route that matches the request.
+    for (size_t i = 0; i < routes_stop; i++)
+    {
+        // if the route path is contained in the uri
+        if ((routes->at(i)->match(uri) && routes->at(i)->isAllowedMethod(method) && body_size <= routes->at(i)->getClientMaxBodySize()) || routes->at(i)->getPath() == request->getUri())
+		{
+			if (body_size > routes->at(i)->getClientMaxBodySize())
+			{
+				throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
+			}
+			if (routes->at(i)->isAllowedMethod(method) == false)
+			{
+				throw HttpStatusCodeException(METHOD_NOT_ALLOWED);
+			}
+            std::cout<< "check redirect\n";
+            if (routes->at(i)->isRedirect(request->getUri()))
+            {
+                std::cout << "redirecting\n";
+                throw HttpRedirectException(routes->at(i)->getRedirect(request->getUri()));
+            }
+            std::cout << "not redirecting\n";
+			//return cgi directly since it already has a response generator
+			if (routes->at(i)->isCGI()) { return routes->at(i); }
+			routes->at(i)->setResponseGenerator(response_generator); 
+			return routes->at(i);
+		}
+    }	
+
+    route = routes->at(routes->size() - 1); // Default route
+    if (route->isAllowedMethod(method) == false)
+    {
+        throw HttpStatusCodeException(METHOD_NOT_ALLOWED);
+    }
+	route->setResponseGenerator(response_generator);
+	return route;
+}
+
+// Sort Routes; regex first, then by path length in descending order
+bool TempRouter::m_sortRoutes(const IRoute *a, const IRoute *b)
+{
+    if (a->isRegex() && !b->isRegex())
+        return true;
+    if (!a->isRegex() && b->isRegex())
+        return false;
+    return a->getPath().length() > b->getPath().length();
+}
+
+void	TempRouter::m_createRoutes(IConfiguration &server, std::vector<IRoute *> &routes)
+{
+	// Create a route for each location block
+    const BlockList &locations_list = server.getBlocks("location");
     for (size_t i = 0; i < locations_list.size(); i++)
     {
         std::string path;
@@ -122,7 +257,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 			route = new Route(path, is_regex, methods, root, index, cgi_path, matcher, client_max_body_size, redirects);
 			m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
 			route->setResponseGenerator(cgi_rg);
-			m_routes.push_back(route);
+			routes.push_back(route);
 			m_response_generators[ cgi_path ] = cgi_rg;
 		}
 		if (!cgi_route)
@@ -130,7 +265,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 			m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
 			route = new Route(path, is_regex, methods, root, index, client_max_body_size, redirects);
 			//route->setResponseGenerator(m_response_generators["GET"]);
-			m_routes.push_back(route);
+			routes.push_back(route);
 		}
         // // Get the cgi_script
         // // e.g. cgi_script /usr/bin/python3;
@@ -147,182 +282,13 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
     }
 
     // Sort the routes
-    std::sort(m_routes.begin(), m_routes.end(), m_sortRoutes);
+    std::sort(routes.begin(), routes.end(), m_sortRoutes);
 
     // print all the route paths
-    for (size_t i = 0; i < m_routes.size(); i++)
+    for (size_t i = 0; i < routes.size(); i++)
     {
-        m_logger.log(VERBOSE, "[TEMPROUTER] Route path: '" + m_routes[i]->getPath() + "'.");
+        m_logger.log(VERBOSE, "[TEMPROUTER] Route path: '" + routes[i]->getPath() + "'.");
     }
-}
-
-// Destructor
-TempRouter::~TempRouter()
-{
-    // Log the destruction of the TempRouter
-    m_logger.log(VERBOSE, "TempRouter destroyed.");
-
-    // Delete the ResponseGenerators
-    std::map<std::string, IResponseGenerator *>::iterator it;
-    for (it = m_response_generators.begin(); it != m_response_generators.end(); it++)
-    {
-        delete it->second;
-    }
-
-    // Delete the Routes
-    for (size_t i = 0; i < m_routes.size(); i++)
-    {
-        delete m_routes[i];
-    }
-}
-
-#include <iostream>
-IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
-{
-	IRoute *route = m_routes[m_routes.size() - 1]; // Default route
-    size_t routes_stop = m_routes.size();
-    std::string uri = request->getUri();
-    std::string method_str = m_http_helper.httpMethodStringMap(request->getMethod());
-    IResponseGenerator *response_generator = m_response_generators[ method_str ];
-	size_t body_size = request->getBody().size();
-    
-    // Match the request to a route
-    (void)response;
-    // Check if cgi request
-    // size_t last_dot = uri.find_last_of('.');
-    // std::string extension = uri.substr(last_dot + 1);
-    // if (extension == "php" || extension == "py")
-    // {
-    //     response_generator = m_response_generators["CGI"];
-    //     uri = "." + extension; // temp for matching
-    //     // set routes_stop to the first route that is not a regex
-    //     for (size_t i = 0; i < routes_stop; i++)
-    //     {
-    //         if (m_routes[i]->isRegex() == false)
-    //         {
-    //             routes_stop = i;
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // Match the request to a route
-    HttpMethod method = request->getMethod();
-    // size_t i;
-    // for (i = 0; i < routes_stop; i++)
-    // {
-    //     // if the route path is contained in the uri
-    //     if (uri.find(m_routes[i]->getPath()) != std::string::npos)
-    //     {
-    //         // Check if the method is allowed
-    //         if (m_routes[i]->isAllowedMethod(method) == false)
-    //         {
-    //             continue;
-    //         }
-    //         route = m_routes[i]; // select the route
-    //         route->setResponseGenerator(response_generator);
-    //         return route;
-    //     }
-    // }
-
-	// search for a route that matches the request.
-    for (size_t i = 0; i < routes_stop; i++)
-    {
-		std::cout << "PATH " << m_routes[i]->getPath() << " " << request->getUri() << std::endl;
-        // if the route path is contained in the uri
-        if ((m_routes[i]->match(uri) && m_routes[i]->isAllowedMethod(method) && body_size <= m_routes[i]->getClientMaxBodySize()) || m_routes[i]->getPath() == request->getUri())
-		{
-			if (body_size > m_routes[i]->getClientMaxBodySize())
-			{
-				throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
-			}
-			if (m_routes[i]->isAllowedMethod(method) == false)
-			{
-				throw HttpStatusCodeException(METHOD_NOT_ALLOWED);
-			}
-            std::cout<< "check redirect\n";
-            if (m_routes[i]->isRedirect(request->getUri()))
-            {
-                std::cout << "redirecting\n";
-                throw HttpRedirectException(m_routes[i]->getRedirect(request->getUri()));
-            }
-            std::cout << "not redirecting\n";
-			//return cgi directly since it already has a response generator
-			if (m_routes[i]->isCGI()) { return m_routes[ i ]; }
-			m_routes[ i ]->setResponseGenerator(response_generator); 
-			return m_routes [ i ];
-		}
-    }	
-
-	//todo: need a better default route this could be anything...
-    route = m_routes[m_routes.size() - 1]; // Default route
-    if (route->isAllowedMethod(method) == false)
-    {
-        throw HttpStatusCodeException(METHOD_NOT_ALLOWED);
-    }
-	route->setResponseGenerator(response_generator);
-	return route;
-}
-
-// Execute the route
-Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
-{
-    IRoute *route = m_routes[m_routes.size() - 1]; // Default route
-    size_t routes_stop = m_routes.size();
-    std::string uri = request->getUri();
-    std::string method_str = m_http_helper.httpMethodStringMap(request->getMethod());
-    IResponseGenerator *response_generator = m_response_generators[method_str];
-    
-    // Match the request to a route
-
-    // Check if cgi request
-    size_t last_dot = uri.find_last_of('.');
-    std::string extension = uri.substr(last_dot + 1);
-    if (extension == "php" || extension == "py")
-    {
-        response_generator = m_response_generators["CGI"];
-        uri = "." + extension; // temp for matching
-        // set routes_stop to the first route that is not a regex
-        for (size_t i = 0; i < routes_stop; i++)
-        {
-            if (m_routes[i]->isRegex() == false)
-            {
-                // print the route path
-                routes_stop = i;
-                break;
-            }
-        }
-    }
-
-    // Match the request to a route
-    HttpMethod method = request->getMethod();
-    for (size_t i = 0; i < routes_stop; i++)
-    {
-        // if the route path is contained in the uri
-        if (uri.find(m_routes[i]->getPath()) != std::string::npos)
-        {
-            // Check if the method is allowed
-            if (m_routes[i]->isAllowedMethod(method) == false)
-            {
-                response->setErrorResponse(METHOD_NOT_ALLOWED);
-                return Triplet_t(-1, std::pair<int, int>(-1, -1));
-            }
-            route = m_routes[i]; // select the route
-            break;
-        }
-    }
-
-    // Generate the response
-    Triplet_t return_value = response_generator->generateResponse(*route, *request, *response, m_configuration);
-
-    // print return value
-    m_logger.log(DEBUG,
-                 "Return value: " + Converter::toString(return_value.first) +
-                     " " + Converter::toString(return_value.second.first) +
-                     " " + Converter::toString(return_value.second.second));
-
-    // return the return value
-    return return_value;
 }
 
 Triplet_t TempRouter::execRoute(IRoute *route, IRequest *request, IResponse *response)
@@ -339,16 +305,6 @@ Triplet_t TempRouter::execRoute(IRoute *route, IRequest *request, IResponse *res
 
     // return the return value
     return return_value;
-}
-
-// Sort Routes; regex first, then by path length in descending order
-bool TempRouter::m_sortRoutes(const IRoute *a, const IRoute *b)
-{
-    if (a->isRegex() && !b->isRegex())
-        return true;
-    if (!a->isRegex() && b->isRegex())
-        return false;
-    return a->getPath().length() > b->getPath().length();
 }
 
 IResponseGenerator	*TempRouter::m_createCGIResponseGenerator(const std::string& type, const std::string& cgi_path, ILogger &logger)
