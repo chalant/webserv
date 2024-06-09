@@ -228,7 +228,7 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     std::vector<char> &response_buffer = response.getBuffer();
 
     // Read the response from the pipe
-    size_t read_buffer_size = 8;
+    size_t read_buffer_size = 4096;
     ssize_t read_return_value;
 
     // Read the response from the pipe until the pipe is empty or blocks

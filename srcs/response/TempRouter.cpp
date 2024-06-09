@@ -37,6 +37,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
         std::string root;
         std::string index;
         std::string cgi_script;
+		size_t		client_max_body_size;
 
         // Get the path
         std::vector<std::string> &location_params = locations_list[i]->getParameters();
@@ -72,6 +73,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
         else
             index = index_vector[0];
 
+		client_max_body_size = locations_list[i]->getSize_t("client_max_body_size");
 		// add cgi's
 		const BlockList	&cgis =  locations_list[i]->getBlocks("cgi");
 		// if there is any CGI in the file, check if it is active and create it if it does not already exist.
@@ -109,7 +111,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 			}
 			else { matcher = m_uri_matchers[ cgi_path ]; }
 			m_uri_matchers[cgi_path] = matcher;
-			route = new Route(path, is_regex, methods, root, index, cgi_path, matcher);
+			route = new Route(path, is_regex, methods, root, index, cgi_path, matcher, client_max_body_size);
 			m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
 			route->setResponseGenerator(cgi_rg);
 			m_routes.push_back(route);
@@ -118,7 +120,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 		if (!cgi_route)
 		{
 			m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
-			route = new Route(path, is_regex, methods, root, index);
+			route = new Route(path, is_regex, methods, root, index, client_max_body_size);
 			//route->setResponseGenerator(m_response_generators["GET"]);
 			m_routes.push_back(route);
 		}
@@ -174,6 +176,7 @@ IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
     std::string uri = request->getUri();
     std::string method_str = m_http_helper.httpMethodStringMap(request->getMethod());
     IResponseGenerator *response_generator = m_response_generators[ method_str ];
+	size_t body_size = request->getBody().size();
     
     // Match the request to a route
     (void)response;
@@ -217,9 +220,18 @@ IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
 	// search for a route that matches the request.
     for (size_t i = 0; i < routes_stop; i++)
     {
+		std::cout << "PATH " << m_routes[i]->getPath() << " " << request->getUri() << std::endl;
         // if the route path is contained in the uri
-        if (m_routes[i]->match(uri) && m_routes[i]->isAllowedMethod(method)) 
+        if ((m_routes[i]->match(uri) && m_routes[i]->isAllowedMethod(method) && body_size <= m_routes[i]->getClientMaxBodySize()) || m_routes[i]->getPath() == request->getUri())
 		{
+			if (body_size > m_routes[i]->getClientMaxBodySize())
+			{
+				throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
+			}
+			if (m_routes[i]->isAllowedMethod(method) == false)
+			{
+				throw HttpStatusCodeException(METHOD_NOT_ALLOWED);
+			}
 			//return cgi directly since it already has a response generator
 			if (m_routes[i]->isCGI()) { return m_routes[ i ]; }
 			m_routes[ i ]->setResponseGenerator(response_generator); 
@@ -300,8 +312,6 @@ Triplet_t TempRouter::execRoute(IRequest *request, IResponse *response)
 
 Triplet_t TempRouter::execRoute(IRoute *route, IRequest *request, IResponse *response)
 {
-	if (!route)
-		return Triplet_t(-1, std::pair<int, int>(-1, -1));
     IResponseGenerator *response_generator = route->getResponseGenerator();
     // Generate the response
     Triplet_t return_value = response_generator->generateResponse(*route, *request, *response, m_configuration);

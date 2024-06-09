@@ -54,6 +54,7 @@ public:
     virtual std::string getPath() const = 0;
     virtual std::string getIndex() const = 0;
     virtual std::string getCgiScript() const = 0;
+	virtual size_t		getClientMaxBodySize() const = 0;
     virtual bool isAllowedMethod(const HttpMethod method) const = 0;
     virtual bool isRegex() const = 0;
 	virtual bool isCGI() const = 0;

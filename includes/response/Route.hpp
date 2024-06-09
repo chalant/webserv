@@ -20,17 +20,19 @@ private:
     IResponseGenerator	*m_response_generator;
 	IURIMatcher			*m_matcher;
 	const bool	m_is_CGI;
+	const size_t	m_client_max_body_size;
 
 public:
 	Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-             const std::string index, const std::string cgi_script, IURIMatcher *matcher);
+             const std::string index, size_t client_max_body_size);
 	Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-             const std::string index);
+             const std::string index, const std::string cgi_script, IURIMatcher *match, size_t client_max_body_size);
     ~Route();
     std::string getPath() const;
     std::string getRoot() const;
     std::string getIndex() const;
     std::string getCgiScript() const;
+	size_t		getClientMaxBodySize() const;
     bool isAllowedMethod(const HttpMethod method) const;
     bool isRegex() const;
 	bool isCGI() const;
