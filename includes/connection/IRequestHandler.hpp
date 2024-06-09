@@ -15,6 +15,7 @@ public:
     virtual int handlePipeRead(int) = 0;
     virtual void handleErrorResponse(int, int) = 0;
     virtual void handleErrorResponse(int, HttpStatusCode) = 0;
+    virtual void handleRedirectResponse(int, std::string) = 0;
     virtual void removeConnection(int) = 0;
 };
 

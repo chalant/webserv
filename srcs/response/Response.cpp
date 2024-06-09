@@ -170,6 +170,16 @@ void Response::setErrorResponse(int status_code)
     this->setErrorResponse(static_cast<HttpStatusCode>(status_code));
 }
 
+// Set all response fields for a permanently moved resource
+void Response::setRedirectResponse(std::string location)
+{
+    this->setStatusLine(MOVED_PERMANENTLY);
+    this->setHeaders("location: " + location + "\r\n"
+                     "content-length: 0\r\n"
+                     "connection: close\r\n"
+                     "server: webserv/1.0\r\n");
+}
+
 // Set response from a CGI response
 void Response::setCgiResponse(std::vector<char> response)
 {

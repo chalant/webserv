@@ -43,6 +43,9 @@ public:
     virtual void setErrorResponse(HttpStatusCode status_code) = 0;
     virtual void setErrorResponse(int status_code) = 0;
 
+    // Set a redirect response
+    virtual void setRedirectResponse(std::string location) = 0;
+
     // Set response fields from a complete response vector
     virtual void setCgiResponse(std::vector<char> response) = 0;
 

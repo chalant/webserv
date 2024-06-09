@@ -299,5 +299,12 @@ public:
     SigsegvException() : WebservException(CRITICAL, "SIGSEGV received.", 0) {};
 };
 
+class HttpRedirectException : public WebservException
+{
+public:
+    HttpRedirectException(const std::string &location)
+        : WebservException(INFO, location, 0) {};
+};
+
 #endif // WEBSERVEXCEPTIONS_HPP
        // Path: includes/exeption/WebservExceptions.hpp

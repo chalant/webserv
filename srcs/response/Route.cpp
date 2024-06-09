@@ -2,15 +2,15 @@
 
 // Constructor
 Route::Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-             const std::string index, const std::string cgi_script, IURIMatcher *matcher, size_t client_max_body_size)
-	: m_path(path), m_is_regex(is_regex), m_methods(methods), m_root(root), m_index(index), m_cgi_script(cgi_script), m_matcher(matcher), m_is_CGI(true), m_client_max_body_size(client_max_body_size)
+             const std::string index, const std::string cgi_script, IURIMatcher *matcher, size_t client_max_body_size, const std::map<std::string, std::string> redirects)
+	: m_path(path), m_is_regex(is_regex), m_methods(methods), m_root(root), m_index(index), m_cgi_script(cgi_script), m_matcher(matcher), m_is_CGI(true), m_client_max_body_size(client_max_body_size), m_redirects(redirects)
 {
 
 }
 
 Route::Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-             const std::string index, size_t client_max_body_size)
-	: m_path(path), m_is_regex(is_regex), m_methods(methods), m_root(root), m_index(index), m_cgi_script(""), m_matcher(NULL), m_is_CGI(false), m_client_max_body_size(client_max_body_size)
+             const std::string index, size_t client_max_body_size, const std::map<std::string, std::string> redirects)
+	: m_path(path), m_is_regex(is_regex), m_methods(methods), m_root(root), m_index(index), m_cgi_script(""), m_matcher(NULL), m_is_CGI(false), m_client_max_body_size(client_max_body_size), m_redirects(redirects)
 {
 }
 
@@ -45,6 +45,28 @@ bool Route::isAllowedMethod(const HttpMethod method) const
 // Check if the path is a regex
 bool Route::isRegex() const { return m_is_regex; }
 bool Route::isCGI() const { return m_is_CGI; }
+
+// Check if the uri is a redirect
+bool Route::isRedirect(const std::string &uri) const
+{
+    for (std::map<std::string, std::string>::const_iterator it = m_redirects.begin(); it != m_redirects.end(); ++it)
+    {
+        if (uri.find(it->first) != std::string::npos)
+            return true;
+    }
+    return false;
+}
+
+// Get the redirect
+std::string Route::getRedirect(const std::string &uri) const
+{
+    for (std::map<std::string, std::string>::const_iterator it = m_redirects.begin(); it != m_redirects.end(); ++it)
+    {
+        if (uri.find(it->first) != std::string::npos)
+            return it->second;
+    }
+    return "";
+}
 
 // Get the response generator
 IResponseGenerator *Route::getResponseGenerator() const

@@ -175,6 +175,8 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         if (dynamic_cast<const HttpStatusCodeException *>(&e))
             status_code =
                 e.getErrorCode(); // An HttpStatusCodeException was thrown
+        else if (dynamic_cast<const HttpRedirectException *>(&e))
+            status_code = 301; // Moved Permanently (Redirect
         else
             status_code = 500; // Internal Server Error; Default status code for
                                // other exceptions
@@ -184,8 +186,16 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
             e, "RequestHandler::processRequest socket=\"" +
                    Converter::toString(socket_descriptor) + "\"");
 
-        // Handle error response
-        this->handleErrorResponse(socket_descriptor, status_code);
+        if (status_code == 301) // Redirect
+        {
+            // Handle redirect response
+            this->handleRedirectResponse(socket_descriptor, e.what());
+        }
+        else
+        {
+            // Handle error response
+            this->handleErrorResponse(socket_descriptor, status_code);
+        }
 
         // return -1
         return Triplet_t(-1, std::pair<int, int>(-1, -1));
@@ -323,6 +333,19 @@ void RequestHandler::handleErrorResponse(int socket_descriptor, int status_code)
     m_sendResponse(socket_descriptor);
 }
 
+// Handles redirect responses
+void RequestHandler::handleRedirectResponse(int socket_descriptor, std::string location)
+{
+    // Get a reference to the Response
+    IResponse &response = m_connection_manager.getResponse(socket_descriptor);
+
+    // Set the response to the redirect status code
+    response.setRedirectResponse(location);
+
+    // Push the response to the buffer
+    m_sendResponse(socket_descriptor);
+}
+
 // Handle error responses - HttpStatusCode input
 void RequestHandler::handleErrorResponse(int socket_descriptor,
                                          HttpStatusCode status_code)
@@ -352,7 +375,6 @@ void RequestHandler::removeConnection(int socket_descriptor)
         m_connection_manager.removeConnection(socket_descriptor);
     else // temp fix; close it anyway
         m_connection_manager.removeConnection(socket_descriptor);
-
 }
 
 // path: srcs/RequestHandler.cpp

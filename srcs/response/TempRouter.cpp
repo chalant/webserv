@@ -38,6 +38,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
         std::string index;
         std::string cgi_script;
 		size_t		client_max_body_size;
+        std::map<std::string, std::string> redirects;
 
         // Get the path
         std::vector<std::string> &location_params = locations_list[i]->getParameters();
@@ -73,7 +74,14 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
         else
             index = index_vector[0];
 
+        // Get the max body size
 		client_max_body_size = locations_list[i]->getSize_t("client_max_body_size");
+
+        // Get the redirects
+        std::vector<std::string> redirects_vector = locations_list[i]->getStringVector("rewrite");
+        for (size_t q = 0; q < redirects_vector.size() / 2; q++)
+            redirects[redirects_vector[q * 2]] = redirects_vector[q * 2 + 1];
+
 		// add cgi's
 		const BlockList	&cgis =  locations_list[i]->getBlocks("cgi");
 		// if there is any CGI in the file, check if it is active and create it if it does not already exist.
@@ -111,7 +119,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 			}
 			else { matcher = m_uri_matchers[ cgi_path ]; }
 			m_uri_matchers[cgi_path] = matcher;
-			route = new Route(path, is_regex, methods, root, index, cgi_path, matcher, client_max_body_size);
+			route = new Route(path, is_regex, methods, root, index, cgi_path, matcher, client_max_body_size, redirects);
 			m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
 			route->setResponseGenerator(cgi_rg);
 			m_routes.push_back(route);
@@ -120,7 +128,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 		if (!cgi_route)
 		{
 			m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
-			route = new Route(path, is_regex, methods, root, index, client_max_body_size);
+			route = new Route(path, is_regex, methods, root, index, client_max_body_size, redirects);
 			//route->setResponseGenerator(m_response_generators["GET"]);
 			m_routes.push_back(route);
 		}
@@ -232,6 +240,13 @@ IRoute	*TempRouter::getRoute(IRequest *request, IResponse *response)
 			{
 				throw HttpStatusCodeException(METHOD_NOT_ALLOWED);
 			}
+            std::cout<< "check redirect\n";
+            if (m_routes[i]->isRedirect(request->getUri()))
+            {
+                std::cout << "redirecting\n";
+                throw HttpRedirectException(m_routes[i]->getRedirect(request->getUri()));
+            }
+            std::cout << "not redirecting\n";
 			//return cgi directly since it already has a response generator
 			if (m_routes[i]->isCGI()) { return m_routes[ i ]; }
 			m_routes[ i ]->setResponseGenerator(response_generator); 

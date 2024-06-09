@@ -86,6 +86,9 @@ public:
     void handleErrorResponse(int socket_descriptor, int status_code);
     void handleErrorResponse(int socket_descriptor, HttpStatusCode status_code);
 
+    // Handle redirect
+    void handleRedirectResponse(int socket_descriptor, std::string location);
+    
     // Remove and close the connection
     void removeConnection(int socket_descriptor);
 };
