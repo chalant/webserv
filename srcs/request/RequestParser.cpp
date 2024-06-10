@@ -318,7 +318,6 @@ void RequestParser::m_parseHeader(
     }
 }
 
-#include <iostream>
 // Function to parse the body of an HTTP request
 void RequestParser::parseBody(IRequest &parsed_request) const
 {

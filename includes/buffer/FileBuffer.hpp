@@ -14,7 +14,7 @@
 #include <vector>
 
 // Default values for maximum size and flush threshold
-#define DEFAULT_MAX_SIZE 33554432     // 32 MB
+#define DEFAULT_MAX_SIZE 157286400    // 150 MB
 #define DEFAULT_FLUSH_THRESHOLD 32768 // 32 KB
 
 class FileBuffer : public IBuffer

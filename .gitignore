@@ -20,5 +20,7 @@ logs/*
 !logs/.gitkeep
 upload/*
 !upload/.gitkeep
+tmp/*
+!tmp/.gitkeep
 *.DS_Store
 temp_file

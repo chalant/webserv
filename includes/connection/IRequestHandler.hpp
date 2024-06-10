@@ -17,6 +17,7 @@ public:
     virtual void handleErrorResponse(int, HttpStatusCode) = 0;
     virtual void handleRedirectResponse(int, std::string) = 0;
     virtual void removeConnection(int) = 0;
+    virtual Triplet_t executeCgi(int) = 0;
 };
 
 #endif // IREQUESTHANDLER_HPP

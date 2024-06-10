@@ -75,6 +75,9 @@ private:
     const HttpHelper &m_http_helper;
     RequestState m_state;
 
+    // Body File Path
+    std::string m_body_file_path;
+    
 public:
     // Constructor and Destructor
     Request(const IConfiguration &configuration, const HttpHelper &http_helper);
@@ -111,6 +114,7 @@ public:
     bool isUploadRequest() const;
     RequestState &getState(void);
     const std::vector<char> &getBuffer() const;
+    std::string getBodyFilePath() const;
 
     // Setters
     void setMethod(const std::string &method);
@@ -128,6 +132,7 @@ public:
     void appendBuffer(const std::vector<char> &raw_request);
     void clearBuffer(void);
     void trimBuffer(ptrdiff_t new_start);
+    void setBodyFilePath(const std::string &body_file_path);
 };
 
 #endif // REQUEST_HPP

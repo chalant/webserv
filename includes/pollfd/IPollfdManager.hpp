@@ -30,6 +30,8 @@ public:
 
     // Method to add a regular file pollfd to the pollfdQueue
     virtual void addRegularFilePollfd(pollfd pollfd) = 0;
+    virtual void addBodyFilePollfd(pollfd pollfd) = 0;
+    virtual bool isBodyFile(int position) = 0;
 
     // Method to add a server socket pollfd to the pollfdQueue
     virtual void addServerSocketPollfd(pollfd pollfd) = 0;

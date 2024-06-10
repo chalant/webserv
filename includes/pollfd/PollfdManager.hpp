@@ -34,6 +34,7 @@ private:
     std::map<int, DescriptorType>
         m_descriptor_type_map; // Map for storing the type of descriptor
     ILogger &m_logger;         // Reference to the logger object
+    std::vector<int> m_body_file_descriptors;
 
     // Method to add a polling file descriptor
     virtual void m_addPollfd(pollfd pollFd);
@@ -47,6 +48,8 @@ public:
 
     // Method to add a regular file pollfd to the pollfdQueue
     virtual void addRegularFilePollfd(pollfd pollFd);
+    virtual void addBodyFilePollfd(pollfd pollfd);
+    virtual bool isBodyFile(int position);
 
     // Method to add a server socket pollfd to the pollfdQueue
     virtual void addServerSocketPollfd(pollfd pollFd);

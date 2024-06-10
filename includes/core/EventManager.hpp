@@ -28,7 +28,7 @@ private:
     // helper functions
     void m_handleRequest(ssize_t &pollfd_index);
     void m_handleClientException(ssize_t &pollfd_index, short events);
-    void m_flushBuffer(ssize_t &pollfd_index, short options = 0);
+    ssize_t m_flushBuffer(ssize_t &pollfd_index, short options = 0);
     void m_cleanUp(ssize_t &pollfd_index, int descriptor, short options = 0);
 
 public:

@@ -260,6 +260,9 @@ const std::vector<BodyParameter> &Request::getBodyParameters() const
     return m_body_parameters;
 }
 
+// Getter function for retrieving the body file path
+std::string Request::getBodyFilePath() const { return m_body_file_path; }
+
 // Getter function for checking if the request is an upload request
 bool Request::isUploadRequest() const { return m_upload_request; }
 
@@ -450,6 +453,12 @@ void Request::trimBuffer(ptrdiff_t new_start)
     {
         m_buffer.erase(m_buffer.begin(), new_start_it);
     }
+}
+
+// Method to set the body file descriptor
+void Request::setBodyFilePath(const std::string &body_file_path)
+{
+    m_body_file_path = body_file_path;
 }
 
 // path: srcs/request/Request.cpp

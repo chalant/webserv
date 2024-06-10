@@ -99,6 +99,7 @@ public:
     virtual bool isUploadRequest() const = 0;
     virtual RequestState &getState(void) = 0;
     virtual std::vector<char> &getBody(void) = 0;
+    virtual std::string getBodyFilePath() const = 0;
     virtual const std::vector<char> &getBuffer() const = 0;
 
     // Setters
@@ -119,6 +120,7 @@ public:
     virtual void appendBuffer(const std::vector<char> &raw_request) = 0;
     virtual void clearBuffer() = 0;
     virtual void trimBuffer(ptrdiff_t) = 0;
+    virtual void setBodyFilePath(const std::string &body_file_path) = 0;
 };
 
 #endif // IREQUEST_HPP

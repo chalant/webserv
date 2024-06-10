@@ -59,7 +59,50 @@ void EventManager::m_handleRegularFileEvents(ssize_t &pollfd_index,
     // Check if file is ready for writing
     if (events & POLLOUT)
     {
-        m_flushBuffer(pollfd_index, KEEP_DESCRIPTOR);
+        // if the file is a body file for the CGI process
+        if (m_pollfd_manager.isBodyFile(pollfd_index))
+        {
+            // Get the body descriptor
+            int body_descriptor =
+                m_pollfd_manager.getDescriptor(pollfd_index);
+
+            // Log the writing to the body file
+            m_logger.log(VERBOSE, "[EVENTMANAGER] Writing to body file '"
+                                       + Converter::toString(body_descriptor) + "'");
+
+            // Write to the body file and check if done
+            if (!m_flushBuffer(pollfd_index, KEEP_DESCRIPTOR))
+            {
+                m_logger.log(ERROR, "[EVENTMANAGER] Finished writing to body file '"
+                                        + Converter::toString(body_descriptor) + "'");
+               
+                // Let RequestHandler handle the CGI process
+                Triplet_t info = m_request_handler.executeCgi(body_descriptor);
+                
+                // Get the info
+                int cgi_pid = info.first;
+                int cgi_output_pipe_read_end = info.second.first;
+
+                // Log the dynamic serving
+                m_logger.log(
+                    VERBOSE,
+                    "[EVENTMANAGER] GGI process launched with id " + Converter::toString(cgi_pid) +
+                        " (CGI output pipe Read end: " +
+                        Converter::toString(cgi_output_pipe_read_end));
+
+                // Add the CGI output pipe Read end to the poll set
+                pollfd pollfd;
+                pollfd.fd = cgi_output_pipe_read_end;
+                pollfd.events = POLLIN;
+                pollfd.revents = 0;
+                m_pollfd_manager.addPipePollfd(pollfd);
+            }
+        }
+        else
+        {
+            // simply flush the buffer
+            m_flushBuffer(pollfd_index, KEEP_DESCRIPTOR);
+        }
     }
 
     // Check for error on the file
@@ -159,6 +202,22 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
         // Clear buffer, remove from polling and close socket
         m_cleanUp(pollfd_index, client_socket_descriptor);
     }
+    else if (info.first ==
+             -4) // Add the  body file for the CGI process to poll
+    {
+        int body_file_descriptor = info.second.first; // the file descriptor of the body file
+
+        // Log the situation
+        m_logger.log(VERBOSE,
+                     "[EVENTMANAGER] Adding body file descriptor '" +
+                         Converter::toString(body_file_descriptor) +
+                         "' to poll");
+        pollfd pollfd;
+        pollfd.fd = body_file_descriptor;
+        pollfd.events = POLLOUT;
+        pollfd.revents = 0;
+        m_pollfd_manager.addBodyFilePollfd(pollfd);
+    }
     else // read pipe returned
     {
         // Get the info
@@ -183,7 +242,7 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
     }
 }
 
-void EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
+ssize_t EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
 {
     // Get the socket descriptor
     int descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
@@ -216,6 +275,7 @@ void EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
                                   Converter::toString(return_value) +
                                   " bytes remaining");
     }
+    return return_value;
 }
 
 void EventManager::m_handleClientException(ssize_t &pollfd_index, short events)
@@ -319,8 +379,8 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
             error_description = "Pipe POLLNVAL - file descriptor is not open";
 
         // Log the error
-        m_logger.log(ERROR, error_description +
-                     " | pipe fd: " + Converter::toString(pipe_descriptor));
+        m_logger.log(ERROR, error_description + " | pipe fd: " +
+                                Converter::toString(pipe_descriptor));
 
         // Let the request handler handle the exception, returns the client
         // socket descriptor linked to the pipe
@@ -352,10 +412,13 @@ void EventManager::m_handlePipeEvents(ssize_t &pollfd_index, short events)
         client_socket = m_request_handler.handlePipeRead(pipe_descriptor);
 
         // Check if all data was read from the pipe
-        if (client_socket == -1) // -1 indicates that the pipe blocked at some point
+        if (client_socket ==
+            -1) // -1 indicates that the pipe blocked at some point
         {
-            m_logger.log(VERBOSE, "Pipe read buffered, waiting for unblocking on pipe: " +
-                                  Converter::toString(pipe_descriptor));
+            m_logger.log(
+                VERBOSE,
+                "Pipe read buffered, waiting for unblocking on pipe: " +
+                    Converter::toString(pipe_descriptor));
 
             // Return and wait for the next POLLIN event on the pipe
             return;

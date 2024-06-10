@@ -1,6 +1,8 @@
 #include "../../includes/connection/RequestHandler.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <fcntl.h>
+#include <sys/fcntl.h>
 #include <unistd.h>
 #include <utility>
 
@@ -36,14 +38,13 @@ RequestHandler::RequestHandler(IBufferManager &buffer_manager,
     m_logger.log(VERBOSE, "RequestHandler instance created.");
 }
 
-#include <iostream>
 // Destructor
 RequestHandler::~RequestHandler()
 {
     // Log the destruction of the RequestHandler instance.
     m_logger.log(VERBOSE, "RequestHandler instance destroyed.");
 }
-#include <iostream>
+
 // Handles a client request
 // Returns Cgi Info for dynamic content or -1 for static content and invalid
 // requests
@@ -129,38 +130,49 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
                 return Triplet_t(-2, std::pair<int, int>(-1, -1));
             }
         }
-        // Delete these 3 lines once router is implemented
-        //(void)m_router;
-        // Triplet_t cgi_info(-1, std::pair<int, int>(-1, -1));
-        // throw HttpStatusCodeException(
-        //   NOT_IMPLEMENTED,
-        //   "RequestHandler::handleRequest: Router not implemented yet.");
+
         state.setRoute(m_router.getRoute(&request, &response));
-        // todo: Route the request, return the CGI info
-        //Triplet_t cgi_info = m_router.execRoute(&request, &response);
-		Triplet_t cgi_info = m_router.execRoute(state.getRoute(), &request, &response);
-		state.reset();
 
-        // If dynamic content is being created, return the info
-        if (cgi_info.first != -1)
+        // in case of cgi, create a temporary file
+        if (state.getRoute()->isCGI())
         {
-            // Get CGI Info
-            int cgi_pid = cgi_info.first;
-            int cgi_output_pipe_read_end = cgi_info.second.first;
+            // create a body file
+            std::string body_file_path;
+            int fd;
+            do
+            {
+                // Set a unique file path for the body file
+                int num = rand() % 1000000;
+                body_file_path = "tmp/body_file_" + Converter::toString(num);
+                fd = open(body_file_path.c_str(), O_CREAT | O_WRONLY, 0666);
+            } while (fd == -1); // if the file already exists, try again
 
-            // Record the cgi info
-            connection.setCgiInfo(cgi_pid, cgi_output_pipe_read_end,
-                                  -1); // -1 not used
+            // set the file descriptor in the request
+            request.setBodyFilePath(body_file_path);
+        
+           // set the file descriptor to non-blocking
+            fcntl(fd, F_SETFL, O_NONBLOCK);
 
-            // Record the pipes to connection socket mappings
-            m_pipe_routes[ cgi_output_pipe_read_end ] = socket_descriptor;
+            // push the request body to the buffermanager
+            m_buffer_manager.pushFileBuffer(fd, request.getBody(), 0);
 
-            return cgi_info; // cgi content
+            // add the file descriptor to the descriptor-to-client-socket map
+            m_pipe_routes[ fd ] = socket_descriptor;
+
+            // return -4 and the fd of the temp file
+            return Triplet_t(-4, std::pair<int, int>(fd, -1));
         }
-        else // static content
+        else
         {
+            // If the route is not CGI, we can execute the route
+            m_router.execRoute(state.getRoute(), &request, &response);
+
+            state.reset();
+
             // Push the response to the buffer
             m_sendResponse(socket_descriptor);
+
+            // return -1 to indicate that the content is static
             return Triplet_t(-1, std::pair<int, int>(-1, -1));
         }
     }
@@ -169,7 +181,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
     {
         // Set the request state to finished
         state.finished(true);
-        
+
         // Get the status code
         int status_code;
         if (dynamic_cast<const HttpStatusCodeException *>(&e))
@@ -200,6 +212,54 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         // return -1
         return Triplet_t(-1, std::pair<int, int>(-1, -1));
     }
+}
+
+// Execute a Cgi route
+Triplet_t RequestHandler::executeCgi(int body_descriptor)
+{
+    // Close the file descriptor
+    close(body_descriptor);
+
+    // Get the client socket descriptor linked to the body_fd
+    int socket_descriptor = m_pipe_routes[ body_descriptor ];
+
+    // Remove the file descriptor from the descriptor-to-client-socket map
+    m_pipe_routes.erase(body_descriptor);
+
+    // Get a reference to the Connection
+    IConnection &connection =
+        m_connection_manager.getConnection(socket_descriptor);
+
+    // Update the connection's last activity time
+    connection.touch();
+
+    // Get a reference to the Request
+    IRequest &request = connection.getRequest();
+
+    // Get a reference to the Response
+    IResponse &response = connection.getResponse();
+
+    // Get a reference to the RequestState
+    RequestState &state = request.getState();
+
+    // Execute the route
+    Triplet_t cgi_info =
+        m_router.execRoute(state.getRoute(), &request, &response);
+
+    state.reset();
+
+    // Get CGI Info
+    int cgi_pid = cgi_info.first;
+    int cgi_output_pipe_read_end = cgi_info.second.first;
+
+    // Record the cgi info
+    connection.setCgiInfo(cgi_pid, cgi_output_pipe_read_end,
+                          -1); // -1 not used
+
+    // Record the pipes to connection socket mappings
+    m_pipe_routes[ cgi_output_pipe_read_end ] = socket_descriptor;
+
+    return cgi_info; // cgi content
 }
 
 // Handles exceptions related to pipe events - returns the client socket
@@ -248,8 +308,10 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
         response_buffer.resize(response_buffer.size() + read_buffer_size);
 
         // Read the response from the pipe
-        read_return_value = read(cgi_output_pipe_read_end, response_buffer.data() + response_buffer.size() - read_buffer_size,
-                         read_buffer_size);
+        read_return_value = read(cgi_output_pipe_read_end,
+                                 response_buffer.data() +
+                                     response_buffer.size() - read_buffer_size,
+                                 read_buffer_size);
     } while (read_return_value == static_cast<ssize_t>(read_buffer_size));
 
     // Handle blocking read
@@ -258,17 +320,13 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
         // Resize the response buffer to the actual size
         response_buffer.resize(response_buffer.size() - read_buffer_size);
 
-        // test print the raw_response content
-        std::cout << " Read returned < 0; errno: " << errno << std::endl;
-        std::string raw_response_str(response_buffer.begin(), response_buffer.end());
-        std::cout << "Current response buffer content: " << raw_response_str << std::endl;
-
         // return -1 to indicate that we are not done reading
         return -1;
     }
 
     // Resize the response buffer to the actual size
-    response_buffer.resize(response_buffer.size() - read_buffer_size + read_return_value);
+    response_buffer.resize(response_buffer.size() - read_buffer_size +
+                           read_return_value);
 
     // print the response
     m_logger.log(VERBOSE, "CGI response received 100%");
@@ -334,7 +392,8 @@ void RequestHandler::handleErrorResponse(int socket_descriptor, int status_code)
 }
 
 // Handles redirect responses
-void RequestHandler::handleRedirectResponse(int socket_descriptor, std::string location)
+void RequestHandler::handleRedirectResponse(int socket_descriptor,
+                                            std::string location)
 {
     // Get a reference to the Response
     IResponse &response = m_connection_manager.getResponse(socket_descriptor);

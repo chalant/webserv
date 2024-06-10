@@ -91,6 +91,9 @@ public:
     
     // Remove and close the connection
     void removeConnection(int socket_descriptor);
+
+    // Execute CGI
+    Triplet_t executeCgi(int body_descriptor);
 };
 
 #endif // CONNECTIONS_HPP

@@ -44,6 +44,7 @@ void PollfdManager::m_addPollfd(pollfd pollFd)
     m_pollfds.push(pollFd);
 }
 
+
 // Method to add a regular file pollfd to the pollfdQueue
 void PollfdManager::addRegularFilePollfd(pollfd pollFd)
 {
@@ -52,6 +53,25 @@ void PollfdManager::addRegularFilePollfd(pollfd pollFd)
 
     m_descriptor_type_map[ pollFd.fd ] = REGULAR_FILE;
     m_addPollfd(pollFd);
+}
+
+void PollfdManager::addBodyFilePollfd(pollfd pollFd)
+{
+    // Add the pollfd to the list of body file pollfds
+    m_body_file_descriptors.push_back(pollFd.fd);
+
+    m_descriptor_type_map[ pollFd.fd ] = REGULAR_FILE;
+    m_addPollfd(pollFd);
+}
+
+bool PollfdManager::isBodyFile(int position)
+{
+    for (size_t i = 0; i < m_body_file_descriptors.size(); i++)
+    {
+        if (m_body_file_descriptors[ i ] == m_pollfds[ position ].fd)
+            return true;
+    }
+    return false;
 }
 
 // Method to add a server socket pollfd to the pollfdQueue
@@ -78,11 +98,27 @@ void PollfdManager::addPipePollfd(pollfd pollFd)
 // Method to remove a polling file descriptor
 void PollfdManager::removePollfd(int position)
 {
+    // Get the descriptor at the specified position
     int descriptor = m_pollfds[ position ].fd;
+
     // Log the removal of a pollfd
     m_logger.log(VERBOSE, "[POLLFDMANAGER] Removing pollfd for descriptor: " +
                               Converter::toString(descriptor));
+
+    // Remove the descriptor from the body file descriptors
+    for (size_t i = 0; i < m_body_file_descriptors.size(); i++)
+    {
+        if (m_body_file_descriptors[ i ] == descriptor)
+        {
+            m_body_file_descriptors.erase(m_body_file_descriptors.begin() + i);
+            break;
+        }
+    }
+
+    // Remove the descriptor from the descriptor type map
     m_descriptor_type_map.erase(descriptor);
+
+    // Remove the pollfd from the pollfdQueue
     m_pollfds.erase(position);
 }
 
