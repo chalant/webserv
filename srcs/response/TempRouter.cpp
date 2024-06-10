@@ -120,24 +120,11 @@ IRoute *TempRouter::getRoute(IRequest *request, IResponse *response)
     // search for a route that matches the request.
     for (size_t i = 0; i < routes_stop; i++)
     {
-        // if the route path is contained in the uri
-        if (uri.find(routes->at(i)->getPath()) != std::string::npos)
-            std::cout << "path is in uri\n";
-        if (routes->at(i)->isAllowedMethod(method) == true)
-        {
-            std::cout << "method is allowed\n";
-        }
-        if (body_size <= routes->at(i)->getClientMaxBodySize())
-        {
-            std::cout << "body size is less than max body size\n";
-        }
         if ((routes->at(i)->match(uri) &&
              routes->at(i)->isAllowedMethod(method) &&
              body_size <= routes->at(i)->getClientMaxBodySize()) ||
             routes->at(i)->getPath() == request->getUri())
         {
-            std::cout << "route path " << routes->at(i)->getPath()
-                      << " is in uri: " << uri << std::endl;
             if (body_size > routes->at(i)->getClientMaxBodySize())
             {
                 throw HttpStatusCodeException(PAYLOAD_TOO_LARGE);
@@ -146,22 +133,17 @@ IRoute *TempRouter::getRoute(IRequest *request, IResponse *response)
             {
                 throw HttpStatusCodeException(METHOD_NOT_ALLOWED);
             }
-            std::cout << "check redirect\n";
             if (routes->at(i)->isRedirect(request->getUri()))
             {
-                std::cout << "redirecting\n";
                 throw HttpRedirectException(
                     routes->at(i)->getRedirect(request->getUri()));
             }
-            std::cout << "not redirecting\n";
             // return cgi directly since it already has a response generator
             if (routes->at(i)->isCGI())
             {
                 return routes->at(i);
             }
             routes->at(i)->setResponseGenerator(response_generator);
-            std::cout << "selecting route '" << routes->at(i)->getPath()
-                      << "'\n";
             return routes->at(i);
         }
     }
@@ -172,7 +154,6 @@ IRoute *TempRouter::getRoute(IRequest *request, IResponse *response)
         throw HttpStatusCodeException(METHOD_NOT_ALLOWED);
     }
     route->setResponseGenerator(response_generator);
-    std::cout << "selecting route '" << routes->at(i)->getPath() << "'\n";
     return route;
 }
 
@@ -304,8 +285,6 @@ void TempRouter::m_createRoutes(IConfiguration &server,
             }
             else
             {
-                std::cout << " matcher already exists for path " << cgi_path
-                          << std::endl;
                 matcher = m_uri_matchers[ cgi_path ];
             }
             m_uri_matchers[ cgi_path ] = matcher;

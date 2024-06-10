@@ -12,7 +12,7 @@ StaticFileResponseGenerator::StaticFileResponseGenerator(ILogger &logger)
 
 // Destructor
 StaticFileResponseGenerator::~StaticFileResponseGenerator() {}
-#include <iostream>
+
 // Generate response
 Triplet_t StaticFileResponseGenerator::generateResponse(
     const IRoute &route, const IRequest &request, IResponse &response,
@@ -54,7 +54,6 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
         // append the default file name
         file_path += route.getIndex();
         
-        std::cout << "Serving index file: " << file_path << std::endl;
         if (m_serveFile(file_path, response) == -1)
         {
             if (route.autoindex() == false)
@@ -67,7 +66,6 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
                 // log the situation
                 m_logger.log(VERBOSE, "Serving directory listing: " + directory_path);
                 // serve the directory listing
-                std::cout << "Serving directory listing: " << directory_path << std::endl;
                 m_serveDirectoryListing(directory_path, response);
             }     
         }
@@ -75,11 +73,10 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     else
     {
         // serve the file
-        std::cout << "Serving file direct: " << file_path << std::endl;
         if ( m_serveFile(file_path, response) == -1)
          {
-                // set the error response
-        response.setErrorResponse(NOT_FOUND);
+            // set the error response
+            response.setErrorResponse(NOT_FOUND);
          }
     }
 

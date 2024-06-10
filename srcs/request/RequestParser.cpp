@@ -49,7 +49,7 @@ void RequestParser::parseRequest(IRequest &request) const
         request.getHeaderValue(TRANSFER_ENCODING) != "chunked")
     {
         // Log the error
-        m_logger.log(DEBUG, "\t\t[REQUESTPARSER] Content-Length is empty");
+        m_logger.log(DEBUG, "\t[REQUESTPARSER] Content-Length is empty");
 
         // Commenting this to allow invalid 42 tester program
         // throw '411' status error

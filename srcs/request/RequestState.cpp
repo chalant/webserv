@@ -30,5 +30,5 @@ void RequestState::reset()
     m_content_red = 0;
     m_content_length = 0;
 }
-#include <iostream>
-void RequestState::setRoute(IRoute *route) { std::cout << "SET ROUTE " << route << std::endl; m_route = route; }
+
+void RequestState::setRoute(IRoute *route) { m_route = route; }
