@@ -16,8 +16,8 @@ SOURCES     = srcs/
 INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
-FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
-#FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
+#FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
+FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
 				
 SRCS        =	main.cpp \

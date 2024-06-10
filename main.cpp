@@ -78,9 +78,9 @@ int main(int argc, char **argv)
         PollfdManager pollfd_manager(configuration, logger);
 
         // Configure the logger
-        LoggerConfiguration logger_configuration(buffer_manager, configuration,
+        LoggerConfiguration *logger_configuration = new LoggerConfiguration(buffer_manager, configuration,
                                                  pollfd_manager);
-        logger.configure(logger_configuration);
+        logger.configure(*logger_configuration);
 
         // Instantiate the Factory.
         Factory factory(configuration, logger);
