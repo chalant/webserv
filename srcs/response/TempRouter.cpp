@@ -2,6 +2,7 @@
 #include "../../includes/response/RFCCgiResponseGenerator.hpp"
 #include "../../includes/response/Route.hpp"
 #include "../../includes/response/StaticFileResponseGenerator.hpp"
+#include "../../includes/response/DeleteResponseGenerator.hpp"
 #include "../../includes/response/UploadResponseGenerator.hpp"
 #include "../../includes/utils/Converter.hpp"
 #include <algorithm>
@@ -25,6 +26,7 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
     m_response_generators["GET"] = new StaticFileResponseGenerator(logger);
     m_response_generators["POST"] = new UploadResponseGenerator(logger);
     m_response_generators["PUT"] = new UploadResponseGenerator(logger);
+    m_response_generators["DELETE"] = new DeleteResponseGenerator(logger);
     //m_response_generators["CGI"] = NULL;
 
 	const BlockList &servers = configuration.getBlocks("http")[0]->getBlocks("server");

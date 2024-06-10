@@ -6,7 +6,7 @@
 #    By: mde-clee <mde-clee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 10:54:31 by llapage           #+#    #+#              #
-#    Updated: 2024/06/04 15:34:15 by mde-clee         ###   ########.fr        #
+#    Updated: 2024/06/10 11:31:50 by mde-clee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,6 +72,7 @@ SRCS        =	main.cpp \
 				srcs/response/TempRouter.cpp \
 				srcs/response/Route.cpp \
 				srcs/response/StaticFileResponseGenerator.cpp \
+				srcs/response/DeleteResponseGenerator.cpp
 				
 #-------------------OBJECTS----------------------
 OBJS        =   $(SRCS:.cpp=.o)
