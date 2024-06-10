@@ -1,5 +1,6 @@
 #include "../../includes/connection/ConnectionManager.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <csignal>
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
@@ -248,6 +249,22 @@ void ConnectionManager::collectGarbage()
              m_connections.begin();
          it != m_connections.end(); it++)
     {
+        // Check if the Cgi Process has expired
+        if (it->second && it->second->cgiHasExpired())
+        {
+            // Get the Cgi Process ID
+            int cgi_process_id = it->second->getCgiPid();
+
+            // kill the Cgi Process
+            kill(cgi_process_id, SIGKILL);
+
+            // Close the associated pipe
+            close(it->second->getCgiOutputPipeReadEnd());
+
+            // Log the expired Process
+            m_logger.log(VERBOSE, "Cgi Process expired and killed. PID: " +
+                                      Converter::toString(cgi_process_id));
+        }
         // Check if the connection has expired
         if (it->second && it->second->hasExpired())
         {

@@ -12,7 +12,7 @@
  *
  */
 
-#define GARBAGE_COLLECTOR_INTERVAL 120 // every 2 minutes
+#define GARBAGE_COLLECTOR_INTERVAL 30 // every 30 seconds
 
 #include <sys/wait.h>
 
