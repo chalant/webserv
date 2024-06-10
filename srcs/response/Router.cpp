@@ -149,6 +149,7 @@ bool isCgiRequest(IRequest *req)
 {
     if (rfindSubstr(req->getUri(), '.') == ".py" ||
         rfindSubstr(req->getUri(), '.') == ".php" ||
+        rfindSubstr(req->getUri(), '.') == ".perl" ||
         rfindSubstr(req->getUri(), '.') == ".pl")
         return (true);
     return (false);
