@@ -214,7 +214,7 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
         return Triplet_t(-1, std::pair<int, int>(-1, -1));
     }
 }
-
+#include <iostream>
 // Execute a Cgi route
 Triplet_t RequestHandler::executeCgi(int body_descriptor)
 {
@@ -332,8 +332,24 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     // print the response
     m_logger.log(VERBOSE, "CGI response received 100%");
 
-    // Set the response
-    if (response_buffer.empty()) // Check if the response is empty
+    // Get the child process exit status without blocking
+    int cgi_pid = m_connection_manager.getConnection(client_socket).getCgiPid();
+    int child_exit_status;
+    waitpid(cgi_pid, &child_exit_status, WNOHANG);
+
+    std::cout << "Child exit status: " << child_exit_status << std::endl;
+
+    // Check if the child process exited abnormaly
+    if (child_exit_status != 0)
+    {
+        // log the situation
+        m_logger.log(ERROR, "CGI process ID " + Converter::toString(cgi_pid) + " exited abnormaly with status " +
+                                Converter::toString(child_exit_status));
+        
+        // Set the response
+        response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
+    }
+    else if (response_buffer.empty()) // Check if the response is empty
         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
     else
         response.setCgiResponse(response_buffer); // Good response
