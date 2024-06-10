@@ -1,4 +1,5 @@
 #include "../../includes/response/DeleteResponseGenerator.hpp"
+#include <cstdio>
 
 // Constructor
 DeleteResponseGenerator::DeleteResponseGenerator(ILogger &logger)

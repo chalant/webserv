@@ -5,6 +5,7 @@
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <utility>
+#include <cstdlib>
 
 /*
  * RequestHandler class
