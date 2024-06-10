@@ -117,13 +117,14 @@ int Logger::log(const IConnection &connection)
                           << "\ttimestamp=\"" << m_getCurrentTimestamp()
                           << "\",\n"
                           << "\tclient_ip=\"" << connection.getIp() << "\",\n"
-                          << "\tclient_port=\"" << connection.getPort()
+                          << "\tclient_port=\"" << connection.getPort() << "\",\n"
+                          << "\tauthority=\"" << request.getAuthority()
                           << "\",\n"
                           << "\tmethod=\"" << request.getMethodString()
                           << "\",\n"
                           << "\trequest_uri=\"" << request.getUri() << "\",\n"
-                          << "\thttp_version=\"" << request.getHttpVersionString()
-                          << "\",\n"
+                          << "\thttp_version=\""
+                          << request.getHttpVersionString() << "\",\n"
                           << "\tstatus_code=\""
                           << response.getStatusCodeString()
                           << "\tresponse_size=\""
