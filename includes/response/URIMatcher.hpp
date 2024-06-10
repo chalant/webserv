@@ -35,8 +35,13 @@ class ExtensionMatcher : public IURIMatcher
 		{
 			size_t last_dot = uri.find_last_of('.');
 			if (last_dot == std::string::npos) { return false ;}
-			std::string extension = uri.substr(last_dot, uri.size());
-			for (size_t i = 0; i < m_extensions.size(); i++) { if (extension == m_extensions[i]) { return true; } }
+			for (size_t i = 0; i < m_extensions.size(); i++) 
+			{
+				if (uri.substr(last_dot, m_extensions[i].size()) == m_extensions[i]) 
+				{ 
+					return true; 
+				} 
+			}
 			return false;
 		}
 };
