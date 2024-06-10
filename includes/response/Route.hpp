@@ -22,12 +22,13 @@ private:
 	const bool	m_is_CGI;
 	const size_t	m_client_max_body_size;
     const std::map<std::string, std::string> m_redirects;
+    bool m_autoindex;
 
 public:
 	Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-             const std::string index, size_t client_max_body_size, const std::map<std::string, std::string> redirects);
+             const std::string index, size_t client_max_body_size, const std::map<std::string, std::string> redirects, bool autoindex);
 	Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-             const std::string index, const std::string cgi_script, IURIMatcher *match, size_t client_max_body_size, const std::map<std::string, std::string> redirects);
+             const std::string index, const std::string cgi_script, IURIMatcher *match, size_t client_max_body_size, const std::map<std::string, std::string> redirects, bool autoindex);
     ~Route();
     std::string getPath() const;
     std::string getRoot() const;
@@ -38,6 +39,7 @@ public:
     bool isRegex() const;
 	bool isCGI() const;
     bool isRedirect(const std::string &uri) const;
+    bool autoindex() const;
     std::string getRedirect(const std::string& uri) const;
     IResponseGenerator	*getResponseGenerator(void) const;
 	void				setResponseGenerator(IResponseGenerator *generator);

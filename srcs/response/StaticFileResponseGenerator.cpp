@@ -1,5 +1,6 @@
 #include "../../includes/response/StaticFileResponseGenerator.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <dirent.h>
 #include <fstream>
 #include <sys/stat.h>
 
@@ -11,7 +12,7 @@ StaticFileResponseGenerator::StaticFileResponseGenerator(ILogger &logger)
 
 // Destructor
 StaticFileResponseGenerator::~StaticFileResponseGenerator() {}
-
+#include <iostream>
 // Generate response
 Triplet_t StaticFileResponseGenerator::generateResponse(
     const IRoute &route, const IRequest &request, IResponse &response,
@@ -37,9 +38,14 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
     std::string file_path = root + uri;
 
     // check if the file_path is a directory
-    if (m_isDirectory(file_path))    {
+    if (m_isDirectory(file_path))
+    {
+        std::string directory_path = file_path;
+
         // log the situation
-        m_logger.log(VERBOSE, "Directory requested: " + file_path + " serving index file: " + file_path + route.getIndex());
+        m_logger.log(VERBOSE, "Directory requested: " + file_path +
+                                  " serving index file: " + file_path +
+                                  route.getIndex());
 
         // append a slash to the file path if needed
         if (file_path.size() > 1 && file_path[ file_path.size() - 1 ] != '/')
@@ -47,58 +53,34 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
 
         // append the default file name
         file_path += route.getIndex();
-    }
-    
-    // open the file in binary mode, in read mode and at the end
-    std::ifstream file(file_path.c_str(),
-                       std::ios::in | std::ios::binary | std::ios::ate);
-    if (!file.is_open())
-    {
-        // log the error
-        m_logger.log(ERROR, "Could not open file: " + file_path);
-
-        // set the response
-        response.setErrorResponse(NOT_FOUND);
+        
+        std::cout << "Serving index file: " << file_path << std::endl;
+        if (m_serveFile(file_path, response) == -1)
+        {
+            if (route.autoindex() == false)
+            {
+                // set the error response
+                response.setErrorResponse(NOT_FOUND);
+            }
+            else
+            {
+                // log the situation
+                m_logger.log(VERBOSE, "Serving directory listing: " + directory_path);
+                // serve the directory listing
+                std::cout << "Serving directory listing: " << directory_path << std::endl;
+                m_serveDirectoryListing(directory_path, response);
+            }     
+        }
     }
     else
     {
-        // log the file being served
-        m_logger.log(VERBOSE, "Serving file: " + file_path);
-
-        // get the size of the file
-        std::streampos size = file.tellg();
-
-        // set the position of the file to the beginning
-        file.seekg(0, std::ios::beg);
-
-        // read the file into the body
-        std::vector<char> body(size);
-        file.read(&body[ 0 ], size);
-
-        // check if the file was read successfully
-        if (!file)
-        {
-            // log the error
-            m_logger.log(ERROR, "Error reading file: " + file_path);
-
-            // set the response
-            response.setErrorResponse(INTERNAL_SERVER_ERROR);
-        }
-        else
-        {
-            // close the file
-            file.close();
-
-            // set the response
-            response.setBody(body);
-
-            response.setStatusLine(OK);
-
-            response.addHeader(CONTENT_TYPE, m_getMimeType(file_path));
-
-            response.addHeader(CONTENT_LENGTH,
-                               Converter::toString(body.size()));
-        }
+        // serve the file
+        std::cout << "Serving file direct: " << file_path << std::endl;
+        if ( m_serveFile(file_path, response) == -1)
+         {
+                // set the error response
+        response.setErrorResponse(NOT_FOUND);
+         }
     }
 
     // return -1
@@ -122,9 +104,12 @@ StaticFileResponseGenerator::m_getMimeType(const std::string &file_path) const
         extension = file_path.substr(dot_position + 1);
 
     // Return the mime type
-    try {
+    try
+    {
         return m_mime_types.at(extension);
-    } catch (const std::out_of_range &e) {
+    }
+    catch (const std::out_of_range &e)
+    {
         return m_mime_types.at("unknown");
     }
 }
@@ -173,6 +158,108 @@ bool StaticFileResponseGenerator::m_isDirectory(const std::string &path) const
         return true; // path is a directory
     else
         return false; // path is a file
+}
+
+// Serve a file
+int StaticFileResponseGenerator::m_serveFile(const std::string &file_path,
+                                             IResponse &response)
+{
+    // open the file in binary mode, in read mode and at the end
+    std::ifstream file(file_path.c_str(),
+                       std::ios::in | std::ios::binary | std::ios::ate);
+    if (!file.is_open())
+    {
+        // log the error
+        m_logger.log(ERROR, "Could not open file: " + file_path);
+
+
+
+        return -1;
+    }
+    else
+    {
+        // log the file being served
+        m_logger.log(VERBOSE, "Serving file: " + file_path);
+
+        // get the size of the file
+        std::streampos size = file.tellg();
+
+        // set the position of the file to the beginning
+        file.seekg(0, std::ios::beg);
+
+        // read the file into the body
+        std::vector<char> body(size);
+        file.read(&body[ 0 ], size);
+
+        // check if the file was read successfully
+        if (!file)
+        {
+            // log the error
+            m_logger.log(ERROR, "Error reading file: " + file_path);
+
+            // set the response
+            response.setErrorResponse(INTERNAL_SERVER_ERROR);
+
+            return -2;
+        }
+        else
+        {
+            // close the file
+            file.close();
+
+            // set the response
+            response.setBody(body);
+            response.setStatusLine(OK);
+            response.addHeader(CONTENT_TYPE, m_getMimeType(file_path));
+            response.addHeader(CONTENT_LENGTH,
+                               Converter::toString(body.size()));
+
+            return 0;
+        }
+    }
+}
+
+// List a directory
+void StaticFileResponseGenerator::m_serveDirectoryListing(const std::string &directory_path,
+                                                  IResponse &response)
+{
+    std::string file_list;
+
+    // Open the directory
+    DIR *dir = opendir(directory_path.c_str());
+    if (dir == NULL)
+    {
+        // log the error
+        m_logger.log(ERROR, "Could not open directory: " + directory_path);
+
+        // set the response
+        response.setErrorResponse(NOT_FOUND);
+
+        return;
+    }
+
+    // Read the directory
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL)
+    {
+        // Get the file name
+        std::string file_name = entry->d_name;
+
+        // Ignore the current and parent directories
+        if (file_name == "." || file_name == "..")
+            continue;
+
+        file_list.append(file_name + "\n");
+    }
+
+    // Close the directory
+    closedir(dir);
+
+    // Set the response
+    response.setBody(file_list);
+    response.setStatusLine(OK);
+    response.addHeader(CONTENT_TYPE, "text/plain");
+    response.addHeader(CONTENT_LENGTH, Converter::toString(file_list.size()));
 }
 
 // Path: srcs/response/Response.cpp

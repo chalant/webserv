@@ -2,15 +2,15 @@
 
 // Constructor
 Route::Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-             const std::string index, const std::string cgi_script, IURIMatcher *matcher, size_t client_max_body_size, const std::map<std::string, std::string> redirects)
-	: m_path(path), m_is_regex(is_regex), m_methods(methods), m_root(root), m_index(index), m_cgi_script(cgi_script), m_matcher(matcher), m_is_CGI(true), m_client_max_body_size(client_max_body_size), m_redirects(redirects)
+             const std::string index, const std::string cgi_script, IURIMatcher *matcher, size_t client_max_body_size, const std::map<std::string, std::string> redirects, bool autoindex)
+	: m_path(path), m_is_regex(is_regex), m_methods(methods), m_root(root), m_index(index), m_cgi_script(cgi_script), m_matcher(matcher), m_is_CGI(true), m_client_max_body_size(client_max_body_size), m_redirects(redirects), m_autoindex(autoindex)
 {
 
 }
 
 Route::Route(const std::string path, const bool is_regex, const std::vector<HttpMethod> methods, const std::string root,
-             const std::string index, size_t client_max_body_size, const std::map<std::string, std::string> redirects)
-	: m_path(path), m_is_regex(is_regex), m_methods(methods), m_root(root), m_index(index), m_cgi_script(""), m_matcher(NULL), m_is_CGI(false), m_client_max_body_size(client_max_body_size), m_redirects(redirects)
+             const std::string index, size_t client_max_body_size, const std::map<std::string, std::string> redirects, bool autoindex)
+	: m_path(path), m_is_regex(is_regex), m_methods(methods), m_root(root), m_index(index), m_cgi_script(""), m_matcher(NULL), m_is_CGI(false), m_client_max_body_size(client_max_body_size), m_redirects(redirects), m_autoindex(autoindex)
 {
 }
 
@@ -56,6 +56,8 @@ bool Route::isRedirect(const std::string &uri) const
     }
     return false;
 }
+
+bool Route::autoindex() const { return m_autoindex; }
 
 // Get the redirect
 std::string Route::getRedirect(const std::string &uri) const

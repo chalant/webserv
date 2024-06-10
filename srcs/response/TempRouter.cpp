@@ -174,6 +174,7 @@ void	TempRouter::m_createRoutes(IConfiguration &server, std::vector<IRoute *> &r
         std::string cgi_script;
 		size_t		client_max_body_size;
         std::map<std::string, std::string> redirects;
+        bool autoindex;
 
         // Get the path
         std::vector<std::string> &location_params = locations_list[i]->getParameters();
@@ -217,6 +218,9 @@ void	TempRouter::m_createRoutes(IConfiguration &server, std::vector<IRoute *> &r
         for (size_t q = 0; q < redirects_vector.size() / 2; q++)
             redirects[redirects_vector[q * 2]] = redirects_vector[q * 2 + 1];
 
+        // Get the autoindex
+        autoindex = locations_list[i]->getBool("autoindex");
+
 		// add cgi's
 		const BlockList	&cgis =  locations_list[i]->getBlocks("cgi");
 		// if there is any CGI in the file, check if it is active and create it if it does not already exist.
@@ -254,7 +258,7 @@ void	TempRouter::m_createRoutes(IConfiguration &server, std::vector<IRoute *> &r
 			}
 			else { matcher = m_uri_matchers[ cgi_path ]; }
 			m_uri_matchers[cgi_path] = matcher;
-			route = new Route(path, is_regex, methods, root, index, cgi_path, matcher, client_max_body_size, redirects);
+			route = new Route(path, is_regex, methods, root, index, cgi_path, matcher, client_max_body_size, redirects, autoindex);
 			m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
 			route->setResponseGenerator(cgi_rg);
 			routes.push_back(route);
@@ -263,7 +267,7 @@ void	TempRouter::m_createRoutes(IConfiguration &server, std::vector<IRoute *> &r
 		if (!cgi_route)
 		{
 			m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path + "',  methods: '" + methods_string + "', root: '" + root + "', index: '" + index + "', cgi script: '" + cgi_script + "'.");
-			route = new Route(path, is_regex, methods, root, index, client_max_body_size, redirects);
+			route = new Route(path, is_regex, methods, root, index, client_max_body_size, redirects, autoindex);
 			//route->setResponseGenerator(m_response_generators["GET"]);
 			routes.push_back(route);
 		}

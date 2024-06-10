@@ -59,6 +59,7 @@ public:
     virtual bool isRegex() const = 0;
 	virtual bool isCGI() const = 0;
     virtual bool isRedirect(const std::string &uri) const = 0;
+    virtual bool autoindex() const = 0;
     virtual std::string getRedirect(const std::string &uri) const = 0;
     virtual IResponseGenerator *getResponseGenerator() const = 0;
 	virtual void				setResponseGenerator(IResponseGenerator *generator) = 0;
