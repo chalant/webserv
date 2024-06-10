@@ -89,11 +89,10 @@ Triplet_t RFCCgiResponseGenerator::generateResponse(
         int file_fd = open(body_file_path.c_str(), O_RDONLY);
         if (file_fd == -1)
         {
-            m_logger.log(ERROR, "Failed to open the request body file: " +
-                                    std::string(strerror(errno)));
-            m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd);
-            exit(EXIT_FAILURE);
+            m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd, NO_THROW);
+            exit (1);
         }
+
         // set CLOSE_ON_EXEC flag
         fcntl(file_fd, F_SETFD, FD_CLOEXEC);
 
