@@ -343,18 +343,11 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
 
     // Clean up
 
-    // Get a reference to the Connection
-    IConnection &connection = m_connection_manager.getConnection(client_socket);
-
-    // Get the CGI input pipe write end
-    int cgi_input_pipe_write_end = connection.getCgiInputPipeWriteEnd();
-
     // Remove the descriptors from the pipe;socket map
     m_pipe_routes.erase(cgi_output_pipe_read_end);
 
-    // Close the pipes
+    // Close the pipe
     close(cgi_output_pipe_read_end);
-    close(cgi_input_pipe_write_end);
 
     // Return the client socket descriptor
     return client_socket;
