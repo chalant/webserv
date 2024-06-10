@@ -236,7 +236,7 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
         // Add the CGI output pipe Read end to the poll set
         pollfd pollfd;
         pollfd.fd = cgi_output_pipe_read_end;
-        pollfd.events = POLLIN;
+        pollfd.events = POLLIN | POLLHUP | POLLERR;
         pollfd.revents = 0;
         m_pollfd_manager.addPipePollfd(pollfd);
     }
