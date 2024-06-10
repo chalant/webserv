@@ -14,6 +14,7 @@
  */
 
 #define DEFAULT_TIMEOUT 300 // 5 minutes
+#define CGI_DEFAULT_TIMEOUT 20 // 20 seconds
 
 #include "../logger/ILogger.hpp"
 #include "IConnection.hpp"
@@ -28,7 +29,6 @@ private:
     int m_port;                     // Port number
     std::string m_remote_address;   // Remote address
     int m_cgi_output_pipe_read_end; // Read pipe descriptor for the response
-    int m_cgi_input_pipe_write_end; // Write pipe descriptor for the request
     int m_cgi_pid;                  // PID of the CGI process
     ILogger &m_logger;              // Reference to the logger
     IRequest *m_request;            // Pointer to the request object
@@ -36,6 +36,7 @@ private:
     ISession *m_session;            // Pointer to the session object
     const time_t m_timeout;         // Timeout for the connection
     time_t m_last_access;           // Last access time
+    time_t m_cgi_start_time;        // Cgi start time
 
 public:
     Connection(std::pair<int, std::pair<std::string, std::string> > client_info,
@@ -56,12 +57,14 @@ public:
     virtual IRequest &getRequest() const;
     virtual IResponse &getResponse() const;
     virtual ISession &getSession() const;
+    virtual int getCgiPid() const;
     virtual void setCgiInfo(int pid, int response_read_pipe_fd,
                             int request_write_pipe_fd);
 
     // Connection management
     virtual void touch();            // Update the last access time
     virtual bool hasExpired() const; // Check if the connection has expired
+    virtual bool cgiHasExpired() const; // Check if the CGI process has expired
 };
 
 #endif // CONNECTION_HPP

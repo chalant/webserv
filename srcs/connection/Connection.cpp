@@ -1,5 +1,6 @@
 #include "../../includes/connection/Connection.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <csignal>
 #include <ctime>
 
 /*
@@ -33,6 +34,7 @@ Connection::~Connection()
 {
     delete m_request;
     delete m_response;
+    kill(m_cgi_pid, SIGKILL);
 }
 
 // Set session
@@ -62,6 +64,8 @@ IRequest &Connection::getRequest() const { return *m_request; }
 IResponse &Connection::getResponse() const { return *m_response; }
 
 ISession &Connection::getSession() const { return *m_session; }
+
+int Connection::getCgiPid() const { return m_cgi_pid; }
 
 void Connection::setCgiInfo(int cgi_pid, int cgi_output_pipe_read_end,
                                 int cgi_input_pipe_write_end)
@@ -97,6 +101,11 @@ void Connection::touch()
 bool Connection::hasExpired() const
 {
     return time(NULL) - m_last_access > m_timeout;
+}
+
+bool Connection::cgiHasExpired() const
+{
+    return time(NULL) - m_cgi_start_time > CGI_DEFAULT_TIMEOUT;
 }
 
 // Path: srcs/Connection.cpp
