@@ -35,8 +35,6 @@ Connection::~Connection()
 {
     delete m_request;
     delete m_response;
-    if (m_cgi_pid != -1)
-        kill(m_cgi_pid, SIGKILL);
 }
 
 // Set session
