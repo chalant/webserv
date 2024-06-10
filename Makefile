@@ -6,7 +6,7 @@
 #    By: mde-clee <mde-clee@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 10:54:31 by llapage           #+#    #+#              #
-#    Updated: 2024/06/10 11:31:50 by mde-clee         ###   ########.fr        #
+#    Updated: 2024/06/10 18:40:51 by mde-clee         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,8 +16,8 @@ SOURCES     = srcs/
 INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
-#FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
-FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
+FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
+#FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
 				
 SRCS        =	main.cpp \

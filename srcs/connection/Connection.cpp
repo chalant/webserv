@@ -23,6 +23,7 @@ Connection::Connection(
     : m_socket_descriptor(client_info.first), m_ip(client_info.second.first),
       m_port(Converter::toInt(client_info.second.second)),
       m_remote_address(m_ip + ":" + client_info.second.second),
+      m_cgi_pid(-1),
       m_logger(logger), m_request(request), m_response(response),
       m_timeout(timeout)
 {
@@ -34,7 +35,8 @@ Connection::~Connection()
 {
     delete m_request;
     delete m_response;
-    kill(m_cgi_pid, SIGKILL);
+    if (m_cgi_pid != -1)
+        kill(m_cgi_pid, SIGKILL);
 }
 
 // Set session
