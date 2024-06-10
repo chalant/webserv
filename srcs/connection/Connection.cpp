@@ -67,6 +67,7 @@ void Connection::setCgiInfo(int cgi_pid, int cgi_output_pipe_read_end,
 {
     (void)cgi_input_pipe_write_end; // Unused
     m_cgi_pid = cgi_pid;
+    m_cgi_start_time = time(NULL);
     m_cgi_output_pipe_read_end = cgi_output_pipe_read_end;
 }
 
