@@ -436,10 +436,12 @@ void Request::appendBuffer(const std::vector<char> &raw_request)
 }
 
 // Method to clear the buffer
-void Request::clearBuffer() { 
-    m_buffer.clear(); 
-    m_buffer.shrink_to_fit(); // makes .data() return nullptr
-    }
+void Request::clearBuffer() 
+{ 
+    m_buffer.clear();
+    //m_buffer.shrink_to_fit(); // makes .data() return nullptr
+	std::vector<char>(m_buffer).swap(m_buffer);
+}
 
 // Method to trim the buffer
 void Request::trimBuffer(ptrdiff_t new_start)

@@ -183,7 +183,7 @@ void RFCCgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
     cgi_env.push_back(
         strdup(("CONTENT_TYPE=" + request.getContentType()).c_str()));
     std::string script_filename = route.getRoot() + route.getPath();
-    if (script_filename.back() != '/')
+    if (script_filename[script_filename.size() - 1] != '/')
         script_filename += "/";
     script_filename += script;
     cgi_env.push_back(strdup(("SCRIPT_FILENAME=" + script_filename).c_str()));
