@@ -41,7 +41,7 @@ Triplet_t DeleteResponseGenerator::generateResponse(
         m_logger.log(ERROR, "Could not delete file: " + file_path);
 
         // set the response
-        response.setErrorResponse(NOT_FOUND);
+        response.setErrorResponse(FORBIDDEN);
     }
     else
     {
