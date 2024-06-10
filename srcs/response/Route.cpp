@@ -84,11 +84,11 @@ void	Route::setResponseGenerator(IResponseGenerator *generator)
 #include <iostream>
 bool	Route::match(const std::string& uri)
 {
-    (void)m_matcher;
-    return uri.find(m_path) != std::string::npos;
+    //(void)m_matcher;
+    //return uri.find(m_path) != std::string::npos;
 
-    // std::cout << "Matching uri " << uri << " with path " << m_path << std::endl;
-	// if (!m_matcher){ return uri.find(m_path) != std::string::npos; }
-    // std::cout << "Using m_matcher" << std::endl;
-	// return m_matcher->match(uri);
+    //std::cout << "Matching uri " << uri << " with path " << m_path << std::endl;
+	if (!m_matcher){ return uri.find(m_path) != std::string::npos; }
+  // std::cout << "Using m_matcher" << std::endl;
+	return m_matcher->match(uri);
 }

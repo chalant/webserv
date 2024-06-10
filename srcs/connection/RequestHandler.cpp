@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <utility>
 #include <cstdlib>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 /*
  * RequestHandler class
@@ -335,20 +337,25 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     // Get the child process exit status without blocking
     int cgi_pid = m_connection_manager.getConnection(client_socket).getCgiPid();
     int child_exit_status;
-    waitpid(cgi_pid, &child_exit_status, WNOHANG);
+    int exit_code = -1;
 
-    std::cout << "Child exit status: " << child_exit_status << std::endl;
+    if ( waitpid(cgi_pid, &child_exit_status, 0) == -1 ) {
+        m_logger.log(ERROR, "waitpid failed");
+    }
+
+    if ( WIFEXITED(child_exit_status) ) {
+        exit_code = WEXITSTATUS(child_exit_status);
+    }
 
     // Check if the child process exited abnormaly
-    if (child_exit_status != 0)
+    if (exit_code != 0)
     {
-        // log the situation
-        m_logger.log(ERROR, "CGI process ID " + Converter::toString(cgi_pid) + " exited abnormaly with status " +
-                                Converter::toString(child_exit_status));
+         // log the situation
+         m_logger.log(ERROR, "CGI process ID " + Converter::toString(cgi_pid) + " exited abnormaly with exit code " + Converter::toString(exit_code) + ".");
         
-        // Set the response
-        response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
-    }
+      // Set the response
+         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
+     }
     else if (response_buffer.empty()) // Check if the response is empty
         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
     else
