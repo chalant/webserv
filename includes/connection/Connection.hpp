@@ -52,7 +52,6 @@ public:
     virtual std::string getIp() const;
     virtual int getPort() const;
     virtual std::string getRemoteAddress() const;
-    virtual int getCgiInputPipeWriteEnd() const;
     virtual int getCgiOutputPipeReadEnd() const;
     virtual IRequest &getRequest() const;
     virtual IResponse &getResponse() const;

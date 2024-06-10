@@ -54,11 +54,6 @@ int Connection::getCgiOutputPipeReadEnd() const
     return m_cgi_output_pipe_read_end;
 }
 
-int Connection::getCgiInputPipeWriteEnd() const
-{
-    return m_cgi_input_pipe_write_end;
-}
-
 IRequest &Connection::getRequest() const { return *m_request; }
 
 IResponse &Connection::getResponse() const { return *m_response; }
