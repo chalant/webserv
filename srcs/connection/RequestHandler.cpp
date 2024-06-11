@@ -329,6 +329,13 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     // Resize the response buffer to the actual size
     response_buffer.resize(response_buffer.size() - read_buffer_size +
                            read_return_value);
+	// Get a reference to the Connection
+    IConnection &connection =
+        m_connection_manager.getConnection(client_socket);
+
+    // Get a reference to the Request
+    IRequest &request = connection.getRequest();
+	unlink(request.getBodyFilePath().c_str());
 
     // print the response
     m_logger.log(VERBOSE, "CGI response received 100%");

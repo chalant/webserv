@@ -14,7 +14,7 @@
  */
 
 #define DEFAULT_TIMEOUT 300    // 5 minutes
-#define CGI_DEFAULT_TIMEOUT 20 // 20 seconds
+#define CGI_DEFAULT_TIMEOUT 300 // 20 seconds
 
 #include "../logger/ILogger.hpp"
 #include "IConnection.hpp"

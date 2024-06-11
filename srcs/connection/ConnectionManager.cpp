@@ -93,8 +93,8 @@ IRequest &ConnectionManager::getRequest(SocketDescriptor_t socket_descriptor)
 // Get a reference to a response
 IResponse &ConnectionManager::getResponse(SocketDescriptor_t socket_descriptor)
 {
-    if (m_connections.find(socket_descriptor) == m_connections.end())
-        throw std::runtime_error("[CONNECTIONMANAGER] Connection not found.");
+    // if (m_connections.find(socket_descriptor) == m_connections.end())
+    //     throw std::runtime_error("[CONNECTIONMANAGER] Connection not found.");
 
     return m_connections[ socket_descriptor ]->getResponse();
 }
