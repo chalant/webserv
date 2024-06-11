@@ -270,7 +270,7 @@ size_t Response::getResponseSize() const
 }
 
 // Get the map of cookies
-std::map<std::string, std::string> Response::getCookiesMap() const
+std::map<std::string, std::string> Response::getCookies() const
 {
     return m_cookies;
 }

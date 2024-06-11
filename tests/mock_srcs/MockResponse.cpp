@@ -132,7 +132,7 @@ std::string MockResponse::getResponseSizeString() const { return ""; }
 
 size_t MockResponse::getResponseSize() const { return 0; }
 
-std::map<std::string, std::string> MockResponse::getCookiesMap() const
+std::map<std::string, std::string> MockResponse::getCookies() const
 {
     return std::map<std::string, std::string>();
 }

@@ -138,9 +138,13 @@ int Logger::log(const IConnection &connection)
         m_appendMapToLog(log_buffer_stream, "response_headers",
                          response.getHeadersStringMap());
 
-        // Add cookies to the log message
-        m_appendMapToLog(log_buffer_stream, "response_cookies",
+        // Add request cookies to the log message
+        m_appendMapToLog(log_buffer_stream, "request_cookies",
                          request.getCookies());
+
+        // Add response cookies to the log message
+        m_appendMapToLog(log_buffer_stream, "response_cookies",
+                         response.getCookies());
 
         log_buffer_stream << "}\n";
 

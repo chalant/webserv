@@ -74,7 +74,7 @@ public:
     virtual std::string getStatusCodeString() const;
     virtual std::string getResponseSizeString() const;
     virtual size_t getResponseSize() const;
-    virtual std::map<std::string, std::string> getCookiesMap() const;
+    virtual std::map<std::string, std::string> getCookies() const;
     virtual std::string getCookie(const std::string &key) const;
 
     // Convert headers to map or string
