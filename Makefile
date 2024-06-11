@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mde-clee <mde-clee@student.42.fr>          +#+  +:+       +#+         #
+#    By: llapage <llapage@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/15 10:54:31 by llapage           #+#    #+#              #
-#    Updated: 2024/06/11 10:31:06 by mde-clee         ###   ########.fr        #
+#    Updated: 2024/06/11 14:20:15 by llapage          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,10 +16,10 @@ SOURCES     = srcs/
 INCLUDES	= includes/
 #-------------------COMPILATION----------------------
 CC        	=   c++
-#FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
-FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
+FLAGS    	= 	-Wall -Werror -Wextra -g -std=c++98
+#FLAGS   	=   -Wall -Werror -Wextra -g -fsanitize=address -std=c++98
 #-------------------SOURCES FILES----------------------
-				
+
 SRCS        =	main.cpp \
 				srcs/buffer/BufferManager.cpp \
 				srcs/buffer/FileBuffer.cpp \
@@ -73,7 +73,7 @@ SRCS        =	main.cpp \
 				srcs/response/Route.cpp \
 				srcs/response/StaticFileResponseGenerator.cpp \
 				srcs/response/DeleteResponseGenerator.cpp
-				
+
 #-------------------OBJECTS----------------------
 OBJS        =   $(SRCS:.cpp=.o)
 #-------------------HEADERS----------------------
@@ -88,7 +88,7 @@ BOLD_OFF    =   \x1b[21m
 #-------------------RULES-----------------------
 %.o: %.cpp
 			@printf "$(YELLOW)Generating $(NAME) objects... %-33.33s\r$(NO_COLOR)" $@
-			@$(CC) $(FLAGS) -c $< -o $@ 
+			@$(CC) $(FLAGS) -c $< -o $@
 $(NAME):	$(OBJS)
 			@printf "$(GREEN)Compiling $(NAME)... %33s\r$(NO_COLOR)" " "
 			@$(CC) $(FLAGS) $(OBJS)  -o $(NAME) -I$(INCLUDES) -I$(SOURCES)
