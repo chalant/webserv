@@ -209,6 +209,7 @@ int StaticFileResponseGenerator::m_serveFile(const std::string &file_path,
             response.addHeader(CONTENT_TYPE, m_getMimeType(file_path));
             response.addHeader(CONTENT_LENGTH,
                                Converter::toString(body.size()));
+            response.addHeader(CONNECTION, "close");
 
             return 0;
         }

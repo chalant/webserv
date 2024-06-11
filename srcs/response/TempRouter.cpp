@@ -100,22 +100,6 @@ IRoute *TempRouter::getRoute(IRequest *request, IResponse *response)
 
     // Match the request to a route
     HttpMethod method = request->getMethod();
-    // size_t i;
-    // for (i = 0; i < routes_stop; i++)
-    // {
-    //     // if the route path is contained in the uri
-    //     if (uri.find(m_routes[i]->getPath()) != std::string::npos)
-    //     {
-    //         // Check if the method is allowed
-    //         if (m_routes[i]->isAllowedMethod(method) == false)
-    //         {
-    //             continue;
-    //         }
-    //         route = m_routes[i]; // select the route
-    //         route->setResponseGenerator(response_generator);
-    //         return route;
-    //     }
-    // }
 
     // search for a route that matches the request.
     for (size_t i = 0; i < routes_stop; i++)
@@ -312,20 +296,6 @@ void TempRouter::m_createRoutes(IConfiguration &server,
             // route->setResponseGenerator(m_response_generators["GET"]);
             routes.push_back(route);
         }
-        // // Get the cgi_script
-        // // e.g. cgi_script /usr/bin/python3;
-        // const std::vector<std::string> &cgi_script_vector =
-        // locations_list[i]->getStringVector("cgi_script"); if
-        // (cgi_script_vector.size() == 0) { cgi_script = ""; } else {
-        // cgi_script = cgi_script_vector[0]; }
-
-        // // Add the route
-        // Route *route = new Route(path, is_regex, methods, root, index,
-        // cgi_script);
-        // route->setResponseGenerator(m_response_generators["GET"]);
-        // m_routes.push_back(route);
-
-        // Log the creation of the Route
     }
 
     // Sort the routes

@@ -303,12 +303,16 @@ void EventManager::m_handleClientException(ssize_t &pollfd_index, short events)
         // Destroy the buffer associated with the descriptor
         m_buffer_manager.destroyBuffer(descriptor);
 
-        // Let the request handler handle the error
-        m_request_handler.handleErrorResponse(descriptor,
-                                              BAD_REQUEST); // 400
+        try {
+            // Let the request handler handle the error
+            m_request_handler.handleErrorResponse(descriptor,
+                                                BAD_REQUEST); // 400
 
-        // Add the POLLOUT event for the socket
-        m_pollfd_manager.addPollOut(pollfd_index);
+            // Add the POLLOUT event for the socket
+            m_pollfd_manager.addPollOut(pollfd_index);
+        } catch (const std::exception &e) {
+            m_logger.log(ERROR, e.what());
+        }
     }
 
     // Check for errors on the socket
