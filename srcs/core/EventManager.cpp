@@ -9,10 +9,13 @@
 #define KEEP_DESCRIPTOR 0x01
 
 EventManager::EventManager(IPollfdManager &pollfd_manager,
-                           IBufferManager &buffer_manager, IConnectionManager &connection_manager, IServer &server,
-                           IRequestHandler &request_handler, ILogger &logger)
-    : m_pollfd_manager(pollfd_manager), m_buffer_manager(buffer_manager), m_connection_manager(connection_manager),
-      m_server(server), m_request_handler(request_handler), m_logger(logger)
+                           IBufferManager &buffer_manager,
+                           IConnectionManager &connection_manager,
+                           IServer &server, IRequestHandler &request_handler,
+                           ILogger &logger)
+    : m_pollfd_manager(pollfd_manager), m_buffer_manager(buffer_manager),
+      m_connection_manager(connection_manager), m_server(server),
+      m_request_handler(request_handler), m_logger(logger)
 {
 }
 
@@ -249,9 +252,13 @@ ssize_t EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
     int descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
 
     // Touch the connection
-    try{
+    try
+    {
         m_connection_manager.getConnection(descriptor).touch();
-    } catch (std::exception &e) {}
+    }
+    catch (std::exception &e)
+    {
+    }
 
     // Flush the buffer
     ssize_t return_value = m_buffer_manager.flushBuffer(descriptor);
@@ -309,14 +316,17 @@ void EventManager::m_handleClientException(ssize_t &pollfd_index, short events)
         // Destroy the buffer associated with the descriptor
         m_buffer_manager.destroyBuffer(descriptor);
 
-        try {
+        try
+        {
             // Let the request handler handle the error
             m_request_handler.handleErrorResponse(descriptor,
-                                                BAD_REQUEST); // 400
+                                                  BAD_REQUEST); // 400
 
             // Add the POLLOUT event for the socket
             m_pollfd_manager.addPollOut(pollfd_index);
-        } catch (const std::exception &e) {
+        }
+        catch (const std::exception &e)
+        {
             m_logger.log(ERROR, e.what());
         }
     }

@@ -37,7 +37,8 @@
 // IConfiguration object
 Request::Request(const IConfiguration &configuration,
                  const HttpHelper &httpHelper)
-    : m_configuration(configuration), m_http_helper(httpHelper), m_body_file_path("")
+    : m_configuration(configuration), m_http_helper(httpHelper),
+      m_body_file_path("")
 {
 }
 
@@ -65,7 +66,8 @@ Request::Request(const Request &src)
 }
 
 // Destructor
-Request::~Request() {
+Request::~Request()
+{
     // If a body file path was set, delete the file
     if (!m_body_file_path.empty())
         remove(m_body_file_path.c_str());
@@ -409,8 +411,8 @@ void Request::setAuthority()
         // to the default port
         m_host_port = m_configuration.getString("default_port");
     }
-	if (m_host_port.empty())
-		 m_host_port = m_configuration.getString("default_port");
+    if (m_host_port.empty())
+        m_host_port = m_configuration.getString("default_port");
     // Set the authority of the request
     m_authority = m_host_name + ":" + m_host_port;
 }

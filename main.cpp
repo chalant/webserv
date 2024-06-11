@@ -105,8 +105,9 @@ int main(int argc, char **argv)
         PollingService polling_service(pollfd_manager, logger);
 
         // Instantiate the EventManager.
-        EventManager event_manager(pollfd_manager, buffer_manager, connection_manager, server,
-                                   request_handler, logger);
+        EventManager event_manager(pollfd_manager, buffer_manager,
+                                   connection_manager, server, request_handler,
+                                   logger);
 
         // Start the webserv core cycle.
         while (true)

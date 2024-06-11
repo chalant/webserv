@@ -151,7 +151,7 @@ bool Router::m_sortRoutes(const IRoute *a, const IRoute *b)
 }
 
 void Router::m_createRoutes(IConfiguration &server,
-                                std::vector<IRoute *> &routes)
+                            std::vector<IRoute *> &routes)
 {
     // Create a route for each location block
     const BlockList &locations_list = server.getBlocks("location");
@@ -278,7 +278,8 @@ void Router::m_createRoutes(IConfiguration &server,
                                       "',  methods: '" + methods_string +
                                       "', root: '" + root + "', index: '" +
                                       index + "', cgi script: '" + cgi_script +
-                                      "'." + "CGI" + server.getString("server_name"));
+                                      "'." + "CGI" +
+                                      server.getString("server_name"));
             route->setResponseGenerator(cgi_rg);
             routes.push_back(route);
             m_response_generators[ cgi_path ] = cgi_rg;
@@ -303,13 +304,13 @@ void Router::m_createRoutes(IConfiguration &server,
     // print all the route paths
     for (size_t i = 0; i < routes.size(); i++)
     {
-        m_logger.log(VERBOSE, "[Router] Route path: '" +
-                                  routes[ i ]->getPath() + "'.");
+        m_logger.log(VERBOSE,
+                     "[Router] Route path: '" + routes[ i ]->getPath() + "'.");
     }
 }
 
 Triplet_t Router::execRoute(IRoute *route, IRequest *request,
-                                IResponse *response)
+                            IResponse *response)
 {
     IResponseGenerator *response_generator = route->getResponseGenerator();
     // Generate the response

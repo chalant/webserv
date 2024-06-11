@@ -753,7 +753,7 @@ void RequestParser::m_assignUntilBoundary(std::istringstream &iss,
 
         // Get the number of bytes read
         bytes_read = iss.gcount();
-		buffer[bytes_read] = '\0'; 
+        buffer[ bytes_read ] = '\0';
 
         // Check if the boundary is found in the buffer
         for (size_t i = 0; i < bytes_read; i++)

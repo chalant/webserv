@@ -13,7 +13,7 @@
  *
  */
 
-#define DEFAULT_TIMEOUT 300    // 5 minutes
+#define DEFAULT_TIMEOUT 300     // 5 minutes
 #define CGI_DEFAULT_TIMEOUT 300 // 20 seconds
 
 #include "../logger/ILogger.hpp"

@@ -81,7 +81,7 @@ void ConnectionManager::removeConnection(SocketDescriptor_t socket_descriptor)
 IConnection &
 ConnectionManager::getConnection(SocketDescriptor_t socket_descriptor)
 {
-    IConnection * connection = m_connections.at(socket_descriptor);
+    IConnection *connection = m_connections.at(socket_descriptor);
     if (connection == NULL)
         throw std::runtime_error("[CONNECTIONMANAGER] Connection not found.");
     return *connection;
@@ -97,7 +97,8 @@ IRequest &ConnectionManager::getRequest(SocketDescriptor_t socket_descriptor)
 IResponse &ConnectionManager::getResponse(SocketDescriptor_t socket_descriptor)
 {
     // if (m_connections.find(socket_descriptor) == m_connections.end())
-    //     throw std::runtime_error("[CONNECTIONMANAGER] Connection not found.");
+    //     throw std::runtime_error("[CONNECTIONMANAGER] Connection not
+    //     found.");
 
     return m_connections[ socket_descriptor ]->getResponse();
 }

@@ -2,11 +2,11 @@
 #define EVENTMANAGER_HPP
 
 #include "../buffer/IBufferManager.hpp"
+#include "../connection/IConnectionManager.hpp"
 #include "../connection/IRequestHandler.hpp"
 #include "../logger/ILogger.hpp"
 #include "../network/IServer.hpp"
 #include "../pollfd/IPollfdManager.hpp"
-#include "../connection/IConnectionManager.hpp"
 #include "IEventManager.hpp"
 
 typedef std::pair<int, std::pair<int, int> > Triplet_t;
@@ -34,9 +34,9 @@ private:
     void m_cleanUp(ssize_t &pollfd_index, int descriptor, short options = 0);
 
 public:
-    EventManager(IPollfdManager &pollfd_manager, IBufferManager &buffer_manager, IConnectionManager &connection_manager,
-                 IServer &server, IRequestHandler &request_handler,
-                 ILogger &logger);
+    EventManager(IPollfdManager &pollfd_manager, IBufferManager &buffer_manager,
+                 IConnectionManager &connection_manager, IServer &server,
+                 IRequestHandler &request_handler, ILogger &logger);
     ~EventManager();
 
     virtual void handleEvents();
