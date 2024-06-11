@@ -28,7 +28,7 @@ struct BodyParameter
     std::string filename;     // Name of the file; applicable for file uploads
     std::string content_type; // MIME type of the content; applicable for file
                               // uploads
-    std::vector<char> data;         // Data of the file or field; contains the content
+    std::vector<char> data;   // Data of the file or field; contains the content
                               // of the part
     std::string disposition_type; // Disposition type (e.g., "form-data",
                                   // "attachment", "inline")
@@ -47,7 +47,7 @@ private:
     bool m_initial;
     bool m_headers;
     bool m_finished;
-	IRoute	*m_route;
+    IRoute *m_route;
 
 public:
     RequestState();
@@ -56,7 +56,7 @@ public:
     bool initial(void) const;
     int getContentRed(void) const;
     int getContentLength(void) const;
-	IRoute	*getRoute(void) const;
+    IRoute *getRoute(void) const;
 
     void finished(bool value);
     void headers(bool value);
@@ -65,7 +65,7 @@ public:
     void setContentRed(int value);
     void setContentLength(int value);
     void reset(void);
-	void	setRoute(IRoute *route);
+    void setRoute(IRoute *route);
 };
 
 class IRequest

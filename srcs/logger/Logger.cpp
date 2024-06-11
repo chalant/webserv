@@ -113,27 +113,22 @@ int Logger::log(const IConnection &connection)
     {
         // Create a temporary stringstream object to construct the log message
         std::ostringstream log_buffer_stream;
-        log_buffer_stream << "{\n"
-                          << "\ttimestamp=\"" << m_getCurrentTimestamp()
-                          << "\",\n"
-                          << "\tclient_ip=\"" << connection.getIp() << "\",\n"
-                          << "\tclient_port=\"" << connection.getPort() << "\",\n"
-                          << "\tauthority=\"" << request.getAuthority()
-                          << "\",\n"
-                          << "\tmethod=\"" << request.getMethodString()
-                          << "\",\n"
-                          << "\trequest_uri=\"" << request.getUri() << "\",\n"
-                          << "\thttp_version=\""
-                          << request.getHttpVersionString() << "\",\n"
-                          << "\tstatus_code=\""
-                          << response.getStatusCodeString()
-                          << "\tresponse_size=\""
-                          << response.getResponseSizeString() << "\",\n"
-                          << "\tuser_agent=\""
-                          << request.getHeaderValue(USER_AGENT) << "\",\n"
-                          << "\treferrer=\"" << request.getHeaderValue(REFERER)
-                          << "\n"
-                          << "\"\n";
+        log_buffer_stream
+            << "{\n"
+            << "\ttimestamp=\"" << m_getCurrentTimestamp() << "\",\n"
+            << "\tclient_ip=\"" << connection.getIp() << "\",\n"
+            << "\tclient_port=\"" << connection.getPort() << "\",\n"
+            << "\tauthority=\"" << request.getAuthority() << "\",\n"
+            << "\tmethod=\"" << request.getMethodString() << "\",\n"
+            << "\trequest_uri=\"" << request.getUri() << "\",\n"
+            << "\thttp_version=\"" << request.getHttpVersionString() << "\",\n"
+            << "\tstatus_code=\"" << response.getStatusCodeString()
+            << "\tresponse_size=\"" << response.getResponseSizeString()
+            << "\",\n"
+            << "\tuser_agent=\"" << request.getHeaderValue(USER_AGENT)
+            << "\",\n"
+            << "\treferrer=\"" << request.getHeaderValue(REFERER) << "\n"
+            << "\"\n";
 
         // Add request headers to the log message
         m_appendMapToLog(log_buffer_stream, "request_headers",

@@ -24,10 +24,8 @@ Connection::Connection(
     : m_socket_descriptor(client_info.first), m_ip(client_info.second.first),
       m_port(Converter::toInt(client_info.second.second)),
       m_remote_address(m_ip + ":" + client_info.second.second),
-      m_cgi_output_pipe_read_end(-1),
-      m_cgi_pid(-1),
-      m_logger(logger), m_request(request), m_response(response),
-      m_timeout(timeout)
+      m_cgi_output_pipe_read_end(-1), m_cgi_pid(-1), m_logger(logger),
+      m_request(request), m_response(response), m_timeout(timeout)
 {
     m_last_access = time(NULL);
 }

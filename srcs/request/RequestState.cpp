@@ -15,7 +15,7 @@ bool RequestState::headers() const { return m_headers; }
 bool RequestState::initial() const { return m_initial; }
 int RequestState::getContentLength() const { return m_content_length; }
 int RequestState::getContentRed() const { return m_content_red; }
-IRoute	*RequestState::getRoute() const { return m_route; }
+IRoute *RequestState::getRoute() const { return m_route; }
 
 void RequestState::finished(bool value) { m_finished = value; }
 void RequestState::headers(bool value) { m_headers = value; }

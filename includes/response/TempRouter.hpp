@@ -21,27 +21,29 @@
 class TempRouter : public ITempRouter
 {
 private:
-    IConfiguration	&m_configuration;
-    ILogger			&m_logger;
-    HttpHelper		m_http_helper;
+    IConfiguration &m_configuration;
+    ILogger &m_logger;
+    HttpHelper m_http_helper;
 
-    //std::vector<IRoute *>			m_routes;
-	std::vector<std::vector<IRoute *> *>	m_routes;
-	std::vector<IConfiguration *>	m_servers;
-    std::map<std::string, IResponseGenerator *>	m_response_generators;
-	std::map<std::string, IURIMatcher *>		m_uri_matchers;
+    // std::vector<IRoute *>			m_routes;
+    std::vector<std::vector<IRoute *> *> m_routes;
+    std::vector<IConfiguration *> m_servers;
+    std::map<std::string, IResponseGenerator *> m_response_generators;
+    std::map<std::string, IURIMatcher *> m_uri_matchers;
 
     // Method to compare two routes by path length
     static bool m_sortRoutes(const IRoute *a, const IRoute *b);
-	IResponseGenerator	*m_createCGIResponseGenerator(const std::string& type, const std::string& bin_path, ILogger &logger);
-	void	m_createRoutes(IConfiguration &server, std::vector<IRoute *> &routes);
+    IResponseGenerator *
+    m_createCGIResponseGenerator(const std::string &type,
+                                 const std::string &bin_path, ILogger &logger);
+    void m_createRoutes(IConfiguration &server, std::vector<IRoute *> &routes);
 
 public:
     TempRouter(IConfiguration &Configuration, ILogger &logger);
     ~TempRouter();
 
-	virtual	IRoute		*getRoute(IRequest *req, IResponse *res);
-	virtual	Triplet_t	execRoute(IRoute *route, IRequest *req, IResponse *res);
+    virtual IRoute *getRoute(IRequest *req, IResponse *res);
+    virtual Triplet_t execRoute(IRoute *route, IRequest *req, IResponse *res);
 };
 
 #endif // TEMPROUTER_HPP

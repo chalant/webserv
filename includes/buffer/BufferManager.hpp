@@ -48,7 +48,8 @@ public:
     ~BufferManager();
 
     // Push into a file buffer
-    ssize_t pushFileBuffer(int file_descriptor, const std::vector<char> &data, size_t flush_threshold = DEFAULT_FLUSH_THRESHOLD);
+    ssize_t pushFileBuffer(int file_descriptor, const std::vector<char> &data,
+                           size_t flush_threshold = DEFAULT_FLUSH_THRESHOLD);
 
     // Push into a socket buffer
     ssize_t pushSocketBuffer(int socket_descriptor,

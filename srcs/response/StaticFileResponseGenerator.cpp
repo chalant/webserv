@@ -53,7 +53,7 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
 
         // append the default file name
         file_path += route.getIndex();
-        
+
         if (m_serveFile(file_path, response) == -1)
         {
             if (route.autoindex() == false)
@@ -64,20 +64,21 @@ Triplet_t StaticFileResponseGenerator::generateResponse(
             else
             {
                 // log the situation
-                m_logger.log(VERBOSE, "Serving directory listing: " + directory_path);
+                m_logger.log(VERBOSE,
+                             "Serving directory listing: " + directory_path);
                 // serve the directory listing
                 m_serveDirectoryListing(directory_path, response);
-            }     
+            }
         }
     }
     else
     {
         // serve the file
-        if ( m_serveFile(file_path, response) == -1)
-         {
+        if (m_serveFile(file_path, response) == -1)
+        {
             // set the error response
             response.setErrorResponse(NOT_FOUND);
-         }
+        }
     }
 
     // return -1
@@ -169,8 +170,6 @@ int StaticFileResponseGenerator::m_serveFile(const std::string &file_path,
         // log the error
         m_logger.log(ERROR, "Could not open file: " + file_path);
 
-
-
         return -1;
     }
     else
@@ -217,8 +216,8 @@ int StaticFileResponseGenerator::m_serveFile(const std::string &file_path,
 }
 
 // List a directory
-void StaticFileResponseGenerator::m_serveDirectoryListing(const std::string &directory_path,
-                                                  IResponse &response)
+void StaticFileResponseGenerator::m_serveDirectoryListing(
+    const std::string &directory_path, IResponse &response)
 {
     std::string file_list;
 

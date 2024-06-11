@@ -274,9 +274,9 @@ void Request::setMethod(const std::string &method)
             METHOD_NOT_ALLOWED, // Throw '405' status error
             "unknown method: \"" + method + "\"");
     else if (m_http_helper.isSupportedMethod(method) == false)
-        //throw HttpStatusCodeException(
-         //   NOT_IMPLEMENTED, // Throw '501' status error
-         //   "unsupported method: \"" + method + "\"");
+        // throw HttpStatusCodeException(
+        //    NOT_IMPLEMENTED, // Throw '501' status error
+        //    "unsupported method: \"" + method + "\"");
         throw HttpStatusCodeException(
             METHOD_NOT_ALLOWED, // Throw '405' status error
             "unsupported method: \"" + method + "\"");
@@ -424,7 +424,8 @@ void Request::setUploadRequest(bool upload_request)
 }
 
 // Method to append new data to the body
-void Request::appendBody(std::vector<char>::const_iterator start, std::vector<char>::const_iterator end)
+void Request::appendBody(std::vector<char>::const_iterator start,
+                         std::vector<char>::const_iterator end)
 {
     m_body.insert(m_body.end(), start, end);
 }
@@ -436,11 +437,11 @@ void Request::appendBuffer(const std::vector<char> &raw_request)
 }
 
 // Method to clear the buffer
-void Request::clearBuffer() 
-{ 
+void Request::clearBuffer()
+{
     m_buffer.clear();
     m_buffer.shrink_to_fit(); // makes .data() return nullptr
-	//std::vector<char>(m_buffer).swap(m_buffer);
+                              // std::vector<char>(m_buffer).swap(m_buffer);
 }
 
 // Method to trim the buffer

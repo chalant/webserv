@@ -88,7 +88,7 @@ public:
 
     // Handle redirect
     void handleRedirectResponse(int socket_descriptor, std::string location);
-    
+
     // Remove and close the connection
     void removeConnection(int socket_descriptor);
 

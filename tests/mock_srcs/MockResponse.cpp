@@ -152,6 +152,9 @@ std::map<std::string, std::string> MockResponse::getHeadersStringMap() const
 std::vector<char> MockResponse::serialise() { return std::vector<char>(); }
 
 // Append data to the body
-void MockResponse::appendBuffer(std::vector<char> &data) { m_body.insert(m_body.end(), data.begin(), data.end()); }
+void MockResponse::appendBuffer(std::vector<char> &data)
+{
+    m_body.insert(m_body.end(), data.begin(), data.end());
+}
 
 // Path: tests/mock_srcs/MockResponse.cpp

@@ -77,7 +77,7 @@ private:
 
     // Body File Path
     std::string m_body_file_path;
-    
+
 public:
     // Constructor and Destructor
     Request(const IConfiguration &configuration, const HttpHelper &http_helper);
@@ -128,7 +128,8 @@ public:
     void setAuthority();
     void addBodyParameter(const BodyParameter &body_parameter);
     void setUploadRequest(bool upload_request);
-    virtual void appendBody(std::vector<char>::const_iterator start, std::vector<char>::const_iterator end);
+    virtual void appendBody(std::vector<char>::const_iterator start,
+                            std::vector<char>::const_iterator end);
     void appendBuffer(const std::vector<char> &raw_request);
     void clearBuffer(void);
     void trimBuffer(ptrdiff_t new_start);

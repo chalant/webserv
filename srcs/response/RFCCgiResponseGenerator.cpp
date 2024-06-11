@@ -89,8 +89,9 @@ Triplet_t RFCCgiResponseGenerator::generateResponse(
         int file_fd = open(body_file_path.c_str(), O_RDONLY);
         if (file_fd == -1)
         {
-            m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd, NO_THROW);
-            exit (1);
+            m_cleanUp(cgi_args.data(), cgi_env.data(), cgi_output_pipe_fd,
+                      NO_THROW);
+            exit(1);
         }
 
         // set CLOSE_ON_EXEC flag
@@ -183,7 +184,7 @@ void RFCCgiResponseGenerator::m_setCgiEnvironment(const std::string &script,
     cgi_env.push_back(
         strdup(("CONTENT_TYPE=" + request.getContentType()).c_str()));
     std::string script_filename = route.getRoot() + route.getPath();
-    if (script_filename[script_filename.size() - 1] != '/')
+    if (script_filename[ script_filename.size() - 1 ] != '/')
         script_filename += "/";
     script_filename += script;
     cgi_env.push_back(strdup(("SCRIPT_FILENAME=" + script_filename).c_str()));

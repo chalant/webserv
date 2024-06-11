@@ -55,10 +55,11 @@ void ConnectionManager::addConnection(
     m_connections[ client_info.first ] = connection;
 
     // Log the new connection
-    m_logger.log(VERBOSE, "[CONNECTIONMANAGER] New connection created. Remote address: " +
-                              client_info.second.first + ":" +
-                              client_info.second.second + " Socket: " +
-                              Converter::toString(client_info.first));
+    m_logger.log(
+        VERBOSE,
+        "[CONNECTIONMANAGER] New connection created. Remote address: " +
+            client_info.second.first + ":" + client_info.second.second +
+            " Socket: " + Converter::toString(client_info.first));
 }
 
 // Remove a connection

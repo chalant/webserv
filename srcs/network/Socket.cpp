@@ -1,10 +1,9 @@
 #include "../../includes/network/Socket.hpp"
 #include <cerrno>
+#include <iostream>
 #include <sstream>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <cerrno>
-#include <iostream>
 
 /*
  * Socket - Class for socket operations.

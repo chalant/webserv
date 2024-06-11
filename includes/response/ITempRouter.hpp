@@ -16,8 +16,9 @@ class ITempRouter
 public:
     virtual ~ITempRouter() {};
 
-	virtual Triplet_t	execRoute(IRoute *route, IRequest *req, IResponse *res) = 0;
-	virtual IRoute		*getRoute(IRequest *req, IResponse *res) = 0;
+    virtual Triplet_t execRoute(IRoute *route, IRequest *req,
+                                IResponse *res) = 0;
+    virtual IRoute *getRoute(IRequest *req, IResponse *res) = 0;
 };
 
 #endif // IROUTER_HPP

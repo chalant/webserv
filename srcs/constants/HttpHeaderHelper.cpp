@@ -319,7 +319,8 @@ std::map<HttpHeader, std::string> HttpHeaderHelper::m_setHttpHeaderStringMap()
     http_header_string_map[ X_FRAME_OPTIONS ] = "x-frame-options";
     http_header_string_map[ X_XSS_PROTECTION ] = "x-xss-protection";
     http_header_string_map[ X_FORWARDED_FOR ] = "x-forwarded-for";
-    http_header_string_map[ X_SECRET_HEADER_FOR_TEST ] = "x-secret-header-for-test";
+    http_header_string_map[ X_SECRET_HEADER_FOR_TEST ] =
+        "x-secret-header-for-test";
     http_header_string_map[ COOKIE ] = "cookie";
     http_header_string_map[ SET_COOKIE ] = "set-cookie";
     http_header_string_map[ UPGRADE_INSECURE_REQUESTS ] =

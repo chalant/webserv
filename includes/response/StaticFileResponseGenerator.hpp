@@ -14,7 +14,8 @@ private:
     std::string m_getMimeType(const std::string &file_path) const;
     bool m_isDirectory(const std::string &path) const;
     int m_serveFile(const std::string &file_path, IResponse &response);
-    void m_serveDirectoryListing(const std::string &directory_path, IResponse &response);
+    void m_serveDirectoryListing(const std::string &directory_path,
+                                 IResponse &response);
 
 public:
     StaticFileResponseGenerator(ILogger &logger);

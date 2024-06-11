@@ -63,32 +63,33 @@ void EventManager::m_handleRegularFileEvents(ssize_t &pollfd_index,
         if (m_pollfd_manager.isBodyFile(pollfd_index))
         {
             // Get the body descriptor
-            int body_descriptor =
-                m_pollfd_manager.getDescriptor(pollfd_index);
+            int body_descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
 
             // Log the writing to the body file
-            m_logger.log(VERBOSE, "[EVENTMANAGER] Writing to body file '"
-                                       + Converter::toString(body_descriptor) + "'");
+            m_logger.log(VERBOSE, "[EVENTMANAGER] Writing to body file '" +
+                                      Converter::toString(body_descriptor) +
+                                      "'");
 
             // Write to the body file and check if done
             if (!m_flushBuffer(pollfd_index, KEEP_DESCRIPTOR))
             {
-                m_logger.log(ERROR, "[EVENTMANAGER] Finished writing to body file '"
-                                        + Converter::toString(body_descriptor) + "'");
-               
+                m_logger.log(ERROR,
+                             "[EVENTMANAGER] Finished writing to body file '" +
+                                 Converter::toString(body_descriptor) + "'");
+
                 // Let RequestHandler handle the CGI process
                 Triplet_t info = m_request_handler.executeCgi(body_descriptor);
-                
+
                 // Get the info
                 int cgi_pid = info.first;
                 int cgi_output_pipe_read_end = info.second.first;
 
                 // Log the dynamic serving
-                m_logger.log(
-                    VERBOSE,
-                    "[EVENTMANAGER] GGI process launched with id " + Converter::toString(cgi_pid) +
-                        " (CGI output pipe Read end: " +
-                        Converter::toString(cgi_output_pipe_read_end));
+                m_logger.log(VERBOSE,
+                             "[EVENTMANAGER] GGI process launched with id " +
+                                 Converter::toString(cgi_pid) +
+                                 " (CGI output pipe Read end: " +
+                                 Converter::toString(cgi_output_pipe_read_end));
 
                 // Add the CGI output pipe Read end to the poll set
                 pollfd pollfd;
@@ -202,16 +203,15 @@ void EventManager::m_handleRequest(ssize_t &pollfd_index)
         // Clear buffer, remove from polling and close socket
         m_cleanUp(pollfd_index, client_socket_descriptor);
     }
-    else if (info.first ==
-             -4) // Add the  body file for the CGI process to poll
+    else if (info.first == -4) // Add the  body file for the CGI process to poll
     {
-        int body_file_descriptor = info.second.first; // the file descriptor of the body file
+        int body_file_descriptor =
+            info.second.first; // the file descriptor of the body file
 
         // Log the situation
-        m_logger.log(VERBOSE,
-                     "[EVENTMANAGER] Adding body file descriptor '" +
-                         Converter::toString(body_file_descriptor) +
-                         "' to poll");
+        m_logger.log(VERBOSE, "[EVENTMANAGER] Adding body file descriptor '" +
+                                  Converter::toString(body_file_descriptor) +
+                                  "' to poll");
         pollfd pollfd;
         pollfd.fd = body_file_descriptor;
         pollfd.events = POLLOUT;

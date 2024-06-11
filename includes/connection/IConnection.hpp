@@ -44,7 +44,8 @@ public:
     // Connection management
     virtual void touch() = 0;            // Update the last access time
     virtual bool hasExpired() const = 0; // Check if the connection has expired
-    virtual bool cgiHasExpired() const = 0; // Check if the CGI process has expired
+    virtual bool
+    cgiHasExpired() const = 0; // Check if the CGI process has expired
 };
 
 #endif // ICONNECTION_HPP

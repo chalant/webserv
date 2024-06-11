@@ -413,7 +413,8 @@ void RequestParser::m_unchunkBody(const std::vector<char> &buffer,
     if (buffer.empty())
     {
         // Log the situation
-        m_logger.log(ERROR, "[REQUESTPARSER] No data to unchunk, Buffer is empty");
+        m_logger.log(ERROR,
+                     "[REQUESTPARSER] No data to unchunk, Buffer is empty");
 
         return; // no data to unchunk
     }
@@ -440,7 +441,9 @@ void RequestParser::m_unchunkBody(const std::vector<char> &buffer,
         request.getState().finished(true);
 
         // Log the situation
-        m_logger.log(VERBOSE, "[REQUESTPARSER] Unchunking Completed; Final body size: " + Converter::toString(request.getBody().size()) + ".");
+        m_logger.log(VERBOSE,
+                     "[REQUESTPARSER] Unchunking Completed; Final body size: " +
+                         Converter::toString(request.getBody().size()) + ".");
 
         // Done parsing chunks
         return;
@@ -473,7 +476,9 @@ void RequestParser::m_unchunkBody(const std::vector<char> &buffer,
     if (it + chunk_size + 2 > buffer.end())
     {
         // Log the situation
-        m_logger.log(VERBOSE, "[REQUESTPARSER] Waiting for data; current body size: " + Converter::toString(request.getBody().size()) + ".");
+        m_logger.log(VERBOSE,
+                     "[REQUESTPARSER] Waiting for data; current body size: " +
+                         Converter::toString(request.getBody().size()) + ".");
 
         return; // not enough data yet
     }

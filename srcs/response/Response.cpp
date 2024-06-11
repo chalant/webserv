@@ -174,7 +174,8 @@ void Response::setErrorResponse(int status_code)
 void Response::setRedirectResponse(std::string location)
 {
     this->setStatusLine(MOVED_PERMANENTLY);
-    this->setHeaders("location: " + location + "\r\n"
+    this->setHeaders("location: " + location +
+                     "\r\n"
                      "content-length: 0\r\n"
                      "connection: close\r\n"
                      "server: webserv/1.0\r\n");

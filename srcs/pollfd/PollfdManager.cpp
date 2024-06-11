@@ -44,7 +44,6 @@ void PollfdManager::m_addPollfd(pollfd pollFd)
     m_pollfds.push(pollFd);
 }
 
-
 // Method to add a regular file pollfd to the pollfdQueue
 void PollfdManager::addRegularFilePollfd(pollfd pollFd)
 {

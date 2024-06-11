@@ -97,7 +97,7 @@ public:
     virtual void addBodyParameter(const BodyParameter &body_parameter);
     virtual void setUploadRequest(bool upload_request);
     virtual void appendBody(std::vector<char>::const_iterator begin,
-                            std::vector<char>::const_iterator end);   
+                            std::vector<char>::const_iterator end);
     virtual void appendBuffer(const std::vector<char> &raw_request);
     virtual void clearBuffer();
     virtual void trimBuffer(ptrdiff_t new_start);

@@ -158,7 +158,7 @@ enum HttpHeader
                       // supported web browsers
     X_FORWARDED_FOR, // Contains the IP address of the client that initiated the
                      // request
-    X_SECRET_HEADER_FOR_TEST, // A header used by a 42 tester program
+    X_SECRET_HEADER_FOR_TEST,  // A header used by a 42 tester program
     UPGRADE_INSECURE_REQUESTS, // Expresses the client's preference for an
                                // encrypted and authenticated response, and that
                                // it can successfully handle the

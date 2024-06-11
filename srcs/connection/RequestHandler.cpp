@@ -1,13 +1,13 @@
 #include "../../includes/connection/RequestHandler.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <cstdlib>
 #include <fcntl.h>
 #include <sys/fcntl.h>
-#include <unistd.h>
-#include <utility>
-#include <cstdlib>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
+#include <utility>
 
 /*
  * RequestHandler class
@@ -152,8 +152,8 @@ Triplet_t RequestHandler::handleRequest(int socket_descriptor)
 
             // set the file descriptor in the request
             request.setBodyFilePath(body_file_path);
-        
-           // set the file descriptor to non-blocking
+
+            // set the file descriptor to non-blocking
             fcntl(fd, F_SETFL, O_NONBLOCK);
 
             // push the request body to the buffermanager
@@ -338,23 +338,27 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     int child_exit_status;
     int exit_code = -1;
 
-    if ( waitpid(cgi_pid, &child_exit_status, 0) == -1 ) {
+    if (waitpid(cgi_pid, &child_exit_status, 0) == -1)
+    {
         m_logger.log(ERROR, "waitpid failed");
     }
 
-    if ( WIFEXITED(child_exit_status) ) {
+    if (WIFEXITED(child_exit_status))
+    {
         exit_code = WEXITSTATUS(child_exit_status);
     }
 
     // Check if the child process exited abnormaly
     if (exit_code != 0)
     {
-         // log the situation
-         m_logger.log(ERROR, "CGI process ID " + Converter::toString(cgi_pid) + " exited abnormaly with exit code " + Converter::toString(exit_code) + ".");
-        
-      // Set the response
-         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
-     }
+        // log the situation
+        m_logger.log(ERROR, "CGI process ID " + Converter::toString(cgi_pid) +
+                                " exited abnormaly with exit code " +
+                                Converter::toString(exit_code) + ".");
+
+        // Set the response
+        response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
+    }
     else if (response_buffer.empty()) // Check if the response is empty
         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
     else

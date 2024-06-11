@@ -54,7 +54,8 @@ BufferManager::~BufferManager()
 
 // Push a file buffer into the manager
 ssize_t BufferManager::pushFileBuffer(int file_descriptor,
-                                      const std::vector<char> &data, size_t flush_threshold)
+                                      const std::vector<char> &data,
+                                      size_t flush_threshold)
 {
     // If the buffer for this file descriptor doesn't exist, create it
     if (m_buffers.find(file_descriptor) == m_buffers.end())

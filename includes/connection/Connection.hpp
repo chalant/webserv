@@ -13,7 +13,7 @@
  *
  */
 
-#define DEFAULT_TIMEOUT 300 // 5 minutes
+#define DEFAULT_TIMEOUT 300    // 5 minutes
 #define CGI_DEFAULT_TIMEOUT 20 // 20 seconds
 
 #include "../logger/ILogger.hpp"
@@ -61,8 +61,8 @@ public:
     virtual void setCgiInfo(int pid, int response_read_pipe_fd);
 
     // Connection management
-    virtual void touch();            // Update the last access time
-    virtual bool hasExpired() const; // Check if the connection has expired
+    virtual void touch();               // Update the last access time
+    virtual bool hasExpired() const;    // Check if the connection has expired
     virtual bool cgiHasExpired() const; // Check if the CGI process has expired
 };
 

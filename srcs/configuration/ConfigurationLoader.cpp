@@ -252,8 +252,8 @@ IConfiguration &ConfigurationLoader::loadConfiguration(const std::string &path)
     Tokenizer tokenizer(m_separators, m_reserved_symbols);
     Parser parser(grammar);
     const std::vector<Token> &tokens = tokenizer.tokenize(conf_stream);
-	if (tokens.size() == 0)
-		return *m_config;
+    if (tokens.size() == 0)
+        return *m_config;
     ParseTree &parse_tree = parser.parse(tokens);
     if (m_config)
         delete m_config;

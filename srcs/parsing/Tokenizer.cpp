@@ -3,22 +3,23 @@
 #include <iostream>
 #include <sstream>
 
-static	bool is_comment(const std::string &comment, const std::string &str, size_t start)
+static bool is_comment(const std::string &comment, const std::string &str,
+                       size_t start)
 {
-	return str.compare(start, comment.size(), comment) == 0;
+    return str.compare(start, comment.size(), comment) == 0;
 }
 
-size_t	skip_comments(const std::string &comment,
-                   const std::string &str, size_t start)
+size_t skip_comments(const std::string &comment, const std::string &str,
+                     size_t start)
 {
-	if (is_comment(comment, str, start))
-	{
-		while (start < str.size() && str[start] != '\n')
-		{
-			start++;
-		}
-	}
-	return start;
+    if (is_comment(comment, str, start))
+    {
+        while (start < str.size() && str[ start ] != '\n')
+        {
+            start++;
+        }
+    }
+    return start;
 }
 
 bool is_separator(const std::vector<std::string> &separators, char c)
@@ -93,15 +94,14 @@ void Tokenizer::m_makeTokens(const std::string &str)
 
     while (i < str.length())
     {
-		i = skip_comments("#", str, i);
+        i = skip_comments("#", str, i);
         while (is_separator(m_separators, str[ i ]))
             i++;
         i = add_reserved(m_tokens, m_reserved_symbols, str, i);
         start = i;
-        while (i < str.length() &&
-               is_reserved(m_reserved_symbols, str, i) == i &&
-			   !is_comment("#", str, i) &&
-               !is_separator(m_separators, str[ i ]))
+        while (
+            i < str.length() && is_reserved(m_reserved_symbols, str, i) == i &&
+            !is_comment("#", str, i) && !is_separator(m_separators, str[ i ]))
             i++;
         if (i - start > 0)
         {
@@ -122,17 +122,17 @@ const std::vector<Token> &Tokenizer::tokenize(const std::string &str)
 const std::vector<Token> &Tokenizer::tokenize(std::ifstream &stream)
 {
     // todo: raise an error here.
-    //std::string line;
+    // std::string line;
     if (!stream.is_open())
         return m_tokens;
     m_tokens.clear();
-	std::ostringstream ss;
+    std::ostringstream ss;
     ss << stream.rdbuf(); // Read the file content into the stream buffer
-    //std::string line = ss.str(); // Convert the stream buffer into a string
-    // while (std::getline(stream, line, ' '))
-    // {
-        
+    // std::string line = ss.str(); // Convert the stream buffer into a string
+    //  while (std::getline(stream, line, ' '))
+    //  {
+
     // }
-	m_makeTokens(ss.str());
+    m_makeTokens(ss.str());
     return m_tokens;
 }
