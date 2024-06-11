@@ -1,5 +1,5 @@
-#ifndef IROUTER_HPP
-#define IROUTER_HPP
+#ifndef IRouter_HPP
+#define IRouter_HPP
 
 /*
  * IRouter.hpp
@@ -9,12 +9,16 @@
 #include "../request/IRequest.hpp"
 #include "../response/IResponse.hpp"
 
+typedef std::pair<int, std::pair<int, int> > Triplet_t;
+
 class IRouter
 {
 public:
     virtual ~IRouter() {};
 
-    virtual void execRoute(IRequest *req, IResponse *res) = 0;
+    virtual Triplet_t execRoute(IRoute *route, IRequest *req,
+                                IResponse *res) = 0;
+    virtual IRoute *getRoute(IRequest *req, IResponse *res) = 0;
 };
 
 #endif // IROUTER_HPP

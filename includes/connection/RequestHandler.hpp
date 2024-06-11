@@ -32,7 +32,7 @@
 #include "../logger/ILogger.hpp"
 #include "../request/RequestParser.hpp"
 #include "../response/IResponseGenerator.hpp"
-#include "../response/ITempRouter.hpp"
+#include "../response/IRouter.hpp"
 #include "IClientHandler.hpp"
 #include "IConnectionManager.hpp"
 #include "IRequestHandler.hpp"
@@ -49,7 +49,7 @@ private:
     IConnectionManager &m_connection_manager; // the connection manager
     IClientHandler &m_client_handler;     // Handles communication with clients
     const RequestParser m_request_parser; // Parses incoming requests
-    ITempRouter &m_router; // Routes requests to appropriate handlers
+    IRouter &m_router; // Routes requests to appropriate handlers
 
     // AResponseGenerator *m_request_handler;                 // Pointer to the
     // recruited request handler
@@ -66,7 +66,7 @@ public:
     // Constructor
     RequestHandler(IBufferManager &buffer_manager,
                    IConnectionManager &connection_manager,
-                   const IConfiguration &configuration, ITempRouter &router,
+                   const IConfiguration &configuration, IRouter &router,
                    ILogger &logger, const IExceptionHandler &exception_handler,
                    IClientHandler &client_handler);
 

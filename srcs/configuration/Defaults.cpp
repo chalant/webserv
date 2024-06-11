@@ -24,6 +24,7 @@ Defaults::Defaults()
     m_directive_parameters[ "python_cgi_path" ].push_back("/usr/bin/python3");
     m_directive_parameters[ "worker_connections" ].push_back("1024");
     m_directive_parameters[ "autoindex" ].push_back("off");
+	m_directive_parameters["default_port"].push_back("80");
 }
 
 Defaults::~Defaults() {}

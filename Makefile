@@ -69,7 +69,7 @@ SRCS        =	main.cpp \
 				srcs/response/RFCCgiResponseGenerator.cpp \
 				srcs/response/UploadResponseGenerator.cpp \
 				srcs/response/Response.cpp \
-				srcs/response/TempRouter.cpp \
+				srcs/response/Router.cpp \
 				srcs/response/Route.cpp \
 				srcs/response/StaticFileResponseGenerator.cpp \
 				srcs/response/DeleteResponseGenerator.cpp

@@ -1,4 +1,4 @@
-#include "../../includes/response/TempRouter.hpp"
+#include "../../includes/response/Router.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/response/DeleteResponseGenerator.hpp"
 #include "../../includes/response/RFCCgiResponseGenerator.hpp"
@@ -10,17 +10,17 @@
 #include <cstdlib>
 #include <string>
 
-/*TempRouter: Selects the right 'Route' and 'ResponseGenerator' based on URI
+/*Router: Selects the right 'Route' and 'ResponseGenerator' based on URI
 (etc.) in the 'IRequest' (each locationblock in the conf file corresponds to a
-'Route', ie the TempRouter selects the correct locationblock)*/
+'Route', ie the Router selects the correct locationblock)*/
 
 // Constructor
-TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
+Router::Router(IConfiguration &configuration, ILogger &logger)
     : m_configuration(configuration), m_logger(logger),
       m_http_helper(HttpHelper(configuration))
 {
-    // Log the creation of the TempRouter
-    m_logger.log(VERBOSE, "Initializing TempRouter...");
+    // Log the creation of the Router
+    m_logger.log(VERBOSE, "Initializing Router...");
 
     // Create the response generators
     m_response_generators[ "GET" ] = new StaticFileResponseGenerator(logger);
@@ -44,10 +44,10 @@ TempRouter::TempRouter(IConfiguration &configuration, ILogger &logger)
 }
 
 // Destructor
-TempRouter::~TempRouter()
+Router::~Router()
 {
-    // Log the destruction of the TempRouter
-    m_logger.log(VERBOSE, "TempRouter destroyed.");
+    // Log the destruction of the Router
+    m_logger.log(VERBOSE, "Router destroyed.");
 
     // Delete the ResponseGenerators
     std::map<std::string, IResponseGenerator *>::iterator it;
@@ -68,8 +68,7 @@ TempRouter::~TempRouter()
     }
 }
 
-#include <iostream>
-IRoute *TempRouter::getRoute(IRequest *request, IResponse *response)
+IRoute *Router::getRoute(IRequest *request, IResponse *response)
 {
     std::string server_name = request->getHostName();
     std::string server_port = request->getHostPort();
@@ -142,7 +141,7 @@ IRoute *TempRouter::getRoute(IRequest *request, IResponse *response)
 }
 
 // Sort Routes; regex first, then by path length in descending order
-bool TempRouter::m_sortRoutes(const IRoute *a, const IRoute *b)
+bool Router::m_sortRoutes(const IRoute *a, const IRoute *b)
 {
     if (a->isRegex() && !b->isRegex())
         return true;
@@ -151,7 +150,7 @@ bool TempRouter::m_sortRoutes(const IRoute *a, const IRoute *b)
     return a->getPath().length() > b->getPath().length();
 }
 
-void TempRouter::m_createRoutes(IConfiguration &server,
+void Router::m_createRoutes(IConfiguration &server,
                                 std::vector<IRoute *> &routes)
 {
     // Create a route for each location block
@@ -275,18 +274,18 @@ void TempRouter::m_createRoutes(IConfiguration &server,
             route =
                 new Route(path, is_regex, methods, root, index, cgi_path,
                           matcher, client_max_body_size, redirects, autoindex);
-            m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path +
+            m_logger.log(VERBOSE, "[Router] New location: '" + path +
                                       "',  methods: '" + methods_string +
                                       "', root: '" + root + "', index: '" +
                                       index + "', cgi script: '" + cgi_script +
-                                      "'.");
+                                      "'." + "CGI" + server.getString("server_name"));
             route->setResponseGenerator(cgi_rg);
             routes.push_back(route);
             m_response_generators[ cgi_path ] = cgi_rg;
         }
         if (!cgi_route)
         {
-            m_logger.log(VERBOSE, "[TEMPROUTER] New location: '" + path +
+            m_logger.log(VERBOSE, "[Router] New location: '" + path +
                                       "',  methods: '" + methods_string +
                                       "', root: '" + root + "', index: '" +
                                       index + "', cgi script: '" + cgi_script +
@@ -304,12 +303,12 @@ void TempRouter::m_createRoutes(IConfiguration &server,
     // print all the route paths
     for (size_t i = 0; i < routes.size(); i++)
     {
-        m_logger.log(VERBOSE, "[TEMPROUTER] Route path: '" +
+        m_logger.log(VERBOSE, "[Router] Route path: '" +
                                   routes[ i ]->getPath() + "'.");
     }
 }
 
-Triplet_t TempRouter::execRoute(IRoute *route, IRequest *request,
+Triplet_t Router::execRoute(IRoute *route, IRequest *request,
                                 IResponse *response)
 {
     IResponseGenerator *response_generator = route->getResponseGenerator();
@@ -327,7 +326,7 @@ Triplet_t TempRouter::execRoute(IRoute *route, IRequest *request,
     return return_value;
 }
 
-IResponseGenerator *TempRouter::m_createCGIResponseGenerator(
+IResponseGenerator *Router::m_createCGIResponseGenerator(
     const std::string &type, const std::string &cgi_path, ILogger &logger)
 {
     if (type == "file")

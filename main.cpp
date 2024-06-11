@@ -12,7 +12,7 @@
 #include "includes/network/Server.hpp"
 #include "includes/network/Socket.hpp"
 #include "includes/pollfd/PollfdManager.hpp"
-#include "includes/response/TempRouter.hpp"
+#include "includes/response/Router.hpp"
 #include "includes/utils/SignalHandler.hpp"
 
 /*
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
         // Instantiate the Router.
         // Router router(configuration, logger, HttpHelper());
-        TempRouter router(configuration, logger);
+        Router router(configuration, logger);
 
         // Instantiate the RequestHandler.
         RequestHandler request_handler(buffer_manager, connection_manager,

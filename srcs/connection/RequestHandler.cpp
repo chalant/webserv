@@ -28,7 +28,7 @@
 RequestHandler::RequestHandler(IBufferManager &buffer_manager,
                                IConnectionManager &connection_manager,
                                const IConfiguration &configuration,
-                               ITempRouter &router, ILogger &logger,
+                               IRouter &router, ILogger &logger,
                                const IExceptionHandler &exception_handler,
                                IClientHandler &client_handler)
     : m_buffer_manager(buffer_manager),

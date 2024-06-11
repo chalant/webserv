@@ -389,7 +389,7 @@ void Request::addCookie(const std::string &key, const std::string &value)
     // Add the cookie to the internal cookies map
     m_cookies[ key ] = value;
 }
-
+#include <iostream>
 // Setter function for setting the authority of the request
 void Request::setAuthority()
 {
@@ -407,9 +407,10 @@ void Request::setAuthority()
     {
         // If the host header does not contain a port number, set the host port
         // to the default port
-        m_host_port = m_configuration.getString("DefaultPort");
+        m_host_port = m_configuration.getString("default_port");
     }
-
+	if (m_host_port.empty())
+		 m_host_port = m_configuration.getString("default_port");
     // Set the authority of the request
     m_authority = m_host_name + ":" + m_host_port;
 }
