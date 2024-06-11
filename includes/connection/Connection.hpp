@@ -46,6 +46,7 @@ public:
 
     // Setters
     virtual void setSession(ISession *session);
+    virtual void clearCgiInfo();
 
     // Getters
     virtual int getSocketDescriptor() const;
@@ -57,8 +58,7 @@ public:
     virtual IResponse &getResponse() const;
     virtual ISession &getSession() const;
     virtual int getCgiPid() const;
-    virtual void setCgiInfo(int pid, int response_read_pipe_fd,
-                            int request_write_pipe_fd);
+    virtual void setCgiInfo(int pid, int response_read_pipe_fd);
 
     // Connection management
     virtual void touch();            // Update the last access time

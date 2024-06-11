@@ -2,6 +2,7 @@
 #include "../../includes/utils/Converter.hpp"
 #include <csignal>
 #include <ctime>
+#include <unistd.h>
 
 /*
  * Connection class
@@ -23,6 +24,7 @@ Connection::Connection(
     : m_socket_descriptor(client_info.first), m_ip(client_info.second.first),
       m_port(Converter::toInt(client_info.second.second)),
       m_remote_address(m_ip + ":" + client_info.second.second),
+      m_cgi_output_pipe_read_end(-1),
       m_cgi_pid(-1),
       m_logger(logger), m_request(request), m_response(response),
       m_timeout(timeout)
@@ -35,10 +37,22 @@ Connection::~Connection()
 {
     delete m_request;
     delete m_response;
+    if (m_cgi_pid != -1)
+    {
+        kill(m_cgi_pid, SIGKILL);
+        close(m_cgi_output_pipe_read_end);
+    }
 }
 
 // Set session
 void Connection::setSession(ISession *session) { m_session = session; }
+
+// Clear CGI PID
+void Connection::clearCgiInfo()
+{
+    m_cgi_pid = -1;
+    m_cgi_output_pipe_read_end = -1;
+}
 
 // Getters
 int Connection::getSocketDescriptor() const { return m_socket_descriptor; }
@@ -62,10 +76,8 @@ ISession &Connection::getSession() const { return *m_session; }
 
 int Connection::getCgiPid() const { return m_cgi_pid; }
 
-void Connection::setCgiInfo(int cgi_pid, int cgi_output_pipe_read_end,
-                                int cgi_input_pipe_write_end)
+void Connection::setCgiInfo(int cgi_pid, int cgi_output_pipe_read_end)
 {
-    (void)cgi_input_pipe_write_end; // Unused
     m_cgi_pid = cgi_pid;
     m_cgi_start_time = time(NULL);
     m_cgi_output_pipe_read_end = cgi_output_pipe_read_end;
@@ -101,6 +113,8 @@ bool Connection::hasExpired() const
 
 bool Connection::cgiHasExpired() const
 {
+    if (m_cgi_pid == -1)
+        return false;
     return time(NULL) - m_cgi_start_time > CGI_DEFAULT_TIMEOUT;
 }
 

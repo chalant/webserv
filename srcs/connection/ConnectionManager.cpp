@@ -196,7 +196,8 @@ void ConnectionManager::assignSessionToConnection(IConnection &connection,
                      Converter::toString(connection.getSocketDescriptor()) +
                      " with client: " + connection.getRemoteAddress());
 }
-
+#include <iostream>
+#include <unistd.h>
 // Retire idle sessions and reap zombie processes
 void ConnectionManager::collectGarbage()
 {

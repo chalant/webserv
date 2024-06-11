@@ -256,8 +256,7 @@ Triplet_t RequestHandler::executeCgi(int body_descriptor)
     int cgi_output_pipe_read_end = cgi_info.second.first;
 
     // Record the cgi info
-    connection.setCgiInfo(cgi_pid, cgi_output_pipe_read_end,
-                          -1); // -1 not used
+    connection.setCgiInfo(cgi_pid, cgi_output_pipe_read_end);
 
     // Record the pipes to connection socket mappings
     m_pipe_routes[ cgi_output_pipe_read_end ] = socket_descriptor;
@@ -371,6 +370,9 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
 
     // Close the pipe
     close(cgi_output_pipe_read_end);
+
+    // Reset the CGI info
+    m_connection_manager.getConnection(client_socket).clearCgiInfo();
 
     // Return the client socket descriptor
     return client_socket;
