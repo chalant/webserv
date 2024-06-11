@@ -728,7 +728,7 @@ std::istream &RequestParser::m_getlineNoCr(std::istream &is,
     }
     return is;
 }
-
+#include <iostream>
 // Function to read a stringstream into a char vector until the boundary is
 // found NOTE - This function will currently fail when the boundary is split
 // between two buffer reads
@@ -760,7 +760,7 @@ void RequestParser::m_assignUntilBoundary(std::istringstream &iss,
             if (buffer[ i ] == boundary[ 0 ])
             {
                 // Check if the boundary is found in the buffer
-                if (strncmp(&buffer[ i ], boundary.c_str(), boundary_length) ==
+                if (boundary.c_str() - &buffer[i] >= static_cast<long>(boundary_length) && strncmp(&buffer[ i ], boundary.c_str(), boundary_length) ==
                     0)
                 {
                     // Add the buffer to the destination minus the CRLF
