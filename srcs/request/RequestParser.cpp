@@ -737,7 +737,7 @@ void RequestParser::m_assignUntilBoundary(std::istringstream &iss,
                                           std::vector<char> &dest) const
 {
     const size_t buffer_size = 1024;
-    char buffer[ buffer_size ];
+    char buffer[ buffer_size + 1 ];
     size_t boundary_length = boundary.length();
     size_t bytes_read;
     size_t pos;
@@ -753,6 +753,7 @@ void RequestParser::m_assignUntilBoundary(std::istringstream &iss,
 
         // Get the number of bytes read
         bytes_read = iss.gcount();
+		buffer[bytes_read] = '\0'; 
 
         // Check if the boundary is found in the buffer
         for (size_t i = 0; i < bytes_read; i++)
@@ -760,7 +761,7 @@ void RequestParser::m_assignUntilBoundary(std::istringstream &iss,
             if (buffer[ i ] == boundary[ 0 ])
             {
                 // Check if the boundary is found in the buffer
-                if (boundary.c_str() - &buffer[i] >= static_cast<long>(boundary_length) && strncmp(&buffer[ i ], boundary.c_str(), boundary_length) ==
+                if (strncmp(&buffer[ i ], boundary.c_str(), boundary_length) ==
                     0)
                 {
                     // Add the buffer to the destination minus the CRLF
