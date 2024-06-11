@@ -81,7 +81,10 @@ void ConnectionManager::removeConnection(SocketDescriptor_t socket_descriptor)
 IConnection &
 ConnectionManager::getConnection(SocketDescriptor_t socket_descriptor)
 {
-    return *m_connections[ socket_descriptor ];
+    IConnection * connection = m_connections.at(socket_descriptor);
+    if (connection == NULL)
+        throw std::runtime_error("[CONNECTIONMANAGER] Connection not found.");
+    return *connection;
 }
 
 // Get a reference to a request

@@ -329,13 +329,6 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     // Resize the response buffer to the actual size
     response_buffer.resize(response_buffer.size() - read_buffer_size +
                            read_return_value);
-	// Get a reference to the Connection
-    IConnection &connection =
-        m_connection_manager.getConnection(client_socket);
-
-    // Get a reference to the Request
-    IRequest &request = connection.getRequest();
-	unlink(request.getBodyFilePath().c_str());
 
     // print the response
     m_logger.log(VERBOSE, "CGI response received 100%");
@@ -343,29 +336,57 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
     // Get the child process exit status without blocking
     int cgi_pid = m_connection_manager.getConnection(client_socket).getCgiPid();
     int child_exit_status;
-    int exit_code = -1;
+    int exit_code = -3;
+    int status;
 
-    if (waitpid(cgi_pid, &child_exit_status, 0) == -1)
+    // Wait for the child process to exit no blocking
+    status = waitpid(cgi_pid, &child_exit_status, WNOHANG);
+
+    if (status == -1) // waitpid failed
     {
         m_logger.log(ERROR, "waitpid failed");
     }
-
-    if (WIFEXITED(child_exit_status))
+    else if (status == 0) // Child process is still running
     {
-        exit_code = WEXITSTATUS(child_exit_status);
+        m_logger.log(ERROR, "Cig process ID " + Converter::toString(cgi_pid) +
+                                " is still running");
+    }
+    else
+    {
+        // Get a reference to the Request
+        IRequest &request =
+            m_connection_manager.getConnection(client_socket).getRequest();
+
+        // Delete the body file
+        std::string body_file_path = request.getBodyFilePath();
+
+        if (body_file_path != "")
+            remove(body_file_path.c_str());
+
+        // Close the pipe
+        close(cgi_output_pipe_read_end);
+
+        if (WIFEXITED(child_exit_status))
+        {
+            exit_code = WEXITSTATUS(child_exit_status);
+            m_logger.log(VERBOSE, "CGI process ID " +
+                                      Converter::toString(cgi_pid) +
+                                      " exited normally with exit code " +
+                                      Converter::toString(exit_code) + ".");
+        }
+        else if (WIFSIGNALED(child_exit_status))
+        {
+            exit_code = WTERMSIG(child_exit_status);
+            m_logger.log(ERROR, "CGI process ID " +
+                                    Converter::toString(cgi_pid) +
+                                    " exited abnormaly with signal " +
+                                    Converter::toString(exit_code) + ".");
+        }
     }
 
-    // Check if the child process exited abnormaly
-    if (exit_code != 0)
-    {
-        // log the situation
-        m_logger.log(ERROR, "CGI process ID " + Converter::toString(cgi_pid) +
-                                " exited abnormaly with exit code " +
-                                Converter::toString(exit_code) + ".");
-
-        // Set the response
+    if (exit_code != 0 &&
+        exit_code != -3) // Check if the CGI process exited normally
         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
-    }
     else if (response_buffer.empty()) // Check if the response is empty
         response.setErrorResponse(INTERNAL_SERVER_ERROR); // 500
     else
@@ -378,9 +399,6 @@ int RequestHandler::handlePipeRead(int cgi_output_pipe_read_end)
 
     // Remove the descriptors from the pipe;socket map
     m_pipe_routes.erase(cgi_output_pipe_read_end);
-
-    // Close the pipe
-    close(cgi_output_pipe_read_end);
 
     // Reset the CGI info
     m_connection_manager.getConnection(client_socket).clearCgiInfo();

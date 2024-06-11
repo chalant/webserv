@@ -38,8 +38,8 @@ Connection::~Connection()
     if (m_cgi_pid != -1)
     {
         kill(m_cgi_pid, SIGKILL);
-        close(m_cgi_output_pipe_read_end);
     }
+    close(m_cgi_output_pipe_read_end);
 }
 
 // Set session

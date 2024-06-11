@@ -37,7 +37,7 @@
 // IConfiguration object
 Request::Request(const IConfiguration &configuration,
                  const HttpHelper &httpHelper)
-    : m_configuration(configuration), m_http_helper(httpHelper)
+    : m_configuration(configuration), m_http_helper(httpHelper), m_body_file_path("")
 {
 }
 
@@ -65,7 +65,11 @@ Request::Request(const Request &src)
 }
 
 // Destructor
-Request::~Request() {}
+Request::~Request() {
+    // If a body file path was set, delete the file
+    if (!m_body_file_path.empty())
+        remove(m_body_file_path.c_str());
+}
 
 // Getter function for retrieving the HTTP method of the request
 HttpMethod Request::getMethod() const { return m_method; }

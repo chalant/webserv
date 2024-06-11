@@ -1,6 +1,7 @@
 #include "../../includes/core/EventManager.hpp"
 #include "../../includes/exception/WebservExceptions.hpp"
 #include "../../includes/utils/Converter.hpp"
+#include <exception>
 #include <unistd.h>
 
 #define NO_EVENTS 0xC0
@@ -8,9 +9,9 @@
 #define KEEP_DESCRIPTOR 0x01
 
 EventManager::EventManager(IPollfdManager &pollfd_manager,
-                           IBufferManager &buffer_manager, IServer &server,
+                           IBufferManager &buffer_manager, IConnectionManager &connection_manager, IServer &server,
                            IRequestHandler &request_handler, ILogger &logger)
-    : m_pollfd_manager(pollfd_manager), m_buffer_manager(buffer_manager),
+    : m_pollfd_manager(pollfd_manager), m_buffer_manager(buffer_manager), m_connection_manager(connection_manager),
       m_server(server), m_request_handler(request_handler), m_logger(logger)
 {
 }
@@ -246,6 +247,11 @@ ssize_t EventManager::m_flushBuffer(ssize_t &pollfd_index, short options)
 {
     // Get the socket descriptor
     int descriptor = m_pollfd_manager.getDescriptor(pollfd_index);
+
+    // Touch the connection
+    try{
+        m_connection_manager.getConnection(descriptor).touch();
+    } catch (std::exception &e) {}
 
     // Flush the buffer
     ssize_t return_value = m_buffer_manager.flushBuffer(descriptor);
